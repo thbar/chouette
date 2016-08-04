@@ -3,6 +3,7 @@ package mobi.chouette.exchange.importer.updater;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
+import mobi.chouette.model.type.ChouetteAreaEnum;
 import no.rutebanken.netex.client.PublicationDeliveryClient;
 import mobi.chouette.exchange.importer.updater.netex.StopPlaceMapper;
 import mobi.chouette.model.NeptuneIdentifiedObject;
@@ -22,7 +23,9 @@ import java.util.stream.Collectors;
 @Stateless(name = NeTExStopPlaceRegisterUpdater.BEAN_NAME)
 public class NeTExStopPlaceRegisterUpdater implements Updater<Map<String, StopArea>> {
     public static final String BEAN_NAME = "NeTExStopPlaceRegisterUpdater";
-    
+
+    public static final String ORIGINAL_ID_KEY = "imported-id";
+
     private final PublicationDeliveryClient client;
     private final StopPlaceMapper stopPlaceMapper = new StopPlaceMapper();
 
@@ -87,6 +90,19 @@ public class NeTExStopPlaceRegisterUpdater implements Updater<Map<String, StopAr
                 .peek(stopPlace -> log.info("got stop place with ID "+stopPlace.getId() + " and name "+  stopPlace.getName() + " back"))
                 .collect(Collectors.toList());
 
+
+        receivedStopPlaces.forEach(stopPlace ->
+                newValue.values().stream()
+                    .forEach(stopArea -> {
+                        if(stopArea.getAreaType().equals(ChouetteAreaEnum.BoardingPosition)) {
+                            boolean exists = stopPlace.getKeyList().getKeyValue().stream()
+                                    .anyMatch(keyValueStructure -> keyValueStructure.getKey().equals(ORIGINAL_ID_KEY)
+                                            && keyValueStructure.getValue().equals(stopArea.getObjectId()));
+                            if(exists) {
+                                log.info("Found "+ stopArea.getObjectId() +".");
+                            }
+                        }
+                    }));
     }
 
 
