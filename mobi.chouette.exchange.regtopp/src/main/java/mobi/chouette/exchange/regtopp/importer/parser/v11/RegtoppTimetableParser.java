@@ -25,7 +25,6 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
-import mobi.chouette.exchange.regtopp.importer.CalendarStrategy;
 import mobi.chouette.exchange.regtopp.importer.RegtoppImportParameters;
 import mobi.chouette.exchange.regtopp.importer.RegtoppImporter;
 import mobi.chouette.exchange.regtopp.importer.index.v11.DaycodeById;
@@ -82,7 +81,7 @@ public class RegtoppTimetableParser implements Parser {
 		case ADD:
 			 chouetteTimetableId = AbstractConverter.composeObjectId(configuration.getObjectIdPrefix(), ObjectIdTypes.TIMETABLE_KEY, entry.getAdminCode()+entry.getDayCodeId()+header.getDate().toString());
 			 break;
-		case OVERWRITE:
+		case UPDATE:
 			default:
 			chouetteTimetableId = AbstractConverter.composeObjectId(configuration.getObjectIdPrefix(), ObjectIdTypes.TIMETABLE_KEY, entry.getAdminCode()+entry.getDayCodeId());
 		}

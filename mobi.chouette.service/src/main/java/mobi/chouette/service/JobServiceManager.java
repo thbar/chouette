@@ -19,13 +19,20 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -38,12 +45,8 @@ import mobi.chouette.model.iev.Link;
 import mobi.chouette.persistence.hibernate.ChouetteIdentifierGenerator;
 import mobi.chouette.scheduler.Scheduler;
 
-import org.apache.commons.io.FileUtils;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-
-@Stateless(name = JobServiceManager.BEAN_NAME)
+@Singleton(name = JobServiceManager.BEAN_NAME)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Startup
 @Log4j
 public class JobServiceManager {
@@ -57,28 +60,22 @@ public class JobServiceManager {
 	ContenerChecker checker;
 
 	@EJB
-	JobServiceManager jobServiceManager;
-
-	@EJB
 	Scheduler scheduler;
 
 	@Resource(lookup = "java:comp/DefaultManagedExecutorService")
 	ManagedExecutorService executor;
 
-	private static Set<Object> referentials = Collections.synchronizedSet(new HashSet<>());
+	private Set<Object> referentials = Collections.synchronizedSet(new HashSet<>());
 
-	private static int maxJobs = 5;
+	private int maxJobs = 5;
 
-	private static String lock = "lock";
-	
 	private String rootDirectory; 
 	
-	private static Set<String> intializedContexts = new HashSet<>();
-
+	private String lock = "lock";
+	
 	@PostConstruct
 	public synchronized void init() {
 		String context = checker.getContext();
-		if (intializedContexts.contains(context)) return;
 		System.setProperty(context + PropertyNames.MAX_STARTED_JOBS, "5");
 		System.setProperty(context + PropertyNames.MAX_COPY_BY_JOB, "5");
 		try {
@@ -122,27 +119,30 @@ public class JobServiceManager {
 			throws ServiceException {
 		// Valider les parametres
 		validateReferential(referential);
+		
 		synchronized (lock) {
-			if (scheduler.getActivejobsCount() >= maxJobs) {
+			int numActiveJobs = scheduler.getActivejobsCount();
+			log.info("Inside lock, numActiveJobs="+numActiveJobs);
+			if (numActiveJobs >= maxJobs) {
 				throw new RequestServiceException(RequestExceptionCode.TOO_MANY_ACTIVE_JOBS, "" + maxJobs
 						+ " active jobs");
 			}
-			JobService jobService = jobServiceManager.createJob(referential, action, type, inputStreamsByName);
-			scheduler.schedule(referential);
-			return jobService;
 		}
+		JobService jobService = createJob(referential, action, type, inputStreamsByName);
+		scheduler.schedule(referential);
+		return jobService;
 	}
 
-	public JobService createJob(String referential, String action, String type,
+	private JobService createJob(String referential, String action, String type,
 			Map<String, InputStream> inputStreamsByName) throws ServiceException {
 		JobService jobService = null;
 		try {
+			log.info("Creating job referential="+referential+" ...");
 			// Instancier le modèle du service 'upload'
 			jobService = new JobService(rootDirectory,referential, action, type);
 
 			// Enregistrer le jobService pour obtenir un id
 			jobDAO.create(jobService.getJob());
-			log.info("job " + jobService.getJob().getId() + " created");
 			// mkdir
 			if (Files.exists(jobService.getPath())) {
 				// réutilisation anormale d'un id de job (réinitialisation de la
@@ -160,14 +160,15 @@ public class JobServiceManager {
 			jobDAO.update(jobService.getJob());
 			// jobDAO.detach(jobService.getJob());
 
+			log.info("Job id=" + jobService.getJob().getId() + " referential="+referential+" created");
 			return jobService;
 
 		} catch (RequestServiceException ex) {
-			log.info("fail to create job ");
+			log.warn("fail to create job ",ex);
 			deleteBadCreatedJob(jobService);
 			throw ex;
 		} catch (Exception ex) {
-			log.info("fail to create job " + ex.getMessage() + " " + ex.getClass().getName());
+			log.warn("fail to create job " + ex.getMessage() + " " + ex.getClass().getName(),ex);
 			deleteBadCreatedJob(jobService);
 			throw new ServiceException(ServiceExceptionCode.INTERNAL_ERROR, ex);
 		}
