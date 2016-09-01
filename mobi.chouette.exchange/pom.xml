@@ -16,7 +16,13 @@
 	<dependencies>
 
 		<!-- Default Dependencies -->
-		<dependency>
+        <dependency>
+            <groupId>no.rutebanken</groupId>
+            <artifactId>netex-java-model</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+
+        <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
