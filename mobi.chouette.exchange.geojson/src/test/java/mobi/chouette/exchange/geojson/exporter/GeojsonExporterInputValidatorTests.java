@@ -3,8 +3,6 @@ package mobi.chouette.exchange.geojson.exporter;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import mobi.chouette.exchange.geojson.exporter.GeojsonExportParameters;
-import mobi.chouette.exchange.geojson.exporter.GeojsonExporterInputValidator;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
 
 import org.testng.Assert;

@@ -7,8 +7,8 @@
  */
 package mobi.chouette.model;
 
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -17,13 +17,9 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-// import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-// import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +30,11 @@ import mobi.chouette.model.type.PTNetworkSourceTypeEnum;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+
+// import javax.persistence.GenerationType;
+// import javax.persistence.SequenceGenerator;
 
 /**
  * Chouette Public Transport Network : a set of lines
@@ -112,9 +113,8 @@ public class Network extends NeptuneIdentifiedObject {
 	 */
 	@Getter
 	@Setter
-	@Temporal(TemporalType.DATE)
 	@Column(name = "version_date")
-	private Date versionDate;
+	private LocalDate versionDate;
 
 	/**
 	 * description

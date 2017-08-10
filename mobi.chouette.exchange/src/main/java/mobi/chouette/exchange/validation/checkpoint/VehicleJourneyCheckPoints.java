@@ -1,6 +1,5 @@
 package mobi.chouette.exchange.validation.checkpoint;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +22,10 @@ import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalTime;
+import org.joda.time.Seconds;
+
 /**
  * check a group of coherent vehicle journeys (i.e. on the same journey pattern)
  * <ul>
@@ -36,10 +39,8 @@ import mobi.chouette.model.type.TransportModeNameEnum;
  * <li>3-VehicleJourney-7 : check if vehicle journey is included in its associated timeband</li>
  * <li>3-VehicleJourney-8 : check if some timesheet journey are included in frequency journeys</li>
  * </ul>
- * 
- * 
+ *
  * @author michel
- * 
  */
 @Log4j
 public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney> implements Validator<VehicleJourney> {
@@ -80,14 +81,14 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 		initCheckPoint(context, VEHICLE_JOURNEY_6, SEVERITY.W);
 		initCheckPoint(context, VEHICLE_JOURNEY_7, SEVERITY.W);
 		initCheckPoint(context, VEHICLE_JOURNEY_8, SEVERITY.W);
-		
+
 		// checkPoint is applicable
 		prepareCheckPoint(context, VEHICLE_JOURNEY_1);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_2);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_4);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_5);
-		
-		
+
+
 		//
 		if (test4_2) {
 			initCheckPoint(context, L4_VEHICLE_JOURNEY_2, SEVERITY.E);
@@ -124,16 +125,16 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 			// 3-VehicleJourney-5 : check if time progress correctly with offset
 			// on each stop and between two stops
 			check3VehicleJourney5(context, vj);
-			
+
 			//3-VehicleJourney-6 : check if two journey frequencies are overlapping on same vehicle journey
 			check3VehicleJourney6(context, vj);
-			
+
 			//3-VehicleJourney-7 : check if vehicle journey is included in its associated timeband
 			check3VehicleJourney7(context, vj);
-			
+
 			//3-VehicleJourney-8 : check if some timesheet journey are included in frequency journeys
 			check3VehicleJourney8(context, vj, beans);
-			
+
 			// 4-VehicleJourney-1 : (optionnal) check columns constraints
 			if (test4_1)
 				check4Generic1(context, vj, L4_VEHICLE_JOURNEY_1, parameters, log);
@@ -143,39 +144,30 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 				check4VehicleJourney2(context, vj, parameters);
 
 		}
-		
-		
-		
+
+
 		// 3-VehicleJourney-3 : check if two journeys progress similarly
 		check3VehicleJourney3stat(context, beans, parameters);
-		
-		
+
+
 		distances.clear();
 		return;
 	}
 
 	/**
 	 * Time between two time values with offset handling
-	 * 
+	 *
 	 * @param first
 	 * @param firstTimeOffset
 	 * @param last
 	 * @param lastTimeOffset
 	 * @return
 	 */
-	private long diffTime(Time first, int firstTimeOffset, Time last, int lastTimeOffset) {
+	private long diffTime(LocalTime first, int firstTimeOffset, LocalTime last, int lastTimeOffset) {
 		if (first == null || last == null)
 			return Long.MIN_VALUE; // TODO
 
-		long firstOffset = firstTimeOffset * 86400L;
-		long lastOffset = lastTimeOffset * 86400L;
-
-		long lastTime = (last.getTime() / 1000L) + lastOffset;
-		long firstTime = (first.getTime() / 1000L) + firstOffset;
-
-		long diff = lastTime - firstTime;
-
-		return diff;
+		return Seconds.secondsBetween(first, last).getSeconds() + (lastTimeOffset - firstTimeOffset) * DateTimeConstants.SECONDS_PER_DAY;
 	}
 
 	private void check3VehicleJourney1(Context context, VehicleJourney vj, ValidationParameters parameters) {
@@ -215,25 +207,22 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 
 	}
 
-	private Map<String,Double> distances = new HashMap<>();
-	
-	private double getDistance(StopArea stop1, StopArea stop2)
-	{
-		String key = stop1.getObjectId()+"#"+stop2.getObjectId();
-		if (distances.containsKey(key))
-		{
+	private Map<String, Double> distances = new HashMap<>();
+
+	private double getDistance(StopArea stop1, StopArea stop2) {
+		String key = stop1.getObjectId() + "#" + stop2.getObjectId();
+		if (distances.containsKey(key)) {
 			return distances.get(key).doubleValue();
 		}
-		key = stop2.getObjectId()+"#"+stop1.getObjectId();
-		if (distances.containsKey(key))
-		{
+		key = stop2.getObjectId() + "#" + stop1.getObjectId();
+		if (distances.containsKey(key)) {
 			return distances.get(key).doubleValue();
 		}
 		double distance = distance(stop1, stop2);
-		distances.put(key,Double.valueOf(distance));
+		distances.put(key, Double.valueOf(distance));
 		return distance;
 	}
-	
+
 	private void check3VehicleJourney2(Context context, VehicleJourney vj, ValidationParameters parameters) {
 		if (isEmpty(vj.getVehicleJourneyAtStops()))
 			return;
@@ -305,61 +294,55 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 	}
 
 	private void check3VehicleJourney3stat(Context context, List<VehicleJourney> beans,
-			ValidationParameters parameters) {
+										   ValidationParameters parameters) {
 		// 3-VehicleJourney-3 : check if two journeys progress similarly
-		Map<String,List<Long>> diffTimeByJps = new HashMap<>();
-		Map<String,Integer> journeySize = new HashMap<>();
-		
+		Map<String, List<Long>> diffTimeByJps = new HashMap<>();
+		Map<String, Integer> journeySize = new HashMap<>();
+
 		prepareCheckPoint(context, VEHICLE_JOURNEY_3);
 		// compute stats
 		for (VehicleJourney vehicleJourney : beans) {
-			String key = vehicleJourney.getJourneyPattern().getObjectId()+"#"+getTransportMode(vehicleJourney);
+			String key = vehicleJourney.getJourneyPattern().getObjectId() + "#" + getTransportMode(vehicleJourney);
 			List<Long> diffTimes = diffTimeByJps.get(key);
-			if (diffTimes == null)
-			{
+			if (diffTimes == null) {
 				diffTimes = new ArrayList<>();
 				diffTimeByJps.put(key, diffTimes);
-				journeySize.put(key,Integer.valueOf(0));
+				journeySize.put(key, Integer.valueOf(0));
 			}
-			journeySize.put(key,Integer.valueOf(journeySize.get(key)+1));
+			journeySize.put(key, Integer.valueOf(journeySize.get(key) + 1));
 			List<VehicleJourneyAtStop> vjas = vehicleJourney.getVehicleJourneyAtStops();
 			for (int j = 1; j < vjas.size(); j++) {
 				long duration = diffTime(vjas.get(j - 1).getDepartureTime(), vjas.get(j - 1)
 						.getDepartureDayOffset(), vjas.get(j).getArrivalTime(), vjas.get(j)
 						.getArrivalDayOffset());
-				if (diffTimes.size() < j)
-				{
+				if (diffTimes.size() < j) {
 					diffTimes.add(Long.valueOf(duration));
-				}
-				else
-				{
-					diffTimes.set(j-1, Long.valueOf(diffTimes.get(j-1)+duration));
+				} else {
+					diffTimes.set(j - 1, Long.valueOf(diffTimes.get(j - 1) + duration));
 				}
 			}
 		}
-		for (String key : journeySize.keySet())
-		{
+		for (String key : journeySize.keySet()) {
 			int count = journeySize.get(key).intValue();
 			List<Long> diffTimes = diffTimeByJps.get(key);
-			for (int i = 0; i < diffTimes.size(); i++)
-			{
-				diffTimes.set(i, Long.valueOf(diffTimes.get(i)/count));
+			for (int i = 0; i < diffTimes.size(); i++) {
+				diffTimes.set(i, Long.valueOf(diffTimes.get(i) / count));
 			}
 		}
-		
+
 		// check data between average data
 		for (VehicleJourney vehicleJourney : beans) {
 			TransportModeNameEnum transportMode = getTransportMode(vehicleJourney);
 			long maxDuration = getModeParameters(parameters, transportMode.toString(), log)
 					.getInterStopDurationVariationMax();
-			String key = vehicleJourney.getJourneyPattern().getObjectId()+"#"+transportMode;
+			String key = vehicleJourney.getJourneyPattern().getObjectId() + "#" + transportMode;
 			List<Long> diffTimes = diffTimeByJps.get(key);
 			List<VehicleJourneyAtStop> vjas = vehicleJourney.getVehicleJourneyAtStops();
 			for (int j = 1; j < vjas.size(); j++) {
 				long duration = diffTime(vjas.get(j - 1).getDepartureTime(), vjas.get(j - 1)
 						.getDepartureDayOffset(), vjas.get(j).getArrivalTime(), vjas.get(j)
 						.getArrivalDayOffset());
-				if (Math.abs(duration - diffTimes.get(j-1)) > maxDuration) {
+				if (Math.abs(duration - diffTimes.get(j - 1)) > maxDuration) {
 					DataLocation source = buildLocation(context, vehicleJourney);
 					DataLocation target1 = buildLocation(context, vjas.get(j - 1).getStopPoint()
 							.getContainedInStopArea());
@@ -368,12 +351,12 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 
 					ValidationReporter reporter = ValidationReporter.Factory.getInstance();
 					reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_3, "1", source,
-							Long.toString(Math.abs(duration - diffTimes.get(j-1))), Long.toString(maxDuration),
+							Long.toString(Math.abs(duration - diffTimes.get(j - 1))), Long.toString(maxDuration),
 							target1, target2);
 				}
 			}
 		}
-		
+
 	}
 
 //	private void check3VehicleJourney3(Context context, List<VehicleJourney> beans, int rank, VehicleJourney vj0,
@@ -524,45 +507,45 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 		}
 
 	}
-	
+
 	// 3-VehicleJourney-6 : Chevauchement de périodes dans une course à fréquence
 	private void check3VehicleJourney6(Context context, VehicleJourney vj) {
 		boolean ok = true;
 		// Si la course est de type fréquence
-		if(vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
+		if (vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
 			prepareCheckPoint(context, VEHICLE_JOURNEY_6);
 
 			List<JourneyFrequency> lstFrequency = vj.getJourneyFrequencies();
-			
-			if(lstFrequency != null) {
-				if(lstFrequency.size() > 1) {
-					for(JourneyFrequency jf: lstFrequency) {
-						for(JourneyFrequency jf2: lstFrequency) {
+
+			if (lstFrequency != null) {
+				if (lstFrequency.size() > 1) {
+					for (JourneyFrequency jf : lstFrequency) {
+						for (JourneyFrequency jf2 : lstFrequency) {
 							// jf2 inclus dans jf
-							if(jf.getFirstDepartureTime().getTime() < jf2.getFirstDepartureTime().getTime()  && jf.getLastDepartureTime().getTime()  > jf2.getLastDepartureTime().getTime()) {
+							if (jf.getFirstDepartureTime().isBefore(jf2.getFirstDepartureTime()) && jf.getLastDepartureTime().isAfter(jf2.getLastDepartureTime())) {
 								ok = false;
 								break;
-							} 
-							
+							}
+
 							//jf inclus dans jf2
-							if (jf.getFirstDepartureTime().getTime() > jf2.getFirstDepartureTime().getTime()  && jf.getLastDepartureTime().getTime()  < jf2.getLastDepartureTime().getTime()) {
+							if (jf.getFirstDepartureTime().isAfter(jf2.getFirstDepartureTime()) && jf.getLastDepartureTime().isBefore(jf2.getLastDepartureTime())) {
 								ok = false;
 								break;
-							} 
+							}
 							// jf en partie sur le creneau de jf2
-							if (jf.getFirstDepartureTime().getTime() < jf2.getFirstDepartureTime().getTime()  && jf.getLastDepartureTime().getTime()  < jf2.getLastDepartureTime().getTime()) {
+							if (jf.getFirstDepartureTime().isBefore(jf2.getFirstDepartureTime()) && jf.getLastDepartureTime().isBefore(jf2.getLastDepartureTime())) {
 								ok = false;
 								break;
-							} 
+							}
 							// jf2 en partie sur le creneau de jf1
-							if(jf.getFirstDepartureTime().getTime() > jf2.getFirstDepartureTime().getTime()  && jf.getLastDepartureTime().getTime()  > jf2.getLastDepartureTime().getTime()) {
+							if (jf.getFirstDepartureTime().isAfter(jf2.getFirstDepartureTime()) && jf.getLastDepartureTime().isAfter(jf2.getLastDepartureTime())) {
 								ok = false;
 								break;
 							}
 						}
 					}
-					
-					if(!ok) {
+
+					if (!ok) {
 						DataLocation location = buildLocation(context, vj);
 						DataLocation target = buildLocation(context, vj);
 						ValidationReporter reporter = ValidationReporter.Factory.getInstance();
@@ -571,7 +554,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 					}
 				}
 			}
-			
+
 		}
 	}
 
@@ -579,24 +562,24 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 	private void check3VehicleJourney7(Context context, VehicleJourney vj) {
 		boolean ok = true;
 		// Si la course est de type fréquence
-		if(vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
+		if (vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
 			List<JourneyFrequency> lstFrequency = vj.getJourneyFrequencies();
 			prepareCheckPoint(context, VEHICLE_JOURNEY_7);
-			
-			if(lstFrequency != null) {
-				if(lstFrequency.size() > 1) {
-					for(JourneyFrequency jf: lstFrequency) {
-						if(jf.getTimeband() != null) {
+
+			if (lstFrequency != null) {
+				if (lstFrequency.size() > 1) {
+					for (JourneyFrequency jf : lstFrequency) {
+						if (jf.getTimeband() != null) {
 							Timeband currentTimeBand = jf.getTimeband();
 							// jf non inclus dans timeband associé
-							if(jf.getFirstDepartureTime().getTime() < currentTimeBand.getStartTime().getTime()  || jf.getLastDepartureTime().getTime()  > currentTimeBand.getEndTime().getTime()) {
+							if (jf.getFirstDepartureTime().isBefore(currentTimeBand.getStartTime()) || jf.getLastDepartureTime().isAfter(currentTimeBand.getEndTime())) {
 								ok = false;
 								break;
-							} 
+							}
 						}
 					}
-					
-					if(!ok) {
+
+					if (!ok) {
 						DataLocation location = buildLocation(context, vj);
 						DataLocation target = buildLocation(context, vj);
 						ValidationReporter reporter = ValidationReporter.Factory.getInstance();
@@ -605,48 +588,48 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 					}
 				}
 			}
-			
+
 		}
 	}
-	
+
 	private boolean compareJourneyFrequencyToVehicleJourneyAtStop(Context context, VehicleJourney currentVj, JourneyFrequency jf, List<VehicleJourney> beans) {
-			boolean ok = true;
-			for(VehicleJourney vj: beans) {
-				if(vj.getJourneyCategory().equals(JourneyCategoryEnum.Timesheet)) {
-					VehicleJourneyAtStop vjas = vj.getVehicleJourneyAtStops().get(0);
-					// heure debut vjas non inclus dans jfs
-					if(vjas.getDepartureTime().getTime() < jf.getFirstDepartureTime().getTime() ||  vjas.getDepartureTime().getTime() > jf.getLastDepartureTime().getTime()) {
-						ok = false;
-					} 
-					if(!ok) {
-						DataLocation location = buildLocation(context, currentVj);
-						DataLocation target = buildLocation(context, vj);
-						ValidationReporter reporter = ValidationReporter.Factory.getInstance();
-						reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_8, location, null,
-								null, target);
-						ok = true;
-					}
+		boolean ok = true;
+		for (VehicleJourney vj : beans) {
+			if (vj.getJourneyCategory().equals(JourneyCategoryEnum.Timesheet)) {
+				VehicleJourneyAtStop vjas = vj.getVehicleJourneyAtStops().get(0);
+				// heure debut vjas non inclus dans jfs
+				if (vjas.getDepartureTime().isBefore(jf.getFirstDepartureTime()) || vjas.getDepartureTime().isAfter(jf.getLastDepartureTime())) {
+					ok = false;
+				}
+				if (!ok) {
+					DataLocation location = buildLocation(context, currentVj);
+					DataLocation target = buildLocation(context, vj);
+					ValidationReporter reporter = ValidationReporter.Factory.getInstance();
+					reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_8, location, null,
+							null, target);
+					ok = true;
 				}
 			}
-			return ok;
+		}
+		return ok;
 	}
-	
+
 	private void compareVehicleJourneyFrequencyToOtherJourneyTimesheet(Context context, VehicleJourney vj, List<VehicleJourney> beans) {
 		List<JourneyFrequency> lstFrequency = vj.getJourneyFrequencies();
-		
-		if(lstFrequency != null) {
-			if(lstFrequency.size() > 0) {
-				for(JourneyFrequency jf: lstFrequency) {
+
+		if (lstFrequency != null) {
+			if (lstFrequency.size() > 0) {
+				for (JourneyFrequency jf : lstFrequency) {
 					compareJourneyFrequencyToVehicleJourneyAtStop(context, vj, jf, beans);
 				}
 			}
 		}
 	}
-	
+
 	// 3-VehicleJourney-8 : check if some timesheet journey are included in frequency journeys
 	private void check3VehicleJourney8(Context context, VehicleJourney vj, List<VehicleJourney> beans) {
 		// Si la course est de type fréquence
-		if(vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
+		if (vj.getJourneyCategory().equals(JourneyCategoryEnum.Frequency)) {
 			prepareCheckPoint(context, VEHICLE_JOURNEY_8);
 			compareVehicleJourneyFrequencyToOtherJourneyTimesheet(context, vj, beans);
 		}

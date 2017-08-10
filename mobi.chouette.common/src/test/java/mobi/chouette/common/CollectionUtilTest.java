@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class CollectionUtilTest {
 
-	@Test(groups = { "collectionUtil" }, description = "substract")
+	@Test(groups = { "collectionUtil" }, description = "subtract")
 	public void testSubstract() throws Exception {
 
 		Collection<String> a = new ArrayList<String>();

@@ -1,7 +1,5 @@
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.sql.Time;
-
 import mobi.chouette.core.ChouetteException;
 import mobi.chouette.exchange.gtfs.exporter.producer.mock.GtfsExporterMock;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
@@ -11,6 +9,7 @@ import mobi.chouette.exchange.gtfs.model.importer.Context;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.StopArea;
 
+import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
@@ -36,8 +35,7 @@ public class GtfsExportTransferProducerTests
       StopArea endOfLink = new StopArea();
       endOfLink.setObjectId("GTFS:StopArea:end");
       neptuneObject.setEndOfLink(endOfLink);
-      Time defaultDuration = new Time(60000);
-      neptuneObject.setDefaultDuration(defaultDuration);
+      neptuneObject.setDefaultDuration(Duration.millis(60000));
 
       producer.save(neptuneObject,  "GTFS",false);
       GtfsTransfer gtfsObject = mock.getExportedTransfers().get(0);
@@ -66,8 +64,7 @@ public class GtfsExportTransferProducerTests
       StopArea endOfLink = new StopArea();
       endOfLink.setObjectId("GTFS:StopArea:end");
       neptuneObject.setEndOfLink(endOfLink);
-      Time defaultDuration = new Time(500);
-      neptuneObject.setDefaultDuration(defaultDuration);
+      neptuneObject.setDefaultDuration(Duration.millis(500));
 
       producer.save(neptuneObject, "GTFS",false);
       GtfsTransfer gtfsObject = mock.getExportedTransfers().get(0);

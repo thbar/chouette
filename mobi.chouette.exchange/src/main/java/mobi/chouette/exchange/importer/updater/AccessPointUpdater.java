@@ -173,7 +173,7 @@ public class AccessPointUpdater implements Updater<AccessPoint> {
 			accessLinkUpdater.update(context, pair.getLeft(), pair.getRight());
 		}
 
-		// Collection<AccessLink> removedAccessLink = CollectionUtils.substract(
+		// Collection<AccessLink> removedAccessLink = CollectionUtils.subtract(
 		// oldValue.getAccessLinks(), newValue.getAccessLinks(),
 		// NeptuneIdentifiedObjectComparator.INSTANCE);
 		// for (AccessLink accessLink : removedAccessLink) {

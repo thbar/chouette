@@ -1,9 +1,7 @@
 package mobi.chouette.exchange.gtfs.parser;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,6 +58,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import org.joda.time.Duration;
+import org.joda.time.LocalTime;
 
 @Log4j
 public class GtfsTripParser implements Parser, Validator, Constant {
@@ -599,28 +598,29 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 			journeyFrequency.setExactTime(frequency.getExactTimes());
 			journeyFrequency.setFirstDepartureTime(frequency.getStartTime().getTime());
 			journeyFrequency.setLastDepartureTime(frequency.getEndTime().getTime());
-			journeyFrequency.setScheduledHeadwayInterval(TimeUtil.valueOf(frequency.getHeadwaySecs()));
+			journeyFrequency.setScheduledHeadwayInterval(Duration.standardSeconds(frequency.getHeadwaySecs()));
 			journeyFrequency.setTimeband(timeband);
 			journeyFrequency.setVehicleJourney(vehicleJourney);
 
 			List<VehicleJourneyAtStop> vjass = vehicleJourney.getVehicleJourneyAtStops();
 			VehicleJourneyAtStop firstVjas = vjass.get(0);
-			Time firstArrivalTime = firstVjas.getArrivalTime();
-			Time firstDepartureTime = firstVjas.getDepartureTime();
+			LocalTime firstArrivalTime = firstVjas.getArrivalTime();
+			LocalTime firstDepartureTime = firstVjas.getDepartureTime();
 			for (VehicleJourneyAtStop vjas : vjass) {
-				vjas.setArrivalTime(TimeUtil.substract(vjas.getArrivalTime(), firstArrivalTime));
-				vjas.setDepartureTime(TimeUtil.substract(vjas.getDepartureTime(), firstDepartureTime));
+				LocalTime arrivalTime=new LocalTime(TimeUtil.subtract(vjas.getArrivalTime(), firstArrivalTime).getMillis());
+				LocalTime departureTime=new LocalTime(TimeUtil.subtract(vjas.getDepartureTime(), firstDepartureTime).getMillis());
+				vjas.setArrivalTime(arrivalTime);
+				vjas.setDepartureTime(departureTime);
 			}
 		}
 	}
 
 	private String getTimebandName(GtfsFrequency frequency) {
-		Calendar startCal = Calendar.getInstance(TimeZone.getDefault());
-		startCal.setTime(frequency.getStartTime().getTime());
-		Calendar endCal = Calendar.getInstance(TimeZone.getDefault());
-		endCal.setTime(frequency.getEndTime().getTime());
-		return (startCal.get(Calendar.HOUR_OF_DAY) + ":" + startCal.get(Calendar.MINUTE) + " - "
-				+ endCal.get(Calendar.HOUR_OF_DAY) + ":" + endCal.get(Calendar.MINUTE));
+		LocalTime start=frequency.getStartTime().getTime();
+		LocalTime end=frequency.getEndTime().getTime();
+
+		return (start.getHourOfDay() + ":" + start.getMinuteOfHour() + " - "
+				+ end.getHourOfDay() + ":" + end.getMinuteOfHour());
 	}
 
 	private JourneyPattern createJourneyPattern(Context context, Referential referential,

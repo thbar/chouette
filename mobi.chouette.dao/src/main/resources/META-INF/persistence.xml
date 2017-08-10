@@ -22,7 +22,8 @@
 			<property name="javax.persistence.validation.mode" value="none" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.default_schema" value="public" />
-         <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+         	<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="jadira.usertype.autoRegisterUserTypes" value="true" />
 		</properties>
 		
 		
@@ -71,6 +72,7 @@
 			<property name="hibernate.cache.use_query_cache" value="true" />
          <property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect" />
 			<property name="javax.persistence.validation.mode" value="none" />
+			<property name="jadira.usertype.autoRegisterUserTypes" value="true" />
 		</properties>
 	</persistence-unit>
 
