@@ -28,6 +28,7 @@ import mobi.chouette.model.type.UserNeedEnum;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.joda.time.Duration;
 
 /**
@@ -166,6 +167,7 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "default_duration")
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration defaultDuration;
 
 	/**
@@ -178,6 +180,7 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "frequent_traveller_duration")
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration frequentTravellerDuration;
 
 	/**
@@ -191,6 +194,7 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "occasional_traveller_duration")
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration occasionalTravellerDuration;
 
 	/**
@@ -203,6 +207,7 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "mobility_restricted_traveller_duration")
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration mobilityRestrictedTravellerDuration;
 
 	/**
