@@ -3,6 +3,8 @@ package mobi.chouette.exchange.gtfs.parser;
 import java.sql.Time;
 import java.util.Calendar;
 
+import org.apache.commons.lang.StringUtils;
+
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
@@ -105,7 +107,8 @@ public class GtfsTransferParser implements Parser, Validator, Constant {
 
 		for (GtfsTransfer gtfsTransfer : importer.getTransferByFromStop()) {
 
-			if(gtfsTransfer.getFromRouteId() == null && gtfsTransfer.getToRouteId() == null && gtfsTransfer.getFromTripId() == null && gtfsTransfer.getToTripId() == null) {
+			if(StringUtils.trimToNull(gtfsTransfer.getFromRouteId()) == null && StringUtils.trimToNull(gtfsTransfer.getToRouteId()) == null
+					&& StringUtils.trimToNull(gtfsTransfer.getFromTripId()) == null && StringUtils.trimToNull(gtfsTransfer.getToTripId()) == null) {
 				// Treat as conneciton link
 				String objectId = AbstractConverter.composeObjectId(configuration.getObjectIdPrefix(),
 						ConnectionLink.CONNECTIONLINK_KEY, gtfsTransfer.getFromStopId() + "_" + gtfsTransfer.getToStopId(),
