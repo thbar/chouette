@@ -1,24 +1,12 @@
 package mobi.chouette.exchange.exporter;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.model.*;
+import mobi.chouette.model.util.NeptuneUtil;
+import org.joda.time.LocalDate;
+
 import java.util.Collection;
 import java.util.List;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.AccessLink;
-import mobi.chouette.model.AccessPoint;
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.Footnote;
-import mobi.chouette.model.Interchange;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.util.NeptuneUtil;
-
-import org.joda.time.LocalDate;
 
 @Log4j
 public class DataCollector {
@@ -44,6 +32,10 @@ public class DataCollector {
 				if (jp.getDepartureStopPoint() == null || jp.getArrivalStopPoint() == null) {
 					NeptuneUtil.refreshDepartureArrivals(jp);
 				}
+                //do not export deleted journey_patterns
+                if((jp.getRegistrationNumber() != null) && (jp.getRegistrationNumber().endsWith("_DEL"))){
+                    continue;
+                }
 				for (VehicleJourney vehicleJourney : jp.getVehicleJourneys()) {
 					if (vehicleJourney.getVehicleJourneyAtStops().isEmpty()) {
 						continue;
