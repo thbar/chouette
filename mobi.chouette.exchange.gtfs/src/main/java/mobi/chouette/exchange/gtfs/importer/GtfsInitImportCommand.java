@@ -1,11 +1,7 @@
 package mobi.chouette.exchange.gtfs.importer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -17,8 +13,10 @@ import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.model.util.Referential;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Log4j
 public class GtfsInitImportCommand implements Command, Constant {
@@ -45,7 +43,8 @@ public class GtfsInitImportCommand implements Command, Constant {
 			if (parameters.getReferencesType() == null || parameters.getReferencesType().isEmpty()) {
 				parameters.setReferencesType("line");
 			}
-			if (context.get(VALIDATION) != null)
+			//throw nullpointerexception because of this condition
+			//if (context.get(VALIDATION) != null)
 				context.put(VALIDATION_DATA, new ValidationData());
 			result = SUCCESS;
 

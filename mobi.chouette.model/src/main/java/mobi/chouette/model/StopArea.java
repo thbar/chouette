@@ -138,8 +138,9 @@ public class StopArea extends NeptuneLocalizedObject {
 	 * 
 	 * @return The actual value
 	 */
+	//delete unique constraint
 	@Getter
-	@Column(name = "registration_number", unique = true)
+	@Column(name = "registration_number")
 	private String registrationNumber;
 
 	/**
