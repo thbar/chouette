@@ -1,23 +1,21 @@
 package mobi.chouette.exchange.report;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import mobi.chouette.exchange.report.ActionReporter.FILE_STATE;
 import mobi.chouette.exchange.validation.report.CheckPointReport.SEVERITY;
-
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "status", "ioType", "errors", "checkPointErrorKeys", "checkPointWarningKeys", "checkPointErrorCount",
@@ -40,16 +38,16 @@ public class FileReport extends AbstractReport{
 	private List<FileError> errors = new ArrayList<>();
 	
 	
-	@XmlElement(name = "checkpoint_errors")
+	@XmlElement(name = "check_point_errors")
 	private List<Integer> checkPointErrorKeys = new ArrayList<Integer>();
 	
-	@XmlElement(name = "checkpoint_warnings")
+	@XmlElement(name = "check_point_warnings")
 	private List<Integer> checkPointWarningKeys = new ArrayList<Integer>();
 
-	@XmlElement(name = "checkpoint_error_count")
+	@XmlElement(name = "check_point_error_count")
 	private int checkPointErrorCount = 0;
 
-	@XmlElement(name = "checkpoint_warning_count")
+	@XmlElement(name = "check_point_warning_count")
 	private int checkPointWarningCount = 0;
 
 	protected void addError(FileError fileError2) {
