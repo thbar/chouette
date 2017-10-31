@@ -3,16 +3,16 @@ package mobi.chouette.exchange.exporter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.model.*;
 import mobi.chouette.model.util.NeptuneUtil;
-import org.joda.time.LocalDate;
 
+import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
 
 @Log4j
 public class DataCollector {
 
-	protected boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate,
-							  boolean skipNoCoordinate, boolean followLinks) {
+	protected boolean collect(ExportableData collection, Line line, Date startDate, Date endDate,
+			boolean skipNoCoordinate, boolean followLinks) {
 		boolean validLine = false;
 		collection.setLine(null);
 		collection.getRoutes().clear();
@@ -56,8 +56,6 @@ public class DataCollector {
 						if (isValid) {
 							collection.getTimetables().addAll(vehicleJourney.getTimetables());
 							collection.getVehicleJourneys().add(vehicleJourney);
-							collection.getInterchanges().addAll(vehicleJourney.getFeederInterchanges());
-							collection.getInterchanges().addAll(vehicleJourney.getConsumerInterchanges());
 							validJourneyPattern = true;
 							validRoute = true;
 							validLine = true;
@@ -85,8 +83,6 @@ public class DataCollector {
 						}
 						if (isValid) {
 							collection.getVehicleJourneys().add(vehicleJourney);
-							collection.getInterchanges().addAll(vehicleJourney.getFeederInterchanges());
-							collection.getInterchanges().addAll(vehicleJourney.getConsumerInterchanges());
 							if (vehicleJourney.getCompany() != null) {
 								collection.getCompanies().add(vehicleJourney.getCompany());
 							}
@@ -112,8 +108,7 @@ public class DataCollector {
 					if (stopPoint == null)
 						continue; // protection from missing stopPoint ranks
 					collection.getStopPoints().add(stopPoint);
-					if (stopPoint.getScheduledStopPoint().getContainedInStopArea()!=null)
-						collectStopAreas(collection, stopPoint.getScheduledStopPoint().getContainedInStopArea(), skipNoCoordinate, followLinks);
+					collectStopAreas(collection, stopPoint.getContainedInStopArea(), skipNoCoordinate, followLinks);
 				}
 			}
 		}// end route loop
@@ -143,7 +138,7 @@ public class DataCollector {
 		return !collection.getPhysicalStops().isEmpty();
 
 	}
-	
+
 	protected void completeSharedData(ExportableData collection) {
 		// force lazy dependencies to be loaded
 		for (ConnectionLink link : collection.getConnectionLinks()) {
