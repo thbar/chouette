@@ -589,17 +589,27 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 			// if route with shape
 			if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
 					&& importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
+
+                List<VehicleJourneyAtStop> vehicleJourneysWithNullShapeDistTraveled = new ArrayList<>();
+
 				for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
-					float shapeValue = ((VehicleJourneyAtStopWrapper) vehicleJourneyAtStop).shapeDistTraveled;
-					if (Float.valueOf(shapeValue) != null) {
-						// add point with shape position 
-						lstShapeVjas.add(vehicleJourneyAtStop);
-					} else {
-						// problem on point without shape position
-						vehicleJourneyAtStop.setVehicleJourney(null);
+					Float shapeValue = ((VehicleJourneyAtStopWrapper) vehicleJourneyAtStop).shapeDistTraveled;
+
+                    if (shapeValue != null) {
+                        // add point with shape position
+                        lstShapeVjas.add(vehicleJourneyAtStop);
+                    } else {
+                        // problem on point without shape position
+                        // vehicleJourneyAtStop.setVehicleJourney(null);
+                        vehicleJourneysWithNullShapeDistTraveled.add(vehicleJourneyAtStop);
 					}
 				}
-				journeyKey += ":" + buildShapeKey(vehicleJourney);
+
+                for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourneysWithNullShapeDistTraveled) {
+                    vehicleJourneyAtStop.setVehicleJourney(null);
+                }
+
+                journeyKey += ":" + buildShapeKey(vehicleJourney);
 
 			} else {
 				journeyKey += "," + buildStopsKey(vehicleJourney);
@@ -620,8 +630,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 			if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
 					&& importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
 				for (int i = 0; i < length; i++) {
-					VehicleJourneyAtStop vehicleJourneyAtStop = lstShapeVjas.get(i);
-					vehicleJourneyAtStop.setStopPoint(journeyPattern.getStopPoints().get(i));
+                    VehicleJourneyAtStop vehicleJourneyAtStop = new VehicleJourneyAtStop();
+				    if(lstShapeVjas.size() != 0){
+                        vehicleJourneyAtStop = lstShapeVjas.get(i);
+                    }
+                    vehicleJourneyAtStop.setStopPoint(journeyPattern.getStopPoints().get(i));
 				}
 			} else {
 				for (int i = 0; i < length; i++) {
@@ -956,9 +969,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 		createStopPoint(route, journeyPattern, vehicleJourney.getVehicleJourneyAtStops(), referential, configuration);
 
 		List<StopPoint> stopPoints = journeyPattern.getStopPoints();
-		journeyPattern.setDepartureStopPoint(stopPoints.get(0));
-		journeyPattern.setArrivalStopPoint(stopPoints.get(stopPoints.size() - 1));
-
+		if(stopPoints.size() != 0){
+            journeyPattern.setDepartureStopPoint(stopPoints.get(0));
+            journeyPattern.setArrivalStopPoint(stopPoints.get(stopPoints.size() - 1));
+        }
+        
 		journeyPattern.setFilled(true);
 		route.setFilled(true);
 
@@ -1391,9 +1406,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 			int leftIndexF = 0;
 			int value = 0;
 
-			rightIndexF = Math.round(((VehicleJourneyAtStopWrapper) right).shapeDistTraveled);
-			leftIndexF = Math.round(((VehicleJourneyAtStopWrapper) left).shapeDistTraveled);
-			value = Math.round(rightIndexF - leftIndexF);
+            if(((VehicleJourneyAtStopWrapper) right).shapeDistTraveled != null && ((VehicleJourneyAtStopWrapper) left).shapeDistTraveled != null){
+                rightIndexF = Math.round(((VehicleJourneyAtStopWrapper) right).shapeDistTraveled);
+                leftIndexF = Math.round(((VehicleJourneyAtStopWrapper) left).shapeDistTraveled);
+                value = Math.round(rightIndexF - leftIndexF);
+            }
 
 			return value;
 		}
