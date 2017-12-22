@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.inject.Named;
@@ -26,6 +28,7 @@ import org.rutebanken.hazelcasthelper.service.KubernetesService;
 import static mobi.chouette.scheduler.hazelcast.HazelcastReferentialsLockManager.BEAN_NAME;
 
 @Singleton(name = BEAN_NAME)
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Named
 @Log4j
 public class HazelcastReferentialsLockManager implements ReferentialLockManager {
@@ -63,28 +66,40 @@ public class HazelcastReferentialsLockManager implements ReferentialLockManager 
 
 	@Override
 	public boolean attemptAcquireJobLock(Long jobId) {
-		boolean acquired = false;
-		if (!jobsLocks.containsKey(jobId) && jobsLocks.tryLock(jobId)) {
-			if (!jobsLocks.containsKey(jobId)) {
-				jobsLocks.put(jobId, hazelcastService.getLocalMemberId());
-				acquired = true;
+		return acquireLock(jobId, jobsLocks);
+	}
+
+	private <T> boolean acquireLock(T key, IMap<T,String> map) {
+		boolean locked = false;
+		try {
+			boolean acquired = false;
+			if (!map.containsKey(key)) {
+				locked = map.tryLock(key);
+				if (locked && !map.containsKey(key)) {
+					map.put(key, hazelcastService.getLocalMemberId());
+					acquired = true;
+				}
+			}
+
+			if (acquired) {
+				log.debug("Acquired lock: " + key);
+			} else {
+				log.info("Failed to acquire lock: " + key);
+
+			}
+			return acquired;
+		} finally {
+			if (locked) {
+				map.forceUnlock(key);
 			}
 		}
-
-		if (acquired) {
-			log.info("Acquired job lock: " + jobId);
-		} else {
-			log.info("Failed to acquire job lock: " + jobId);
-
-		}
-		return acquired;
 	}
 
 	@Override
 	public void releaseJobLock(Long jobId) {
 		try {
 			if (jobsLocks.containsKey(jobId)) {
-				jobsLocks.tryRemove(jobId, 0, TimeUnit.SECONDS);
+				jobsLocks.remove(jobId);
 				log.info("Released job lock: " + jobId);
 			}
 		} catch (Throwable t) {
@@ -105,21 +120,11 @@ public class HazelcastReferentialsLockManager implements ReferentialLockManager 
 		Set<String> acquiredLocks = new HashSet<>();
 		for (String referential : referentials) {
 			try {
-				boolean locked = false;
-				if (!locks.containsKey(referential) && locks.tryLock(referential)) {
-					if (!locks.containsKey(referential)) {
-						locks.put(referential, hazelcastService.getLocalMemberId());
-						acquiredLocks.add(referential);
-						locked = true;
-					}
-					locks.unlock(referential);
-
-				}
-
-				if (!locked) {
+				if (!acquireLock(referential,locks)) {
 					success = false;
 					break;
 				}
+				acquiredLocks.add(referential);
 			} catch (Throwable t) {
 				log.debug("Exception while trying to acquire lock: " + referential + " : " + t.getMessage());
 				success = false;
@@ -150,7 +155,7 @@ public class HazelcastReferentialsLockManager implements ReferentialLockManager 
 	private boolean releaseLock(String referential) {
 		try {
 			if (locks.containsKey(referential)) {
-				return locks.tryRemove(referential, 0, TimeUnit.SECONDS);
+				return locks.remove(referential) != null;
 			}
 		} catch (Throwable t) {
 			log.warn("Exception when trying to release lock: " + referential + " : " + t.getMessage(), t);
@@ -161,7 +166,13 @@ public class HazelcastReferentialsLockManager implements ReferentialLockManager 
 
 	@Override
 	public String lockStatus() {
-		return "Hazelcast lock manager: ReferentialLocks: " + locks + ", JobLocks: " + jobsLocks + ". Cluster info: " + hazelcastService.information();
+		return "Hazelcast lock manager: ReferentialLocks: " + printMap(locks) + ", JobLocks: " + printMap(jobsLocks) + ". Cluster info: " + hazelcastService.information();
+	}
+
+	private String printMap(IMap<?, ?> map) {
+		StringBuilder sb = new StringBuilder("{");
+		map.forEach((k, v) -> sb.append("[").append(k).append(":").append(v).append("]"));
+		return sb.append("}").toString();
 	}
 
 	private class CleanUpAfterRemovedMembersListener implements MembershipListener {

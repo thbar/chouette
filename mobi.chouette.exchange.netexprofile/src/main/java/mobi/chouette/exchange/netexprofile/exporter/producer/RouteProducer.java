@@ -2,12 +2,15 @@ package mobi.chouette.exchange.netexprofile.exporter.producer;
 
 import java.math.BigInteger;
 
+import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.ConversionUtil;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableData;
+import mobi.chouette.model.type.PTDirectionEnum;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.rutebanken.netex.model.DirectionTypeEnumeration;
 import org.rutebanken.netex.model.KeyListStructure;
 import org.rutebanken.netex.model.KeyValueStructure;
 import org.rutebanken.netex.model.LineRefStructure;
@@ -19,6 +22,7 @@ import org.rutebanken.netex.model.RouteRefStructure;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.POINT_ON_ROUTE;
 
+@Log4j
 public class RouteProducer extends NetexProducer implements NetexEntityProducer<org.rutebanken.netex.model.Route, mobi.chouette.model.Route> {
 
 	@Override
@@ -50,7 +54,7 @@ public class RouteProducer extends NetexProducer implements NetexEntityProducer<
 		NetexProducerUtils.populateReference(neptuneRoute.getLine(), lineRefStruct, true);
 		netexRoute.setLineRef(netexFactory.createLineRef(lineRefStruct));
 
-		
+
 		PointsOnRoute_RelStructure pointsOnRoute = netexFactory.createPointsOnRoute_RelStructure();
 
 		int order = 1;
@@ -77,7 +81,28 @@ public class RouteProducer extends NetexProducer implements NetexEntityProducer<
 			netexRoute.setInverseRouteRef(routeRefStruct);
 		}
 
+		netexRoute.setDirectionType(mapDirectionType(neptuneRoute.getDirection()));
 		return netexRoute;
+	}
+
+
+	private DirectionTypeEnumeration mapDirectionType(PTDirectionEnum neptuneDirection) {
+		if (neptuneDirection == null) {
+			return null;
+		}
+		switch (neptuneDirection) {
+			case A:
+				return DirectionTypeEnumeration.OUTBOUND;
+			case R:
+				return DirectionTypeEnumeration.INBOUND;
+			case ClockWise:
+				return DirectionTypeEnumeration.CLOCKWISE;
+			case CounterClockWise:
+				return DirectionTypeEnumeration.ANTICLOCKWISE;
+		}
+
+		log.debug("Unable to map neptune direction to NeTEx: " + neptuneDirection);
+		return null;
 	}
 
 }
