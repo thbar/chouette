@@ -3,6 +3,7 @@ package mobi.chouette.exchange.netexprofile.exporter.producer;
 import static mobi.chouette.exchange.netexprofile.Constant.NETEX_REFERENTIAL;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
 
+import mobi.chouette.model.util.Coordinate;
 import org.apache.commons.collections.CollectionUtils;
 import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.PrivateCodeStructure;
@@ -21,7 +22,7 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 
 public class StopPlaceProducer extends NetexProducer implements NetexEntityProducer<StopPlace, StopArea> {
 
-	private static final String DEFAULT_COORDINATE_SYSTEM = "WGS84";
+	private static final String DEFAULT_COORDINATE_SYSTEM = Coordinate.WGS84;
 
 	@Override
 	public StopPlace produce(Context context, StopArea stopArea) {

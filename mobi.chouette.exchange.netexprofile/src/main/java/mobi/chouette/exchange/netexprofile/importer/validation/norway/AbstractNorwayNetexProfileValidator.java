@@ -1,18 +1,5 @@
 package mobi.chouette.exchange.netexprofile.importer.validation.norway;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.xpath.XPathExpressionException;
-
-import org.apache.commons.lang.StringUtils;
-import org.rutebanken.netex.model.DataManagedObjectStructure;
-
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.importer.util.DataLocationHelper;
 import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
@@ -21,6 +8,11 @@ import mobi.chouette.exchange.validation.report.ValidationReporter;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XdmNode;
+import org.apache.commons.lang.StringUtils;
+import org.rutebanken.netex.model.DataManagedObjectStructure;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.util.*;
 
 public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexProfileValidator {
 
@@ -29,8 +21,8 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	public static final String PROFILE_NORWAY_NETWORKTIMETABLE_107_11 = "1.07:NO-NeTEx-networktimetable:1.1";
 	public static final String EXPORT_PROFILE_ID = PROFILE_NORWAY_NETWORKTIMETABLE_107_11; // Update when new profile version is implemented
 	
-	public static final String NSR_XMLNSURL = "http://www.rutebanken.org/ns/nsr";
-	public static final String NSR_XMLNS = "NSR";
+	public static final String NSR_XMLNSURL = "http://rmr.nouvelle-aquitaine.pro/naq";
+	public static final String NSR_XMLNS = "NAQ";
 
 	public static final String _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT = "1-NETEXPROFILE-ReferenceToIllegalElement";
 

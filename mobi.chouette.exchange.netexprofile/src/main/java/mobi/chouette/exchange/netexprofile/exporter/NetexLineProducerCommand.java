@@ -1,16 +1,7 @@
 package mobi.chouette.exchange.netexprofile.exporter;
 
-import java.io.IOException;
-
-import javax.naming.InitialContext;
-import javax.xml.bind.MarshalException;
-
-import org.joda.time.LocalDate;
-import org.xml.sax.SAXParseException;
-
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -22,6 +13,12 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.NamingUtil;
+import org.joda.time.LocalDate;
+import org.xml.sax.SAXParseException;
+
+import javax.naming.InitialContext;
+import javax.xml.bind.MarshalException;
+import java.io.IOException;
 
 @Log4j
 public class NetexLineProducerCommand implements Command, Constant {
@@ -37,7 +34,7 @@ public class NetexLineProducerCommand implements Command, Constant {
         try {
 
             Line line = (Line) context.get(LINE);
-            log.info("procesing line " + NamingUtil.getName(line));
+            log.info("processing line " + NamingUtil.getName(line));
             NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
             
             

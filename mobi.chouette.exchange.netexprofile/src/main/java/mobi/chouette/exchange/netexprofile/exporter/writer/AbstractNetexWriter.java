@@ -1,19 +1,18 @@
 package mobi.chouette.exchange.netexprofile.exporter.writer;
 
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.AbstractNorwayNetexProfileValidator;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import mobi.chouette.exchange.netexprofile.importer.validation.norway.AbstractNorwayNetexProfileValidator;
-
 public class AbstractNetexWriter {
 
     static final String NETEX_PROFILE_VERSION = AbstractNorwayNetexProfileValidator.EXPORT_PROFILE_ID;
-    static final String DEFAULT_ZONE_ID = "Europe/Oslo";
-    static final String DEFAULT_LANGUAGE_CODE = "no";
+    static final String DEFAULT_ZONE_ID = "Europe/Paris";
+    static final String DEFAULT_LANGUAGE_CODE = "fr";
     static final String NSR_XMLNS = "NSR";
 	static final String PARTICIPANT_REF_CONTENT = "RB";
 

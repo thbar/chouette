@@ -1,11 +1,11 @@
 package mobi.chouette.model.util;
 
-import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.math.BigDecimal;
 
 @ToString
 @AllArgsConstructor
@@ -23,5 +23,7 @@ public class Coordinate
    @Getter
    @Setter
    public BigDecimal y;
+
+
 
 }
