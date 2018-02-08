@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>3.4.3_OKINA-SNAPSHOT</version>
+		<version>3.4.4_OKINA-SNAPSHOT</version>
 	</parent>
 	<artifactId>chouette_iev</artifactId>
 	<packaging>ear</packaging>
@@ -17,8 +17,7 @@
       <resources>
          <resource>
             <directory>${basedir}/src/main/resources</directory>
-            <filtering>false</filtering>
-            <includes>
+            <filtering>false</filtering><includes>
                <include>*.properties</include>
             </includes>
             <targetPath>${project.build.directory}</targetPath>
@@ -85,7 +84,6 @@
 				<configuration>
 					<filename>${earName}.ear</filename>
 					<skip>${skipWildfly}</skip>
-                    <port>10090</port>
 				</configuration>
 				<executions>
 					<execution>
