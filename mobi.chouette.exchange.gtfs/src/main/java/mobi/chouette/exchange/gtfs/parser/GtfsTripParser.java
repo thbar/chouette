@@ -1,58 +1,25 @@
 package mobi.chouette.exchange.gtfs.parser;
 
-import java.math.BigDecimal;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.zip.Adler32;
-import java.util.zip.Checksum;
-
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineSegment;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
-import mobi.chouette.exchange.gtfs.model.GtfsRoute;
-import mobi.chouette.exchange.gtfs.model.GtfsShape;
-import mobi.chouette.exchange.gtfs.model.GtfsStop;
+import mobi.chouette.exchange.gtfs.model.*;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
-import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
-import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip.DirectionType;
-import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
-import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
-import mobi.chouette.exchange.gtfs.model.importer.Index;
-import mobi.chouette.exchange.gtfs.model.importer.RouteById;
-import mobi.chouette.exchange.gtfs.model.importer.ShapeById;
-import mobi.chouette.exchange.gtfs.model.importer.StopById;
-import mobi.chouette.exchange.gtfs.model.importer.StopTimeByTrip;
+import mobi.chouette.exchange.gtfs.model.importer.*;
 import mobi.chouette.exchange.gtfs.validation.Constant;
 import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
-import mobi.chouette.model.JourneyFrequency;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.RouteSection;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timeband;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.*;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
@@ -60,16 +27,19 @@ import mobi.chouette.model.type.SectionStatusEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.*;
+import java.util.zip.Adler32;
+import java.util.zip.Checksum;
 
 @Log4j
 public class GtfsTripParser implements Parser, Validator, Constant {
 
 	private static final Comparator<OrderedCoordinate> COORDINATE_SORTER = new OrderedCoordinateComparator();
+    public static final String PUBLISHED_JOURNEY_IDENTIFIER = " - ";
 
 	@Getter
 	@Setter
@@ -1380,7 +1350,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 	/**
 	 * Convert GtfsStopTime pickUpType to VehicleJourneyAtStopPickUpType
 	 * 
-	 * @param pickupType
+	 * @param dropOffType
 	 * @return
 	 */
 	public AlightingPossibilityEnum convertGtfsDropOffTypeToAlightingPossibility(GtfsStopTime.DropOffType dropOffType) {
