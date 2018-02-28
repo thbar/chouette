@@ -78,7 +78,8 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 
 		initCheckPoint(context, VEHICLE_JOURNEY_1, SEVERITY.W);
 		initCheckPoint(context, VEHICLE_JOURNEY_2, SEVERITY.I);
-		initCheckPoint(context, VEHICLE_JOURNEY_2,"1", SEVERITY.E);
+		initCheckPoint(context, VEHICLE_JOURNEY_RB_1, SEVERITY.E);
+		initCheckPoint(context, VEHICLE_JOURNEY_RB_2,SEVERITY.E);
 		initCheckPoint(context, VEHICLE_JOURNEY_3, SEVERITY.W);
 		initCheckPoint(context, VEHICLE_JOURNEY_4, SEVERITY.W);
 		initCheckPoint(context, VEHICLE_JOURNEY_5, SEVERITY.E);
@@ -91,7 +92,8 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 		// checkPoint is applicable
 		prepareCheckPoint(context, VEHICLE_JOURNEY_1);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_2);
-		prepareCheckPoint(context, VEHICLE_JOURNEY_2,"1");
+		prepareCheckPoint(context, VEHICLE_JOURNEY_RB_1);
+		prepareCheckPoint(context, VEHICLE_JOURNEY_RB_2);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_4);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_5);
 		prepareCheckPoint(context, VEHICLE_JOURNEY_5,"1");
@@ -280,7 +282,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 					DataLocation target2 = buildLocation(context, vjas1.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
 	
 					ValidationReporter reporter = ValidationReporter.Factory.getInstance();
-					reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2, "1", source, null, null, target1, target2);
+					reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_RB_1, null, source, null, null, target1, target2);
 				} else {
 					
 					double distance = getDistance(vjas0.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject(), vjas1.getStopPoint().getScheduledStopPoint()
@@ -301,14 +303,21 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 							reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2, "2", source,
 	                                calculatedSpeed, Integer.toString((int) minSpeed), target1, target2);
 						} else if (speed > maxSpeed) {
+
 							// trop rapide
 							DataLocation source = buildLocation(context, vj);
 							DataLocation target1 = buildLocation(context, vjas0.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
 							DataLocation target2 = buildLocation(context, vjas1.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
-	
 							ValidationReporter reporter = ValidationReporter.Factory.getInstance();
-							reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2, "3", source,
-	                                calculatedSpeed, Integer.toString((int) maxSpeed), target1, target2);
+							if (parameters.getMaxSpeedHardLimitFactor()!=null && speed > maxSpeed * parameters.getMaxSpeedHardLimitFactor() ) {
+								int hardLimit=(int)(maxSpeed * parameters.getMaxSpeedHardLimitFactor());
+								reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_RB_2, null, source,
+										calculatedSpeed, Integer.toString(hardLimit), target1, target2);
+							} else {
+								reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2, "3", source,
+										calculatedSpeed, Integer.toString((int) maxSpeed), target1, target2);
+							}
+
 						}
 					}
 				}
