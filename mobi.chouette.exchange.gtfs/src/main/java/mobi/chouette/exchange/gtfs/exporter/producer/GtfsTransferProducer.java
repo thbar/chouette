@@ -66,6 +66,10 @@ public class GtfsTransferProducer extends AbstractProducer {
 		} else if (neptuneObject.getMinimumTransferTime() !=null){
          transfer.setTransferType(GtfsTransfer.TransferType.Minimal);
          transfer.setMinTransferTime(Integer.valueOf((int) (neptuneObject.getMinimumTransferTime().getStandardSeconds())));
+		} else if (neptuneObject.getPriority() != null && neptuneObject.getPriority() >= 0){
+			transfer.setTransferType(GtfsTransfer.TransferType.Recommended);
+		} else {
+			transfer.setTransferType(GtfsTransfer.TransferType.NoAllowed);
 		}
 
 		if (neptuneObject.getFeederVehicleJourney()!=null) {
@@ -85,7 +89,7 @@ public class GtfsTransferProducer extends AbstractProducer {
       }
       catch (Exception e)
       {
-          log.error("fail to produce transfer "+e.getClass().getName()+" "+e.getMessage());
+          log.error("fail to produce transfer "+e.getClass().getName()+" "+e.getMessage(), e);
          return false;
       }
       return true;
