@@ -1,18 +1,16 @@
 package mobi.chouette.exchange.netex;
 
-import java.io.File;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.netex.importer.NetexParserCommand;
 import mobi.chouette.exchange.report.ActionReport;
 import mobi.chouette.exchange.validation.report.ValidationReport;
 import mobi.chouette.model.util.Referential;
-
 import org.testng.annotations.Test;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.File;
 
 public class NetexParserTest  implements mobi.chouette.common.Constant{
 
@@ -48,6 +46,7 @@ public class NetexParserTest  implements mobi.chouette.common.Constant{
 		ActionReport report = new ActionReport();
 		ValidationReport validationReport = new ValidationReport();
 		command.setFileURL("file://"+f.getAbsolutePath());
+        System.out.println("file url : " + command.getFileURL());
 		context.put(Constant.REPORT, report);
 		context.put(REFERENTIAL, new Referential());
 		context.put(Constant.VALIDATION_REPORT, validationReport);
