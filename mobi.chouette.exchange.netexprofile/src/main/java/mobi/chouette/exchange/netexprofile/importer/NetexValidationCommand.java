@@ -28,6 +28,7 @@ public class NetexValidationCommand implements Command, Constant {
         String fileName = (String) context.get(FILE_NAME);
 
         try {
+
             NetexProfileValidator validator = (NetexProfileValidator) context.get(NETEX_PROFILE_VALIDATOR);
             validator.validate(context);
 

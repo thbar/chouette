@@ -1,7 +1,7 @@
 ---
-- set_fact: build_home="/usr/src/jenkinsbuild/workspace/chouette"
+- set_fact: build_home="/var/lib/jenkins/workspace/chouette"
 # - set_fact: build_home="/home/en/git/rutebanken/chouette"
-- set_fact: build_log_directory="/usr/src/log"
+- set_fact: build_log_directory="/var/lib/jenkins/logs/builds"
 - set_fact: logfile="{{build_log_directory}}/chouette.log"
 
 - name: Make log directory structure
