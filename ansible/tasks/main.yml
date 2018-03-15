@@ -5,10 +5,10 @@
 - set_fact: logfile="{{build_log_directory}}/chouette.log"
 
 - name: Make log directory structure
-  file: path={{build_log_directory}} state=directory mode=0755 group=users
+  file: path={{build_log_directory}} state=directory mode=0755 group=jenkins
 
 - name: Make chouette target directory structure
-  file: path={{chouette_root}}/ state=directory mode=0755 group=users
+  file: path={{chouette_root}}/ state=directory mode=0755 group=jenkins
 
 - name: Upload the wildfly setup directory to the docker host
   synchronize: src=files/wildfly dest={{chouette_root}}/.
