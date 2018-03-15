@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PublicationDelivery xmlns="http://www.netex.org.uk/netex" xmlns:ns2="http://www.opengis.net/gml/3.2" xmlns:ns3="http://www.siri.org.uk/siri" version="1.0">
     <PublicationTimestamp>2016-11-11T12:45:09.849Z</PublicationTimestamp>
-    <ParticipantRef>NSR</ParticipantRef>
+    <ParticipantRef>NAQ</ParticipantRef>
     <Description>Flight DY151 : Tromsø-Trondheim</Description>
     <dataObjects>
         <CompositeFrame created="2016-11-11T12:45:09.849Z" version="1" id="AVI:CompositeFrame:DY151">
@@ -10,7 +10,7 @@
                     <Xmlns>AVI</Xmlns>
                     <XmlnsUrl>http://avinor.no/</XmlnsUrl>
                 </Codespace>
-                <Codespace id="nsr">
+                <Codespace id="naq">
                     <Xmlns>NAQ</Xmlns>
                     <XmlnsUrl>http://www.nasjonaltstoppestedregister.rutebanken.no</XmlnsUrl>
                 </Codespace>
@@ -49,13 +49,13 @@
                 </ResourceFrame>
                 <SiteFrame version="any" id="AVI:SiteFrame:1">
                     <stopPlaces>
-                        <StopPlace version="1" id="NSR:StopPlace:03011521">
+                        <StopPlace version="1" id="NAQ:StopPlace:03011521">
                             <Name>Tromsø</Name>
                             <ShortName>TOS</ShortName>
                             <TransportMode>air</TransportMode>
                             <StopPlaceType>airport</StopPlaceType>
                         </StopPlace>
-                        <StopPlace version="1" id="NSR:StopPlace:03011522">
+                        <StopPlace version="1" id="NAQ:StopPlace:03011522">
                             <Name>Trondheim</Name>
                             <ShortName>TRD</ShortName>
                             <TransportMode>air</TransportMode>
@@ -125,11 +125,11 @@
                     <stopAssignments>
                         <PassengerStopAssignment order="1" version="any" id="AVI:PassengerStopAssignment:DY151101001">
                             <ScheduledStopPointRef ref="AVI:ScheduledStopPoint:DY151101001"/>
-                            <StopPlaceRef ref="NSR:StopPlace:03011521"/>
+                            <StopPlaceRef ref="NAQ:StopPlace:03011521"/>
                         </PassengerStopAssignment>
                         <PassengerStopAssignment order="2" version="any" id="AVI:PassengerStopAssignment:DY151101002">
                             <ScheduledStopPointRef ref="AVI:ScheduledStopPoint:DY151101002"/>
-                            <StopPlaceRef ref="NSR:StopPlace:03011522"/>
+                            <StopPlaceRef ref="NAQ:StopPlace:03011522"/>
                         </PassengerStopAssignment>
                     </stopAssignments>
                     <journeyPatterns>

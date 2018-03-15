@@ -19,7 +19,7 @@
           <Xmlns>BRA</Xmlns>
           <XmlnsUrl>http://www.rutebanken.org/ns/bra</XmlnsUrl>
         </Codespace>
-        <Codespace id="NSR">
+        <Codespace id="NAQ">
           <Xmlns>NAQ</Xmlns>
           <XmlnsUrl>http://rmr.nouvelle-aquitaine.pro/naq</XmlnsUrl>
           <Description>Nasjonalt Stoppested Register</Description>
@@ -27,9 +27,9 @@
       </codespaces>
       <FrameDefaults>
         <DefaultLocale>
-          <TimeZone>CET</TimeZone>
-          <SummerTimeZone>CEST</SummerTimeZone>
-          <DefaultLanguage>no</DefaultLanguage>
+          <TimeZone>Europe/Paris</TimeZone>
+          <SummerTimeZone>Europe/Paris</SummerTimeZone>
+          <DefaultLanguage>fr</DefaultLanguage>
         </DefaultLocale>
         <DefaultLocationSystem>EPSG:4326</DefaultLocationSystem>
       </FrameDefaults>

@@ -16,7 +16,7 @@
                     <Xmlns>AVI</Xmlns>
                     <XmlnsUrl>http://avinor.no/</XmlnsUrl>
                 </Codespace>
-                <Codespace id="nsr">
+                <Codespace id="naq">
                     <Xmlns>NAQ</Xmlns>
                     <XmlnsUrl>http://rmr.nouvelle-aquitaine.pro/naq</XmlnsUrl>
                 </Codespace>
@@ -40,7 +40,7 @@
                             </ContactDetails>
                             <OrganisationType>authority</OrganisationType>
                         </Authority>
-                        <Authority version="1" id="NSR:Authority:NSR">
+                        <Authority version="1" id="NAQ:Authority:NAQ">
                             <CompanyNumber></CompanyNumber>
                             <Name>Nasjonal Stoppestedsregister</Name>
                             <LegalName>NASJONAL STOPPESTEDSREGISTER</LegalName>

@@ -11,7 +11,7 @@
                     <Xmlns>AVI</Xmlns>
                     <XmlnsUrl>http://www.rutebanken.org/ns/avi</XmlnsUrl>
                 </Codespace>
-                <Codespace id="nsr">
+                <Codespace id="naq">
                     <Xmlns>NAQ</Xmlns>
                     <XmlnsUrl>http://rmr.nouvelle-aquitaine.pro/naq</XmlnsUrl>
                 </Codespace>

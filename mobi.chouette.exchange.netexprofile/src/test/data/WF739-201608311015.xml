@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.0">
     <PublicationTimestamp>2016-08-31T07:53:35.009Z</PublicationTimestamp>
-    <ParticipantRef>NSR</ParticipantRef>
+    <ParticipantRef>NAQ</ParticipantRef>
     <Description>Flight WF739 : Bodø-Trondheim</Description>
     <dataObjects>
         <CompositeFrame created="2016-08-31T07:53:35.009Z" version="1" id="AVI:CompositeFrame:WF739">
@@ -10,7 +10,7 @@
                     <Xmlns>AVI</Xmlns>
                     <XmlnsUrl>http://avinor.no/</XmlnsUrl>
                 </Codespace>
-                <Codespace id="nsr">
+                <Codespace id="naq">
                     <Xmlns>NAQ</Xmlns>
                     <XmlnsUrl>http://www.nasjonaltstoppestedregister.rutebanken.no</XmlnsUrl>
                 </Codespace>
@@ -48,10 +48,10 @@
                 </ResourceFrame>
                 <SiteFrame version="any" id="AVI:SiteFrame:1">
                     <stopPlaces>
-                        <StopPlace version="1" id="NSR:StopPlace:boo"/>
-                        <StopPlace version="1" id="NSR:StopPlace:mjf"/>
-                        <StopPlace version="1" id="NSR:StopPlace:osy"/>
-                        <StopPlace version="1" id="NSR:StopPlace:trd"/>
+                        <StopPlace version="1" id="NAQ:StopPlace:boo"/>
+                        <StopPlace version="1" id="NAQ:StopPlace:mjf"/>
+                        <StopPlace version="1" id="NAQ:StopPlace:osy"/>
+                        <StopPlace version="1" id="NAQ:StopPlace:trd"/>
                     </stopPlaces>
                 </SiteFrame>
                 <ServiceFrame version="any" id="AVI:ServiceFrame:1">
