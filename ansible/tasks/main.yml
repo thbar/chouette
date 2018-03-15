@@ -41,8 +41,8 @@
 - name: Log into okina registry
   docker_login:
     registry: registry.okina.fr
-    username: {{ okina-docker-registry-user }}
-    password: {{ okina-docker-registry- password }}
+    username: "{{ okina-docker-registry-user }}"
+    password: "{{ okina-docker-registry- password }}"
     reauthorize: yes
 
 - name: Build the chouette docker image
