@@ -17,7 +17,7 @@
           <Description>Public Transport Reference Data for Møre og Romsdal fylke, Norway</Description>
         </Codespace>
         <Codespace id="NSR">
-          <Xmlns>NSR</Xmlns>
+          <Xmlns>NAQ</Xmlns>
           <XmlnsUrl>http://www.rutebanken.no/nasjonaltstoppestedregister</XmlnsUrl>
           <Description>Rutebanken - Nasjonalt stoppestedregister</Description>
         </Codespace>
