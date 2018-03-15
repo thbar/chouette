@@ -84,7 +84,7 @@ public class FranceLineNetexProfileValidatorTest {
 
 		Set<Codespace> validCodespaces = new HashSet<>();
 
-		Codespace nsrCodespace = createCodespace(1L, "NSR", "http://www.rutebanken.org/ns/nsr");
+		Codespace nsrCodespace = createCodespace(1L, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL);
 		validCodespaces.add(nsrCodespace);
 
 		Codespace avinorCodespace = createCodespace(2L, "AVI", "http://www.rutebanken.org/ns/avi");

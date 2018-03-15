@@ -13,7 +13,7 @@ public class AbstractNetexWriter {
     static final String NETEX_PROFILE_VERSION = AbstractNorwayNetexProfileValidator.EXPORT_PROFILE_ID;
     static final String DEFAULT_ZONE_ID = "Europe/Paris";
     static final String DEFAULT_LANGUAGE_CODE = "fr";
-    static final String NSR_XMLNS = "NSR";
+    static final String NSR_XMLNS = "NAQ";
 	static final String PARTICIPANT_REF_CONTENT = "RB";
 
 

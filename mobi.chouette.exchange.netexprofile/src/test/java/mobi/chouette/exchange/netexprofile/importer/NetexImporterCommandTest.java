@@ -11,6 +11,7 @@ import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.DummyChecker;
 import mobi.chouette.exchange.netexprofile.JobDataTest;
 import mobi.chouette.exchange.netexprofile.NetexTestUtils;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.AbstractNorwayNetexProfileValidator;
 import mobi.chouette.exchange.report.*;
 import mobi.chouette.exchange.validation.report.CheckPointReport;
 import mobi.chouette.exchange.validation.report.ValidationReport;
@@ -196,7 +197,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -313,7 +314,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -375,7 +376,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -474,7 +475,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -531,7 +532,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -649,7 +650,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -885,7 +886,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -970,7 +971,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -1052,7 +1053,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
 		);
 
@@ -1135,7 +1136,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "RUT", "http://www.rutebanken.org/ns/ruter"))
 		);
 
@@ -1192,7 +1193,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		clearCodespaceRecords();
 
 		insertCodespaceRecords(Arrays.asList(
-				createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
 				createCodespace(null, "VKT", "http://www.rutebanken.org/ns/vkt"))
 		);
 

@@ -1,24 +1,5 @@
 package mobi.chouette.exchange.netexprofile.importer.validation.norway;
 
-import static mobi.chouette.exchange.netexprofile.NetexTestUtils.createCodespace;
-import static mobi.chouette.exchange.validation.report.ValidationReporter.RESULT.NOK;
-import static mobi.chouette.exchange.validation.report.ValidationReporter.RESULT.OK;
-import static mobi.chouette.exchange.validation.report.ValidationReporter.RESULT.UNCHECK;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.xml.xpath.XPathFactoryConfigurationException;
-
-import org.rutebanken.netex.model.PublicationDeliveryStructure;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.importer.DuplicateIdCheckerCommand;
@@ -35,8 +16,18 @@ import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.exchange.validation.report.ValidationReporter.RESULT;
 import mobi.chouette.model.Codespace;
 import mobi.chouette.model.util.Referential;
-
 import net.sf.saxon.s9api.XdmNode;
+import org.rutebanken.netex.model.PublicationDeliveryStructure;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import javax.xml.xpath.XPathFactoryConfigurationException;
+import java.io.File;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static mobi.chouette.exchange.netexprofile.NetexTestUtils.createCodespace;
+import static mobi.chouette.exchange.validation.report.ValidationReporter.RESULT.*;
 
 public class NorwayLineNetexProfileValidatorTest {
 
@@ -90,7 +81,7 @@ public class NorwayLineNetexProfileValidatorTest {
 
 		Set<Codespace> validCodespaces = new HashSet<>();
 
-		Codespace nsrCodespace = createCodespace(1L, "NSR", "http://www.rutebanken.org/ns/nsr");
+		Codespace nsrCodespace = createCodespace(1L, "NAQ", "http://rmr.nouvelle-aquitaine.pro/naq");
 		validCodespaces.add(nsrCodespace);
 
 		Codespace avinorCodespace = createCodespace(2L, "AVI", "http://www.rutebanken.org/ns/avi");
