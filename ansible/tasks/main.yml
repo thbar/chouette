@@ -1,7 +1,7 @@
 ---
 #- set_fact: build_home="/var/lib/jenkins/workspace/chouette"
 # - set_fact: build_home="/home/en/git/rutebanken/chouette"
-- set_fact: build_log_directory="/var/lib/jenkins/logs/builds"
+#- set_fact: build_log_directory="/var/lib/jenkins/logs/builds"
 - set_fact: logfile="{{build_log_directory}}/chouette.log"
 
 - name: Make log directory structure
@@ -25,20 +25,18 @@
 - name: Move Dockerfile
   template: src=Dockerfile.j2 dest={{chouette_root}}/Dockerfile mode=0755
 
-- name: Download postgresql jar file
-  get_url: url=http://jump/postgresql-9.3-1103.jdbc41.jar
-           dest={{ chouette_root }}/postgresql-9.3-1103.jdbc41.jar
-
-- name: Download URLs
-  shell: curl -s --netrc https://nexus.rutebanken.org/content/groups/public/{{ item.path }}/{{ item.filename }} -o {{ chouette_root }}/{{ item.filename }}
+- name: Copy global libs for wildfly custo
+  copy: src=files/{{item.filename}} dest={{chouette_root}}/{{item.filename}}
   with_items:
-    - { path: "org/hibernate/hibernate-spatial/4.3", filename: "hibernate-spatial-4.3.jar" }
-    - { path: "net/postgis/postgis-jdbc/2.1.7.2", filename: "postgis-jdbc-2.1.7.2.jar" }
-    - { path: "com/vividsolutions/jts/1.13", filename: "jts-1.13.jar" }
-    - { path: "com/sun/xml/bind/jaxb-impl/2.2.11", filename: "jaxb-impl-2.2.11.jar" }
-    - { path: "com/sun/xml/bind/jaxb-core/2.2.11", filename: "jaxb-core-2.2.11.jar" }
-    - { path: "com/sun/xml/bind/jaxb-xjc/2.2.11", filename: "jaxb-xjc-2.2.11.jar" }
-    - { path: "xerces/xercesImpl/2.11.0.SP6-RB", filename: "xercesImpl-2.11.0.SP6-RB.jar" }
+    - { filename: "hibernate-spatial-4.3.jar" }
+    - { filename: "postgis-jdbc-2.1.7.2.jar" }
+    - { filename: "jts-1.13.jar" }
+    - { filename: "jaxb-impl-2.2.11.jar" }
+    - { filename: "jaxb-core-2.2.11.jar" }
+    - { filename: "jaxb-xjc-2.2.11.jar" }
+    - { filename: "jaxb-xjc-2.2.11.jar" }
+    - { filename: "xercesImpl-2.11.0.SP6-RB.jar" }
+    - { filename: "postgresql-9.3-1103.jdbc41.jar" }
 
 - name: Build the chouette docker image
   shell: docker build --tag={{ chouette_docker_image|quote }} --force-rm=true {{chouette_root}} > {{logfile}} 2>&1
@@ -46,4 +44,4 @@
 
 - name: Push chouette docker image if built
   when: image.changed
-  shell: docker push {{ chouette_docker_image|quote }}
+  shell: docker push {{ chouette_docker_image|quote }} > {{logfile}} 2>&1
