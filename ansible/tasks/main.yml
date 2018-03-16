@@ -37,8 +37,16 @@
     - { filename: "xercesImpl-2.11.0.SP6-RB.jar" }
     - { filename: "postgresql-9.3-1103.jdbc41.jar" }
 
-- name: Log into okina registry
-  shell: echo {{okina_docker_registry_password}} | docker login -u {{okina_docker_registry_user}} --password-stdin registry.okina.fr
+#- name: Log into okina registry
+#  shell: echo {{okina_docker_registry_password}} | docker login -u {{okina_docker_registry_user}} --password-stdin registry.okina.fr
+#
+
+- name: Log into DockerHub
+  docker_login:
+    registry: registry.okina.fr
+    username: "{{okina_docker_registry_user}}"
+    password: "{{okina_docker_registry_password}}"
+    reauthorize: yes
 
 - name: Build the chouette docker image
   shell: docker build --tag={{ chouette_docker_image|quote }} --force-rm=true {{chouette_root}} > {{logfile}} 2>&1
