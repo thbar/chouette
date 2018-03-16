@@ -1,3 +1,14 @@
+#---
+#docker_build_root: "~/dev/misc/docker-build"
+#build_home: "~/dev/workspaces/chouette_okina"
+#chouette_docker_image: "registry.okina.fr/na/chouette"
+#
+#build_log_directory: "{{docker_build_root}}/logs"
+#chouette_root: "{{docker_build_root}}/chouette"
+#logfile: "{{build_log_directory}}/chouette.log"
+#
+
+
 ---
 docker_build_root: "/var/lib/jenkins/docker"
 build_home: "/var/lib/jenkins/workspace/Naq-Chouette"

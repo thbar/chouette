@@ -1,14 +1,13 @@
 ---
-#- set_fact: build_home="/var/lib/jenkins/workspace/chouette"
-# - set_fact: build_home="/home/en/git/rutebanken/chouette"
-#- set_fact: build_log_directory="/var/lib/jenkins/logs/builds"
 - set_fact: logfile="{{build_log_directory}}/chouette.log"
 
+- include_vars: ~/.naq-credentials.yml
+
 - name: Make log directory structure
-  file: path={{build_log_directory}} state=directory mode=0755 group=jenkins
+  file: path={{build_log_directory}} state=directory mode=0755 group={{lookup('env', 'USER')}}
 
 - name: Make chouette target directory structure
-  file: path={{chouette_root}}/ state=directory mode=0755 group=jenkins
+  file: path={{chouette_root}}/ state=directory mode=0755 group={{lookup('env', 'USER')}}
 
 - name: Upload the wildfly setup directory to the docker host
   synchronize: src=files/wildfly dest={{chouette_root}}/.
@@ -39,11 +38,7 @@
     - { filename: "postgresql-9.3-1103.jdbc41.jar" }
 
 - name: Log into okina registry
-  docker_login:
-    registry: registry.okina.fr
-    username: "{{ okina_docker_registry_user }}"
-    password: "{{ okina_docker_registry_password }}"
-    reauthorize: yes
+  shell: echo {{okina_docker_registry_password}} | docker login -u {{okina_docker_registry_user}} --password-stdin registry.okina.fr
 
 - name: Build the chouette docker image
   shell: docker build --tag={{ chouette_docker_image|quote }} --force-rm=true {{chouette_root}} > {{logfile}} 2>&1
