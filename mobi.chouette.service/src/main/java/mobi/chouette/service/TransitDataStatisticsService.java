@@ -20,6 +20,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.TimetableDAO;
 import mobi.chouette.model.CalendarDay;
@@ -76,7 +77,7 @@ public class TransitDataStatisticsService {
 
 		ContextHolder.setContext(referential);
 
-		log.info("Gettings statistics for "
+		log.info(Color.CYAN+ "Gettings statistics for "
 				+ referential
 				+ " using startDate="
 				+ startDate
