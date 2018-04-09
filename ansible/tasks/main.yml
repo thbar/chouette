@@ -49,9 +49,9 @@
     reauthorize: yes
 
 - name: Build the chouette docker image
-  shell: docker build --tag={{ chouette_docker_image|quote }} --force-rm=true {{chouette_root}} > {{logfile}} 2>&1
+  shell: docker build --tag={{ chouette_docker_image|quote }}:{{ chouette_docker_image_version|quote }} --force-rm=true {{chouette_root}} > {{logfile}} 2>&1
   register: image
 
 - name: Push chouette docker image if built
   when: image.changed
-  shell: docker push {{ chouette_docker_image|quote }} > {{logfile}} 2>&1
+  shell: docker push {{ chouette_docker_image|quote }}:{{ chouette_docker_image_version|quote }} > {{logfile}} 2>&1
