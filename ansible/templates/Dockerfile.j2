@@ -19,9 +19,6 @@ COPY wildfly/jaxb_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/s
 COPY xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
 COPY wildfly/xerces_module.xml /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/module.xml
 
-#Copy iev.properties
-COPY wildfly/iev.properties /etc/chouette/iev/
-
 RUN touch /opt/jboss/wildfly/build.log
 RUN chmod a+w /opt/jboss/wildfly/build.log
 
