@@ -1,22 +1,11 @@
 package mobi.chouette.exchange.gtfs.validation;
 
 //import java.util.HashSet;
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.gtfs.model.importer.AgencyById;
-import mobi.chouette.exchange.gtfs.model.importer.CalendarByService;
-import mobi.chouette.exchange.gtfs.model.importer.CalendarDateByService;
-import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
-import mobi.chouette.exchange.gtfs.model.importer.GtfsExceptionsHashSet;
-import mobi.chouette.exchange.gtfs.model.importer.RouteById;
-import mobi.chouette.exchange.gtfs.model.importer.ShapeById;
-import mobi.chouette.exchange.gtfs.model.importer.StopById;
-import mobi.chouette.exchange.gtfs.model.importer.TransferByFromStop;
-import mobi.chouette.exchange.gtfs.model.importer.TripById;
+import mobi.chouette.exchange.gtfs.model.importer.*;
 import mobi.chouette.exchange.gtfs.parser.AbstractConverter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.FILE_ERROR_CODE;
@@ -24,12 +13,9 @@ import mobi.chouette.exchange.report.ActionReporter.FILE_STATE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.exchange.validation.report.DataLocation;
 import mobi.chouette.exchange.validation.report.ValidationReporter;
-import mobi.chouette.model.Company;
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.*;
+
+import java.util.Set;
 //import mobi.chouette.exchange.validation.report.ValidationReport2;
 
 @Log4j
@@ -53,10 +39,10 @@ public class GtfsValidationReporter implements Constant{
 		reporter.addItemToValidationReport(context, "1-GTFS-", "Route", 2, "E","E");
 
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Common", 4, "E","W","E","W");
-		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 4, "E","W","E","E");
+		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 5, "E","W","E","E","E");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Route", 4, "W","W","W","W");
 }
-	
+
 	public void dispose() {
 		exceptions.clear();
 		exceptions = null;
@@ -88,7 +74,7 @@ public class GtfsValidationReporter implements Constant{
 			reportError(context, routeId , error, filename);
 		}
 	}
-	
+
 	private DataLocation buildDataLocation(Context context, DataLocation loc, String gtfsRouteId)
 	{
 		String fileName = loc.getFilename();
@@ -109,7 +95,7 @@ public class GtfsValidationReporter implements Constant{
 		else if (fileName.equals(StopById.FILENAME))
 		{
 			loc.getPath().add(loc.new Path(StopArea.class.getSimpleName(),""));
-			
+
 		}
 		else if (fileName.equals(TripById.FILENAME))
 		{
@@ -119,14 +105,14 @@ public class GtfsValidationReporter implements Constant{
 				GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 				String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
 						gtfsRouteId, log);
-			    loc.getPath().add(loc.new Path(Line.class.getSimpleName(),lineId));	
+			    loc.getPath().add(loc.new Path(Line.class.getSimpleName(),lineId));
 			}
-			
+
 		}
 		else if (fileName.equals(CalendarByService.FILENAME) || fileName.equals(CalendarDateByService.FILENAME))
 		{
 			loc.getPath().add(loc.new Path(Timetable.class.getSimpleName(),""));
-			
+
 		}
 		else if (fileName.equals(ShapeById.FILENAME))
 		{
@@ -135,14 +121,14 @@ public class GtfsValidationReporter implements Constant{
 				GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 				String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
 						gtfsRouteId, log);
-			    loc.getPath().add(loc.new Path(Line.class.getSimpleName(),lineId));	
+			    loc.getPath().add(loc.new Path(Line.class.getSimpleName(),lineId));
 			}
-			
+
 		}
 		else if (fileName.equals(TransferByFromStop.FILENAME))
 		{
 			loc.getPath().add(loc.new Path(ConnectionLink.class.getSimpleName(),""));
-			
+
 		}
 		return loc;
 	}
@@ -381,7 +367,6 @@ public class GtfsValidationReporter implements Constant{
 			// throw new Exception("The file \"" + filenameInfo +
 			// "\" must provide a non empty \"" + fieldName + "\" for each " +
 			// name);
-
 		case MISSING_REQUIRED_VALUES2:
 			// 1-GTFS-Common-4-1
 			checkPointName = checkPointName(name, GtfsException.ERROR.MISSING_REQUIRED_VALUES2);
@@ -543,6 +528,14 @@ public class GtfsValidationReporter implements Constant{
 					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
 			break;
 
+        case COORDINATES_STOP_0_0:
+            // 2-GTFS-Stop-5
+            checkPointName = checkPointName(name, GtfsException.ERROR.COORDINATES_STOP_0_0);
+            fieldName = ex.getField();
+            validationReporter.addCheckPointReportError(context, checkPointName,
+                    buildDataLocation(context, new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()), routeId), ex.getValue());
+            throw ex;
+
 		case DUPLICATE_ROUTE_NAMES:
 			// 2-GTFS-Route-5
 			checkPointName = checkPointName(name, GtfsException.ERROR.DUPLICATE_ROUTE_NAMES);
@@ -660,6 +653,8 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Stop_3;
 		case NO_PARENT_FOR_STATION:
 			return GTFS_2_GTFS_Stop_4;
+        case COORDINATES_STOP_0_0:
+            return GTFS_2_GTFS_Stop_5;
 		case DUPLICATE_ROUTE_NAMES:
 			return GTFS_2_GTFS_Route_1;
 		case CONTAINS_ROUTE_NAMES:
@@ -771,11 +766,11 @@ public class GtfsValidationReporter implements Constant{
 
 	public void reportError(Context context, GtfsException gtfsException, String fileName) throws Exception {
 		reportError(context,null,gtfsException,fileName);
-		
+
 	}
 
 	public void reportErrors(Context context, Set<GtfsException> errors, String fileName) throws Exception {
 		reportErrors(context,null,errors,fileName);
-		
+
 	}
 }

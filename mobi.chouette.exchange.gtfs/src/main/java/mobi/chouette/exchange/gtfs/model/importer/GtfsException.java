@@ -56,7 +56,8 @@ public class GtfsException extends RuntimeException {
 		INVERSE_DUPLICATE_ROUTE_NAMES, 
 		ALL_DAYS_ARE_INVALID, 
 		START_DATE_AFTER_END_DATE, 
-		EMPTY_SERVICE
+		EMPTY_SERVICE,
+        COORDINATES_STOP_0_0
 	}
 
 	@Getter
@@ -145,6 +146,7 @@ public class GtfsException extends RuntimeException {
 		case DUPLICATE_STOP_SEQUENCE :
 		case DUPLICATE_DOUBLE_KEY :
 		case BAD_REFERENCED_ID:
+        case COORDINATES_STOP_0_0:
 			return true;
 		default:
 			return false;

@@ -146,4 +146,20 @@ public class Phase2StopTests extends AbstractPhase2Tests {
 			Assert.assertEquals(detail.getSource().getFile().getLineNumber(), Integer.valueOf(1), "detail must refer bad line");
 		}
 	}
+
+    @Test(groups = { "Phase 2 Stop" }, description = "coordinates stops 0 0" ,priority=317 )
+    public void verifyTest_2_7() throws Exception {
+        log.info(Color.GREEN + "Stop_7 : coordinates stops 0 0" + Color.NORMAL);
+        Context context = new Context();
+        CheckPointReport result = verifyValidation( log, context, "stop_7", GTFS_2_GTFS_Stop_5,SEVERITY.ERROR, RESULT.NOK,true);
+
+        Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+        for (CheckPointErrorReport detail : getDetails(context, result))
+        {
+            Assert.assertNotNull(detail.getSource(), "detail must refer a source");
+            Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
+            Assert.assertEquals(detail.getSource().getFile().getFilename(), "stops.txt", "detail must refer bad file");
+            Assert.assertEquals(detail.getSource().getFile().getLineNumber(), Integer.valueOf(3), "detail must refer bad line");
+        }
+    }
 }
