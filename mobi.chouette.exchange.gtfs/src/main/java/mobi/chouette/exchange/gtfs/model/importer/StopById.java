@@ -1,20 +1,16 @@
 package mobi.chouette.exchange.gtfs.model.importer;
 
-import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.HTMLTagValidator;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.GtfsStop;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.WheelchairBoardingType;
-import org.slf4j.Logger;
-import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
 
-@Log4j
 public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 
 	public static enum FIELDS {
@@ -348,7 +344,6 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 		if(copy_bean.getStopLat() != null && copy_bean.getStopLon() != null){
             if(copy_bean.getStopLat().intValue() == 0 && copy_bean.getStopLon().intValue() == 0){
                 result4 = false;
-                log.info("coordinates 0 0 passée");
                 bean.getErrors().add(new GtfsException(_path, copy_bean.getId(), getIndex(FIELDS.stop_lat.name()), FIELDS.stop_lat.name(), GtfsException.ERROR.COORDINATES_STOP_0_0, copy_bean.getStopId(), copy_bean.getStopLat().toString()));
             }
             else {
