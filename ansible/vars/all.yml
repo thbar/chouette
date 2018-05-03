@@ -5,7 +5,7 @@ chouette_docker_image_version: "1.0"
 #build_home: "~/dev/workspaces/chouette_okina"
 
 docker_build_root: "/var/lib/jenkins/docker"
-build_home: "/var/lib/jenkins/workspace/Naq-Chouette"
+build_home: "/var/lib/jenkins/workspace/Naq-Docker-Chouette"
 
 chouette_docker_image: "registry.okina.fr/na/chouette"
 build_log_directory: "{{docker_build_root}}/logs"
