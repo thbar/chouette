@@ -1389,9 +1389,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 			int leftIndexF = 0;
 			int value = 0;
 
-			rightIndexF = Math.round(((VehicleJourneyAtStopWrapper) right).shapeDistTraveled);
-			leftIndexF = Math.round(((VehicleJourneyAtStopWrapper) left).shapeDistTraveled);
-			value = Math.round(rightIndexF - leftIndexF);
+            if (((VehicleJourneyAtStopWrapper) right).shapeDistTraveled != null && ((VehicleJourneyAtStopWrapper) left).shapeDistTraveled != null) {
+                rightIndexF = Math.round(((VehicleJourneyAtStopWrapper) right).shapeDistTraveled);
+                leftIndexF = Math.round(((VehicleJourneyAtStopWrapper) left).shapeDistTraveled);
+                value = Math.round(rightIndexF - leftIndexF);
+            }
 
 			return value;
 		}
