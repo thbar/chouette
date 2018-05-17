@@ -1,9 +1,33 @@
 package mobi.chouette.exchange.netexprofile;
 
+import java.math.BigInteger;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.OffsetTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.extern.log4j.Log4j;
 import mobi.chouette.model.type.DayTypeEnum;
+import mobi.chouette.model.type.ServiceAlterationEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 import org.apache.commons.lang.StringUtils;
+import org.rutebanken.netex.model.AirSubmodeEnumeration;
+import org.rutebanken.netex.model.AllVehicleModesOfTransportEnumeration;
+import org.rutebanken.netex.model.BusSubmodeEnumeration;
+import org.rutebanken.netex.model.CoachSubmodeEnumeration;
+import org.rutebanken.netex.model.DayOfWeekEnumeration;
+import org.rutebanken.netex.model.MetroSubmodeEnumeration;
+import org.rutebanken.netex.model.MultilingualString;
+import org.rutebanken.netex.model.RailSubmodeEnumeration;
+import org.rutebanken.netex.model.ServiceAlterationEnumeration;
+import org.rutebanken.netex.model.TelecabinSubmodeEnumeration;
+import org.rutebanken.netex.model.TramSubmodeEnumeration;
+import org.rutebanken.netex.model.TransportSubmodeStructure;
+import org.rutebanken.netex.model.WaterSubmodeEnumeration;
 import org.rutebanken.netex.model.*;
 
 import java.math.BigInteger;
@@ -12,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mobi.chouette.common.TimeUtil.toLocalTimeFromJoda;
-
+@Log4j
 public class ConversionUtil {
 
 	public static MultilingualString getMultiLingualString(String v) {
@@ -190,7 +214,8 @@ public class ConversionUtil {
 				return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.REGIONAL_RAIL);
 			case TouristRailway:
 				return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.TOURIST_RAILWAY);
-
+			case AirportLinkRail:
+				return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.AIRPORT_LINK_RAIL);
 				/**
 				 * Metro sub modes
 				 */
@@ -242,6 +267,24 @@ public class ConversionUtil {
 			default:
 				// Fall through
 			}
+		}
+
+		return null;
+	}
+
+	public static ServiceAlterationEnumeration toServiceAlterationEnumeration(ServiceAlterationEnum chouetteValue) {
+		if (chouetteValue==null) {
+			return null;
+		}
+		switch (chouetteValue) {
+			case Planned:
+				return ServiceAlterationEnumeration.PLANNED;
+			case Cancellation:
+				return ServiceAlterationEnumeration.CANCELLATION;
+			case ExtraJourney:
+				return ServiceAlterationEnumeration.EXTRA_JOURNEY;
+			default:
+				log.error("Unsupported Chouette ServiceAlteration value: " + chouetteValue);
 		}
 
 		return null;

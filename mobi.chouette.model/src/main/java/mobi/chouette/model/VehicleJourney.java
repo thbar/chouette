@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -16,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -23,6 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.model.type.JourneyCategoryEnum;
+import mobi.chouette.model.type.ServiceAlterationEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 
@@ -259,6 +263,19 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	private Boolean flexibleService;
 
 	/**
+	 * Type of Service alteration. Default is planned.
+	 *
+	 * @param serviceAlteration
+	 *            New value
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@Enumerated(EnumType.STRING)
+	@Column(name = "service_alteration")
+	private ServiceAlterationEnum serviceAlteration;
+
+	/**
 	 * route reference
 	 * 
 	 * @param route
@@ -322,6 +339,19 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "footnotes_vehicle_journeys", joinColumns = { @JoinColumn(name = "vehicle_journey_id") }, inverseJoinColumns = { @JoinColumn(name = "footnote_id") })
 	private List<Footnote> footnotes = new ArrayList<>(0);
+
+	/**
+	 * keyvalues
+	 *
+	 * @param keyvalue
+	 * New value
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "vehicle_journeys_key_values", joinColumns = @JoinColumn(name = "vehicle_journey_id"))
+	private List<KeyValue> keyValues = new ArrayList<>(0);
 
 	/**
 	 * timetables
@@ -393,6 +423,5 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	@Setter
 	@OneToMany(mappedBy = "consumerVehicleJourney", cascade = { CascadeType.PERSIST, CascadeType.MERGE },fetch = FetchType.LAZY)
 	private List<Interchange> consumerInterchanges = new ArrayList<>(0);
-
 
 }
