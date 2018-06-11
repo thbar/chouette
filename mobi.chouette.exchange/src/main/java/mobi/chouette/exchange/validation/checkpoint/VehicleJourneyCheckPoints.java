@@ -120,6 +120,8 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 			Collections.sort(lvjas, VEHICLE_JOURNEY_AT_STOP_SORTER);
 		}
 
+		boolean sourceFile = context.get(SOURCE).equals(SOURCE_FILE);
+
 		for (int i = 0; i < beans.size(); i++) {
 			VehicleJourney vj = beans.get(i);
 
@@ -127,8 +129,10 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 			// stop
 			check3VehicleJourney1(context, vj, parameters);
 
-			// 3-VehicleJourney-2 : check speed progression
-			check3VehicleJourney2(context, vj, parameters);
+			if (!sourceFile) {
+				// 3-VehicleJourney-2 : check speed progression
+				check3VehicleJourney2(context, vj, parameters);
+			}
 
 //			// 3-VehicleJourney-3 : check if two journeys progress similarly
 //			check3VehicleJourney3(context, beans, i, vj, parameters);
@@ -294,11 +298,17 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 					if (distance < 1) {
 						// arrêts superposés, vitesse non calculable
 					} else {
-						double speed = distance / (double) diffTime * 36 / 10; // (km/h)
-						String calculatedSpeed = Integer.toString((int) speed );
-	
-						if (speed < minSpeed) {
+
+						// Times are often with minute resolution. Assume max error (120 sec) when comparing with min and max allowed speed.
+						boolean minuteResolution = vjas0.getDepartureTime().getSecondOfMinute() == 0 && vjas1.getArrivalTime().getSecondOfMinute() == 00;
+						double minPossibleDiffTime = minuteResolution ? Math.max(diffTime - 120, 1) : diffTime;
+						double maxPossibleDiffTime = minuteResolution ? diffTime + 120 : diffTime;
+						double optimisticSpeed = distance / minPossibleDiffTime * 36 / 10; // (km/h)
+						double pessimisticSpeed = distance / maxPossibleDiffTime * 36 / 10; // (km/h);
+
+						if (optimisticSpeed < minSpeed) {
 							// trop lent
+							String calculatedSpeed = Integer.toString((int) optimisticSpeed );
 							DataLocation source = buildLocation(context, vj);
 							DataLocation target1 = buildLocation(context, vjas0.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
 							DataLocation target2 = buildLocation(context, vjas1.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
@@ -306,14 +316,15 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 							ValidationReporter reporter = ValidationReporter.Factory.getInstance();
 							reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2_2, null, source,
 	                                calculatedSpeed, Integer.toString((int) minSpeed), target1, target2);
-						} else if (speed > maxSpeed) {
+						} else if (pessimisticSpeed > maxSpeed) {
 
 							// trop rapide
+							String calculatedSpeed = Integer.toString((int) pessimisticSpeed );
 							DataLocation source = buildLocation(context, vj);
 							DataLocation target1 = buildLocation(context, vjas0.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
 							DataLocation target2 = buildLocation(context, vjas1.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
 							ValidationReporter reporter = ValidationReporter.Factory.getInstance();
-							if (parameters.getMaxSpeedHardLimitFactor()!=null && speed > maxSpeed * parameters.getMaxSpeedHardLimitFactor() ) {
+							if (parameters.getMaxSpeedHardLimitFactor()!=null && pessimisticSpeed > maxSpeed * parameters.getMaxSpeedHardLimitFactor() ) {
 								int hardLimit=(int)(maxSpeed * parameters.getMaxSpeedHardLimitFactor());
 								reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2_5, null, source,
 										calculatedSpeed, Integer.toString(hardLimit), target1, target2);

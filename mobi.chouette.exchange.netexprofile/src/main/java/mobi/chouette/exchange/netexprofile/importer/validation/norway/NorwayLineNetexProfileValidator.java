@@ -1,5 +1,6 @@
 package mobi.chouette.exchange.netexprofile.importer.validation.norway;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.XPathSelector;
 import org.apache.commons.lang.StringUtils;
 
 import lombok.extern.log4j.Log4j;
@@ -20,19 +23,27 @@ import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValid
 import mobi.chouette.exchange.netexprofile.importer.validation.norway.StopPlaceRegistryIdValidator.DefaultExternalReferenceValidatorFactory;
 import mobi.chouette.exchange.netexprofile.util.NetexIdExtractorHelper;
 import mobi.chouette.exchange.validation.ValidationData;
+import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.model.Codespace;
+
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
+import org.rutebanken.netex.model.BookingAccessEnumeration;
+import org.rutebanken.netex.model.BookingMethodEnumeration;
+import org.rutebanken.netex.model.FlexibleLineTypeEnumeration;
+import org.rutebanken.netex.model.FlexibleServiceEnumeration;
+import org.rutebanken.netex.model.PurchaseMomentEnumeration;
+import org.rutebanken.netex.model.PurchaseWhenEnumeration;
 
 @Log4j
 public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileValidator implements NetexProfileValidator {
 
 	public static final String NAME = "NorwayLineNetexProfileValidator";
-	
-	private static final String[] validTransportModes = new String[] {
+
+	private static final String[] validTransportModes = new String[]{
 			"coach",
 			"bus",
 			"tram",
@@ -44,14 +55,15 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 			"funicular",
 			"unknown"
 	};
-	
-	
-	private static final String[] validTransportSubModes = new String[] {
+
+
+	private static final String[] validTransportSubModes = new String[]{
 			"internationalCoach",
 			"nationalCoach",
 			"touristCoach",
 			"airportLinkBus",
 			"localTram",
+			"cityTram",
 			"international",
 			"metro",
 			"domesticFlight",
@@ -84,16 +96,46 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 			"sightseeingBus"
 	};
 
-
 	private String validTransportModeString;
 	private String validTransportSubModeString;
 
-	public NorwayLineNetexProfileValidator() {
-		List<String> validTransportModesWithQuotes = Arrays.asList(validTransportModes).stream().map(e -> "'" + e + "'").collect(Collectors.toList());
-		List<String> validTransportSubModesWithQuotes = Arrays.asList(validTransportSubModes).stream().map(e -> "'" + e + "'").collect(Collectors.toList());
+	private String validBookingAccessString = formatLegalEnumValues(BookingAccessEnumeration.PUBLIC.value(),
+			BookingAccessEnumeration.AUTHORISED_PUBLIC.value(),
+			BookingAccessEnumeration.STAFF.value());
+	private String validBookingMethodString = formatLegalEnumValues(BookingMethodEnumeration.CALL_DRIVER.value(),
+			BookingMethodEnumeration.CALL_OFFICE.value(),
+			BookingMethodEnumeration.ONLINE.value(),
+			BookingMethodEnumeration.PHONE_AT_STOP.value(),
+			BookingMethodEnumeration.TEXT.value());
+	private String validFlexibleLineTypeString = formatLegalEnumValues(FlexibleLineTypeEnumeration.CORRIDOR_SERVICE.value(),
+			FlexibleLineTypeEnumeration.MAIN_ROUTE_WITH_FLEXIBLE_ENDS.value(),
+			FlexibleLineTypeEnumeration.FLEXIBLE_AREAS_ONLY.value(),
+			FlexibleLineTypeEnumeration.HAIL_AND_RIDE_SECTIONS.value(),
+			FlexibleLineTypeEnumeration.FIXED_STOP_AREA_WIDE.value(),
+			FlexibleLineTypeEnumeration.MIXED_FLEXIBLE.value(),
+			FlexibleLineTypeEnumeration.MIXED_FLEXIBLE_AND_FIXED.value(),
+			FlexibleLineTypeEnumeration.FIXED.value());
+	private String validBookWhenString = formatLegalEnumValues(PurchaseWhenEnumeration.TIME_OF_TRAVEL_ONLY.value(),
+			PurchaseWhenEnumeration.DAY_OF_TRAVEL_ONLY.value(),
+			PurchaseWhenEnumeration.UNTIL_PREVIOUS_DAY.value(),
+			PurchaseWhenEnumeration.ADVANCE_ONLY.value(),
+			PurchaseWhenEnumeration.ADVANCE_AND_DAY_OF_TRAVEL.value());
+	private String validBuyWhenString = formatLegalEnumValues(PurchaseMomentEnumeration.ON_RESERVATION.value(),
+			PurchaseMomentEnumeration.BEFORE_BOARDING.value(),
+			PurchaseMomentEnumeration.AFTER_BOARDING.value(),
+			PurchaseMomentEnumeration.ON_CHECK_OUT.value());
+	private String validFlexibleServiceTypeString = formatLegalEnumValues(FlexibleServiceEnumeration.DYNAMIC_PASSING_TIMES.value(),
+			FlexibleServiceEnumeration.FIXED_HEADWAY_FREQUENCY.value(),
+			FlexibleServiceEnumeration.FIXED_PASSING_TIMES.value(),
+			FlexibleServiceEnumeration.NOT_FLEXIBLE.value());
 
-		validTransportModeString = StringUtils.join(validTransportModesWithQuotes, ",");
-		validTransportSubModeString = StringUtils.join(validTransportSubModesWithQuotes, ",");
+	public NorwayLineNetexProfileValidator() {
+		validTransportModeString = formatLegalEnumValues(validTransportModes);
+		validTransportSubModeString = formatLegalEnumValues(validTransportSubModes);
+	}
+
+	private String formatLegalEnumValues(String... values) {
+		return StringUtils.join(Arrays.asList(values).stream().map(e -> "'" + e + "'").collect(Collectors.toList()), ",");
 	}
 
 	@Override
@@ -130,7 +172,7 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 		verifyUseOfVersionOnRefsToLocalElements(context, localIds, localRefs);
 		verifyReferencesToCommonElements(context, localRefs, localIds, commonIds);
 		verifyReferencesToCorrectEntityTypes(context, localRefs);
-		verifyExternalRefs(context, localRefs, localIds,commonIds != null ? commonIds.keySet() : new HashSet<>());
+		verifyExternalRefs(context, localRefs, localIds, commonIds != null ? commonIds.keySet() : new HashSet<>());
 
 		XdmValue compositeFrames = selectNodeSet("/PublicationDelivery/dataObjects/CompositeFrame", xpath, dom);
 		if (compositeFrames.size() > 0) {
@@ -183,22 +225,22 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 
 	}
 
-	private void validateCompositeFrame(Context context,  XPathCompiler xpath, XdmNode dom) throws XPathExpressionException, SaxonApiException {
+	private void validateCompositeFrame(Context context, XPathCompiler xpath, XdmNode dom) throws XPathExpressionException, SaxonApiException {
 
 		validateCommonFrameConcepts(context, xpath, dom);
-		
+
 		XdmValue resourceFrames = selectNodeSet("frames/ResourceFrame", xpath, dom);
 		for (XdmItem resourceFrame : resourceFrames) {
 			validateResourceFrame(context, xpath, (XdmNode) resourceFrame, null);
 		}
 
-		validateAtLeastElementPresent(context, xpath, dom, "frames/ServiceFrame",1, _1_NETEX_SERVICE_FRAME);
+		validateAtLeastElementPresent(context, xpath, dom, "frames/ServiceFrame", 1, _1_NETEX_SERVICE_FRAME);
 		XdmValue serviceFrames = selectNodeSet("frames/ServiceFrame", xpath, dom);
 		for (XdmItem serviceFrame : serviceFrames) {
 			validateServiceFrame(context, xpath, (XdmNode) serviceFrame, null);
 		}
 
-		validateAtLeastElementPresent(context, xpath, dom, "frames/TimetableFrame",1, _1_NETEX_TIMETABLE_FRAME);
+		validateAtLeastElementPresent(context, xpath, dom, "frames/TimetableFrame", 1, _1_NETEX_TIMETABLE_FRAME);
 		XdmValue timetableFrames = selectNodeSet("frames/TimetableFrame", xpath, dom);
 		for (XdmItem timetableFrame : timetableFrames) {
 			validateTimetableFrame(context, xpath, (XdmNode) timetableFrame, null);
@@ -212,7 +254,7 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 		validateElementNotPresent(context, xpath, dom, "frames/SiteFrame", _1_NETEX_SITE_FRAME);
 	}
 
-	private void validateServiceFrame(Context context,  XPathCompiler xpath, XdmNode dom, String subLevelPath) throws XPathExpressionException, SaxonApiException {
+	private void validateServiceFrame(Context context, XPathCompiler xpath, XdmNode dom, String subLevelPath) throws XPathExpressionException, SaxonApiException {
 		XdmNode subLevel = dom;
 		if (subLevelPath != null) {
 			subLevel = (XdmNode) selectNode(subLevelPath, xpath, dom);
@@ -221,31 +263,58 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 		if (subLevel != null) {
 
 			validateServiceFrameCommonElements(context, xpath, subLevel);
-			validateElementPresent(context, xpath, subLevel, "lines/Line", _1_NETEX_SERVICE_FRAME_LINE);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line[not(Name) or normalize-space(Name) = '']", _1_NETEX_SERVICE_FRAME_LINE_NAME);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line[not(PublicCode) or normalize-space(PublicCode) = '']", _1_NETEX_SERVICE_FRAME_LINE_PUBLIC_CODE);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line[not(TransportMode)]", _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTMODE);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line[not(TransportSubmode)]", _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTSUBMODE);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line/routes/Route", _1_NETEX_SERVICE_FRAME_ROUTE_INDIRECTION);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line[not(RepresentedByGroupRef)]",
+			validateElementPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine]", _1_NETEX_SERVICE_FRAME_LINE);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine][not(Name) or normalize-space(Name) = '']", _1_NETEX_SERVICE_FRAME_LINE_NAME);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine][not(PublicCode) or normalize-space(PublicCode) = '']", _1_NETEX_SERVICE_FRAME_LINE_PUBLIC_CODE);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine][not(TransportMode)]", _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTMODE);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine][not(TransportSubmode)]", _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTSUBMODE);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine]/routes/Route", _1_NETEX_SERVICE_FRAME_ROUTE_INDIRECTION);
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine][not(RepresentedByGroupRef)]",
 					_1_NETEX_SERVICE_FRAME_LINE_GROUPOFLINES_OR_NETWORK);
+
+
+			validateFlexibleLineMandatoryValues(context, xpath, subLevel);
+
+			validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine/FlexibleLineType[not(. = (" + validFlexibleLineTypeString + "))]",
+					_1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_FLEXIBLELINETYPE);
+			validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine/BookWhen[not(. = (" + validBookWhenString + "))]",
+					_1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine/BuyWhen[tokenize(.,' ')[not(. = (" + validBuyWhenString + "))]]",
+					_1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BUYWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine/BookingMethods[tokenize(.,' ')[not(. = (" + validBookingMethodString + "))]]",
+					_1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGMETHODS);
+			validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine/BookingAccess[not(. = (" + validBookingAccessString + "))]",
+					_1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGACCESS);
 
 			validateAtLeastElementPresent(context, xpath, subLevel, "routes/Route", 1, _1_NETEX_SERVICE_FRAME_ROUTE_INDIRECTION);
 			validateElementNotPresent(context, xpath, subLevel, "routes/Route[not(Name) or normalize-space(Name) = '']", _1_NETEX_SERVICE_FRAME_ROUTE_NAME);
-			validateElementNotPresent(context, xpath, subLevel, "routes/Route[not(LineRef)]", _1_NETEX_SERVICE_FRAME_ROUTE_LINEREF);
+			validateElementNotPresent(context, xpath, subLevel, "routes/Route[not(LineRef) and not(FlexibleLineRef)]", _1_NETEX_SERVICE_FRAME_ROUTE_LINEREF);
 			validateElementNotPresent(context, xpath, subLevel, "routes/Route[not(pointsInSequence)]", _1_NETEX_SERVICE_FRAME_ROUTE_POINTSINSEQUENCE);
 
-	//		validateElementNotPresent(context, xpath, subLevel, "journeyPatterns/ServiceJourneyPattern", _1_NETEX_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN);
+			//		validateElementNotPresent(context, xpath, subLevel, "journeyPatterns/ServiceJourneyPattern", _1_NETEX_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN);
 			validateAtLeastElementPresent(context, xpath, subLevel, "journeyPatterns/JourneyPattern | journeyPatterns/ServiceJourneyPattern", 1,
 					_1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN);
 
-			
+
 			validateElementNotPresent(context, xpath, subLevel,
 					"journeyPatterns/ServiceJourneyPattern[not(RouteRef)] | journeyPatterns/JourneyPattern[not(RouteRef)]",
 					_1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN_ROUTE_REF);
 
 			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern[1][not(DestinationDisplayRef)]",
 					_1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_MISSING_DESTINATIONDISPLAY);
+			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern[last()][DestinationDisplayRef]",
+					_1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_DESTINATIONDISPLAY_ON_LAST_STOP);
+
+
+			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern/BookingArrangements/BookWhen[not(. = (" + validBookWhenString + "))]",
+					_1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern/BookingArrangements/BuyWhen[tokenize(.,' ')[not(. = (" + validBuyWhenString + "))]]",
+					_1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BUYWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern/BookingArrangements/BookingMethods[tokenize(.,' ')[not(. = (" + validBookingMethodString + "))]]",
+					_1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGMETHODS);
+			validateElementNotPresent(context, xpath, subLevel, "//pointsInSequence/StopPointInJourneyPattern/BookingArrangements/BookingAccess[not(. = (" + validBookingAccessString + "))]",
+					_1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGACCESS);
+
 
 			validateElementNotPresent(context, xpath, subLevel, "destinationDisplays/DestinationDisplay[not(FrontText) or normalize-space(FrontText) = '']",
 					_1_NETEX_SERVICE_FRAME_DESTINATION_DISPLAY_FRONTTEXT);
@@ -256,12 +325,61 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 			validateElementNotPresent(context, xpath, subLevel, "//StopPointInJourneyPattern[DestinationDisplayRef/@ref = preceding-sibling::StopPointInJourneyPattern[1]/DestinationDisplayRef/@ref and number(@order) >  number(preceding-sibling::StopPointInJourneyPattern[1]/@order)]",
 					_1_NETEX_SERVICE_FRAME_STOP_WITH_REPEATING_DESTINATIONDISPLAYREF);
 
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line/TransportMode[not(. = ("+ validTransportModeString +"))]",
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine]/TransportMode[not(. = (" + validTransportModeString + "))]",
 					_1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTMODE);
-			validateElementNotPresent(context, xpath, subLevel, "lines/Line/TransportSubmode/*[not(. = ("+ validTransportSubModeString +"))]",
+			validateElementNotPresent(context, xpath, subLevel, "lines/*[self::Line or self::FlexibleLine]/TransportSubmode/*[not(. = (" + validTransportSubModeString + "))]",
 					_1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTSUBMODE);
-			
-			
+
+
+		}
+	}
+
+	/**
+	 * Validate the presence of mandatory values for flexible lines. Must be set on line, on service journey or for each stop point in journey pattern.
+	 */
+	private void validateFlexibleLineMandatoryValues(Context context, XPathCompiler xpath, XdmNode subLevel) throws XPathExpressionException, SaxonApiException {
+		validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine[not(FlexibleLineType)]", _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_FLEXIBLELINETYPE);
+
+		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookingMethods", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGMETHODS);
+		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookingContact", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGCONTACT);
+		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookWhen", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKWHEN);
+	}
+
+
+	private void validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(Context context, XPathCompiler xpath, XdmNode subLevel, String fieldName, String checkPointKey) throws SaxonApiException, XPathExpressionException {
+		ValidationReporter validationReporter = ValidationReporter.Factory.getInstance();
+		validateCheckpointExists(context, checkPointKey, validationReporter);
+		List<XdmValue> errorNodes = new ArrayList<>();
+
+		if (evaluationExpression(xpath, subLevel, "lines/FlexibleLine and lines/FlexibleLine[not(" + fieldName + ")]")) {
+			XPathSelector selector = xpath.compile("journeyPatterns/*[self::JourneyPattern or self::ServiceJourneyPattern][pointsInSequence/StopPointInJourneyPattern[not(BookingArrangements/" + fieldName + ")]]").load();
+			selector.setContextItem(subLevel);
+			XdmValue nodes = selector.evaluate();
+
+			for (XdmValue value : nodes) {
+				if (value instanceof XdmNode) {
+					XdmNode node = (XdmNode) value;
+					String id = node.getAttributeValue(QName.fromEQName("id"));
+					String version = node.getAttributeValue(QName.fromEQName("version"));
+
+					XPathSelector sjSelector = xpath.compile("//vehicleJourneys/ServiceJourney[(not(FlexibleServiceProperties) or not(FlexibleServiceProperties/" + fieldName + ")) and JourneyPatternRef/@ref='" + id + "' and @version='" + version + "']").load();
+					sjSelector.setContextItem(subLevel);
+					XdmValue errorsForJP = sjSelector.evaluate();
+					if (errorsForJP.size() > 0) {
+						errorNodes.add(errorsForJP);
+					}
+				}
+
+			}
+		}
+		if (errorNodes.size() == 0) {
+			validationReporter.reportSuccess(context, checkPointKey);
+		} else {
+			for (XdmValue errorNode : errorNodes) {
+				for (XdmItem item : errorNode) {
+					validationReporter.addCheckPointReportError(context, checkPointKey, DataLocationHelper.findDataLocation(context, item));
+				}
+			}
 		}
 	}
 
@@ -300,16 +418,29 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 					_1_NETEX_TIMETABLE_FRAME_SERVICEJOURNEY_JOURNEYPATTERN_REF);
 			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney[(TransportMode and not(TransportSubmode))  or (not(TransportMode) and TransportSubmode)]",
 					_1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_TRANSPORTMODE_OVERRIDE);
-			
-			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney[not(OperatorRef) and not(//ServiceFrame/lines/Line/OperatorRef)]", _1_NETEX_TIMETABLE_FRAME_VEHICLEJOURNEY_OPERATORREF_OR_LINE_OPREATORREF);
+
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney[not(OperatorRef) and not(//ServiceFrame/lines/*[self::Line or self::FlexibleLine]/OperatorRef)]", _1_NETEX_TIMETABLE_FRAME_VEHICLEJOURNEY_OPERATORREF_OR_LINE_OPREATORREF);
 
 			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney[not(dayTypes/DayTypeRef)]", _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DAYTYPEREF);
 
 			validateElementNotPresent(context, xpath, subLevel, "for $a in vehicleJourneys/ServiceJourney return if(count(//ServiceFrame/journeyPatterns/*[@id = $a/JourneyPatternRef/@ref]/pointsInSequence/StopPointInJourneyPattern) != count($a/passingTimes/TimetabledPassingTime)) then $a else ()", _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_MISSING_PASSING_TIME);
-			
-			validateElementNotPresent(context, xpath, subLevel, "//ServiceJourney[@id = preceding-sibling::ServiceJourney/@id]", _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DUPLICATE_WITH_DIFFERENT_VERSION);
-			
 
+			validateElementNotPresent(context, xpath, subLevel, "//ServiceJourney[@id = preceding-sibling::ServiceJourney/@id]", _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DUPLICATE_WITH_DIFFERENT_VERSION);
+
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties[not(@id)]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ID);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties[not(@version)]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_VERSION);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties/BookWhen[not(. = (" + validBookWhenString + "))]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties/BuyWhen[tokenize(.,' ')[not(. = (" + validBuyWhenString + "))]]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BUYWHEN);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties/BookingMethods[tokenize(.,' ')[not(. = (" + validBookingMethodString + "))]]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGMETHODS);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties/BookingAccess[not(. = (" + validBookingAccessString + "))]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGACCESS);
+			validateElementNotPresent(context, xpath, subLevel, "vehicleJourneys/ServiceJourney/FlexibleServiceProperties/FlexibleServiceType[not(. = (" + validFlexibleServiceTypeString + "))]",
+					_1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_FLEXIBLESERVICETYPE);
 		}
 	}
 
@@ -321,14 +452,14 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 				instance = new NorwayLineNetexProfileValidator();
 
 				// Shitty, should use inversion of control pattern and dependency injection
-				if("true".equals(context.get("testng"))) {
+				if ("true".equals(context.get("testng"))) {
 					instance.addExternalReferenceValidator(new DummyStopReferentialIdValidator());
 				} else {
 					StopPlaceRegistryIdValidator stopRegistryValidator = (StopPlaceRegistryIdValidator) DefaultExternalReferenceValidatorFactory
 							.create(StopPlaceRegistryIdValidator.class.getName(), context);
 					instance.addExternalReferenceValidator(stopRegistryValidator);
 				}
-				
+
 				instance.addExternalReferenceValidator(new ServiceJourneyInterchangeIgnorer());
 
 				context.put(NAME, instance);

@@ -14,9 +14,12 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.BookingArrangementDAO;
 import mobi.chouette.dao.BrandingDAO;
 import mobi.chouette.dao.CompanyDAO;
+import mobi.chouette.dao.ContactStructureDAO;
 import mobi.chouette.dao.DestinationDisplayDAO;
+import mobi.chouette.dao.FlexibleServicePropertiesDAO;
 import mobi.chouette.dao.FootnoteDAO;
 import mobi.chouette.dao.GroupOfLineDAO;
 import mobi.chouette.dao.InterchangeDAO;
@@ -100,6 +103,14 @@ public class CleanRepositoryCommand implements Command {
 	@EJB
 	private RoutePointDAO routePointDAO;
 
+	@EJB
+	private ContactStructureDAO contactStructureDAO;
+
+	@EJB
+	private BookingArrangementDAO bookingArrangementDAO;
+
+	@EJB
+	private FlexibleServicePropertiesDAO flexibleServicePropertiesDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -130,6 +141,10 @@ public class CleanRepositoryCommand implements Command {
 			destinationDisplayDAO.truncate();
 			interchangeDAO.truncate();
 			routePointDAO.truncate();
+			flexibleServicePropertiesDAO.truncate();
+			bookingArrangementDAO.truncate();
+			contactStructureDAO.truncate();
+
 			result = SUCCESS;
 		} catch (Exception e) {
 			log.error(e);

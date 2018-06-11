@@ -518,7 +518,21 @@ CREATE TABLE footnotes_vehicle_journey_at_stops (
 
 ALTER TABLE chouette_gui.footnotes_vehicle_journey_at_stops OWNER TO chouette;
 
+CREATE TABLE booking_arrangements_buy_when (
+    booking_arrangement_id bigint NOT NULL,
+    buy_when character varying(255)
+    );
 
+
+ALTER TABLE chouette_gui.booking_arrangements_buy_when OWNER TO chouette;
+
+CREATE TABLE booking_arrangements_booking_methods (
+    booking_arrangement_id bigint NOT NULL,
+    booking_method character varying(255)
+    );
+
+
+ALTER TABLE chouette_gui.booking_arrangements_booking_methods OWNER TO chouette;
 
 CREATE TABLE lines_key_values (
     line_id bigint NOT NULL,
@@ -882,6 +896,64 @@ CREATE TABLE journey_patterns_stop_points (
 
 ALTER TABLE chouette_gui.journey_patterns_stop_points OWNER TO chouette;
 
+
+
+CREATE TABLE contact_structures (
+    id bigint NOT NULL,
+    contact_person CHARACTER VARYING,
+    email CHARACTER VARYING,
+    phone CHARACTER VARYING,
+    fax CHARACTER VARYING,
+    url CHARACTER VARYING,
+    further_details CHARACTER VARYING
+);
+
+ALTER TABLE chouette_gui.contact_structures OWNER TO chouette;
+
+
+CREATE SEQUENCE contact_structures_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE chouette_gui.contact_structures_id_seq OWNER TO chouette;
+
+ALTER SEQUENCE contact_structures_id_seq OWNED BY contact_structures.id;
+
+CREATE TABLE booking_arrangements (
+    id bigint NOT NULL,
+    booking_contact_id bigint,
+    booking_note character varying,
+    booking_access character varying(255),
+    book_when character varying(255),
+    latest_booking_time  time without time zone,
+    minimum_booking_period  time without time zone
+);
+
+
+ALTER TABLE chouette_gui.booking_arrangements OWNER TO chouette;
+
+CREATE SEQUENCE booking_arrangements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE chouette_gui.booking_arrangements_id_seq OWNER TO chouette;
+
+--
+-- TOC entry 4265 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: lines_id_seq; Type: SEQUENCE OWNED BY; Schema: chouette_gui; Owner: chouette
+--
+
+ALTER SEQUENCE booking_arrangements_id_seq OWNED BY booking_arrangements.id;
+
 --
 -- TOC entry 200 (class 1259 OID 938954)
 -- Name: lines; Type: TABLE; Schema: chouette_gui; Owner: chouette; Tablespace:
@@ -908,7 +980,9 @@ CREATE TABLE lines (
     url character varying(255),
     color character varying(6),
     text_color character varying(6),
-    stable_id character varying(255)
+    stable_id character varying(255),
+    flexible_line_type character varying,
+    booking_arrangement_id bigint
 );
 
 
@@ -1284,7 +1358,8 @@ CREATE TABLE stop_points (
     "position" integer,
     for_boarding character varying(255),
     for_alighting character varying(255),
-    scheduled_stop_point_id bigint
+    scheduled_stop_point_id bigint,
+    booking_arrangement_id bigint
 );
 
 
@@ -1583,6 +1658,32 @@ ALTER TABLE chouette_gui.vehicle_journey_at_stops_id_seq OWNER TO chouette;
 
 ALTER SEQUENCE vehicle_journey_at_stops_id_seq OWNED BY vehicle_journey_at_stops.id;
 
+CREATE TABLE flexible_service_properties (
+    id bigint NOT NULL,
+    objectid character varying(255) NOT NULL,
+    object_version integer,
+    creation_time timestamp without time zone,
+    creator_id character varying(255),
+    flexible_service_type character varying(255),
+    booking_arrangement_id bigint,
+    cancellation_possible boolean,
+    change_of_time_possible boolean
+    );
+
+ALTER TABLE chouette_gui.flexible_service_properties OWNER TO chouette;
+
+CREATE SEQUENCE flexible_service_properties_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE chouette_gui.flexible_service_properties_id_seq OWNER TO chouette;
+
+ALTER SEQUENCE flexible_service_properties_id_seq OWNED BY flexible_service_properties.id;
+
 
 --
 -- TOC entry 236 (class 1259 OID 939101)
@@ -1611,7 +1712,8 @@ CREATE TABLE vehicle_journeys (
     flexible_service boolean,
     journey_category integer DEFAULT 0 NOT NULL,
     private_code character varying(255),
-    service_alteration character varying(255)
+    service_alteration character varying(255),
+    flexible_service_properties_id bigint
 );
 
 
@@ -1927,6 +2029,13 @@ ALTER TABLE ONLY journey_patterns
 -- Name: lines_pkey; Type: CONSTRAINT; Schema: chouette_gui; Owner: chouette; Tablespace:
 --
 
+
+ALTER TABLE ONLY contact_structures
+    ADD CONSTRAINT contact_structures_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY booking_arrangements
+    ADD CONSTRAINT booking_arrangements_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY lines
     ADD CONSTRAINT lines_pkey PRIMARY KEY (id);
 
@@ -2043,6 +2152,9 @@ ALTER TABLE ONLY vehicle_journey_at_stops
 -- TOC entry 4084 (class 2606 OID 939749)
 -- Name: vehicle_journeys_pkey; Type: CONSTRAINT; Schema: chouette_gui; Owner: chouette; Tablespace:
 --
+
+ALTER TABLE ONLY flexible_service_properties
+    ADD CONSTRAINT flexible_service_properties_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY vehicle_journeys
     ADD CONSTRAINT vehicle_journeys_pkey PRIMARY KEY (id);
@@ -2463,9 +2575,14 @@ ALTER TABLE ONLY routes_route_points
 -- Name: line_company_fkey; Type: FK CONSTRAINT; Schema: chouette_gui; Owner: chouette
 --
 
+ALTER TABLE ONLY booking_arrangements
+    ADD CONSTRAINT booking_arrangement_booking_contact_fkey FOREIGN KEY (booking_contact_id) REFERENCES contact_structures(id) ON DELETE SET NULL;
+
 ALTER TABLE ONLY lines
     ADD CONSTRAINT line_company_fkey FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL;
 
+ALTER TABLE ONLY lines
+    ADD CONSTRAINT line_booking_arrangement_fkey FOREIGN KEY (booking_arrangement_id) REFERENCES booking_arrangements(id) ON DELETE SET NULL;
 
 --
 -- TOC entry 4110 (class 2606 OID 940041)
@@ -2531,6 +2648,9 @@ ALTER TABLE ONLY stop_points
     ADD CONSTRAINT stoppoint_route_fkey FOREIGN KEY (route_id) REFERENCES routes(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY stop_points
+    ADD CONSTRAINT stoppoint_booking_arrangement_fkey FOREIGN KEY (booking_arrangement_id) REFERENCES booking_arrangements(id);
+
+ALTER TABLE ONLY stop_points
     ADD CONSTRAINT stoppoint_scheduled_stop_fkey FOREIGN KEY (scheduled_stop_point_id) REFERENCES scheduled_stop_points(id);
 
 ALTER TABLE ONLY route_points
@@ -2578,8 +2698,15 @@ ALTER TABLE ONLY vehicle_journeys
 -- Name: vj_route_fkey; Type: FK CONSTRAINT; Schema: chouette_gui; Owner: chouette
 --
 
+ALTER TABLE ONLY flexible_service_properties
+    ADD CONSTRAINT fsp_booking_arrangement_fkey FOREIGN KEY (booking_arrangement_id) REFERENCES booking_arrangements(id);
+
 ALTER TABLE ONLY vehicle_journeys
     ADD CONSTRAINT vj_route_fkey FOREIGN KEY (route_id) REFERENCES routes(id) ON DELETE CASCADE;
+
+
+ALTER TABLE ONLY vehicle_journeys
+    ADD CONSTRAINT vj_fsp_fkey FOREIGN KEY (flexible_service_properties_id) REFERENCES flexible_service_properties(id);
 
 
 --
@@ -2616,6 +2743,14 @@ ALTER TABLE ONLY time_tables_vehicle_journeys
 
 ALTER TABLE ONLY time_tables_vehicle_journeys
     ADD CONSTRAINT vjtm_vj_fkey FOREIGN KEY (vehicle_journey_id) REFERENCES vehicle_journeys(id) ON DELETE CASCADE;
+
+
+ALTER TABLE ONLY chouette_gui.booking_arrangements_buy_when
+    ADD CONSTRAINT booking_arrangement_buy_when FOREIGN KEY (booking_arrangement_id) REFERENCES chouette_gui.booking_arrangements(id) ON DELETE CASCADE;
+
+
+ALTER TABLE ONLY chouette_gui.booking_arrangements_booking_methods
+    ADD CONSTRAINT booking_arrangements_booking_methods FOREIGN KEY (booking_arrangement_id) REFERENCES chouette_gui.booking_arrangements(id) ON DELETE CASCADE;
 
 
 ALTER TABLE ONLY chouette_gui.lines_key_values

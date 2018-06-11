@@ -4,12 +4,15 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import mobi.chouette.common.Context;
+import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.ConversionUtil;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.util.JtsGmlConverter;
+import mobi.chouette.model.BookingArrangement;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
@@ -21,9 +24,11 @@ import mobi.chouette.model.type.BoardingPossibilityEnum;
 import com.vividsolutions.jts.geom.LineString;
 import net.opengis.gml._3.LineStringType;
 import org.apache.commons.collections.CollectionUtils;
+import org.rutebanken.netex.model.BookingArrangementsStructure;
 import org.rutebanken.netex.model.DestinationDisplayRefStructure;
 import org.rutebanken.netex.model.KeyValueStructure;
 import org.rutebanken.netex.model.LinkSequenceProjection;
+import org.rutebanken.netex.model.MultilingualString;
 import org.rutebanken.netex.model.PointsInJourneyPattern_RelStructure;
 import org.rutebanken.netex.model.PrivateCodeStructure;
 import org.rutebanken.netex.model.RouteRefStructure;
@@ -40,9 +45,11 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.SERVIC
 
 public class JourneyPatternProducer extends NetexProducer implements NetexEntityProducer<org.rutebanken.netex.model.JourneyPattern, mobi.chouette.model.JourneyPattern> {
 
-    @Override
-    public org.rutebanken.netex.model.JourneyPattern produce(Context context, mobi.chouette.model.JourneyPattern neptuneJourneyPattern) {
-        org.rutebanken.netex.model.JourneyPattern netexJourneyPattern = netexFactory.createJourneyPattern();
+	private static ContactStructureProducer contactStructureProducer = new ContactStructureProducer();
+
+	@Override
+	public org.rutebanken.netex.model.JourneyPattern produce(Context context, mobi.chouette.model.JourneyPattern neptuneJourneyPattern) {
+		org.rutebanken.netex.model.JourneyPattern netexJourneyPattern = netexFactory.createJourneyPattern();
 
         ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(Constant.EXPORTABLE_NETEX_DATA);
 
@@ -120,9 +127,28 @@ public class JourneyPatternProducer extends NetexProducer implements NetexEntity
 
         		NoticeProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, exportableNetexData.getNoticeAssignmentsServiceFrame(), stopPoint.getFootnotes(), stopPoint);
 
-				pointsInJourneyPattern.getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().add(stopPointInJourneyPattern);
-			}
-		}
+                BookingArrangement bookingArrangement = stopPoint.getBookingArrangement();
+				if (bookingArrangement != null) {
+					BookingArrangementsStructure netexBookingArrangement = new BookingArrangementsStructure();
+					if (bookingArrangement.getBookingNote() != null) {
+						netexBookingArrangement.setBookingNote(new MultilingualString().withValue(bookingArrangement.getBookingNote()));
+					}
+					netexBookingArrangement.setBookingAccess(ConversionUtil.toBookingAccess(bookingArrangement.getBookingAccess()));
+					netexBookingArrangement.setBookWhen(ConversionUtil.toPurchaseWhen(bookingArrangement.getBookWhen()));
+					if (!CollectionUtils.isEmpty(bookingArrangement.getBuyWhen())) {
+						netexBookingArrangement.withBuyWhen(bookingArrangement.getBuyWhen().stream().map(ConversionUtil::toPurchaseMoment).collect(Collectors.toList()));
+					}
+					if (!CollectionUtils.isEmpty(bookingArrangement.getBookingMethods())) {
+						netexBookingArrangement.withBookingMethods(bookingArrangement.getBookingMethods().stream().map(ConversionUtil::toBookingMethod).collect(Collectors.toList()));
+					}
+					netexBookingArrangement.setLatestBookingTime(TimeUtil.toLocalTimeFromJoda(bookingArrangement.getLatestBookingTime()));
+					netexBookingArrangement.setMinimumBookingPeriod(TimeUtil.toDurationFromJodaDuration(bookingArrangement.getMinimumBookingPeriod()));
+
+					netexBookingArrangement.setBookingContact(contactStructureProducer.produce(bookingArrangement.getBookingContact()));
+					stopPointInJourneyPattern.setBookingArrangements(netexBookingArrangement);
+				}pointsInJourneyPattern.getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().add(stopPointInJourneyPattern);
+            }
+        }
 
 		addLinksInSequence(neptuneJourneyPattern, netexJourneyPattern, context);
         netexJourneyPattern.setPointsInSequence(pointsInJourneyPattern);
