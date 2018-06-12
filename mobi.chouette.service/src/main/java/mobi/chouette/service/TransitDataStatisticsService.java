@@ -1,38 +1,12 @@
 package mobi.chouette.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.TimetableDAO;
 import mobi.chouette.model.CalendarDay;
-import mobi.chouette.model.statistics.Line;
-import mobi.chouette.model.statistics.LineAndTimetable;
-import mobi.chouette.model.statistics.LineStatistics;
-import mobi.chouette.model.statistics.Period;
-import mobi.chouette.model.statistics.PublicLine;
-import mobi.chouette.model.statistics.Timetable;
-import mobi.chouette.model.statistics.ValidityCategory;
+import mobi.chouette.model.statistics.*;
 import mobi.chouette.persistence.hibernate.ContextHolder;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
@@ -40,6 +14,10 @@ import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 import org.rutebanken.helper.calendar.CalendarPattern;
 import org.rutebanken.helper.calendar.CalendarPatternAnalyzer;
+
+import javax.ejb.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static javax.ejb.ConcurrencyManagementType.BEAN;
 
@@ -77,7 +55,7 @@ public class TransitDataStatisticsService {
 
 		ContextHolder.setContext(referential);
 
-		log.info(Color.CYAN+ "Gettings statistics for "
+		log.debug(Color.CYAN+ "Gettings statistics for "
 				+ referential
 				+ " using startDate="
 				+ startDate
