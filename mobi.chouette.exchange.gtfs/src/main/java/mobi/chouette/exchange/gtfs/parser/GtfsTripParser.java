@@ -1046,11 +1046,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 		String routeId = AbstractConverter.composeObjectId(configuration, Route.ROUTE_KEY,
 				routeKey, log);
 
-		Route route = ObjectFactory.getRoute(referential, routeId);
-		route.setLine(line);
-		String wayBack = gtfsTrip.getDirectionId().equals(DirectionType.Outbound) ? "A" : "R";
-		route.setWayBack(wayBack);
-		return route;
+
+        Route route = ObjectFactory.getRoute(referential, routeId);
+        route.setLine(line);
+        PTDirectionEnum wayBack = gtfsTrip.getDirectionId().equals(DirectionType.Outbound) ? PTDirectionEnum.A : PTDirectionEnum.R;
+        route.setWayBack(wayBack.toString());
+        route.setDirection(wayBack);
+        return route;
 	}
 
 	protected void convert(Context context, GtfsStopTime gtfsStopTime, GtfsTrip gtfsTrip, VehicleJourneyAtStop vehicleJourneyAtStop) {
