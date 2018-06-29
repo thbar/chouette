@@ -52,6 +52,7 @@ public class FileStoreFactory {
 
 					if (FILE_STORE == null) {
 						FILE_STORE = new LocalFileStore();
+                        log.warn("No FileStore implementation defined, using LocalFileStore as default");
 					}
 				}
 			}

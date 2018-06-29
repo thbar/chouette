@@ -36,6 +36,7 @@ public class LocalFileStore implements FileStore {
 
 	@Override
 	public void writeFile(Path filePath, InputStream content) {
+	    log.info("Using LocalFileStore for file : " + filePath);
 		try {
 			FileUtils.copyInputStreamToFile(content, filePath.toFile());
 		} catch (IOException ioE) {

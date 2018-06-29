@@ -1,19 +1,5 @@
 package mobi.chouette.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.ws.rs.core.MediaType;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Delegate;
@@ -29,9 +15,21 @@ import mobi.chouette.exchange.parameters.AbstractParameter;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Link;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Data
 @Log4j
@@ -94,6 +92,7 @@ public class JobService implements JobData, ServiceConstants {
 			Parameters parameters = new Parameters(getParametersAsString(), validator);
 
 			FileStore fileStore = FileStoreFactory.getFileStore();
+			log.info("using File Store for parameters file : " + fileStore.toString());
 			fileStore.writeFile(filePath(PARAMETERS_FILE), IOUtils.toInputStream(getParametersAsString() + "+n", "UTF-8"));
 
 			addLink(MediaType.APPLICATION_JSON, Link.PARAMETERS_REL);
