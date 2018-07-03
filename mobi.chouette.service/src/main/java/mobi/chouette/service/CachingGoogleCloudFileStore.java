@@ -124,6 +124,8 @@ public class CachingGoogleCloudFileStore implements FileStore {
 	@Override
 	public void writeFile(Path filePath, InputStream content) {
 
+	    log.info("Writing with CachingGoogleCloudFileStore");
+
 		try {
 			ByteArrayInputStream bis;
 			if (content instanceof ByteArrayInputStream) {
@@ -131,6 +133,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
 			} else {
 				bis = new ByteArrayInputStream(IOUtils.toByteArray(content));
 			}
+            log.info("Preparing to write with cloudFileStore");
 			cloudFileStore.writeFile(filePath, bis);
 			bis.reset();
 			localFileStore.writeFile(filePath, bis);

@@ -58,6 +58,7 @@ public class GoogleCloudFileStore implements FileStore {
 
 	@Override
 	public void writeFile(Path filePath, InputStream content) {
+        log.info("Using GoogleCloudFileStore for file : " + filePath);
 		BlobStoreHelper.uploadBlob(storage, containerName, toGCSPath(filePath), content, false);
 	}
 
