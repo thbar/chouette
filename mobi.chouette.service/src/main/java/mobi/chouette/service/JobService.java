@@ -118,6 +118,7 @@ public class JobService implements JobData, ServiceConstants {
 			}
 			
 			JSONUtil.toJSON(filePath(ACTION_PARAMETERS_FILE), parameters.getConfiguration());
+			fileStore.writeFile(filePath(VALIDATION_PARAMETERS_FILE), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getValidation()).getBytes()));
 			addLink(MediaType.APPLICATION_JSON, Link.ACTION_PARAMETERS_REL);
 
 			if (parameters.getValidation() != null) {
