@@ -1,20 +1,14 @@
 package mobi.chouette.exchange.gtfs.importer;
 
-import java.util.Arrays;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
-
 import org.apache.log4j.Logger;
+
+import javax.xml.bind.annotation.*;
+import java.util.Arrays;
 
 @XmlRootElement(name = "gtfs-import")
 @NoArgsConstructor
@@ -44,8 +38,8 @@ public class GtfsImportParameters extends AbstractImportParameter {
 	private int maxDistanceForConnectionLink = 0;
 
 	@Getter@Setter
-	@XmlElement(name = "max_distance_for_commercial", defaultValue="0")
-	private int maxDistanceForCommercial = 0;
+	@XmlElement(name = "max_distance_for_commercial", defaultValue="10")
+	private int maxDistanceForCommercial = 10;
 
 	@Getter@Setter
 	@XmlElement(name = "ignore_end_chars", defaultValue="0")
