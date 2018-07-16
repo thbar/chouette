@@ -38,8 +38,8 @@ public class GtfsImportParameters extends AbstractImportParameter {
 	private int maxDistanceForConnectionLink = 0;
 
 	@Getter@Setter
-	@XmlElement(name = "max_distance_for_commercial", defaultValue="10")
-	private int maxDistanceForCommercial = 10;
+	@XmlElement(name = "max_distance_for_commercial", defaultValue="0")
+	private int maxDistanceForCommercial = 0;
 
 	@Getter@Setter
 	@XmlElement(name = "ignore_end_chars", defaultValue="0")
