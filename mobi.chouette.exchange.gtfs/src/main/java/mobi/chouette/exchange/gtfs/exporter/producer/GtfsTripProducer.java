@@ -174,11 +174,16 @@ public class GtfsTripProducer extends AbstractProducer {
 		StopPoint point = vjas.getStopPoint();
 		if (point.getForBoarding() != null) {
 			time.setPickupType(toPickUpType(point.getForBoarding(), time.getPickupType()));
-		}
+		} else {
+		    // Set to default "Scheduled" if it's null
+            time.setPickupType(PickupType.Scheduled);
+        }
 		if (point.getForAlighting() != null) {
 			time.setDropOffType(toDropOffType(point.getForAlighting(), time.getDropOffType()));
-		}
-
+		} else {
+            // Set to default "Scheduled" if it's null
+            time.setDropOffType(DropOffType.Scheduled);
+        }
 	}
 
 	private DropOffType toDropOffType(AlightingPossibilityEnum forAlighting, DropOffType defaultValue) {
