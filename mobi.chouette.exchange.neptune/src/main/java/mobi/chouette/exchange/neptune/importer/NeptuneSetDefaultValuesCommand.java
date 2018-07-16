@@ -1,30 +1,23 @@
 package mobi.chouette.exchange.neptune.importer;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.neptune.Constant;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.*;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
 import mobi.chouette.model.util.Referential;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.util.Collection;
 
 @Log4j
 public class NeptuneSetDefaultValuesCommand implements Command, Constant {
@@ -96,8 +89,7 @@ public class NeptuneSetDefaultValuesCommand implements Command, Constant {
 	}
 
 	private void processBoardingAlightingForRoute(Route route) {
-		boolean invalidData = false; 
-		boolean usefullData = false;
+		boolean invalidData = false;
 
 		b1: for (JourneyPattern jp : route.getJourneyPatterns()) {
 			for (VehicleJourney vj : jp.getVehicleJourneys()) {
@@ -118,20 +110,9 @@ public class NeptuneSetDefaultValuesCommand implements Command, Constant {
 				if (sp.getForBoarding() == null)
 					sp.setForBoarding(BoardingPossibilityEnum.normal);
 			}
-			for (StopPoint sp : route.getStopPoints()) {
-				if (!sp.getForAlighting().equals(AlightingPossibilityEnum.normal)) {
-					usefullData = true;
-					break;
-				}
-				if (!sp.getForBoarding().equals(BoardingPossibilityEnum.normal)) {
-					usefullData = true;
-					break;
-				}
-			}
-
 		}
-		if (invalidData || !usefullData) {
-			// remove useless informations
+		if (invalidData) {
+			// remove invalid informations
 			for (StopPoint sp : route.getStopPoints()) {
 				sp.setForAlighting(null);
 				sp.setForBoarding(null);
