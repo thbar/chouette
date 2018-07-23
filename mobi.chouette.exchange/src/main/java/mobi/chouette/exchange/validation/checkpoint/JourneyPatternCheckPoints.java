@@ -1,12 +1,5 @@
 package mobi.chouette.exchange.validation.checkpoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
@@ -25,7 +18,8 @@ import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 
-import static mobi.chouette.model.VehicleJourney_.journeyPattern;
+import java.util.*;
+
 
 @Log4j
 public class JourneyPatternCheckPoints extends AbstractValidation<JourneyPattern> implements Validator<JourneyPattern> {
