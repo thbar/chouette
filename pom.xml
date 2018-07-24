@@ -832,6 +832,17 @@
 				<skipInitDb>false</skipInitDb>
 			</properties>
 		</profile>
+        <profile>
+            <id>justCompile</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <skipWildfly>true</skipWildfly>
+                <skipInitDb>true</skipInitDb>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
 		<profile>
 			<id>skipTestCompileAndRun</id>
 			<activation>

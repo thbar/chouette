@@ -1,7 +1,7 @@
 ---
 chouette_docker_image_version: "1.2"
 
-#docker_build_root: "~/dev/misc/docker-build"
+#docker_build_root: "/tmp/docker-build"
 #build_home: "~/dev/workspaces/chouette_okina"
 
 docker_build_root: "/var/lib/jenkins/docker"
