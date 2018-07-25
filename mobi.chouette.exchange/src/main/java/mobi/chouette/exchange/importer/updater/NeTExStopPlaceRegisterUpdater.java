@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.rutebanken.netex.client.PublicationDeliveryClient;
+import org.rutebanken.netex.client.TokenService;
 import org.rutebanken.netex.model.*;
 import org.xml.sax.SAXException;
 
@@ -75,23 +76,28 @@ public class NeTExStopPlaceRegisterUpdater {
         navigationPathMapper = new NavigationPathMapper();
     }
 
+    private static final String PROP_KC_CLIENT_ID = "keycloak.resource";
+    private static final String PROP_KC_CLIENT_SECRET = "iam.keycloak.client.secret";
+    private static final String PROP_KC_CLIENT_REALM = "keycloak.realm";
+    private static final String PROP_KC_CLIENT_AUTH_URL = "keycloak.auth-server-url";
+
     @EJB
     private ContenerChecker contenerChecker;
 
     @PostConstruct
     public void postConstruct() {
-        String urlPropertyKey = contenerChecker.getContext() + PropertyNames.STOP_PLACE_REGISTER_URL;
-        String url = System.getProperty(urlPropertyKey);
-        if (url == null) {
-            log.warn("Cannot read property " + urlPropertyKey + ". Will not update stop place registry.");
-            this.client = null;
-        } else {
-            try {
-                this.client = new PublicationDeliveryClient(url, true);
-            } catch (JAXBException | SAXException | IOException e) {
-                log.warn("Cannot initialize publication delivery client with URL '" + url + "'", e);
-            }
+        String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
+        String clientId = getAndValidateProperty(PROP_KC_CLIENT_ID);
+        String clientSecret = getAndValidateProperty(PROP_KC_CLIENT_SECRET);
+        String realm = getAndValidateProperty(PROP_KC_CLIENT_REALM);
+        String authServerUrl = getAndValidateProperty(PROP_KC_CLIENT_AUTH_URL);
+
+        try {
+            this.client = new PublicationDeliveryClient(url, true, new TokenService(clientId, clientSecret, realm, authServerUrl));
+        } catch (JAXBException | SAXException | IOException e) {
+            log.warn("Cannot initialize publication delivery client with URL '" + url + "'", e);
         }
+
 
     }
 
@@ -99,7 +105,7 @@ public class NeTExStopPlaceRegisterUpdater {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         if (client == null) {
-            return;
+            throw new RuntimeException("Looks like PublicationDeliveryClient is not set up correctly. Aborting.");
         }
 
         // Use a correlation ID that will be set as ID on the site frame sent to
@@ -491,6 +497,17 @@ public class NeTExStopPlaceRegisterUpdater {
                 }
             }
         }
+    }
+
+
+    private String getAndValidateProperty(String propertyName) {
+        String urlPropertyKey = contenerChecker.getContext() + propertyName;
+        String propertyValue = System.getProperty(urlPropertyKey);
+        if (propertyValue == null) {
+            log.warn("Cannot read property " + urlPropertyKey + ". Will not update stop place registry.");
+            this.client = null;
+        }
+        return propertyValue;
     }
 
 
