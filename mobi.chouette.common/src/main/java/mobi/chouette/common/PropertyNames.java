@@ -22,4 +22,11 @@ public interface PropertyNames {
     String GTFS_AGENCY_URL_DEFAULTS = "iev.gtfs.agency.url.defaults";
     String GTFS_AGENCY_PHONE_DEFAULTS = "iev.gtfs.agency.phone.defaults";
     String OSRM_ROUTE_SECTIONS_BASE = "iev.osrm.endpoint.";
+
+    String KC_CLIENT_ID = ".keycloak.resource";
+    String KC_CLIENT_SECRET = ".iam.keycloak.client.secret";
+    String KC_CLIENT_REALM = ".keycloak.realm";
+    String KC_CLIENT_AUTH_URL = ".keycloak.auth-server-url";
+
+
 }

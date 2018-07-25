@@ -41,6 +41,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static mobi.chouette.common.PropertyNames.*;
+
 @Log4j
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 @Singleton(name = NeTExStopPlaceRegisterUpdater.BEAN_NAME)
@@ -76,10 +78,6 @@ public class NeTExStopPlaceRegisterUpdater {
         navigationPathMapper = new NavigationPathMapper();
     }
 
-    private static final String PROP_KC_CLIENT_ID = "keycloak.resource";
-    private static final String PROP_KC_CLIENT_SECRET = "iam.keycloak.client.secret";
-    private static final String PROP_KC_CLIENT_REALM = "keycloak.realm";
-    private static final String PROP_KC_CLIENT_AUTH_URL = "keycloak.auth-server-url";
 
     @EJB
     private ContenerChecker contenerChecker;
@@ -87,10 +85,10 @@ public class NeTExStopPlaceRegisterUpdater {
     @PostConstruct
     public void postConstruct() {
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
-        String clientId = getAndValidateProperty(PROP_KC_CLIENT_ID);
-        String clientSecret = getAndValidateProperty(PROP_KC_CLIENT_SECRET);
-        String realm = getAndValidateProperty(PROP_KC_CLIENT_REALM);
-        String authServerUrl = getAndValidateProperty(PROP_KC_CLIENT_AUTH_URL);
+        String clientId = getAndValidateProperty(KC_CLIENT_ID);
+        String clientSecret = getAndValidateProperty(KC_CLIENT_SECRET);
+        String realm = getAndValidateProperty(KC_CLIENT_REALM);
+        String authServerUrl = getAndValidateProperty(KC_CLIENT_AUTH_URL);
 
         try {
             this.client = new PublicationDeliveryClient(url, true, new TokenService(clientId, clientSecret, realm, authServerUrl));
