@@ -109,7 +109,7 @@ public class NeTExStopPlaceRegisterUpdaterTest {
     }
 
     private PublicationDeliveryClient createMockedPublicationDeliveryClient(StopArea stopArea) throws JAXBException, IOException, SAXException {
-        return new PublicationDeliveryClient("") {
+        return new PublicationDeliveryClient("", null) {
             @Override
             public PublicationDeliveryStructure sendPublicationDelivery(
                     PublicationDeliveryStructure publicationDelivery) throws JAXBException, IOException {
