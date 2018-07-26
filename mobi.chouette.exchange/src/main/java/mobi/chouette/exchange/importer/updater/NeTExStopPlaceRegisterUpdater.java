@@ -20,7 +20,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.rutebanken.netex.client.PublicationDeliveryClient;
+import org.apache.log4j.Logger;import org.rutebanken.netex.client.PublicationDeliveryClient;
 import org.rutebanken.netex.client.TokenService;
 import org.rutebanken.netex.model.*;
 import org.xml.sax.SAXException;
@@ -91,7 +91,7 @@ public class NeTExStopPlaceRegisterUpdater {
         String authServerUrl = getAndValidateProperty(KC_CLIENT_AUTH_URL);
 
         try {
-            this.client = new PublicationDeliveryClient(url, true, new TokenService(clientId, clientSecret, realm, authServerUrl));
+            this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
         } catch (JAXBException | SAXException | IOException e) {
             log.warn("Cannot initialize publication delivery client with URL '" + url + "'", e);
         }
@@ -441,7 +441,10 @@ public class NeTExStopPlaceRegisterUpdater {
 
     private void updateStopAreaForStopPoint(String correlationId, Map<String, String> map, Referential referential, Set<String> discardedStopAreas, StopPoint sp) {
         ScheduledStopPoint scheduledStopPoint = sp.getScheduledStopPoint();
-        if (scheduledStopPoint != null) {
+        foo(correlationId, map, referential, discardedStopAreas, sp, scheduledStopPoint, log);
+
+    } static void foo(String correlationId, Map<String, String> map, Referential referential, Set<String> discardedStopAreas, StopPoint sp, ScheduledStopPoint scheduledStopPoint, Logger log) {
+    if (scheduledStopPoint != null) {
             StopArea stopArea = scheduledStopPoint.getContainedInStopAreaRef().getObject();
             String currentObjectId = stopArea.getObjectId();
             String newObjectId = map.get(currentObjectId);
@@ -467,9 +470,7 @@ public class NeTExStopPlaceRegisterUpdater {
             }
         } else {
             log.warn("Could not find mapped object for " + sp.getObjectId() + " - correlation id : " + correlationId);
-        }
-
-    }
+        }}
 
     private void addIdsToLookupMap(Map<String, String> map, KeyListStructure keyList, String newStopPlaceId) {
         // Add current id to map as well to handle if we send correct id's in and receive the same back
