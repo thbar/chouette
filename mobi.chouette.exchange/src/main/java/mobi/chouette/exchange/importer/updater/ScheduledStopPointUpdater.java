@@ -135,7 +135,7 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 			} else if (data.getDataLocations() == null) {
 				log.error("ValidationData.getDataLocations() is null");
 			} else if (newSA!=null && data.getDataLocations().get(newSA.getObjectId()) == null) {
-				log.error("No data location for new stop area: " + newSA.getObjectId() + " unlike old stop area: " + oldSA.getObjectId());
+				log.error("No data location for new stop area: " + newSA.getObjectId() + " unlike old stop area: " + oldSA == null ? "null" : oldSA.getObjectId());
 			}
 
 
