@@ -1,16 +1,15 @@
 package mobi.chouette.ws;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.scheduler.ReferentialLockManagerFactory;
+import mobi.chouette.service.HealthService;
+import org.springframework.stereotype.Component;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.scheduler.ReferentialLockManagerFactory;
-import mobi.chouette.service.HealthService;
-
-import org.springframework.stereotype.Component;
 
 @Component
 @Log4j
