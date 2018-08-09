@@ -1,11 +1,11 @@
 package mobi.chouette.exchange.gtfs.model.importer;
 
+import mobi.chouette.common.HTMLTagValidator;
+import mobi.chouette.exchange.gtfs.model.GtfsShape;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Map;
-
-import mobi.chouette.common.HTMLTagValidator;
-import mobi.chouette.exchange.gtfs.model.GtfsShape;
 
 public class ShapeById extends IndexImpl<GtfsShape> implements GtfsConverter {
 	
@@ -182,7 +182,12 @@ public class ShapeById extends IndexImpl<GtfsShape> implements GtfsConverter {
 	@Override
 	public boolean validate(GtfsShape bean, GtfsImporter dao) {
 		boolean result = true;
-		
+
+        if (bean.getShapeId().contains(":")) {
+            result = false;
+            bean.getErrors().add(new GtfsException(_path, bean.getId(), getIndex(FIELDS.shape_id.name()), FIELDS.shape_id.name(), GtfsException.ERROR.INVALID_FORMAT, bean.getShapeId(), bean.getShapeId()));
+        }
+
 		return result;
 	}
 

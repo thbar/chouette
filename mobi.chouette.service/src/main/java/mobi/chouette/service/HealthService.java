@@ -1,12 +1,12 @@
 package mobi.chouette.service;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.dao.DbStatusChecker;
+
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.dao.DbStatusChecker;
 
 @Singleton(name = HealthService.BEAN_NAME)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
