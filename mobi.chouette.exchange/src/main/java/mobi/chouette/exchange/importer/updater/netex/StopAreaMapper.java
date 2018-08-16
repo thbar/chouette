@@ -14,9 +14,9 @@ public class StopAreaMapper {
 
     public StopArea mapCommercialStopPoint(Referential referential, StopArea stopArea) {
         String split[] = stopArea.getObjectId().split(":");
-        String parentId = split[0]+":StopPlace:"+split[2];
-        
-    	StopArea parent = ObjectFactory.getStopArea(referential, parentId);
+        String parentId = split[0] + ":StopPlace:" + split[2];
+
+        StopArea parent = ObjectFactory.getStopArea(referential, parentId);
         parent.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
         parent.setLatitude(stopArea.getLatitude());
         parent.setLongitude(stopArea.getLongitude());
@@ -53,7 +53,9 @@ public class StopAreaMapper {
 
     public void mapQuayName(StopPlace stopPlace, Quay quay, StopArea stopArea) {
         if (quay.getName() == null) {
-            stopArea.setName(stopPlace.getName().getValue());
+            if (stopPlace.getName() != null) {
+                stopArea.setName(stopPlace.getName().getValue());
+            }
         } else if (quay.getName() != null) {
             if (multiLingualStringEquals(stopPlace.getName(), quay.getName())) {
                 // Same as parent

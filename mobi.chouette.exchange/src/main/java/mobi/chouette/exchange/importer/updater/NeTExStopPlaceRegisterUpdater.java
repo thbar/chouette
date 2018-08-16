@@ -152,7 +152,7 @@ public class NeTExStopPlaceRegisterUpdater {
         // Find and convert valid StopAreas
         List<StopPlace> stopPlaces = referential.getStopAreas().values().stream()
                 .map(stopArea -> stopArea.getParent() == null ? stopArea : stopArea.getParent())
-                .filter(stopArea -> fullStopAreaNotCahced.test(stopArea))
+                .filter(fullStopAreaNotCahced)
                 .filter(stopArea -> stopArea.getObjectId() != null)
                 .filter(stopArea -> stopArea.getAreaType() == ChouetteAreaEnum.CommercialStopPoint)
                 .distinct()
