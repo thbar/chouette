@@ -57,12 +57,19 @@ public class StopAreaMapper {
                 stopArea.setName(stopPlace.getName().getValue());
             }
         } else if (quay.getName() != null) {
-            if (multiLingualStringEquals(stopPlace.getName(), quay.getName())) {
+            if (stopPlace.getName() != null && multiLingualStringEquals(stopPlace.getName(), quay.getName())) {
                 // Same as parent
                 stopArea.setName(quay.getName().getValue());
             } else {
                 // Different than parent
-                stopArea.setName(stopPlace.getName().getValue() + " / " + quay.getName().getValue());
+                if (stopPlace.getName() != null) {
+                    String value = "";
+                            if(stopPlace.getName() != null) {
+                                value += stopPlace.getName().getValue() + "/";
+                            }
+                            value += quay.getName().getValue();
+                    stopArea.setName(value);
+                }
                 stopArea.setRegistrationNumber(quay.getPublicCode());
             }
         }
