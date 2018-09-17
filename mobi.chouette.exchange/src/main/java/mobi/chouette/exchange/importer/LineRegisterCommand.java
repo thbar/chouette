@@ -1,18 +1,7 @@
 package mobi.chouette.exchange.importer;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.ContenerChecker;
@@ -22,32 +11,31 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
-import mobi.chouette.exchange.importer.updater.LineOptimiser;
-import mobi.chouette.exchange.importer.updater.LineUpdater;
-import mobi.chouette.exchange.importer.updater.StopAreaIdMapper;
-import mobi.chouette.exchange.importer.updater.Updater;
+import mobi.chouette.exchange.importer.updater.*;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.*;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @Stateless(name = LineRegisterCommand.COMMAND)
@@ -73,7 +61,10 @@ public class LineRegisterCommand implements Command {
 	@EJB(beanName = StopAreaIdMapper.BEAN_NAME)
 	private StopAreaIdMapper stopAreaIdMapper;
 
-	@Override
+    @EJB(beanName = NeTExStopPlaceRegisterUpdater.BEAN_NAME)
+    private NeTExStopPlaceRegisterUpdater stopPlaceRegisterUpdater;
+
+    @Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
 
@@ -105,6 +96,15 @@ public class LineRegisterCommand implements Command {
 			} else {
 				log.info("Will not map ids against external stop place registry as import parameter stop_registry_map_id != true");
 			}
+
+
+            boolean shouldUpdateStopPlaceRegistry =
+                    Boolean.parseBoolean(System.getProperty(checker.getContext() + PropertyNames.STOP_PLACE_REGISTER_UPDATE));
+            if(shouldUpdateStopPlaceRegistry) {
+                stopPlaceRegisterUpdater.update(context, referential);
+            } else {
+                log.warn("Stop place register will not be updated. Neither is property " + PropertyNames.STOP_PLACE_REGISTER_UPDATE + " set nor has import parameter update_stop_registry = true.");
+            }
 
 
 			log.info("register line : " + newValue.getObjectId() + " " + newValue.getName() + " vehicleJourney count = "

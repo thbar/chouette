@@ -1,21 +1,5 @@
 package mobi.chouette.model;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,19 +7,20 @@ import lombok.ToString;
 import mobi.chouette.model.converter.ConnectionLinkTypeToStringConverter;
 import mobi.chouette.model.type.ConnectionLinkTypeEnum;
 import mobi.chouette.model.type.UserNeedEnum;
-
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.joda.time.Duration;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chouette ConnectionLink : relation between 2 StopAreas
  * <p/>
  * Neptune mapping : ConnectionLink <br/>
  * Gtfs mapping : transfer
- * 
  */
 
 @Entity
@@ -43,308 +28,307 @@ import org.joda.time.Duration;
 @NoArgsConstructor
 @ToString
 public class ConnectionLink extends NeptuneIdentifiedObject {
-	private static final long serialVersionUID = 8490105295077539089L;
+    private static final long serialVersionUID = 8490105295077539089L;
 
-	@Getter
-	@Setter
-	@SequenceGenerator(name = "connection_links_id_seq", sequenceName = "connection_links_id_seq",
-			allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "connection_links_id_seq")
-	@Id
-	@Column(name = "id", nullable = false)
-	protected Long id;
-	
-	/**
-	 * name
-	 * 
-	 * @return The actual value
-	 */
-	@Getter
-	@Column(name = "name", nullable = false)
-	private String name;
+    @Getter
+    @Setter
+    @SequenceGenerator(name = "connection_links_id_seq", sequenceName = "connection_links_id_seq",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "connection_links_id_seq")
+    @Id
+    @Column(name = "id", nullable = false)
+    protected Long id;
 
-	/**
-	 * set name <br/>
-	 * truncated to 255 characters if too long
-	 * 
-	 * @param value
-	 *            New value
-	 */
-	public void setName(String value) {
-		name = StringUtils.abbreviate(value, 255);
-	}
+    /**
+     * name
+     *
+     * @return The actual value
+     */
+    @Getter
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	/**
-	 * comment
-	 * 
-	 * @return The actual value
-	 */
-	@Getter
-	@Column(name = "comment")
-	private String comment;
+    /**
+     * set name <br/>
+     * truncated to 255 characters if too long
+     *
+     * @param value New value
+     */
+    public void setName(String value) {
+        name = StringUtils.abbreviate(value, 255);
+    }
 
-	/**
-	 * set comment <br/>
-	 * truncated to 255 characters if too long
-	 * 
-	 * @param value
-	 *            New value
-	 */
-	public void setComment(String value) {
-		comment = StringUtils.abbreviate(value, 255);
-	}
+    /**
+     * comment
+     *
+     * @return The actual value
+     */
+    @Getter
+    @Column(name = "comment")
+    private String comment;
 
-	/**
-	 * link length in meters
-	 * 
-	 * @param linkDistance
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@Column(name = "link_distance")
-	private BigDecimal linkDistance;
+    /**
+     * set comment <br/>
+     * truncated to 255 characters if too long
+     *
+     * @param value New value
+     */
+    public void setComment(String value) {
+        comment = StringUtils.abbreviate(value, 255);
+    }
 
-	/**
-	 * lift indicator <br/>
-	 * 
-	 * <ul>
-	 * <li>true if a lift is available on this link</li>
-	 * <li>false if no lift is available on this link</li>
-	 * </ul>
-	 * 
-	 * @param liftAvailable
-	 *            New state for lift indicator
-	 * @return The actual lift indicator
-	 */
-	@Getter
-	@Setter
-	@Column(name = "lift_availability")
-	private Boolean liftAvailable = false;
+    /**
+     * link length in meters
+     *
+     * @param linkDistance
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    @Column(name = "link_distance")
+    private BigDecimal linkDistance;
 
-	/**
-	 * mobility restriction indicator (such as wheel chairs) <br/>
-	 * 
-	 * <ul>
-	 * <li>true if wheel chairs can follow this link</li>
-	 * <li>false if wheel chairs can't follow this link</li>
-	 * </ul>
-	 * 
-	 * @param mobilityRestrictedSuitable
-	 *            New state for mobility restriction indicator
-	 * @return The actual mobility restriction indicator
-	 */
-	@Getter
-	@Setter
-	@Column(name = "mobility_restricted_suitability")
-	private Boolean mobilityRestrictedSuitable = false;
+    /**
+     * lift indicator <br/>
+     *
+     * <ul>
+     * <li>true if a lift is available on this link</li>
+     * <li>false if no lift is available on this link</li>
+     * </ul>
+     *
+     * @param liftAvailable
+     * New state for lift indicator
+     * @return The actual lift indicator
+     */
+    @Getter
+    @Setter
+    @Column(name = "lift_availability")
+    private Boolean liftAvailable = false;
 
-	/**
-	 * stairs indicator <br/>
-	 * 
-	 * <ul>
-	 * <li>true if a stairs are presents on this link</li>
-	 * <li>false if no stairs are presents on this link</li>
-	 * </ul>
-	 * 
-	 * @param stairsAvailable
-	 *            New state for stairs indicator
-	 * @return The actual stairs indicator
-	 */
-	@Getter
-	@Setter
-	@Column(name = "stairs_availability")
-	private Boolean stairsAvailable = false;
+    /**
+     * mobility restriction indicator (such as wheel chairs) <br/>
+     *
+     * <ul>
+     * <li>true if wheel chairs can follow this link</li>
+     * <li>false if wheel chairs can't follow this link</li>
+     * </ul>
+     *
+     * @param mobilityRestrictedSuitable
+     * New state for mobility restriction indicator
+     * @return The actual mobility restriction indicator
+     */
+    @Getter
+    @Setter
+    @Column(name = "mobility_restricted_suitability")
+    private Boolean mobilityRestrictedSuitable = false;
 
-	/**
-	 * medium time to follow the link <br/>
-	 * null if unknown
-	 * 
-	 * @param defaultDuration
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@Column(name = "default_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
-	private Duration defaultDuration;
+    /**
+     * stairs indicator <br/>
+     *
+     * <ul>
+     * <li>true if a stairs are presents on this link</li>
+     * <li>false if no stairs are presents on this link</li>
+     * </ul>
+     *
+     * @param stairsAvailable
+     * New state for stairs indicator
+     * @return The actual stairs indicator
+     */
+    @Getter
+    @Setter
+    @Column(name = "stairs_availability")
+    private Boolean stairsAvailable = false;
 
-	/**
-	 * time to follow the link for a frequent traveller <br/>
-	 * null if unknown
-	 * 
-	 * @param frequentTravellerDuration
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@Column(name = "frequent_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
-	private Duration frequentTravellerDuration;
+    /**
+     * medium time to follow the link <br/>
+     * null if unknown
+     *
+     * @param defaultDuration
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    @Column(name = "default_duration")
+    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
+    private Duration defaultDuration;
 
-	/**
-	 * time to follow the link for an occasional traveller <br/>
-	 * null if unknown
-	 * 
-	 * @param occasionalTravellerDuration
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@Column(name = "occasional_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
-	private Duration occasionalTravellerDuration;
+    /**
+     * time to follow the link for a frequent traveller <br/>
+     * null if unknown
+     *
+     * @param frequentTravellerDuration
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    @Column(name = "frequent_traveller_duration")
+    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
+    private Duration frequentTravellerDuration;
 
-	/**
-	 * time to follow the link for a traveller with mobility restriction <br/>
-	 * null if unknown
-	 * 
-	 * @param mobilityRestrictedTravellerDuration
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@Column(name = "mobility_restricted_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
-	private Duration mobilityRestrictedTravellerDuration;
+    /**
+     * time to follow the link for an occasional traveller <br/>
+     * null if unknown
+     *
+     * @param occasionalTravellerDuration
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    @Column(name = "occasional_traveller_duration")
+    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
+    private Duration occasionalTravellerDuration;
 
-	/**
-	 * link type
-	 * 
-	 * @param linkType
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	// don't use Enumerated to manage blank database values
-	@Convert(converter = ConnectionLinkTypeToStringConverter.class)
-	// @Enumerated(EnumType.STRING)
-	@Column(name = "link_type")
-	private ConnectionLinkTypeEnum linkType;
+    /**
+     * time to follow the link for a traveller with mobility restriction <br/>
+     * null if unknown
+     *
+     * @param mobilityRestrictedTravellerDuration
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    @Column(name = "mobility_restricted_traveller_duration")
+    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
+    private Duration mobilityRestrictedTravellerDuration;
 
-	/**
-	 * coded user needs as binary map<br/>
-	 * 
-	 * use following methods for easier access :
-	 * <ul>
-	 * <li>getUserNeeds</li>
-	 * <li>setUserNeeds</li>
-	 * <li>addUserNeed</li>
-	 * <li>addAllUserNeed</li>
-	 * <li>removeUserNeed</li>
-	 * </ul>
-	 * 
-	 * @param intUserNeeds
-	 *            New value
-	 * @return The actual value
-	 */
-	@Column(name = "int_user_needs")
-	@Getter
-	@Setter
-	private Integer intUserNeeds = 0;
+    /**
+     * link type
+     *
+     * @param linkType
+     * New value
+     * @return The actual value
+     */
+    @Getter
+    @Setter
+    // don't use Enumerated to manage blank database values
+    @Convert(converter = ConnectionLinkTypeToStringConverter.class)
+    // @Enumerated(EnumType.STRING)
+    @Column(name = "link_type")
+    private ConnectionLinkTypeEnum linkType;
 
-	/**
-	 * return UserNeeds as Enum list
-	 * 
-	 * @return UserNeeds
-	 */
-	public List<UserNeedEnum> getUserNeeds() {
-		List<UserNeedEnum> result = new ArrayList<UserNeedEnum>();
-		if (intUserNeeds == null) return result;
-		for (UserNeedEnum userNeed : UserNeedEnum.values()) {
-			int mask = 1 << userNeed.ordinal();
-			if ((this.intUserNeeds & mask) == mask) {
-				result.add(userNeed);
-			}
-		}
-		return result;
-	}
+    /**
+     * coded user needs as binary map<br/>
+     * <p>
+     * use following methods for easier access :
+     * <ul>
+     * <li>getUserNeeds</li>
+     * <li>setUserNeeds</li>
+     * <li>addUserNeed</li>
+     * <li>addAllUserNeed</li>
+     * <li>removeUserNeed</li>
+     * </ul>
+     *
+     * @param intUserNeeds
+     * New value
+     * @return The actual value
+     */
+    @Column(name = "int_user_needs")
+    @Getter
+    @Setter
+    private Integer intUserNeeds = 0;
 
-	/**
-	 * update UserNeeds as Enum list
-	 * 
-	 * @param userNeeds
-	 */
-	public void setUserNeeds(List<UserNeedEnum> userNeeds) {
-		int value = 0;
-		for (UserNeedEnum userNeed : userNeeds) {
-			int mask = 1 << userNeed.ordinal();
-			value |= mask;
-		}
-		this.intUserNeeds = value;
-	}
+    /**
+     * return UserNeeds as Enum list
+     *
+     * @return UserNeeds
+     */
+    public List<UserNeedEnum> getUserNeeds() {
+        List<UserNeedEnum> result = new ArrayList<UserNeedEnum>();
+        if (intUserNeeds == null) return result;
+        for (UserNeedEnum userNeed : UserNeedEnum.values()) {
+            int mask = 1 << userNeed.ordinal();
+            if ((this.intUserNeeds & mask) == mask) {
+                result.add(userNeed);
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * first stop area connected to link
-	 * 
-	 * @return The actual value
-	 */
-	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "departure_id")
-	private StopArea startOfLink;
+    /**
+     * update UserNeeds as Enum list
+     *
+     * @param userNeeds
+     */
+    public void setUserNeeds(List<UserNeedEnum> userNeeds) {
+        int value = 0;
+        for (UserNeedEnum userNeed : userNeeds) {
+            int mask = 1 << userNeed.ordinal();
+            value |= mask;
+        }
+        this.intUserNeeds = value;
+    }
 
-	/**
-	 * set startOfLink
-	 * 
-	 * @param stopArea
-	 */
-	public void setStartOfLink(StopArea stopArea) {
-		if (this.startOfLink != null) {
-			this.startOfLink.getConnectionStartLinks().remove(this);
-		}
-		this.startOfLink = stopArea;
-		if (stopArea != null) {
-			stopArea.getConnectionStartLinks().add(this);
-		}
-	}
-	/**
-	 * set stopArea without updating stopArea collection
-	 * 
-	 * @param stopArea
-	 */
-	public void forceStartOfLink(StopArea stopArea) {
-		this.startOfLink = stopArea;
-	}
+    /**
+     * first stop area connected to link
+     *
+     * @return The actual value
+     */
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "departure_id")
+    private StopArea startOfLink;
 
-	/**
-	 * last stop area connected to link
-	 * 
-	 * @return The actual value
-	 */
-	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "arrival_id")
-	private StopArea endOfLink;
+    /**
+     * set startOfLink
+     *
+     * @param stopArea
+     */
+    public void setStartOfLink(StopArea stopArea) {
+        if (this.startOfLink != null) {
+            this.startOfLink.getConnectionStartLinks().remove(this);
+        }
+        this.startOfLink = stopArea;
+        if (stopArea != null) {
+            stopArea.getConnectionStartLinks().add(this);
+        }
+    }
 
-	/**
-	 * set stopArea
-	 * 
-	 * @param stopArea
-	 */
-	public void setEndOfLink(StopArea stopArea) {
-		if (this.endOfLink != null) {
-			this.endOfLink.getConnectionEndLinks().remove(this);
-		}
-		this.endOfLink = stopArea;
-		if (stopArea != null) {
-			stopArea.getConnectionEndLinks().add(this);
-		}
-	}
-	
-	/**
-	 * set stopArea without updating stopArea collection
-	 * 
-	 * @param stopArea
-	 */
-	public void forceEndOfLink(StopArea stopArea) {
-		this.endOfLink = stopArea;
-	}
+    /**
+     * set stopArea without updating stopArea collection
+     *
+     * @param stopArea
+     */
+    public void forceStartOfLink(StopArea stopArea) {
+        this.startOfLink = stopArea;
+    }
+
+    /**
+     * last stop area connected to link
+     *
+     * @return The actual value
+     */
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "arrival_id")
+    private StopArea endOfLink;
+
+    /**
+     * set stopArea
+     *
+     * @param stopArea
+     */
+    public void setEndOfLink(StopArea stopArea) {
+        if (this.endOfLink != null) {
+            this.endOfLink.getConnectionEndLinks().remove(this);
+        }
+        this.endOfLink = stopArea;
+        if (stopArea != null) {
+            stopArea.getConnectionEndLinks().add(this);
+        }
+    }
+
+    /**
+     * set stopArea without updating stopArea collection
+     *
+     * @param stopArea
+     */
+    public void forceEndOfLink(StopArea stopArea) {
+        this.endOfLink = stopArea;
+    }
 
 }
