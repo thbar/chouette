@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.4.OKI-SNAPSHOT</version>
+    <version>3.4.RB-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -33,7 +33,7 @@
         <!-- NB: Concious choice of using snapshot version. This is to keep in
             sync, and fail fast if incompatibilities -->
         <netex-java-model.version>1.0.9-SNAPSHOT</netex-java-model.version>
-        <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
+        <rutebanken.helpers.version>0.0.4-SNAPSHOT</rutebanken.helpers.version>
     </properties>
     <distributionManagement>
         <snapshotRepository>
@@ -270,8 +270,7 @@
                 <version>2.17</version>
                 <configuration>
                     <argLine>-Djboss.socket.binding.port-offset=300
-                        -XX:MaxPermSize=256m
-                    </argLine>
+                        -XX:MaxPermSize=256m</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- Fork every test because it will launch a separate AS instance -->
                     <forkCount>1</forkCount>
@@ -324,8 +323,7 @@
                         </goals>
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>target/generated-sources/delombok</sourceDirectory>
-
+                            <sourceDirectory>src/main/java</sourceDirectory>
                             <verbose>false</verbose>
                             <skip>${skipDelombok}</skip>
                         </configuration>
@@ -591,12 +589,11 @@
                             <artifactId>mobi.chouette.exchange.converter</artifactId>
                             <version>${project.version}</version>
                         </dependency>
-             -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>mobi.chouette.service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+             -->			<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>mobi.chouette.ws</artifactId>
@@ -752,7 +749,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>25.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>commons-pool</groupId>
@@ -833,17 +830,6 @@
             <properties>
                 <skipWildfly>false</skipWildfly>
                 <skipInitDb>false</skipInitDb>
-            </properties>
-        </profile>
-        <profile>
-            <id>justCompile</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <skipWildfly>true</skipWildfly>
-                <skipInitDb>true</skipInitDb>
-                <skipTests>true</skipTests>
             </properties>
         </profile>
         <profile>

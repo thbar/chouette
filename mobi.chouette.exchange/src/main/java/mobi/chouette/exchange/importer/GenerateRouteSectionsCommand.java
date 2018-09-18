@@ -52,6 +52,10 @@ public class GenerateRouteSectionsCommand implements Command, Constant {
 	@EJB
 	private RouteSectionDAO routeSectionDAO;
 
+	private Integer maxMetersFromQuay;
+
+	private static final int DEFAULT_MAX_METERS_FROM_QUAY = 500;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
@@ -85,7 +89,14 @@ public class GenerateRouteSectionsCommand implements Command, Constant {
 				Coordinate to = getCoordinateFromStopPoint(sp);
 				LineString lineString = null;
 				if (from != null && to != null) {
+
 					lineString = routeSectionGenerator.getRouteSection(from, to, transportMode);
+					if (!isLineStringGoodMatchForQuays(lineString, from, to)) {
+						log.info("Ignoring generated LineString because it is to far from stop at start and/or end of section." +
+								"JP: " + jp.getObjectId() + ", From: " + prev.getScheduledStopPoint().getContainedInStopAreaRef().getObject() +
+								", to: " + sp.getScheduledStopPoint().getContainedInStopAreaRef().getObject() + ", transportMode: " + transportMode);
+						lineString = null;
+					}
 
 				}
 				routeSections.add(createRouteSection(prev, sp, lineString));
@@ -98,6 +109,24 @@ public class GenerateRouteSectionsCommand implements Command, Constant {
 			jp.getRouteSections().add(routeSection);
 		}
 		journeyPatternDAO.update(jp);
+	}
+
+	protected boolean isLineStringGoodMatchForQuays(LineString lineString, Coordinate from, Coordinate to) {
+
+		if (lineString != null && lineString.getCoordinates() != null && lineString.getCoordinates().length > 0) {
+
+			Coordinate lineStart = lineString.getCoordinates()[0];
+			Coordinate lineEnd = lineString.getCoordinates()[lineString.getCoordinates().length - 1];
+
+			double distanceFromStart = GeometryUtil.calculateDistanceInMeters(from.x, from.y, lineStart.x, lineStart.y);
+			double distanceFromEnd = GeometryUtil.calculateDistanceInMeters(to.x, to.y, lineEnd.x, lineEnd.y);
+
+			int maxMetersFromQuay = getMaxMetersFromQuay();
+			if (distanceFromStart > maxMetersFromQuay || distanceFromEnd > maxMetersFromQuay) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private RouteSection createRouteSection(StopPoint from, StopPoint to, LineString lineString) {
@@ -126,6 +155,20 @@ public class GenerateRouteSectionsCommand implements Command, Constant {
 			return null;
 		}
 		return new Coordinate(stopArea.getLongitude().doubleValue(), stopArea.getLatitude().doubleValue());
+	}
+
+	private int getMaxMetersFromQuay() {
+		if (maxMetersFromQuay == null) {
+			String maxAsString = System.getProperty("iev.route.section.generate.quay.distance.max.meters");
+			if (maxAsString != null) {
+				maxMetersFromQuay = Integer.valueOf(maxAsString);
+				log.info("Using configured value for iev.route.section.generate.quay.distance.max.meters: " + maxMetersFromQuay);
+			} else {
+				maxMetersFromQuay = DEFAULT_MAX_METERS_FROM_QUAY;
+				log.info("No value configured iev.route.section.generate.quay.distance.max.meters, using default: " + maxMetersFromQuay);
+			}
+		}
+		return maxMetersFromQuay;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
