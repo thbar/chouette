@@ -35,12 +35,12 @@ public class GtfsRouteParserTest {
         // ne commence pas par 8
         gtfsRoute.setRouteType(RouteTypeEnum.Rail);
         gtfsRoute.setRouteId("OCE777777");
-        Assert.assertEquals(gtfsRouteParser.getSubModeFromRoute(gtfsRoute), TransportSubModeNameEnum.RegionalRail);
+        Assert.assertNotEquals(gtfsRouteParser.getSubModeFromRoute(gtfsRoute), TransportSubModeNameEnum.RegionalRail);
 
         // pas 8 chiffres
         gtfsRoute.setRouteType(RouteTypeEnum.Rail);
         gtfsRoute.setRouteId("OCE46513");
-        Assert.assertEquals(gtfsRouteParser.getSubModeFromRoute(gtfsRoute), TransportSubModeNameEnum.RegionalRail);
+        Assert.assertNotEquals(gtfsRouteParser.getSubModeFromRoute(gtfsRoute), TransportSubModeNameEnum.RegionalRail);
 
         // vide
         gtfsRoute.setRouteType(RouteTypeEnum.Rail);
