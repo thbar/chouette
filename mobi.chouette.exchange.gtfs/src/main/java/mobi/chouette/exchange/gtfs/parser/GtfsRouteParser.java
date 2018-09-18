@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.gtfs.parser;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -13,6 +7,7 @@ import mobi.chouette.common.Context;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+import mobi.chouette.exchange.gtfs.model.RouteTypeEnum;
 import mobi.chouette.exchange.gtfs.model.importer.AgencyById;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
@@ -26,8 +21,16 @@ import mobi.chouette.exchange.importer.Validator;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
+import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 @Log4j
 public class GtfsRouteParser implements Parser, Validator, Constant {
@@ -233,7 +236,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 		if(line.getName() == null) {
 			line.setName(line.getNumber());
 		}
-		
+
 //		if (line.getPublishedName() != null) {
 //			line.setName(line.getPublishedName());
 //		} else {
@@ -241,7 +244,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 //		}
 
 		line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
-		line.setTransportSubModeName(gtfsRoute.getRouteType().getSubMode());
+		line.setTransportSubModeName(getSubModeFromRoute(gtfsRoute));
 		
 		String[] token = line.getObjectId().split(":");
 		line.setRegistrationNumber(token[2]);
@@ -272,4 +275,24 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 			}
 		});
 	}
+
+    TransportSubModeNameEnum getSubModeFromRoute(GtfsRoute gtfsRoute) {
+        if (gtfsRoute.getRouteType() != null) {
+            if (gtfsRoute.getRouteType() == RouteTypeEnum.Rail) {
+                if (gtfsRoute.getRouteId() != null && gtfsRoute.getRouteId().length() > 3) {
+                    String routeId = gtfsRoute.getRouteId().substring(3);
+                    if (routeId.matches("8\\d{5}")) { // TER
+                        return TransportSubModeNameEnum.RegionalRail;
+                    } else if (Stream.of("1\\d{5}", "[34]\\d{3}").anyMatch(routeId::matches)) { // IC
+                        return TransportSubModeNameEnum.InterregionalRail;
+                    } else if (Stream.of("[857]\\d{3}", "[857]\\d{3}/\\d{2}", "[857]\\d{3}/\\d{4}").anyMatch(routeId::matches)) {
+                        return TransportSubModeNameEnum.LongDistance;
+                    }
+                }
+            } else {
+                return gtfsRoute.getRouteType().getSubMode();
+            }
+        }
+        return null;
+    }
 }
