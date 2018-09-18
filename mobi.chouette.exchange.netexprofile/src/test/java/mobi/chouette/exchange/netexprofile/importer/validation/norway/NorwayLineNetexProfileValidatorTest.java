@@ -88,7 +88,7 @@ public class NorwayLineNetexProfileValidatorTest {
 
 		Set<Codespace> validCodespaces = new HashSet<>();
 
-		Codespace nsrCodespace = createCodespace(1L, "NAQ", "http://rmr.nouvelle-aquitaine.pro/naq");
+		Codespace nsrCodespace = createCodespace(1L, "NSR", "http://www.rutebanken.org/ns/nsr");
 		validCodespaces.add(nsrCodespace);
 
 		Codespace avinorCodespace = createCodespace(2L, "AVI", "http://www.rutebanken.org/ns/avi");
@@ -348,7 +348,6 @@ public class NorwayLineNetexProfileValidatorTest {
 		Assert.assertEquals(vr.getResult(), ValidationReporter.VALIDATION_RESULT.ERROR);
 		Set<String> errorLevelFailures = getErrorLevelFailures(vr);
 
-		Assert.assertTrue(errorLevelFailures.remove(AbstractNorwayNetexProfileValidator._1_NETEX_CODESPACE));
 		Assert.assertTrue(errorLevelFailures.remove(AbstractNorwayNetexProfileValidator._1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_FLEXIBLELINETYPE));
 		Assert.assertTrue(errorLevelFailures.remove(AbstractNorwayNetexProfileValidator._1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BUYWHEN));
 
