@@ -65,7 +65,7 @@ public class StopAreaMapper {
                 if (stopPlace.getName() != null) {
                     String value = "";
                             if(stopPlace.getName() != null) {
-                                value += stopPlace.getName().getValue() + "/";
+                                value += stopPlace.getName().getValue() + " / ";
                             }
                             value += quay.getName().getValue();
                     stopArea.setName(value);
