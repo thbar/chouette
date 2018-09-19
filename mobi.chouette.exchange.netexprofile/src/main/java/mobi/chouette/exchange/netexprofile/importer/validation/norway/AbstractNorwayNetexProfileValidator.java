@@ -459,8 +459,8 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	protected void validateCommonFrameConcepts(Context context, XPathCompiler xpath, XdmNode dom) throws XPathExpressionException, SaxonApiException {
 		validateElementNotPresent(context, xpath, dom, ".[not(validityConditions)]", _1_NETEX_COMPOSITE_FRAME_VALIDITYCONDTITIONS);
 		validateElementNotPresent(context, xpath, dom, "frames//validityConditions", _1_NETEX_VALIDITYCONDITIONS_ON_FRAMES_INSIDE_COMPOSITEFRAME);
-		validateElementPresent(context, xpath, dom, "codespaces/Codespace[Xmlns = 'NSR' and XmlnsUrl = 'http://www.rutebanken.org/ns/nsr']",
-				_1_NETEX_CODESPACE);
+        validateElementPresent(context, xpath, dom, "codespaces/Codespace[Xmlns = '" + NSR_XMLNS + "' and XmlnsUrl = '" + NSR_XMLNSURL + "']",
+                _1_NETEX_CODESPACE);
 		validateElementNotPresent(context, xpath, dom, "//ValidBetween[not(FromDate) and not(ToDate)]", _1_NETEX_VALIDBETWEEN_INCOMPLETE);
 		validateElementNotPresent(context, xpath, dom, "//ValidBetween[FromDate and ToDate and ToDate < FromDate]", _1_NETEX_VALIDBETWEEN_TODATE_BEFORE_FROMDATE);
 		validateElementNotPresent(context, xpath, dom, "//AvailabilityCondition[not(FromDate) and not(ToDate)]", _1_NETEX_AVAILABILITYCONDITION_INCOMPLETE);
