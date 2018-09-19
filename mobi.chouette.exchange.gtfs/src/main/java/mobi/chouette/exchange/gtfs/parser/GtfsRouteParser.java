@@ -290,7 +290,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
                     String routeId = gtfsRoute.getRouteId().substring(3);
                     if (routeId.matches("8\\d{5}")) { // TER
                         return TransportSubModeNameEnum.RegionalRail;
-                    } else if (Stream.of("1\\d{5}", "[34]\\d{3}", "\\d{3}").anyMatch(routeId::matches)) { // IC
+                    } else if (Stream.of("1\\d{5}", "[34]\\d{3}").anyMatch(routeId::matches)) { // IC
                         return TransportSubModeNameEnum.InterregionalRail;
                     } else if (Stream.of("[857]\\d{3}", "[857]\\d{3}/\\d{2}", "[857]\\d{3}/\\d{4}").anyMatch(routeId::matches)) {
                         return TransportSubModeNameEnum.LongDistance;
