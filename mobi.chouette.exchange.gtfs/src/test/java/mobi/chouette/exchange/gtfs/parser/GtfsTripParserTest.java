@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class GtfsRouteParserTest {
+public class GtfsTripParserTest {
 
     public GtfsRouteParser gtfsRouteParser;
     private GtfsRoute gtfsRoute;
@@ -156,5 +156,6 @@ public class GtfsRouteParserTest {
         Assert.assertNotEquals(gtfsRouteParser.getSubModeFromRoute(gtfsRoute), TransportSubModeNameEnum.InterregionalRail);
 
     }
+
 
 }
