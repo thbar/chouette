@@ -1233,24 +1233,17 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * Compute sub mode for French Rail.
      * Based on SNCF organizatio train codification.
      *
-     * @param gtfsRoute
+     * @param tripHeadSign
      * @return sub mode upon train codification in case of a rail typed route.
      */
-    TransportSubModeNameEnum getSubModeFromTripHeadSign(String gtfsRoute) {
-        if (gtfsRoute.getRouteType() != null) {
-            if (gtfsRoute.getRouteType() == RouteTypeEnum.Rail) {
-                if (gtfsRoute.getRouteId() != null && gtfsRoute.getRouteId().length() > 3) {
-                    String routeId = gtfsRoute.getRouteId().substring(3);
-                    if (routeId.matches("8\\d{5}")) { // TER
-                        return TransportSubModeNameEnum.RegionalRail;
-                    } else if (Stream.of("1\\d{5}", "[34]\\d{3}").anyMatch(routeId::matches)) { // IC
-                        return TransportSubModeNameEnum.InterregionalRail;
-                    } else if (Stream.of("[857]\\d{3}", "[857]\\d{3}/\\d{2}", "[857]\\d{3}/\\d{4}").anyMatch(routeId::matches)) {
-                        return TransportSubModeNameEnum.LongDistance;
-                    }
-                }
-            } else {
-                return gtfsRoute.getRouteType().getSubMode();
+    TransportSubModeNameEnum getSubModeFromTripHeadSign(String tripHeadSign) {
+        if (tripHeadSign != null && tripHeadSign.length() > 3) {
+            if (tripHeadSign.matches("8\\d{5}")) { // TER
+                return TransportSubModeNameEnum.RegionalRail;
+            } else if (Stream.of("1\\d{5}", "[34]\\d{3}").anyMatch(tripHeadSign::matches)) { // IC
+                return TransportSubModeNameEnum.InterregionalRail;
+            } else if (Stream.of("[857]\\d{3}", "[857]\\d{3}/\\d{2}", "[857]\\d{3}/\\d{4}").anyMatch(tripHeadSign::matches)) {
+                return TransportSubModeNameEnum.LongDistance;
             }
         }
         return null;
