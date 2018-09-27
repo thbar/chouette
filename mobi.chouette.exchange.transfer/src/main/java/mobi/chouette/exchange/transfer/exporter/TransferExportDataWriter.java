@@ -132,6 +132,7 @@ public class TransferExportDataWriter implements Command, Constant {
 				if ((i + 1) % FLUSH_SIZE == 0) {
 					log.info("Intermediary flush");
 					lineDAO.flush();
+                    log.info("Intermediary flush : line flush ok");
 					// Remove most flushed objects from persistence context to ease garbage collection
 					detachLineFromPersistenceContext(lineToTransfer, i, FLUSH_SIZE);
 					log.info("Intermediary flush completed");
