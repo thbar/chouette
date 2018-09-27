@@ -95,7 +95,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
                 }
             }
 
-            scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 600, updateFrequencySeconds, SECONDS);
+            scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 1800, updateFrequencySeconds, SECONDS);
 
         } else {
             log.info("Not initializing CachingGoogleCloudFileStore as other FileStore impl is configured. " + implPropKey + ":" + implProp);
