@@ -822,7 +822,17 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         StopArea stopArea1 = containedInStopAreaRef1.getObject();
         log.info("stopArea1 : " + stopArea1.toString());
 
-        return stopArea1.equals(sp2.getScheduledStopPoint().getContainedInStopAreaRef().getObject())
+         ScheduledStopPoint scheduledStopPoint2 = sp2.getScheduledStopPoint();
+        log.info("scheduledStopPoint2 : " + scheduledStopPoint2.toString());
+        ObjectReference<StopArea> containedInStopAreaRef2 = scheduledStopPoint2.getContainedInStopAreaRef();
+        log.info("containedInStopAreaRef2 : " + containedInStopAreaRef2.toString());
+        StopArea stopArea2 = containedInStopAreaRef2.getObject();
+        log.info("stopArea2 : " + stopArea2.toString());
+
+        if (sp1.getForBoarding() == null) sp1.setForBoarding(BoardingPossibilityEnum.normal);
+        if (sp2.getForBoarding() == null) sp2.setForBoarding(BoardingPossibilityEnum.normal);
+
+        return stopArea1.equals(sp2)
                 && sp1.getForBoarding().equals(sp2.getForBoarding())
                 && sp1.getForAlighting().equals(sp2.getForAlighting());
     }
