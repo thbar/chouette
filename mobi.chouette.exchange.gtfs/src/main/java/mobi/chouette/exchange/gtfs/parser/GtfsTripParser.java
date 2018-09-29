@@ -473,6 +473,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         for (GtfsTrip gtfsTrip : gtfsTrips.values(gtfsRouteId)) {
 
+            log.info("GTFS TRIP : " + gtfsTrip.getTripHeadSign());
+
             if (!importer.getStopTimeByTrip().values(gtfsTrip.getTripId()).iterator().hasNext()) {
                 continue;
             }
@@ -578,9 +580,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                     }
                 }
                 journeyKey += ":" + buildShapeKey(vehicleJourney);
+                log.info("route with shape => journey key = " + journeyKey);
 
             } else {
                 journeyKey += "," + buildStopsKey(vehicleJourney);
+                log.info("route WITHOUT shape => journey key = " + journeyKey);
             }
 
             JourneyPattern journeyPattern = journeyPatternByStopSequence.get(journeyKey);
@@ -1010,6 +1014,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 + end.getHourOfDay() + ":" + end.getMinuteOfHour());
     }
 
+    private RoutePoint createRoutePointFromStopPoint(Referential referential, StopPoint firstStopPoint) {
+        RoutePoint firstRoutePoint = ObjectFactory.getRoutePoint(referential, firstStopPoint.objectIdPrefix() + ":RoutePoint:" + firstStopPoint.objectIdSuffix());
+        firstRoutePoint.setScheduledStopPoint(firstStopPoint.getScheduledStopPoint());
+        firstRoutePoint.setFilled(true);
+        return firstRoutePoint;
+    }
+
     /**
      * @param context
      * @param referential
@@ -1100,13 +1111,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         //addSyntheticDestinationDisplayIfMissingOnFirstStopPoint(configuration, referential, journeyPattern);
 
         return journeyPattern;
-    }
-
-    private RoutePoint createRoutePointFromStopPoint(Referential referential, StopPoint firstStopPoint) {
-        RoutePoint firstRoutePoint = ObjectFactory.getRoutePoint(referential, firstStopPoint.objectIdPrefix() + ":RoutePoint:" + firstStopPoint.objectIdSuffix());
-        firstRoutePoint.setScheduledStopPoint(firstStopPoint.getScheduledStopPoint());
-        firstRoutePoint.setFilled(true);
-        return firstRoutePoint;
     }
 
     private void addSyntheticDestinationDisplayIfMissingOnFirstStopPoint(GtfsImportParameters configuration, Referential referential, JourneyPattern jp) {
@@ -1312,6 +1316,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             routeKey += "_" + gtfsTrip.getShapeId();
         // routeKey += "_" + line.getRoutes().size();
         routeKey += "_" + buildStopsKey(vehicleJourney);
+        log.info("create route : build stops key = " + routeKey);
         String routeId = AbstractConverter.composeObjectId(configuration, Route.ROUTE_KEY,
                 routeKey, log);
         // log.info(Color.LIGHT_BLUE + "createRoute : route " + routeId +
