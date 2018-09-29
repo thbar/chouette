@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -816,7 +815,14 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * @return
      */
     private boolean checkIfTwoPointAreEquivalent(StopPoint sp1, StopPoint sp2) {
-        return sp1.getScheduledStopPoint().getContainedInStopAreaRef().getObject().equals(sp2.getScheduledStopPoint().getContainedInStopAreaRef().getObject())
+        ScheduledStopPoint scheduledStopPoint1 = sp1.getScheduledStopPoint();
+        log.info("scheduledStopPoint1 : " + scheduledStopPoint1.toString());
+        ObjectReference<StopArea> containedInStopAreaRef1 = scheduledStopPoint1.getContainedInStopAreaRef();
+        log.info("containedInStopAreaRef1 : " + containedInStopAreaRef1.toString());
+        StopArea stopArea1 = containedInStopAreaRef1.getObject();
+        log.info("stopArea1 : " + stopArea1.toString());
+
+        return stopArea1.equals(sp2.getScheduledStopPoint().getContainedInStopAreaRef().getObject())
                 && sp1.getForBoarding().equals(sp2.getForBoarding())
                 && sp1.getForAlighting().equals(sp2.getForAlighting());
     }
@@ -1479,13 +1485,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      *
      * @param referential
      * @param configuration
-	 *
-	 * @param routeId
-	 *            route objectId
-	 * @param stopTimesOfATrip
-	 *            first trip's ordered GTFS StopTimes
-	 * @param mapStopAreasByStopId
-	 *            stopAreas to attach created StopPoints (parent relationship)
+     * @param routeId              route objectId
+     * @param stopTimesOfATrip     first trip's ordered GTFS StopTimes
+     * @param mapStopAreasByStopId stopAreas to attach created StopPoints (parent relationship)
      * @return
      */
     private void createStopPoint(Route route, JourneyPattern journeyPattern, List<VehicleJourneyAtStop> list,
@@ -1496,7 +1498,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         for (VehicleJourneyAtStop vehicleJourneyAtStop : list) {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
             String baseKey = route.getObjectId().replace(Route.ROUTE_KEY, StopPoint.STOPPOINT_KEY) + "a"
-					+ wrapper.stopId.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
+                    + wrapper.stopId.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
             String stopKey = baseKey;
             int dup = 1;
             while (stopPointKeys.contains(stopKey)) {
@@ -1518,7 +1520,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             scheduledStopPoint.setContainedInStopAreaRef(new SimpleObjectReference(stopArea));
             stopPoint.setRoute(route);
             stopPoint.setPosition(position++);
-//            stopPoint.setForBoarding(toBoardingPossibility(wrapper.getPickUpType()));
+//            stopPoint.setForBoarding(toBoardingPossibility(wrapper.pickUp));
 //            stopPoint.setForAlighting(toAlightingPossibility(wrapper.dropOff));
 
             if (wrapper.stopHeadsign != null) {
