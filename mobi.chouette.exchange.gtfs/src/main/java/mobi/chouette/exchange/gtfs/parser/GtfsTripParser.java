@@ -831,6 +831,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         if (sp1.getForBoarding() == null) sp1.setForBoarding(BoardingPossibilityEnum.normal);
         if (sp2.getForBoarding() == null) sp2.setForBoarding(BoardingPossibilityEnum.normal);
+        if (sp1.getForAlighting() == null) sp1.setForAlighting(AlightingPossibilityEnum.normal);
+        if (sp2.getForAlighting() == null) sp2.setForAlighting(AlightingPossibilityEnum.normal);
 
         return stopArea1.equals(stopArea2)
                 && sp1.getForBoarding().equals(sp2.getForBoarding())
