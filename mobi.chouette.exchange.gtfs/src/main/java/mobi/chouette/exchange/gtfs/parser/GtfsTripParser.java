@@ -691,11 +691,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         for (int i = 0; i < routeList.size(); i++) {
             Route route1 = routeList.get(i);
+            log.info("Route 1 : " + route1.toString());
             if (route1.getStopPoints().size() == 0) {
                 continue;
             }
             for (int j = i + 1; j < routeList.size(); j++) {
                 Route route2 = routeList.get(j);
+                log.info("Route 2 : " + route2.toString());
 
                 if (route2.getStopPoints().size() == 0) {
                     continue;
@@ -781,6 +783,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             }
             includedSPMap.put(includedStop, includingSPList.get(rank));
         }
+        log.info("Match ? " + match);
         if (match) {
             for (Iterator<JourneyPattern> iterator = routeIncluded.getJourneyPatterns().iterator(); iterator.hasNext(); ) {
                 JourneyPattern journeyPattern = iterator.next();
