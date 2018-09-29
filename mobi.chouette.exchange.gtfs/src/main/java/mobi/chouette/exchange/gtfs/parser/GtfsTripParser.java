@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
@@ -695,14 +696,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         for (int i = 0; i < routeList.size(); i++) {
             Route route1 = routeList.get(i);
-            log.info("Route 1 : " + route1.getName());
             if (route1.getStopPoints().size() == 0) {
                 continue;
             }
             for (int j = i + 1; j < routeList.size(); j++) {
                 Route route2 = routeList.get(j);
-                log.info("Route 2 : " + route2.getName());
-
                 if (route2.getStopPoints().size() == 0) {
                     continue;
                 }
@@ -787,7 +785,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             }
             includedSPMap.put(includedStop, includingSPList.get(rank));
         }
-        log.info("Match ? " + match);
         if (match) {
             for (Iterator<JourneyPattern> iterator = routeIncluded.getJourneyPatterns().iterator(); iterator.hasNext(); ) {
                 JourneyPattern journeyPattern = iterator.next();
@@ -1071,6 +1068,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 String first = route.getStopPoints().get(0).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName();
                 String last = route.getStopPoints().get(route.getStopPoints().size() - 1).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName();
                 route.setName(first + " -> " + last);
+                log.info(Color.LIGHT_GREEN + "=====> Route name " + route.getName());
             }
         }
 
