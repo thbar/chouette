@@ -691,13 +691,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         for (int i = 0; i < routeList.size(); i++) {
             Route route1 = routeList.get(i);
-            log.info("Route 1 : " + route1.toString());
+            log.info("Route 1 : " + route1.getName());
             if (route1.getStopPoints().size() == 0) {
                 continue;
             }
             for (int j = i + 1; j < routeList.size(); j++) {
                 Route route2 = routeList.get(j);
-                log.info("Route 2 : " + route2.toString());
+                log.info("Route 2 : " + route2.getName());
 
                 if (route2.getStopPoints().size() == 0) {
                     continue;
