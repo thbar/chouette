@@ -474,7 +474,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         for (GtfsTrip gtfsTrip : gtfsTrips.values(gtfsRouteId)) {
 
-            log.info("GTFS TRIP : " + gtfsTrip.getTripHeadSign());
 
             if (!importer.getStopTimeByTrip().values(gtfsTrip.getTripId()).iterator().hasNext()) {
                 continue;
@@ -581,11 +580,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                     }
                 }
                 journeyKey += ":" + buildShapeKey(vehicleJourney);
-                log.info("route with shape => journey key = " + journeyKey);
 
             } else {
                 journeyKey += "," + buildStopsKey(vehicleJourney);
-                log.info("route WITHOUT shape => journey key = " + journeyKey);
             }
 
             JourneyPattern journeyPattern = journeyPatternByStopSequence.get(journeyKey);
@@ -1068,7 +1065,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 String first = route.getStopPoints().get(0).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName();
                 String last = route.getStopPoints().get(route.getStopPoints().size() - 1).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName();
                 route.setName(first + " -> " + last);
-                log.info(Color.LIGHT_GREEN + "=====> Route name " + route.getName());
+                log.info(Color.LIGHT_GREEN + "=====> Setting route name " + route.getName());
             }
         }
 
@@ -1132,10 +1129,10 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                     destinationDisplay.setFrontText(content);
                     departureStopPoint.setDestinationDisplay(destinationDisplay);
                 } else {
-                    log.warn("Cannot create synthetic DestinationDisplay for StopPoint " + departureStopPoint + " as StopArea name is null");
+                    log.warn(Color.LIGHT_RED + "Cannot create synthetic DestinationDisplay for StopPoint " + departureStopPoint + " as StopArea name is null");
                 }
             } else {
-                log.warn("Cannot create synthetic DestinationDisplay for StopPoint " + departureStopPoint + " as StopArea is null");
+                log.warn(Color.LIGHT_RED +"Cannot create synthetic DestinationDisplay for StopPoint " + departureStopPoint + " as StopArea is null");
             }
         }
 
@@ -1530,7 +1527,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                                 DestinationDisplay.DESTINATIONDISPLAY_KEY, stopKey, null));
                 destinationDisplay.setFrontText(wrapper.stopHeadsign);
                 destinationDisplay.setName(wrapper.stopHeadsign);
-
                 stopPoint.setDestinationDisplay(destinationDisplay);
             }
 
