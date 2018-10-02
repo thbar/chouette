@@ -164,6 +164,8 @@ public class NeTExStopPlaceRegisterUpdater {
 
 //		List<NavigationPath> navigationPaths = findAndMapConnectionLinks(referential, correlationId, siteFrame, m);
 
+        List<StopPlace> stopPlacesToDelete = new ArrayList<>();
+
         if (!stopPlaces.isEmpty()) {
 
             // Only keep uniqueIds to avoid duplicate processing
@@ -201,6 +203,7 @@ public class NeTExStopPlaceRegisterUpdater {
                             + ToStringBuilder.reflectionToString(stopPlace)
                             + " correlationId: "
                             + correlationId);
+                    stopPlacesToDelete.add(stopPlace);
                 } else {
                     // Recursively find all transportModes
                     Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
@@ -229,6 +232,9 @@ public class NeTExStopPlaceRegisterUpdater {
                     }
                 }
             }
+
+            // Do not add stop places with no transport mode as they belong to no route.
+            stopPlaces.removeAll(stopPlacesToDelete);
 
             siteFrame.setStopPlaces(new StopPlacesInFrame_RelStructure().withStopPlace(stopPlaces));
 
@@ -373,17 +379,13 @@ public class NeTExStopPlaceRegisterUpdater {
 //				.map(e -> referential.getSharedConnectionLinks().remove(e.getObjectId())).collect(Collectors.toList());
 
         // Clean referential from old garbage stop areas
-        for (String obsoleteObjectId : discardedStopAreas)
-
-        {
+        for (String obsoleteObjectId : discardedStopAreas) {
             referential.getStopAreas().remove(obsoleteObjectId);
         }
 
         for (
 
-                StopArea sa : createdParents)
-
-        {
+                StopArea sa : createdParents) {
             referential.getStopAreas().remove(sa.getObjectId());
         }
 
