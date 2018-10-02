@@ -203,7 +203,6 @@ public class NeTExStopPlaceRegisterUpdater {
                             + ToStringBuilder.reflectionToString(stopPlace)
                             + " correlationId: "
                             + correlationId);
-                    stopPlacesToDelete.add(stopPlace);
                 } else {
                     // Recursively find all transportModes
                     Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
@@ -229,6 +228,7 @@ public class NeTExStopPlaceRegisterUpdater {
                                 + stopPlace.getId()
                                 + " correlationId: "
                                 + correlationId);
+                        stopPlacesToDelete.add(stopPlace);
                     }
                 }
             }
