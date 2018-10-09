@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
@@ -725,6 +726,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             journeyFrequency.setScheduledHeadwayInterval(Duration.standardSeconds(frequency.getHeadwaySecs()));
             journeyFrequency.setTimeband(timeband);
             vehicleJourney.getJourneyFrequencies().add(journeyFrequency);
+            log.info(Color.YELLOW + "Bugfix frequencies==========================================");
 //            journeyFrequency.setVehicleJourney(vehicleJourney);
 
             List<VehicleJourneyAtStop> vjass = vehicleJourney.getVehicleJourneyAtStops();
