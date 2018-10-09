@@ -2,6 +2,7 @@ package mobi.chouette.exchange.gtfs.parser;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
+import mobi.chouette.exchange.gtfs.NetworksNames;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
@@ -117,7 +118,9 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 	}
 	
 	private void convert(Context context, GtfsAgency gtfsAgency, Company company, OrganisationTypeEnum organisationType) {
-		company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
+        GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        NetworksNames networksNames = new NetworksNames();
+        company.setName(networksNames.getNetworkName(configuration.getObjectIdPrefix()));
 		company.setUrl(AbstractConverter.toString(gtfsAgency.getAgencyUrl()));
 		company.setPhone(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyPhone()));
 		String[] token = company.getObjectId().split(":");

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
+import mobi.chouette.exchange.gtfs.NetworksNames;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
@@ -177,6 +178,8 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
     @Override
     public void parse(Context context) throws Exception {
 
+        NetworksNames networksNames = new NetworksNames();
+
         Referential referential = (Referential) context.get(REFERENTIAL);
         GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
@@ -189,10 +192,10 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         Line line = ObjectFactory.getLine(referential, lineId);
         convert(context, gtfsRoute, line);
 
-        String agencyId = gtfsRoute.getAgencyId();
-        if (agencyId == null) {
-            agencyId = GtfsAgency.DEFAULT_ID;
-        }
+        String agencyId = "1";
+//        if (agencyId == null) {
+//            agencyId = GtfsAgency.DEFAULT_ID;
+//        }
 
         String operatorId = AbstractConverter.composeObjectId(configuration,
                 Company.OPERATOR_KEY, agencyId + "o", log);
@@ -208,7 +211,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
                     Company.AUTHORITY_KEY, agencyId, log);
             Company authority = ObjectFactory.getCompany(referential, authorityId);
             ptNetwork.setCompany(authority);
-            ptNetwork.setName(authority.getName()); // Set same name on network as on agency
+            ptNetwork.setName(networksNames.getNetworkName(configuration.getObjectIdPrefix())); // Set same name on network as on agency
         }
 
         line.setNetwork(ptNetwork);
