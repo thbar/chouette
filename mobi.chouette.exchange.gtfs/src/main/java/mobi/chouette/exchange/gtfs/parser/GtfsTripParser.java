@@ -725,9 +725,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             journeyFrequency.setLastDepartureTime(frequency.getEndTime().getTime());
             journeyFrequency.setScheduledHeadwayInterval(Duration.standardSeconds(frequency.getHeadwaySecs()));
             journeyFrequency.setTimeband(timeband);
-            vehicleJourney.getJourneyFrequencies().add(journeyFrequency);
-            log.info(Color.YELLOW + "Bugfix frequencies==========================================");
-//            journeyFrequency.setVehicleJourney(vehicleJourney);
+            journeyFrequency.setVehicleJourney(vehicleJourney);
+            log.info(Color.YELLOW + "Frequencies==========================================");
 
             List<VehicleJourneyAtStop> vjass = vehicleJourney.getVehicleJourneyAtStops();
             VehicleJourneyAtStop firstVjas = vjass.get(0);
