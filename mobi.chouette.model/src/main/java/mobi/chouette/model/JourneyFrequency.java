@@ -98,7 +98,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "scheduled_headway_interval", nullable = false)
+	@Column(name = "scheduled_headway_interval")
 	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration scheduledHeadwayInterval;
 
