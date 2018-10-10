@@ -333,46 +333,46 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 		}
 
 		// journey frequency
-//		/* if (!optimized) */{
-//			Collection<JourneyFrequency> addedJourneyFrequency = CollectionUtil.substract(
-//					newValue.getJourneyFrequencies(), oldValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
-//			final Collection<String> objectIds = new ArrayList<String>();
-//			for (JourneyFrequency journeyFrequency : addedJourneyFrequency) {
-//				objectIds.add(journeyFrequency.getTimeband().getObjectId());
-//			}
-//			List<Timeband> timebands = null;
-//			for (JourneyFrequency item : addedJourneyFrequency) {
-//				JourneyFrequency journeyFrequency = new JourneyFrequency();
-//				Timeband timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
-//				if (timeband == null) {
-//					if (timebands == null) {
-//						timebands = timebandDAO.findByObjectId(objectIds);
-//						for (Timeband object : timebands) {
-//							cache.getTimebands().put(object.getObjectId(), object);
-//						}
-//					}
-//					timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
-//				}
-//				if (timeband != null) {
-//					journeyFrequency.setTimeband(timeband);
-//				}
-//				journeyFrequency.setVehicleJourney(oldValue);
-//			}
-//
-//			Collection<Pair<JourneyFrequency, JourneyFrequency>> modifiedJourneyFrequency = CollectionUtil
-//					.intersection(oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(),
-//							JOURNEY_FREQUENCY_COMPARATOR);
-//			for (Pair<JourneyFrequency, JourneyFrequency> pair : modifiedJourneyFrequency) {
-//				journeyFrequencyUpdater.update(context, pair.getLeft(), pair.getRight());
-//			}
-//
-//			Collection<JourneyFrequency> removedJourneyFrequency = CollectionUtil.substract(
-//					oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
-//			for (JourneyFrequency journeyFrequency : removedJourneyFrequency) {
-//				journeyFrequency.setVehicleJourney(null);
-//				journeyFrequencyDAO.delete(journeyFrequency);
-//			}
-//		}
+		/* if (!optimized) */{
+			Collection<JourneyFrequency> addedJourneyFrequency = CollectionUtil.substract(
+					newValue.getJourneyFrequencies(), oldValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
+			final Collection<String> objectIds = new ArrayList<String>();
+			for (JourneyFrequency journeyFrequency : addedJourneyFrequency) {
+				objectIds.add(journeyFrequency.getTimeband().getObjectId());
+			}
+			List<Timeband> timebands = null;
+			for (JourneyFrequency item : addedJourneyFrequency) {
+				JourneyFrequency journeyFrequency = new JourneyFrequency();
+				Timeband timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
+				if (timeband == null) {
+					if (timebands == null) {
+						timebands = timebandDAO.findByObjectId(objectIds);
+						for (Timeband object : timebands) {
+							cache.getTimebands().put(object.getObjectId(), object);
+						}
+					}
+					timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
+				}
+				if (timeband != null) {
+					journeyFrequency.setTimeband(timeband);
+				}
+				journeyFrequency.setVehicleJourney(oldValue);
+			}
+
+			Collection<Pair<JourneyFrequency, JourneyFrequency>> modifiedJourneyFrequency = CollectionUtil
+					.intersection(oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(),
+							JOURNEY_FREQUENCY_COMPARATOR);
+			for (Pair<JourneyFrequency, JourneyFrequency> pair : modifiedJourneyFrequency) {
+				journeyFrequencyUpdater.update(context, pair.getLeft(), pair.getRight());
+			}
+
+			Collection<JourneyFrequency> removedJourneyFrequency = CollectionUtil.substract(
+					oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
+			for (JourneyFrequency journeyFrequency : removedJourneyFrequency) {
+				journeyFrequency.setVehicleJourney(null);
+				journeyFrequencyDAO.delete(journeyFrequency);
+			}
+		}
 
 		updateFootnotes(context,oldValue,newValue,cache);
 		updateInterchanges(context, oldValue, newValue);
