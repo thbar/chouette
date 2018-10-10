@@ -111,7 +111,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "first_departure_time", nullable = false)
+	@Column(name = "first_departure_time")
 	private LocalTime firstDepartureTime;
 
 	/**
@@ -123,7 +123,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "last_departure_time", nullable = false)
+	@Column(name = "last_departure_time")
 	private LocalTime lastDepartureTime;
 
 	/**
