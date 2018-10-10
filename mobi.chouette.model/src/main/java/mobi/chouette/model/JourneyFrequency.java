@@ -98,7 +98,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "scheduled_headway_interval")
+	@Column(name = "scheduled_headway_interval", nullable = false)
 	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration scheduledHeadwayInterval;
 
@@ -111,7 +111,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "first_departure_time")
+	@Column(name = "first_departure_time", nullable = false)
 	private LocalTime firstDepartureTime;
 
 	/**
@@ -123,7 +123,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 */
 	@Getter
 	@Setter
-	@Column(name = "last_departure_time")
+	@Column(name = "last_departure_time", nullable = false)
 	private LocalTime lastDepartureTime;
 
 	/**

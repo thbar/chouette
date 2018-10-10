@@ -1,43 +1,23 @@
 package mobi.chouette.exchange.importer.updater;
 
+import mobi.chouette.common.CollectionUtil;
+import mobi.chouette.common.Context;
+import mobi.chouette.common.Pair;
+import mobi.chouette.dao.*;
+import mobi.chouette.exchange.validation.ValidationData;
+import mobi.chouette.exchange.validation.report.ValidationReporter;
+import mobi.chouette.model.*;
+import mobi.chouette.model.util.NeptuneUtil;
+import mobi.chouette.model.util.ObjectFactory;
+import mobi.chouette.model.util.Referential;
+import org.apache.commons.beanutils.BeanUtils;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-
-import org.apache.commons.beanutils.BeanUtils;
-
-import mobi.chouette.common.CollectionUtil;
-import mobi.chouette.common.Context;
-import mobi.chouette.common.Pair;
-import mobi.chouette.dao.CompanyDAO;
-import mobi.chouette.dao.InterchangeDAO;
-import mobi.chouette.dao.FootnoteDAO;
-import mobi.chouette.dao.JourneyFrequencyDAO;
-import mobi.chouette.dao.LineDAO;
-import mobi.chouette.dao.RouteDAO;
-import mobi.chouette.dao.StopPointDAO;
-import mobi.chouette.dao.TimebandDAO;
-import mobi.chouette.dao.TimetableDAO;
-import mobi.chouette.dao.VehicleJourneyAtStopDAO;
-import mobi.chouette.exchange.validation.ValidationData;
-import mobi.chouette.exchange.validation.report.ValidationReporter;
-import mobi.chouette.model.Company;
-import mobi.chouette.model.Footnote;
-import mobi.chouette.model.Interchange;
-import mobi.chouette.model.JourneyFrequency;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timeband;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
-import mobi.chouette.model.util.NeptuneUtil;
-import mobi.chouette.model.util.ObjectFactory;
-import mobi.chouette.model.util.Referential;
 
 @Stateless(name = VehicleJourneyUpdater.BEAN_NAME)
 public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
@@ -353,52 +333,52 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 		}
 
 		// journey frequency
-		/* if (!optimized) */{
-			Collection<JourneyFrequency> addedJourneyFrequency = CollectionUtil.substract(
-					newValue.getJourneyFrequencies(), oldValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
-			final Collection<String> objectIds = new ArrayList<String>();
-			for (JourneyFrequency journeyFrequency : addedJourneyFrequency) {
-				objectIds.add(journeyFrequency.getTimeband().getObjectId());
-			}
-			List<Timeband> timebands = null;
-			for (JourneyFrequency item : addedJourneyFrequency) {
-				JourneyFrequency journeyFrequency = new JourneyFrequency();
-				Timeband timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
-				if (timeband == null) {
-					if (timebands == null) {
-						timebands = timebandDAO.findByObjectId(objectIds);
-						for (Timeband object : timebands) {
-							cache.getTimebands().put(object.getObjectId(), object);
-						}
-					}
-					timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
-				}
-				if (timeband != null) {
-					journeyFrequency.setTimeband(timeband);
-				}
-				journeyFrequency.setVehicleJourney(oldValue);
-			}
+//		/* if (!optimized) */{
+//			Collection<JourneyFrequency> addedJourneyFrequency = CollectionUtil.substract(
+//					newValue.getJourneyFrequencies(), oldValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
+//			final Collection<String> objectIds = new ArrayList<String>();
+//			for (JourneyFrequency journeyFrequency : addedJourneyFrequency) {
+//				objectIds.add(journeyFrequency.getTimeband().getObjectId());
+//			}
+//			List<Timeband> timebands = null;
+//			for (JourneyFrequency item : addedJourneyFrequency) {
+//				JourneyFrequency journeyFrequency = new JourneyFrequency();
+//				Timeband timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
+//				if (timeband == null) {
+//					if (timebands == null) {
+//						timebands = timebandDAO.findByObjectId(objectIds);
+//						for (Timeband object : timebands) {
+//							cache.getTimebands().put(object.getObjectId(), object);
+//						}
+//					}
+//					timeband = cache.getTimebands().get(item.getTimeband().getObjectId());
+//				}
+//				if (timeband != null) {
+//					journeyFrequency.setTimeband(timeband);
+//				}
+//				journeyFrequency.setVehicleJourney(oldValue);
+//			}
+//
+//			Collection<Pair<JourneyFrequency, JourneyFrequency>> modifiedJourneyFrequency = CollectionUtil
+//					.intersection(oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(),
+//							JOURNEY_FREQUENCY_COMPARATOR);
+//			for (Pair<JourneyFrequency, JourneyFrequency> pair : modifiedJourneyFrequency) {
+//				journeyFrequencyUpdater.update(context, pair.getLeft(), pair.getRight());
+//			}
+//
+//			Collection<JourneyFrequency> removedJourneyFrequency = CollectionUtil.substract(
+//					oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
+//			for (JourneyFrequency journeyFrequency : removedJourneyFrequency) {
+//				journeyFrequency.setVehicleJourney(null);
+//				journeyFrequencyDAO.delete(journeyFrequency);
+//			}
+//		}
 
-			Collection<Pair<JourneyFrequency, JourneyFrequency>> modifiedJourneyFrequency = CollectionUtil
-					.intersection(oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(),
-							JOURNEY_FREQUENCY_COMPARATOR);
-			for (Pair<JourneyFrequency, JourneyFrequency> pair : modifiedJourneyFrequency) {
-				journeyFrequencyUpdater.update(context, pair.getLeft(), pair.getRight());
-			}
-
-			Collection<JourneyFrequency> removedJourneyFrequency = CollectionUtil.substract(
-					oldValue.getJourneyFrequencies(), newValue.getJourneyFrequencies(), JOURNEY_FREQUENCY_COMPARATOR);
-			for (JourneyFrequency journeyFrequency : removedJourneyFrequency) {
-				journeyFrequency.setVehicleJourney(null);
-				journeyFrequencyDAO.delete(journeyFrequency);
-			}
-		}
-		updateInterchanges(context, oldValue, newValue);
 		updateFootnotes(context,oldValue,newValue,cache);
 		updateInterchanges(context, oldValue, newValue);
 //		monitor.stop();
 	}
-	
+
 	private void updateFootnotes(Context context, VehicleJourney oldValue, VehicleJourney newValue, Referential cache) throws Exception {
 		Collection<Footnote> addedFootnote = CollectionUtil.substract(newValue.getFootnotes(),
 				oldValue.getFootnotes(), NeptuneIdentifiedObjectComparator.INSTANCE);
@@ -433,13 +413,13 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 			oldValue.getFootnotes().remove(Footnote);
 		}
 	}
-	
-	
+
+
 	public void updateInterchanges(Context context, VehicleJourney oldValue, VehicleJourney newValue) throws Exception {
 		updateInterchanges(context, oldValue, newValue, oldValue.getConsumerInterchanges(), newValue.getConsumerInterchanges(), "consumerVehicleJourney");
 		updateInterchanges(context, oldValue, newValue, oldValue.getFeederInterchanges(), newValue.getFeederInterchanges(), "feederVehicleJourney");
 	}
-	
+
 	private void updateInterchanges(Context context, VehicleJourney oldValue, VehicleJourney newValue, List<Interchange> oldValueInterchanges, List<Interchange> newValueInterchanges, String method) throws Exception {
 		Referential cache = (Referential) context.get(CACHE);
 
@@ -481,7 +461,7 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 		}
 
 	}
-	
+
 	/**
 	 * Test 2-DATABASE-VehicleJourney-2
 	 * @param validationReporter
