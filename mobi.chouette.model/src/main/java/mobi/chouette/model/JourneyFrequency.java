@@ -67,7 +67,7 @@ public class JourneyFrequency extends NeptuneObject {
 	}
 
 	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "timeband_id")
 	private Timeband timeband;
 
