@@ -92,7 +92,7 @@ public class Timeband extends NeptuneIdentifiedObject {
 
 	@Getter
 	@Setter
-	@OneToMany(mappedBy = "timeband", cascade = { CascadeType.PERSIST })
+	@OneToMany(mappedBy = "timeband")
 	// @JoinColumn(name = "timeband_id", updatable = false)
 	private List<JourneyFrequency> journeyFrequencies = new ArrayList<JourneyFrequency>(0);
 	// @Getter

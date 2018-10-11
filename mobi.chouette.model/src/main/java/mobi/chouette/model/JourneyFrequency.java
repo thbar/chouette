@@ -45,7 +45,7 @@ public class JourneyFrequency extends NeptuneObject {
 	 * @return The actual value
 	 */
 	@Getter
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "vehicle_journey_id")
 	private VehicleJourney vehicleJourney;
 
