@@ -31,7 +31,7 @@ public class NetworksNames {
         producers.put("VIL","Elios");
         producers.put("LIB","Calibus");
         producers.put("MAR","TMA");
-        producers.put("PBA","Réseau Pays Basque"); // à voir
+//        producers.put("PBA","Réseau Pays Basque(Chronoplus et Hegobus)"); // à voir
         producers.put("GUE","agglo'Bus");
         producers.put("BBR","agglo2B");
         producers.put("OLE","Liaison maritime Oléron-La Rochelle");
@@ -52,7 +52,7 @@ public class NetworksNames {
         producers.put("VIE","Lignes en Vienne");
         producers.put("BAC","Transports Maritimes Départementaux de la Gironde");
         producers.put("FAI","Liaison maritime Aix-Fouras");
-        producers.put("SNC","SNCF");
+//        producers.put("SNC","SNCF");
     }
 
     public String getNetworkName(String prefix){
