@@ -104,7 +104,7 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-            if(!configuration.getObjectIdPrefix().equals("PBA") && !configuration.getObjectIdPrefix().equals("SNC")) {
+            if(!(configuration.getObjectIdPrefix()).equals("PBA") || !(configuration.getObjectIdPrefix()).equals("SNC")) {
                 gtfsAgency.setAgencyId("1");
             }
 
