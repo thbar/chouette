@@ -1,36 +1,8 @@
 package mobi.chouette.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.ContenerChecker;
@@ -48,13 +20,22 @@ import mobi.chouette.model.iev.Link;
 import mobi.chouette.model.iev.Stat;
 import mobi.chouette.persistence.hibernate.ChouetteIdentifierGenerator;
 import mobi.chouette.scheduler.Scheduler;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.ws.rs.core.MediaType;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton(name = JobServiceManager.BEAN_NAME)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -80,7 +61,10 @@ public class JobServiceManager {
 
 
 	private Set<Object> referentials = Collections.synchronizedSet(new HashSet<>());
-	private String rootDirectory;
+
+
+    @Getter
+    private String rootDirectory;
 
 	@PostConstruct
 	public synchronized void init() {

@@ -17,8 +17,11 @@ import javax.inject.Named;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -98,6 +101,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
             }
 
             scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 20, updateFrequencySeconds, SECONDS);
+            scheduler.scheduleAtFixedRate(new CleanLocalCacheTask(), 20, 3600, SECONDS);
 
         } else {
             log.info("Not initializing CachingGoogleCloudFileStore as other FileStore impl is configured. " + implPropKey + ":" + implProp);
@@ -212,5 +216,39 @@ public class CachingGoogleCloudFileStore implements FileStore {
             return null;
         }
 
+    }
+
+
+    /**
+     * Cleaning files older than 24h
+     */
+    private class CleanLocalCacheTask implements Runnable {
+
+        @Override
+        public void run() {
+            log.info("cleaning local cache : Cleaning all files older than " + syncedUntil);
+
+            try {
+                Files.find(Paths.get(jobServiceManager.getRootDirectory()), 1,
+                        (path, basicFileAttrs) -> basicFileAttrs.lastModifiedTime()
+                                .toInstant().isBefore( ZonedDateTime.now()
+                                        .minusDays(1).toInstant()))
+                        .forEach(fileToDelete -> {
+                            try {
+                                if (!Files.isDirectory(fileToDelete)) {
+                                    log.info("deleting : " + fileToDelete);
+                                    Files.delete(fileToDelete);
+                                }
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        });
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+
+            log.info("Finished pre-fetching job files from cloud storage");
+
+        }
     }
 }
