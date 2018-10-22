@@ -86,6 +86,8 @@ public class CachingGoogleCloudFileStore implements FileStore {
                 syncedUntil = LocalDateTime.now().minusDays(cacheHistoryDays);
             }
 
+            log.info("Set syncedUntil to : " + syncedUntil);
+
             String updateFrequencyKey = "iev.file.store.cache.update.seconds";
             if (System.getProperty(updateFrequencyKey) != null) {
                 try {
