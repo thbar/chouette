@@ -226,7 +226,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
 
         @Override
         public void run() {
-            log.info("cleaning local cache : Cleaning all files older than " + syncedUntil);
+            log.info("Cleaning local cache : Cleaning all files older than " + syncedUntil);
 
             try {
                 Files.find(Paths.get(jobServiceManager.getRootDirectory()), 1,
