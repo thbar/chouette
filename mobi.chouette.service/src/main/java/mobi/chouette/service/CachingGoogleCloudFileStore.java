@@ -100,8 +100,8 @@ public class CachingGoogleCloudFileStore implements FileStore {
                 }
             }
 
-            scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 20, updateFrequencySeconds, SECONDS);
             scheduler.scheduleAtFixedRate(new CleanLocalCacheTask(), 20, 3600, SECONDS);
+            scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 20, updateFrequencySeconds, SECONDS);
 
         } else {
             log.info("Not initializing CachingGoogleCloudFileStore as other FileStore impl is configured. " + implPropKey + ":" + implProp);
@@ -229,7 +229,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
             log.info("Cleaning local cache : Cleaning all files older than " + syncedUntil);
 
             try {
-                Files.find(Paths.get(jobServiceManager.getRootDirectory()), 1,
+                Files.find(Paths.get(jobServiceManager.getRootDirectory()), 5,
                         (path, basicFileAttrs) -> basicFileAttrs.lastModifiedTime()
                                 .toInstant().isBefore( ZonedDateTime.now()
                                         .minusDays(1).toInstant()))
