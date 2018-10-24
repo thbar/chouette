@@ -20,7 +20,7 @@ public class NetworksNames {
         producers.put("ROC","R'Bus");
         producers.put("ROY","Cara'bus");
         producers.put("TUT","TuT");
-        producers.put("COU","Couralin");
+//        producers.put("COU","Couralin");
         producers.put("PER","Péribus");
         producers.put("VIT","Vitalis");
         producers.put("MAC","Yego");

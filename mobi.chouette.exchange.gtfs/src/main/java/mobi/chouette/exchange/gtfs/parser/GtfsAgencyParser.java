@@ -104,7 +104,7 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-            if(!configuration.getObjectIdPrefix().equals("PBA") && !configuration.getObjectIdPrefix().equals("SNC")) {
+            if(!configuration.getObjectIdPrefix().equals("PBA") && !configuration.getObjectIdPrefix().equals("SNC") && !configuration.getObjectIdPrefix().equals("COU")) {
                 gtfsAgency.setAgencyId("1");
             }
 
@@ -124,7 +124,7 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 	private void convert(Context context, GtfsAgency gtfsAgency, Company company, OrganisationTypeEnum organisationType) {
         GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
         NetworksNames networksNames = new NetworksNames();
-        if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC")){
+        if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC") || configuration.getObjectIdPrefix().equals("COU")){
             company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
         }
         else{

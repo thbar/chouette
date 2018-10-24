@@ -193,7 +193,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         convert(context, gtfsRoute, line);
 
         String agencyId = null;
-        if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC")) {
+        if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC") || configuration.getObjectIdPrefix().equals("COU")) {
             agencyId = gtfsRoute.getAgencyId();
         }
         else{
@@ -217,7 +217,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
                     Company.AUTHORITY_KEY, agencyId, log);
             Company authority = ObjectFactory.getCompany(referential, authorityId);
             ptNetwork.setCompany(authority);
-            if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC")) {
+            if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC") || configuration.getObjectIdPrefix().equals("COU")) {
                 ptNetwork.setName(authority.getName()); // Set same name on network as on agency
             }
             else{
