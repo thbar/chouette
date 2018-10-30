@@ -288,27 +288,27 @@ public class TransitDataStatisticsService {
 					}
 				}
 
-                List<mobi.chouette.model.Period> periodsToDelete = new ArrayList<>();
+                List<Period> periodsToDelete = new ArrayList<>();
 				if(t.getPeriods() != null && t.getPeriods().size() > 0){
 				    for(mobi.chouette.model.Period p : t.getPeriods()){
 				        if(t.getCalendarDays() != null){
 				            for (CalendarDay dayExcluded : t.getCalendarDays()){
 				                if(!dayExcluded.getIncluded() && startDate.equals(dayExcluded.getDate().toDate())){
-                                    periodsToDelete.add(p);
+                                    periodsToDelete.add(new Period (p.getStartDate().toDate(), p.getEndDate().toDate()));
 				                    Calendar cal = Calendar.getInstance();
 				                    cal.setTime(startDate);
 				                    cal.add(Calendar.DATE, 1);
                                     timetable.getPeriods().add(new Period(cal.getTime(), p.getEndDate().toDate()));
                                 }
                                 else if(!dayExcluded.getIncluded() && p.getEndDate().equals(dayExcluded.getDate())){
-                                    periodsToDelete.add(p);
+                                    periodsToDelete.add(new Period (p.getStartDate().toDate(), p.getEndDate().toDate()));
                                     Calendar cal = Calendar.getInstance();
                                     cal.setTime(startDate);
                                     cal.add(Calendar.DATE, -1);
                                     timetable.getPeriods().add(new Period(startDate, cal.getTime()));
                                 }
                                 else if(!dayExcluded.getIncluded() && !p.getStartDate().equals(dayExcluded.getDate().toDate()) && !p.getEndDate().equals(dayExcluded.getDate().toDate())){
-                                    periodsToDelete.add(p);
+                                    periodsToDelete.add(new Period (p.getStartDate().toDate(), p.getEndDate().toDate()));
                                     Calendar calEnd = Calendar.getInstance();
                                     Calendar calStart = Calendar.getInstance();
 
