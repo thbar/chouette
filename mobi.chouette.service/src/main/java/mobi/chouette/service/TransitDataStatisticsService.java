@@ -306,23 +306,23 @@ public class TransitDataStatisticsService {
                             Calendar newDateEnd = Calendar.getInstance();
 
                             for (CalendarDay dayDelete : daystoDelete) {
-                                if (p.getStartDate().equals(dayDelete.getDate().toDate())) {
+                                if (p.getStartDate().toDate().equals(dayDelete.getDate().toDate())) {
                                     newDateStart.setTime(p.getStartDate().toDate());
                                     newDateStart.add(Calendar.DATE, 1);
                                 }
 
-                                if (newDateStart != null && newDateStart.equals(dayDelete.getDate().toDate())) {
+                                if (newDateStart != null && newDateStart.getTime().equals(dayDelete.getDate().toDate())) {
                                     newDateStart.add(Calendar.DATE, 1);
                                 }
                             }
 
                             for (CalendarDay dayDeleteReverse : daysToDeleteReverse) {
-                                if (p.getEndDate().equals(dayDeleteReverse.getDate().toDate())) {
+                                if (p.getEndDate().toDate().equals(dayDeleteReverse.getDate().toDate())) {
                                     newDateEnd.setTime(p.getEndDate().toDate());
                                     newDateEnd.add(Calendar.DATE, -1);
                                 }
 
-                                if (newDateEnd != null && newDateEnd.equals(dayDeleteReverse.getDate().toDate())) {
+                                if (newDateEnd != null && newDateEnd.getTime().equals(dayDeleteReverse.getDate().toDate())) {
                                     newDateEnd.add(Calendar.DATE, -1);
                                 }
                             }
@@ -351,7 +351,7 @@ public class TransitDataStatisticsService {
 
                                     timetable.getPeriods().add(new Period(dateStart.getTime(), newDateEnd.getTime()));
                                 }
-                                else if(!newDateStart.equals(p.getStartDate().toDate()) || !newDateEnd.equals(p.getEndDate().toDate())){
+                                else if(!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())){
                                     periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
                                     timetable.getPeriods().add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
                                 }
