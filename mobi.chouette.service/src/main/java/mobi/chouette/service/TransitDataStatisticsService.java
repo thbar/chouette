@@ -303,17 +303,18 @@ public class TransitDataStatisticsService {
                             daysToDeleteReverse.sort(Collections.reverseOrder());
 
                             Calendar newDateStart = Calendar.getInstance();
-                            newDateStart.setTime(null);
                             Calendar newDateEnd = Calendar.getInstance();
-                            newDateEnd.setTime(null);
+                            boolean newDateStartValued = false;
+                            boolean newDateEndValued = false;
 
                             for (CalendarDay dayDelete : daystoDelete) {
                                 if (p.getStartDate().toDate().equals(dayDelete.getDate().toDate())) {
                                     newDateStart.setTime(p.getStartDate().toDate());
                                     newDateStart.add(Calendar.DATE, 1);
+                                    newDateStartValued = true;
                                 }
 
-                                if (newDateStart != null && newDateStart.getTime().equals(dayDelete.getDate().toDate())) {
+                                if (newDateStartValued && newDateStart.getTime().equals(dayDelete.getDate().toDate())) {
                                     newDateStart.add(Calendar.DATE, 1);
                                 }
                             }
@@ -322,19 +323,20 @@ public class TransitDataStatisticsService {
                                 if (p.getEndDate().toDate().equals(dayDeleteReverse.getDate().toDate())) {
                                     newDateEnd.setTime(p.getEndDate().toDate());
                                     newDateEnd.add(Calendar.DATE, -1);
+                                    newDateEndValued = true;
                                 }
 
-                                if (newDateEnd != null && newDateEnd.getTime().equals(dayDeleteReverse.getDate().toDate())) {
+                                if (newDateEndValued && newDateEnd.getTime().equals(dayDeleteReverse.getDate().toDate())) {
                                     newDateEnd.add(Calendar.DATE, -1);
                                 }
                             }
 
 
                             for (CalendarDay dayDelete : daystoDelete) {
-                                if (newDateStart.getTime() == null) {
+                                if (!newDateStartValued) {
                                     newDateStart.setTime(p.getStartDate().toDate());
                                 }
-                                if (newDateEnd.getTime() == null) {
+                                if (!newDateEndValued) {
                                     newDateEnd.setTime(p.getEndDate().toDate());
                                 }
 
