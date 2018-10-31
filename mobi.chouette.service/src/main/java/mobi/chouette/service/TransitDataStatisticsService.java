@@ -335,13 +335,15 @@ public class TransitDataStatisticsService {
                             for (CalendarDay dayDelete : daystoDelete) {
                                 if (!newDateStartValued) {
                                     newDateStart.setTime(p.getStartDate().toDate());
+                                    newDateStartValued = true;
                                 }
                                 if (!newDateEndValued) {
                                     newDateEnd.setTime(p.getEndDate().toDate());
+                                    newDateEndValued = true;
                                 }
 
-                                if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) > 0 && newDateEnd.getTime().compareTo(dayDelete.getDate().toDate()) < 0) {
-                                    periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
+                                if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) < 0 && newDateEnd.getTime().compareTo(dayDelete.getDate().toDate()) > 0) {
+                                    periodsToDelete.add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
                                     Calendar dateEnd = Calendar.getInstance();
                                     Calendar dateStart = Calendar.getInstance();
 
