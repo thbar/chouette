@@ -303,7 +303,9 @@ public class TransitDataStatisticsService {
                             daysToDeleteReverse.sort(Collections.reverseOrder());
 
                             Calendar newDateStart = Calendar.getInstance();
+                            newDateStart.setTime(null);
                             Calendar newDateEnd = Calendar.getInstance();
+                            newDateEnd.setTime(null);
 
                             for (CalendarDay dayDelete : daystoDelete) {
                                 if (p.getStartDate().toDate().equals(dayDelete.getDate().toDate())) {
@@ -329,10 +331,10 @@ public class TransitDataStatisticsService {
 
 
                             for (CalendarDay dayDelete : daystoDelete) {
-                                if (newDateStart == null) {
+                                if (newDateStart.getTime() == null) {
                                     newDateStart.setTime(p.getStartDate().toDate());
                                 }
-                                if (newDateEnd == null) {
+                                if (newDateEnd.getTime() == null) {
                                     newDateEnd.setTime(p.getEndDate().toDate());
                                 }
 
