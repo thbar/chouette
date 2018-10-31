@@ -356,6 +356,8 @@ public class TransitDataStatisticsService {
                                     dateStart.add(Calendar.DATE, 1);
 
                                     timetable.getPeriods().add(new Period(dateStart.getTime(), newDateEnd.getTime()));
+                                    newDateStart = dateStart;
+                                    newDateStartValued = true;
                                 }
                                 else if(!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())){
                                     periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
