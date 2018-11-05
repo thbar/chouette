@@ -342,7 +342,7 @@ public class TransitDataStatisticsService {
                                     newDateEndValued = true;
                                 }
 
-                                if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) < 0 && newDateEnd.getTime().compareTo(dayDelete.getDate().toDate()) > 0) {
+                                if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) <= 0 && newDateEnd.getTime().compareTo(dayDelete.getDate().toDate()) > 0) {
                                     periodsToDelete.add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
                                     Calendar dateEnd = Calendar.getInstance();
                                     Calendar dateStart = Calendar.getInstance();
