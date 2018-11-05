@@ -347,10 +347,12 @@ public class TransitDataStatisticsService {
                                     Calendar dateEnd = Calendar.getInstance();
                                     Calendar dateStart = Calendar.getInstance();
 
-                                    dateEnd.setTime(dayDelete.getDate().toDate());
-                                    dateEnd.add(Calendar.DATE, -1);
+                                    if(newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) < 0){
+                                        dateEnd.setTime(dayDelete.getDate().toDate());
+                                        dateEnd.add(Calendar.DATE, -1);
 
-                                    timetable.getPeriods().add(new Period(newDateStart.getTime(), dateEnd.getTime()));
+                                        timetable.getPeriods().add(new Period(newDateStart.getTime(), dateEnd.getTime()));
+                                    }
 
                                     dateStart.setTime(dayDelete.getDate().toDate());
                                     dateStart.add(Calendar.DATE, 1);
