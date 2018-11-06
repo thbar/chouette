@@ -286,6 +286,8 @@ public class TransitDataStatisticsService {
                     }
                 }
 
+                // Inclusion of excluded dates.
+
                 List<Period> periodsToDelete = new ArrayList<>();
                 List<CalendarDay> daystoDelete = new ArrayList<>();
                 List<CalendarDay> daysToDeleteReverse = new ArrayList<>();
@@ -293,6 +295,9 @@ public class TransitDataStatisticsService {
                 if (t.getPeriods() != null && t.getPeriods().size() > 0) {
                     for (mobi.chouette.model.Period p : t.getPeriods()) {
                         if (t.getCalendarDays() != null) {
+
+                            // All excluded dates are retrieved for sorting in chronological and inverse order.
+
                             for (CalendarDay dayExcluded : t.getCalendarDays()) {
                                 if (!dayExcluded.getIncluded()) {
                                     daystoDelete.add(dayExcluded);
@@ -306,6 +311,8 @@ public class TransitDataStatisticsService {
                             Calendar newDateEnd = Calendar.getInstance();
                             boolean newDateStartValued = false;
                             boolean newDateEndValued = false;
+
+                            // We manage the beginning and the end of the calendars.
 
                             for (CalendarDay dayDelete : daystoDelete) {
                                 if (p.getStartDate().toDate().equals(dayDelete.getDate().toDate())) {
@@ -331,6 +338,7 @@ public class TransitDataStatisticsService {
                                 }
                             }
 
+                            // Exclusions between the beginning and the end of the calendar are taken into account.
 
                             for (CalendarDay dayDelete : daystoDelete) {
                                 if (!newDateStartValued) {
@@ -341,6 +349,8 @@ public class TransitDataStatisticsService {
                                     newDateEnd.setTime(p.getEndDate().toDate());
                                     newDateEndValued = true;
                                 }
+
+                                // Management of excluded dates between the beginning and the end of the period.
 
                                 if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) <= 0 && newDateEnd.getTime().compareTo(dayDelete.getDate().toDate()) > 0) {
                                     periodsToDelete.add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
@@ -360,10 +370,6 @@ public class TransitDataStatisticsService {
                                     timetable.getPeriods().add(new Period(dateStart.getTime(), newDateEnd.getTime()));
                                     newDateStart = dateStart;
                                     newDateStartValued = true;
-                                }
-                                else if(!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())){
-                                    periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
-                                    timetable.getPeriods().add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
                                 }
                             }
                         }
