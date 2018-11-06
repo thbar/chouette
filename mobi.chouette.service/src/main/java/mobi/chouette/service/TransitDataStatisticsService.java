@@ -371,6 +371,11 @@ public class TransitDataStatisticsService {
                                     newDateStart = dateStart;
                                     newDateStartValued = true;
                                 }
+
+                                else if(!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())){
+                                    periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
+                                    timetable.getPeriods().add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
+                                }
                             }
                         }
                     }
