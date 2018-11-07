@@ -105,13 +105,15 @@ public class TransitDataStatisticsService {
         }
         else{
             for (PublicLine pl : lineStats.getPublicLines()) {
-                int s = pl.getEffectivePeriods().size();
-                Period p  = pl.getEffectivePeriods().get(s - 1);
-                if(p.getTo().compareTo(startDate) > 0){
-                    lineStats.setInvalid(false);
-                }
-                if(p.getTo().compareTo(dateExpiring) > 0){
-                    lineStats.setExpiring(false);
+                if(pl.getEffectivePeriods().size() != 0) {
+                    int s = pl.getEffectivePeriods().size();
+                    Period p = pl.getEffectivePeriods().get(s - 1);
+                    if (p.getTo().compareTo(startDate) > 0) {
+                        lineStats.setInvalid(false);
+                    }
+                    if (p.getTo().compareTo(dateExpiring) > 0) {
+                        lineStats.setExpiring(false);
+                    }
                 }
             }
         }
