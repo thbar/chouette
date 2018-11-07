@@ -79,14 +79,37 @@ public class TransitDataStatisticsService {
         List<PublicLine> pL = new ArrayList<>(publicLines.values());
         Collections.sort(pL);
 
-        LineStatistics lineStats = new LineStatistics(startDate, days, pL);
+        LineStatistics lineStats = new LineStatistics(startDate, days, pL, true, true);
         // Put lineNumbers into buckets depending on validity in the future
         categorizeValidity(lineStats, startDate, minDaysValidityCategories);
 
         // Merge identical names to display in PublicLines
         mergeNames(lineStats);
 
+        // If all lines are expiring or expired, send a mail to report
+        alertExpired(lineStats, startDate, minDaysValidityCategories);
+
         return lineStats;
+    }
+
+    private void alertExpired(LineStatistics lineStats, Date startDate, Map<Integer, String> minDaysValidityCategories) {
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(startDate);
+        List<Integer> categories = new ArrayList<>(minDaysValidityCategories.keySet());
+        Collections.sort(categories);
+        cd.add(Calendar.DATE, categories.get(0));
+        Date dateExpiring = cd.getTime();
+        for (PublicLine pl : lineStats.getPublicLines()) {
+            int s = pl.getEffectivePeriods().size();
+            Period p  = pl.getEffectivePeriods().get(s - 1);
+            if(p.getTo().compareTo(startDate) > 0){
+                lineStats.setInvalid(false);
+            }
+
+            if(p.getTo().compareTo(dateExpiring) > 0){
+                lineStats.setExpiring(false);
+            }
+        }
     }
 
     private void mergeNames(LineStatistics lineStats) {
