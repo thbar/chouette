@@ -99,15 +99,20 @@ public class TransitDataStatisticsService {
         Collections.sort(categories);
         cd.add(Calendar.DATE, categories.get(0));
         Date dateExpiring = cd.getTime();
-        for (PublicLine pl : lineStats.getPublicLines()) {
-            int s = pl.getEffectivePeriods().size();
-            Period p  = pl.getEffectivePeriods().get(s - 1);
-            if(p.getTo().compareTo(startDate) > 0){
-                lineStats.setInvalid(false);
-            }
-
-            if(p.getTo().compareTo(dateExpiring) > 0){
-                lineStats.setExpiring(false);
+        if(lineStats.getPublicLines().size() == 0){
+            lineStats.setInvalid(false);
+            lineStats.setExpiring(false);
+        }
+        else{
+            for (PublicLine pl : lineStats.getPublicLines()) {
+                int s = pl.getEffectivePeriods().size();
+                Period p  = pl.getEffectivePeriods().get(s - 1);
+                if(p.getTo().compareTo(startDate) > 0){
+                    lineStats.setInvalid(false);
+                }
+                if(p.getTo().compareTo(dateExpiring) > 0){
+                    lineStats.setExpiring(false);
+                }
             }
         }
     }

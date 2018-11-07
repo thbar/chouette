@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @XmlRootElement(name = "lineStatistics")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "startDate", "days", "validityCategories", "publicLines" })
+@XmlType(propOrder = { "startDate", "days", "validityCategories", "publicLines", "invalid", "expiring" })
 @Getter
 public class LineStatistics {
 
