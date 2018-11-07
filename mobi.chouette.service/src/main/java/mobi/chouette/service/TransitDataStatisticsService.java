@@ -117,6 +117,10 @@ public class TransitDataStatisticsService {
                 }
             }
         }
+
+        if(lineStats.getPublicLines().size() != 0 && lineStats.isInvalid()){
+            lineStats.setExpiring(false);
+        }
     }
 
     private void mergeNames(LineStatistics lineStats) {
