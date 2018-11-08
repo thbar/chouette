@@ -28,11 +28,11 @@ import com.jamonapi.MonitorFactory;
 public class DaoNetexLineProducerCommand implements Command, Constant {
 
 	public static final String COMMAND = "DaoNetexLineProducerCommand";
-	
-	@Resource 
+
+	@Resource
 	private SessionContext daoContext;
-	
-	@EJB 
+
+	@EJB
 	private LineDAO lineDAO;
 
 	@Override

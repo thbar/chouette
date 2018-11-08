@@ -2,6 +2,6 @@
 - name: Create image
   hosts: localhost
   vars_files:
-    - vars/all.yml
+  - vars/all.yml
   tasks:
-    - include: tasks/main.yml
+  - include: tasks/main.yml

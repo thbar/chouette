@@ -1,0 +1,128 @@
+version: 2
+aliases:
+  - &GCP-auth
+    name: GCP Authenticate
+    command: |
+      echo 'export GCLOUD_SERVICE_KEY="$GCLOUD_SERVICE_KEY"' >> $BASH_ENV
+      /tools/gcp_authenticate.sh
+  - &docker-login
+    name: Docker login
+    command: |
+      echo 'export GCLOUD_SERVICE_KEY="$GCLOUD_SERVICE_KEY"' >> $BASH_ENV
+      /tools/docker_login.sh
+  - &docker-build-and-push
+    name: Docker build and push
+    command: |
+      echo 'export CIRCLE_PROJECT_REPONAME="$CIRCLE_PROJECT_REPONAME"' >> $BASH_ENV
+      echo 'export CIRCLE_SHA1="$CIRCLE_SHA1"' >> $BASH_ENV
+      echo 'export BUILD_ARGS="--build-arg NEXUS_USER=$NEXUS_USER --build-arg NEXUS_PASS=$NEXUS_PASS"' >> $BASH_ENV
+      /tools/docker_build_push.sh
+  - &post-hook
+    name: Notify about build and docker image pushed
+    command: |
+      echo 'export CIRCLE_PROJECT_REPONAME="$CIRCLE_PROJECT_REPONAME"' >> $BASH_ENV
+      echo 'export CIRCLE_SHA1="$CIRCLE_SHA1"' >> $BASH_ENV
+      echo 'export BUILD_STATUS_API_KEY="$BUILD_STATUS_API_KEY"' >> $BASH_ENV
+      /tools/build_notify.sh
+jobs:
+  build:
+    docker:
+      - image: eu.gcr.io/carbon-1287/circleci-toolbox-image
+        auth:
+          username: _json_key
+          password: $GCLOUD_SERVICE_KEY
+      - image: mdillon/postgis:9.6
+        environment:
+          TZ: Europe/Oslo
+          POSTGRES_DB: chouette_test
+          POSTGRES_USER: chouette
+          POSTGRES_PASSWORD: chouette
+    environment:
+      MAVEN_OPTS: -Xmx2G
+      _JAVA_OPTIONS: -Xmx2G
+    steps:
+      - checkout
+      - restore_cache:
+          key: dep-cache-{{ checksum "pom.xml" }}
+      # Cannot use go offline and -o because of snapshot dependencies.
+      - run: mvn -DskipWildfly -DskipDelombok -B -q clean install -s /tools/m2/settings.xml
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: dep-cache-{{ checksum "pom.xml" }}
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - target
+            - pom.xml
+            - .circleci
+            - Dockerfile
+            - docker
+            - mobi.chouette.command
+            - mobi.chouette.common
+            - mobi.chouette.dao
+            - mobi.chouette.dao.iev
+            - mobi.chouette.exchange
+            - mobi.chouette.exchange.converter
+            - mobi.chouette.exchange.geojson
+            - mobi.chouette.exchange.gtfs
+            - mobi.chouette.exchange.hub
+            - mobi.chouette.exchange.kml
+            - mobi.chouette.exchange.neptune
+            - mobi.chouette.exchange.netex
+            - mobi.chouette.exchange.netexprofile
+            - mobi.chouette.exchange.regtopp
+            - mobi.chouette.exchange.sig
+            - mobi.chouette.exchange.stopplace
+            - mobi.chouette.exchange.transfer
+            - mobi.chouette.exchange.validator
+            - mobi.chouette.iml
+            - mobi.chouette.model
+            - mobi.chouette.model.iev
+            - mobi.chouette.persistence.hibernate
+            - mobi.chouette.schema.checker
+            - mobi.chouette.service
+            - mobi.chouette.ws
+            - chouette_iev
+  deploy-docker:
+    docker:
+      - image: eu.gcr.io/carbon-1287/circleci-toolbox-image
+        auth:
+          username: _json_key
+          password: $GCLOUD_SERVICE_KEY
+    environment:
+      DEBIAN_FRONTEND: "noninteractive"
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - restore_cache:
+          key: dep-cache-{{ checksum "pom.xml" }}
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: *GCP-auth
+      - run: *docker-login
+      - run: *docker-build-and-push
+      - run: *post-hook
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build:
+          context: org-carbon
+      - deploy-docker:
+          context: org-carbon
+          requires:
+            - build
+          filters:
+            branches:
+              only: rutebanken_develop
