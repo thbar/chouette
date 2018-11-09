@@ -308,7 +308,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
                             DataLocation target2 = buildLocation(context, vjas1.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
                             ValidationReporter reporter = ValidationReporter.Factory.getInstance();
                             boolean isFlexible = (vj.getFlexibleService() != null && vj.getFlexibleService()) || (vj.getRoute().getLine().getFlexibleService() != null && vj.getRoute().getLine().getFlexibleService().booleanValue());
-                            if (!isFlexible) {
+                            if (!isFlexible) { // Not applicable to flexible lines.
                                 if (parameters.getMaxSpeedHardLimitFactor() != null && pessimisticSpeed > maxSpeed * parameters.getMaxSpeedHardLimitFactor() )
                                 {
                                     int hardLimit = (int) (maxSpeed * parameters.getMaxSpeedHardLimitFactor());

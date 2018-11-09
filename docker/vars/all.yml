@@ -1,5 +1,5 @@
 ---
-chouette_docker_image_version: "1.10"
+chouette_docker_image_version: "1.11"
 
 docker_build_root: "/tmp/docker-build"
 build_home: "~/dev/workspaces/chouette_okina"
