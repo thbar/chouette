@@ -1,45 +1,27 @@
 package mobi.chouette.exchange.netexprofile.parser;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBElement;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.rutebanken.netex.model.JourneyPattern_VersionStructure;
-import org.rutebanken.netex.model.JourneyPatternsInFrame_RelStructure;
-import org.rutebanken.netex.model.LinkInLinkSequence_VersionedChildStructure;
-import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
-import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
-import org.rutebanken.netex.model.ServiceLinkInJourneyPattern_VersionedChildStructure;
-import org.rutebanken.netex.model.StopPointInJourneyPattern;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.netexprofile.Constant;
-import mobi.chouette.model.BookingArrangement;
+import mobi.chouette.model.*;
 import mobi.chouette.model.DestinationDisplay;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.ScheduledStopPoint;
-import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
+import mobi.chouette.model.type.SectionStatusEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.rutebanken.netex.model.BookingArrangementsStructure;
-import org.rutebanken.netex.model.JourneyPattern_VersionStructure;
-import org.rutebanken.netex.model.JourneyPatternsInFrame_RelStructure;
-import org.rutebanken.netex.model.LinkInLinkSequence_VersionedChildStructure;
-import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
-import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
-import org.rutebanken.netex.model.ServiceLinkInJourneyPattern_VersionedChildStructure;
-import org.rutebanken.netex.model.StopPointInJourneyPattern;
+import org.rutebanken.netex.model.*;
+
+import javax.xml.bind.JAXBElement;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j
 public class JourneyPatternParser extends NetexParser implements Parser, Constant {
@@ -102,6 +84,9 @@ public class JourneyPatternParser extends NetexParser implements Parser, Constan
 
 		}
 
+		if (chouetteJourneyPattern.hasCompleteRouteSections()) {
+			chouetteJourneyPattern.setSectionStatus(SectionStatusEnum.Completed);
+		}
 
 	}
 

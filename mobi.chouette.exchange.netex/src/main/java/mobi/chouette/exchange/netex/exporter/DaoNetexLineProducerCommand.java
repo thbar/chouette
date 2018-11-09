@@ -1,16 +1,7 @@
 package mobi.chouette.exchange.netex.exporter;
 
-import java.io.IOException;
-
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -20,24 +11,27 @@ import mobi.chouette.dao.LineDAO;
 import mobi.chouette.exchange.netex.Constant;
 import mobi.chouette.model.Line;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
 
 @Log4j
 @Stateless(name = DaoNetexLineProducerCommand.COMMAND)
 public class DaoNetexLineProducerCommand implements Command, Constant {
 
 	public static final String COMMAND = "DaoNetexLineProducerCommand";
-	
-	@Resource 
+
+	@Resource
 	private SessionContext daoContext;
-	
-	@EJB 
+
+	@EJB
 	private LineDAO lineDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean execute(Context context) throws Exception {
+	public boolean execute(Context context) {
 
 		boolean result = ERROR;
 		Monitor monitor = MonitorFactory.start(COMMAND);
