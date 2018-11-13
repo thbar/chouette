@@ -1,24 +1,23 @@
 package mobi.chouette.exchange.importer.updater;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.StopAreaTypeEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
-
 import org.rutebanken.netex.model.StopTypeEnumeration;
+
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.importer.updater.NeTExStopPlaceUtil.findTransportModeForStopArea;
 import static mobi.chouette.exchange.importer.updater.NeTExStopPlaceUtil.mapTransportMode;
@@ -34,6 +33,8 @@ public class StopAreaIdMapper {
     @EJB(beanName = StopAreaIdCache.BEAN_NAME)
     private StopAreaIdCache stopAreaIdCache;
 
+    @EJB
+    private StopAreaDAO stopAreaDAO;
 
     public void mapStopAreaIds(Referential referential) {
         referential.setStopAreas(mapStopAreas(referential.getStopAreas(),referential));
@@ -60,6 +61,10 @@ public class StopAreaIdMapper {
         if (newId != null) {
             stopArea.setObjectId(newId);
             log.debug("Mapped id for " + stopArea.getAreaType() + " from: " + orgId + " to: " + newId);
+
+            Integer objectVersion = stopAreaDAO.findByObjectId(newId).getObjectVersion();
+            stopArea.setObjectVersion(objectVersion);
+            log.debug("Set object version for " + orgId+ "/" + newId + " to : " + objectVersion);
 
             referential.getStopAreaMapping().put(orgId,newId);
 
