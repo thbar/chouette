@@ -99,13 +99,12 @@ public class TransitDataStatisticsService {
         Collections.sort(categories);
         cd.add(Calendar.DATE, categories.get(0));
         Date dateExpiring = cd.getTime();
-        if(lineStats.getPublicLines().size() == 0){
+        if (lineStats.getPublicLines().size() == 0) {
             lineStats.setInvalid(false);
             lineStats.setExpiring(false);
-        }
-        else{
+        } else {
             for (PublicLine pl : lineStats.getPublicLines()) {
-                if(pl.getEffectivePeriods().size() != 0) {
+                if (pl.getEffectivePeriods().size() != 0) {
                     int s = pl.getEffectivePeriods().size();
                     Period p = pl.getEffectivePeriods().get(s - 1);
                     if (p.getTo().compareTo(startDate) > 0) {
@@ -118,7 +117,7 @@ public class TransitDataStatisticsService {
             }
         }
 
-        if(lineStats.getPublicLines().size() != 0 && lineStats.isInvalid()){
+        if (lineStats.getPublicLines().size() != 0 && lineStats.isInvalid()) {
             lineStats.setExpiring(false);
         }
     }
@@ -196,7 +195,13 @@ public class TransitDataStatisticsService {
     private boolean isValidAtLeastNumberOfDays(PublicLine pl, LocalDate startDateLocal, Integer numDays) {
         if (pl.getEffectivePeriods().size() > 0) {
             Date limitDate = startDateLocal.plusDays(numDays).toDate();
-            return pl.getEffectivePeriods().stream().anyMatch(p -> !p.getFrom().after(startDateLocal.toDate()) && !p.getTo().before(limitDate));
+            List<Period> allPeriods = new ArrayList<>();
+            allPeriods.addAll(pl.getEffectivePeriods());
+            allPeriods.sort(Comparator.comparing(o -> o.getTo().getTime()));
+            Date startDateGlobalPeriods = allPeriods.get(0).getFrom();
+            allPeriods.sort(Collections.reverseOrder());
+            Date endDateGlobalPeriods = allPeriods.get(0).getTo();
+            return !startDateGlobalPeriods.after(startDateLocal.toDate()) && !endDateGlobalPeriods.before(limitDate);
         }
 
         return false;
@@ -391,7 +396,7 @@ public class TransitDataStatisticsService {
                                     Calendar dateEnd = Calendar.getInstance();
                                     Calendar dateStart = Calendar.getInstance();
 
-                                    if(newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) < 0){
+                                    if (newDateStart.getTime().compareTo(dayDelete.getDate().toDate()) < 0) {
                                         dateEnd.setTime(dayDelete.getDate().toDate());
                                         dateEnd.add(Calendar.DATE, -1);
 
@@ -404,9 +409,7 @@ public class TransitDataStatisticsService {
                                     timetable.getPeriods().add(new Period(dateStart.getTime(), newDateEnd.getTime()));
                                     newDateStart = dateStart;
                                     newDateStartValued = true;
-                                }
-
-                                else if(!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())){
+                                } else if (!newDateStart.getTime().equals(p.getStartDate().toDate()) || !newDateEnd.getTime().equals(p.getEndDate().toDate())) {
                                     periodsToDelete.add(new Period(p.getStartDate().toDate(), p.getEndDate().toDate()));
                                     timetable.getPeriods().add(new Period(newDateStart.getTime(), newDateEnd.getTime()));
                                 }
