@@ -75,7 +75,10 @@ public class JourneyPatternCheckPoints extends AbstractValidation<JourneyPattern
 			// to journey stops count minus 1
 			if (!sourceFile) {
 				check3JourneyPattern2(context, jp);
-				check3JourneyPatternRb4(context, jp);
+				boolean flexibleService = jp.getRoute().getLine().getFlexibleService() != null && jp.getRoute().getLine().getFlexibleService();
+				if (!flexibleService) {
+				    check3JourneyPatternRb4(context, jp);
+                }
 			}
 			// 3-RouteSection-1 : Check if route section distance doesn't exceed
 			// gap as parameter
