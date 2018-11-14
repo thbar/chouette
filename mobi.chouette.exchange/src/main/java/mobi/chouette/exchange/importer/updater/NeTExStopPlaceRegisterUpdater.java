@@ -49,6 +49,8 @@ import static mobi.chouette.common.PropertyNames.*;
 public class NeTExStopPlaceRegisterUpdater {
     private static final String STOP_PLACE_REGISTER_MAP = "STOP_PLACE_REGISTER_MAP";
 
+    private static final String VERSION = "1";
+
     public static final String IMPORTED_ID = "imported-id";
 
     public static final String MERGED_ID = "merged-id";
@@ -160,7 +162,7 @@ public class NeTExStopPlaceRegisterUpdater {
                 .map(stopPlaceMapper::mapStopAreaToStopPlace).collect(Collectors.toList());
 
         SiteFrame siteFrame = new SiteFrame();
-        stopPlaceMapper.setVersion(siteFrame);
+        siteFrame.setVersion(VERSION);
 
 //		List<NavigationPath> navigationPaths = findAndMapConnectionLinks(referential, correlationId, siteFrame, m);
 

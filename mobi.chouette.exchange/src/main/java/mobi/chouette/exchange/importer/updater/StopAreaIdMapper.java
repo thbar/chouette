@@ -37,12 +37,12 @@ public class StopAreaIdMapper {
     private StopAreaDAO stopAreaDAO;
 
     public void mapStopAreaIds(Referential referential) {
-        referential.setStopAreas(mapStopAreas(referential.getStopAreas(),referential));
-        referential.setSharedStopAreas(mapStopAreas(referential.getSharedStopAreas(),referential));
+        referential.setStopAreas(mapStopAreas(referential.getStopAreas(), referential));
+        referential.setSharedStopAreas(mapStopAreas(referential.getSharedStopAreas(), referential));
     }
 
-    private Map<String, StopArea> mapStopAreas(Map<String,StopArea> stopAreaMap, Referential referential) {
-        return stopAreaMap.entrySet().stream().map(entry -> mapIdsForStopArea(entry.getValue(),referential)).distinct().collect(Collectors.toMap(StopArea::getObjectId, Function.identity()));
+    private Map<String, StopArea> mapStopAreas(Map<String, StopArea> stopAreaMap, Referential referential) {
+        return stopAreaMap.entrySet().stream().map(entry -> mapIdsForStopArea(entry.getValue(), referential)).distinct().collect(Collectors.toMap(StopArea::getObjectId, Function.identity()));
     }
 
 
@@ -64,9 +64,9 @@ public class StopAreaIdMapper {
 
             Integer objectVersion = stopAreaDAO.findByObjectId(newId).getObjectVersion();
             stopArea.setObjectVersion(objectVersion);
-            log.debug("Set object version for " + orgId+ "/" + newId + " to : " + objectVersion);
+            log.debug("Set object version for " + orgId + "/" + newId + " to : " + objectVersion);
 
-            referential.getStopAreaMapping().put(orgId,newId);
+            referential.getStopAreaMapping().put(orgId, newId);
 
         } else {
             log.debug("Failed to map id for " + stopArea.getAreaType() + " from: " + orgId);
@@ -74,7 +74,7 @@ public class StopAreaIdMapper {
 
         //stopArea.getContainedStopAreas().forEach(child -> mapIdsForStopArea(child));
         if (stopArea.getParent() != null) {
-            mapIdsForStopArea(stopArea.getParent(),referential);
+            mapIdsForStopArea(stopArea.getParent(), referential);
         }
         return stopArea;
     }

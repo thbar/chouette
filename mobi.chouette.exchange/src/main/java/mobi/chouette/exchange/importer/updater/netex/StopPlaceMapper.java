@@ -13,8 +13,6 @@ import org.rutebanken.netex.model.*;
 @Log4j
 public class StopPlaceMapper {
 
-    private static final String VERSION = "1";
-
     /**
      * Map stop area with contained stop areas.
      *
@@ -38,7 +36,7 @@ public class StopPlaceMapper {
     protected Quay mapQuay(StopArea stopArea) {
         Quay quay = new Quay();
         mapId(stopArea, quay);
-        setVersion(quay);
+        setVersion(stopArea, quay);
         mapCentroid(stopArea, quay);
         mapQuayName(stopArea, quay);
         mapPublicCode(stopArea, quay);
@@ -59,7 +57,7 @@ public class StopPlaceMapper {
     private StopPlace mapStopPlace(StopArea stopArea) {
         StopPlace stopPlace = new StopPlace();
         mapId(stopArea, stopPlace);
-        setVersion(stopPlace);
+        setVersion(stopArea, stopPlace);
         mapCentroid(stopArea, stopPlace);
         mapName(stopArea, stopPlace);
         return stopPlace;
@@ -71,8 +69,8 @@ public class StopPlaceMapper {
         }
     }
 
-    public void setVersion(EntityInVersionStructure entity) {
-        entity.setVersion(VERSION);
+    public void setVersion(StopArea stopArea, EntityInVersionStructure entity) {
+        entity.setVersion(String.valueOf(stopArea.getObjectVersion()));
     }
 
     private void mapId(StopArea stopArea, Zone_VersionStructure zone) {
@@ -86,7 +84,7 @@ public class StopPlaceMapper {
     }
 
     private void mapCentroid(StopArea stopArea, Zone_VersionStructure zone) {
-        setVersion(zone);
+        setVersion(stopArea, zone);
         if (stopArea.getLatitude() != null && stopArea.getLongitude() != null) {
             zone.setCentroid(new SimplePoint_VersionStructure().withLocation(
                     new LocationStructure().withLatitude(stopArea.getLatitude()).withLongitude(stopArea.getLongitude())));
