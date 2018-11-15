@@ -1,10 +1,18 @@
 package mobi.chouette.exchange.gtfs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+/**
+ * Class for network names and line transport modes.
+ */
 
 public class NetworksNames {
     private Map<String, String> producers = new HashMap<>();
+    private List<String> producersExceptionNameNetwork = new ArrayList<>();
+    private List<String> producersSitesTerritorialises = new ArrayList<>();
 
     public NetworksNames(){
         //AOM
@@ -53,10 +61,62 @@ public class NetworksNames {
         producers.put("BAC","Transports Maritimes Départementaux de la Gironde");
         producers.put("FAI","Liaison maritime Aix-Fouras");
 //        producers.put("SNC","SNCF");
+
+
+        producersExceptionNameNetwork.add("COU");
+        producersExceptionNameNetwork.add("PBA");
+        producersExceptionNameNetwork.add("SNC");
+
+        producersSitesTerritorialises.add("CHA");
+        producersSitesTerritorialises.add("CMA");
+        producersSitesTerritorialises.add("COR");
+        producersSitesTerritorialises.add("CRE");
+        producersSitesTerritorialises.add("DSE");
+        producersSitesTerritorialises.add("DOR");
+        producersSitesTerritorialises.add("GIR");
+        producersSitesTerritorialises.add("HVI");
+        producersSitesTerritorialises.add("LAN");
+        producersSitesTerritorialises.add("LGA");
+        producersSitesTerritorialises.add("PAT");
+        producersSitesTerritorialises.add("VIE");
+
+
     }
 
+    /**
+     * Return the network name from the ID of the data space.
+     * @param prefix
+     * @return
+     */
     public String getNetworkName(String prefix){
         return producers.get(prefix);
+    }
+
+    /**
+     * Check if the ID of the data space is in the list.
+     * @param prefix
+     * @return
+     */
+    public Boolean getPrefixInList(String prefix){
+        return producersExceptionNameNetwork.contains(prefix);
+    }
+
+    /**
+     * Check if the data space identifier is not in the list.
+     * @param prefix
+     * @return
+     */
+    public Boolean getPrefixOutList(String prefix){
+        return !producersExceptionNameNetwork.contains(prefix);
+    }
+
+    /**
+     * Check that this is a territorial site.
+     * @param prefix
+     * @return
+     */
+    public Boolean getTerritorializedSites(String prefix){
+        return producersSitesTerritorialises.contains(prefix);
     }
 
 }
