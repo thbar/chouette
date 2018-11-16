@@ -55,7 +55,7 @@ public class NetworksNames {
         producers.put("GIR","TransGironde");
         producers.put("HVI","Moohv87");
         producers.put("LAN","XL'R");
-        producers.put("LGA","Tidéo");
+//        producers.put("LGA","Tidéo");
         producers.put("PAT","Transports64");
         producers.put("VIE","Lignes en Vienne");
         producers.put("BAC","Transports Maritimes Départementaux de la Gironde");
@@ -66,6 +66,7 @@ public class NetworksNames {
         producersExceptionNameNetwork.add("COU");
         producersExceptionNameNetwork.add("PBA");
         producersExceptionNameNetwork.add("SNC");
+        producersExceptionNameNetwork.add("LGA");
 
         producersSitesTerritorialises.add("CHA");
         producersSitesTerritorialises.add("CMA");
