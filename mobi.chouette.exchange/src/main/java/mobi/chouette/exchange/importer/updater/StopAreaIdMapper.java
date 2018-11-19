@@ -136,4 +136,5 @@ public class StopAreaIdMapper {
     public void setStopAreaIdCache(StopAreaIdCache stopAreaIdCache) {
         this.stopAreaIdCache = stopAreaIdCache;
     }
+
 }

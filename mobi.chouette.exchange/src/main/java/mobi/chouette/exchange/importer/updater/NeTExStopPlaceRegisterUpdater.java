@@ -159,7 +159,9 @@ public class NeTExStopPlaceRegisterUpdater {
                 .filter(stopArea -> stopArea.getAreaType() == ChouetteAreaEnum.CommercialStopPoint)
                 .distinct()
                 .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
-                .map(stopPlaceMapper::mapStopAreaToStopPlace).collect(Collectors.toList());
+                .map(stopPlaceMapper::mapStopAreaToStopPlace)
+                .map(stopArea -> stopPlaceMapper.addImportedIdInfo(stopArea, referential))
+                .collect(Collectors.toList());
 
         SiteFrame siteFrame = new SiteFrame();
         siteFrame.setVersion(VERSION);

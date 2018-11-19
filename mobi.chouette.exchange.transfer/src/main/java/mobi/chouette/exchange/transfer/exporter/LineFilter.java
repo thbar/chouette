@@ -1,17 +1,12 @@
 package mobi.chouette.exchange.transfer.exporter;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.model.*;
+import mobi.chouette.model.util.NeptuneUtil;
+import org.joda.time.LocalDate;
+
 import java.util.Date;
 import java.util.Iterator;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.Timetable;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.util.NeptuneUtil;
-
-import org.joda.time.LocalDate;
 
 @Log4j
 public class LineFilter {
@@ -21,14 +16,14 @@ public class LineFilter {
 		// Clean line
 		for (Iterator<Route> routeI = line.getRoutes().iterator(); routeI.hasNext();) {
 			Route route = routeI.next();
-			if (route.getStopPoints().size() < 2) {
+			if (route.getStopPoints().size() < 2 && !route.getLine().getFlexibleService()) {
 				routeI.remove();
 				continue;
 
 			}
 			for (Iterator<JourneyPattern> jpI = route.getJourneyPatterns().iterator(); jpI.hasNext();) {
 				JourneyPattern jp = jpI.next();
-				if (jp.getStopPoints().size() < 2) {
+				if (jp.getStopPoints().size() < 2 && !jp.getRoute().getLine().getFlexibleService()) {
 					jpI.remove();
 					continue; // no stops
 				}
