@@ -21,6 +21,7 @@ import mobi.chouette.exchange.importer.Validator;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
+import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 
@@ -193,7 +194,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         convert(context, gtfsRoute, line);
 
         String agencyId = null;
-        if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC") || configuration.getObjectIdPrefix().equals("COU")) {
+        if(networksNames.getPrefixInList(configuration.getObjectIdPrefix())) {
             agencyId = gtfsRoute.getAgencyId();
         }
         else{
@@ -217,7 +218,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
                     Company.AUTHORITY_KEY, agencyId, log);
             Company authority = ObjectFactory.getCompany(referential, authorityId);
             ptNetwork.setCompany(authority);
-            if(configuration.getObjectIdPrefix().equals("PBA") || configuration.getObjectIdPrefix().equals("SNC") || configuration.getObjectIdPrefix().equals("COU")) {
+            if(networksNames.getPrefixInList(configuration.getObjectIdPrefix())) {
                 ptNetwork.setName(authority.getName()); // Set same name on network as on agency
             }
             else{
@@ -235,6 +236,8 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
     }
 
     protected void convert(Context context, GtfsRoute gtfsRoute, Line line) {
+        GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        NetworksNames networksNames = new NetworksNames();
 
         line.setName(AbstractConverter.getNonEmptyTrimedString(gtfsRoute.getRouteLongName()));
 //		if (line.getName() == null)
@@ -254,7 +257,12 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 //			line.setName(line.getNumber());
 //		}
 
-        line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
+        if(networksNames.getTerritorializedSites(configuration.getObjectIdPrefix())){
+            line.setTransportModeName(TransportModeNameEnum.Coach);
+        }
+        else{
+            line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
+        }
 		line.setTransportSubModeName(gtfsRoute.getRouteType().getSubMode());
 
         String[] token = line.getObjectId().split(":");

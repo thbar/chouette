@@ -3,7 +3,7 @@ chouette_docker_image_version: "1.14"
 
 #docker_build_root: "/tmp/docker-build"
 #build_home: "~/dev/workspaces/chouette_okina"
-
+#
 docker_build_root: "/var/lib/jenkins/docker"
 build_home: "/var/lib/jenkins/workspace/Naq-Docker-Chouette"
 
