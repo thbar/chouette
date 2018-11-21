@@ -9,6 +9,9 @@ import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
 import org.rutebanken.netex.model.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Map from chouette model to NeTEx
  */
@@ -143,7 +146,11 @@ public class StopPlaceMapper {
      * @return Netex stop place augmented with imported id if found.
      */
     public StopPlace addImportedIdInfo(StopPlace stopPlace, Referential referential) {
-        String importedId = (String) referential.getStopAreaMapping().inverseBidiMap().get(stopPlace.getId());
+        Map<String, String> stopAreaMappingInverse = new HashMap<>();
+        for(Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()){
+            stopAreaMappingInverse.put(entry.getValue(), entry.getKey());
+        }
+        String importedId = stopAreaMappingInverse.get(stopPlace.getId());
         if (StringUtils.isNotBlank(importedId)) {
             stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
                     .withKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID)
