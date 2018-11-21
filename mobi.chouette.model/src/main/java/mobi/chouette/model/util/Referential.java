@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.model.*;
-import org.apache.commons.collections.BidiMap;
-import org.apache.commons.collections.bidimap.DualHashBidiMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +44,7 @@ public class Referential implements java.io.Serializable {
 
     @Getter
     @Setter
-    private BidiMap stopAreaMapping = new DualHashBidiMap();
-
+    private Map<String, String> stopAreaMapping = new HashMap<>();
 
     @Getter
     @Setter

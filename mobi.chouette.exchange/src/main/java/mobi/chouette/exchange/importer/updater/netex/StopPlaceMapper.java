@@ -1,11 +1,9 @@
 package mobi.chouette.exchange.importer.updater.netex;
 
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.exchange.importer.updater.NeTExStopPlaceRegisterUpdater;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
-import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
 import org.rutebanken.netex.model.*;
 
@@ -142,13 +140,13 @@ public class StopPlaceMapper {
      * @param referential chouette import referential
      * @return Netex stop place augmented with imported id if found.
      */
-    public StopPlace addImportedIdInfo(StopPlace stopPlace, Referential referential) {
-        String importedId = (String) referential.getStopAreaMapping().inverseBidiMap().get(stopPlace.getId());
-        if (StringUtils.isNotBlank(importedId)) {
-            stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                    .withKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID)
-                    .withValue(importedId)));
-        }
-        return stopPlace;
-    }
+//    public StopPlace addImportedIdInfo(StopPlace stopPlace, Referential referential) {
+//        String importedId = (String) referential.getStopAreaMapping().inverseBidiMap().get(stopPlace.getId());
+//        if (StringUtils.isNotBlank(importedId)) {
+//            stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+//                    .withKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID)
+//                    .withValue(importedId)));
+//        }
+//        return stopPlace;
+//    }
 }
