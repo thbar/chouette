@@ -160,7 +160,7 @@ public class NeTExStopPlaceRegisterUpdater {
                 .distinct()
                 .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                 .map(stopPlaceMapper::mapStopAreaToStopPlace)
-//                .map(stopArea -> stopPlaceMapper.addImportedIdInfo(stopArea, referential))
+                .map(stopArea -> stopPlaceMapper.addImportedIdInfo(stopArea, referential))
                 .collect(Collectors.toList());
 
         SiteFrame siteFrame = new SiteFrame();
