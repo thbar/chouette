@@ -31,11 +31,13 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<scope>provided</scope>
+            <version>5.3.6.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<scope>provided</scope>
+            <version>5.3.6.Final</version>
 		</dependency>
 
 		<!-- Modules -->
