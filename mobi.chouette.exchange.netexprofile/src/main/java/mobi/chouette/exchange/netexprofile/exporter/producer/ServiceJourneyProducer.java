@@ -1,10 +1,5 @@
 package mobi.chouette.exchange.netexprofile.exporter.producer;
 
-import java.math.BigInteger;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.netexprofile.Constant;
@@ -12,27 +7,19 @@ import mobi.chouette.exchange.netexprofile.ConversionUtil;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableData;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.importer.util.NetexTimeConversionUtil;
-import mobi.chouette.model.BookingArrangement;
+import mobi.chouette.model.*;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.LocalTime;
-import org.rutebanken.netex.model.DayTypeRefStructure;
-import org.rutebanken.netex.model.DayTypeRefs_RelStructure;
+import org.rutebanken.netex.model.*;
 import org.rutebanken.netex.model.FlexibleServiceProperties;
-import org.rutebanken.netex.model.JourneyPatternRefStructure;
-import org.rutebanken.netex.model.MultilingualString;
-import org.rutebanken.netex.model.OperatorRefStructure;
-import org.rutebanken.netex.model.PrivateCodeStructure;
-import org.rutebanken.netex.model.ServiceJourney;
-import org.rutebanken.netex.model.StopPointInJourneyPatternRefStructure;
-import org.rutebanken.netex.model.TimetabledPassingTime;
-import org.rutebanken.netex.model.TimetabledPassingTimes_RelStructure;
+
+import java.math.BigInteger;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServiceJourneyProducer extends NetexProducer {
 
@@ -102,6 +89,7 @@ public class ServiceJourneyProducer extends NetexProducer {
 				StopPoint stopPoint = vehicleJourneyAtStop.getStopPoint();
 				StopPointInJourneyPatternRefStructure pointInPatternRefStruct = netexFactory.createStopPointInJourneyPatternRefStructure();
 				NetexProducerUtils.populateReference(stopPoint, pointInPatternRefStruct, true);
+                pointInPatternRefStruct.setRef(pointInPatternRefStruct.getRef().concat(journeyPatternRefStruct.getRef().substring(journeyPatternRefStruct.getRef().lastIndexOf(":")+1)));
 				timetabledPassingTime.setPointInJourneyPatternRef(netexFactory.createStopPointInJourneyPatternRef(pointInPatternRefStruct));
 
 				LocalTime departureTime = vehicleJourneyAtStop.getDepartureTime();
