@@ -1,27 +1,18 @@
 package mobi.chouette.exchange.netex.exporter.writer;
 
+import mobi.chouette.exchange.netex.exporter.ExportableData;
+import mobi.chouette.exchange.netex.exporter.ModelTranslator;
+import mobi.chouette.model.*;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
-import mobi.chouette.exchange.netex.exporter.ExportableData;
-import mobi.chouette.exchange.netex.exporter.ModelTranslator;
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.GroupOfLine;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Network;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
-
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class ServiceFrameWriter extends AbstractWriter{
 	
@@ -278,7 +269,7 @@ public class ServiceFrameWriter extends AbstractWriter{
 		writer.write("      <pointsInSequence>\n");
 		//        #foreach( $stopPoint in $journeyPattern.stopPoints )
 		for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
-		writer.write("        <StopPointInJourneyPattern version=\"1\" id=\""+stopPoint.objectIdPrefix()+":StopPointInJourneyPattern:"+stopPoint.objectIdSuffix()+"\">\n");
+		writer.write("        <StopPointInJourneyPattern version=\"1\" id=\""+stopPoint.objectIdPrefix()+":StopPointInJourneyPattern:"+stopPoint.objectIdSuffix()+"_"+journeyPattern.getObjectId()+"\">\n");
 		writer.write("          <ScheduledStopPointRef version=\""+stopPoint.getObjectVersion()+"\" ref=\""+modelTranslator.netexId(stopPoint)+"\"/>\n");
 		writer.write("        </StopPointInJourneyPattern>\n");
 		}
