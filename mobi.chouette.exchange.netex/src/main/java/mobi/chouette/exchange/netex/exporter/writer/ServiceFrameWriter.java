@@ -269,7 +269,7 @@ public class ServiceFrameWriter extends AbstractWriter{
 		writer.write("      <pointsInSequence>\n");
 		//        #foreach( $stopPoint in $journeyPattern.stopPoints )
 		for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
-		writer.write("        <StopPointInJourneyPattern version=\"1\" id=\""+stopPoint.objectIdPrefix()+":StopPointInJourneyPattern:"+stopPoint.objectIdSuffix()+"_"+journeyPattern.getObjectId()+"\">\n");
+		writer.write("        <StopPointInJourneyPattern version=\"1\" id=\""+stopPoint.objectIdPrefix()+":StopPointInJourneyPattern:"+stopPoint.objectIdSuffix()+"\">\n");
 		writer.write("          <ScheduledStopPointRef version=\""+stopPoint.getObjectVersion()+"\" ref=\""+modelTranslator.netexId(stopPoint)+"\"/>\n");
 		writer.write("        </StopPointInJourneyPattern>\n");
 		}
