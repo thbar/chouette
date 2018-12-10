@@ -1,42 +1,27 @@
 package mobi.chouette.exchange.netexprofile.exporter.producer;
 
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.vividsolutions.jts.geom.LineString;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.ConversionUtil;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.util.JtsGmlConverter;
-import mobi.chouette.model.BookingArrangement;
+import mobi.chouette.model.*;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Route;
-import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.ScheduledStopPoint;
-import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
-
-import com.vividsolutions.jts.geom.LineString;
 import net.opengis.gml._3.LineStringType;
 import org.apache.commons.collections.CollectionUtils;
-import org.rutebanken.netex.model.BookingArrangementsStructure;
-import org.rutebanken.netex.model.DestinationDisplayRefStructure;
-import org.rutebanken.netex.model.KeyValueStructure;
-import org.rutebanken.netex.model.LinkSequenceProjection;
-import org.rutebanken.netex.model.MultilingualString;
-import org.rutebanken.netex.model.PointsInJourneyPattern_RelStructure;
-import org.rutebanken.netex.model.PrivateCodeStructure;
-import org.rutebanken.netex.model.RouteRefStructure;
-import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
-import org.rutebanken.netex.model.ServiceLink;
-import org.rutebanken.netex.model.ServiceLinkInJourneyPattern_VersionedChildStructure;
-import org.rutebanken.netex.model.ServiceLinkRefStructure;
-import org.rutebanken.netex.model.StopPointInJourneyPattern;
+import org.rutebanken.netex.model.*;
+
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.createUniqueId;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
@@ -96,6 +81,7 @@ public class JourneyPatternProducer extends NetexProducer implements NetexEntity
 			if (stopPoint != null) {
 				StopPointInJourneyPattern stopPointInJourneyPattern = netexFactory.createStopPointInJourneyPattern();
 				NetexProducerUtils.populateId(stopPoint, stopPointInJourneyPattern);
+                stopPointInJourneyPattern.setId(stopPointInJourneyPattern.getId().concat(netexJourneyPattern.getId().substring(netexJourneyPattern.getId().lastIndexOf(":")+1)));
 
 				if (stopPoint.getScheduledStopPoint() != null) {
 					ScheduledStopPointRefStructure stopPointRefStruct = netexFactory.createScheduledStopPointRefStructure();
