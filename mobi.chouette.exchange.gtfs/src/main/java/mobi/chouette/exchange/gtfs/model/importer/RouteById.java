@@ -120,9 +120,7 @@ public class RouteById extends IndexImpl<GtfsRoute> implements GtfsConverter {
 			if (bean.getRouteId() != null){
 				bean.setRouteShortName(bean.getRouteId());
 			}
-			else{
-				noShortName = true;
-			}
+			noShortName = true;
 		} else {
 			bean.setRouteShortName(STRING_CONVERTER.from(context, FIELDS.route_short_name, value, false));
 		}
