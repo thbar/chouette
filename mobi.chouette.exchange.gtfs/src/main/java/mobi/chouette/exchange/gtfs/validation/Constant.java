@@ -26,7 +26,6 @@ public interface Constant extends mobi.chouette.exchange.gtfs.Constant {
 	public static final String GTFS_1_GTFS_Common_14  = "1-GTFS-Common-14";
 	public static final String GTFS_1_GTFS_Common_15  = "1-GTFS-Common-15";
 	public static final String GTFS_1_GTFS_Common_16  = "1-GTFS-Common-16";
-	public static final String GTFS_1_GTFS_Common_17  = "1-GTFS-Common-17";
 
 	public static final String GTFS_1_GTFS_Route_1    = "1-GTFS-Route-1";
 	public static final String GTFS_1_GTFS_Route_2    = "1-GTFS-Route-2";
@@ -38,7 +37,8 @@ public interface Constant extends mobi.chouette.exchange.gtfs.Constant {
 	public static final String GTFS_2_GTFS_Common_2   = "2-GTFS-Common-2";
 	public static final String GTFS_2_GTFS_Common_3   = "2-GTFS-Common-3";
 	public static final String GTFS_2_GTFS_Common_4   = "2-GTFS-Common-4";
-	
+	public static final String GTFS_2_GTFS_Common_5   = "2-GTFS-Common-5";
+
 	public static final String GTFS_2_GTFS_Stop_1     = "2-GTFS-Stop-1";
 	public static final String GTFS_2_GTFS_Stop_2     = "2-GTFS-Stop-2";
 	public static final String GTFS_2_GTFS_Stop_3     = "2-GTFS-Stop-3";

@@ -569,6 +569,14 @@ public class GtfsValidationReporter implements Constant{
 					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
 			break;
 
+		case MISSING_ROUTE_SHORT_NAME:
+			// 2-GTFS-Common-5
+			checkPointName = checkPointName(name, GtfsException.ERROR.MISSING_ROUTE_SHORT_NAME);
+			fieldName = ex.getField();
+			validationReporter.addCheckPointReportError(context,checkPointName,
+					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
+			break;
+
 		case MISSING_FOREIGN_KEY: // THIS CAN NEVER OCCUR !
 		case SYSTEM: // THIS CAN NEVER OCCUR !
 		default:
@@ -644,6 +652,8 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Common_3;
 		case SHARED_VALUE:
 			return GTFS_2_GTFS_Common_4;
+		case MISSING_ROUTE_SHORT_NAME:
+			return GTFS_2_GTFS_Common_5;
 
 		case BAD_REFERENCED_ID:
 			return GTFS_2_GTFS_Stop_1;
