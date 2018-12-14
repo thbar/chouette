@@ -569,6 +569,13 @@ public class GtfsValidationReporter implements Constant{
 					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
 			break;
 
+		case ROUTE_SHORT_NAME_MISSING:
+			checkPointName = checkPointName(name, GtfsException.ERROR.ROUTE_SHORT_NAME_MISSING);
+			fieldName = ex.getField();
+			validationReporter.addCheckPointReportError(context,checkPointName,
+					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
+
+
 		case MISSING_FOREIGN_KEY: // THIS CAN NEVER OCCUR !
 		case SYSTEM: // THIS CAN NEVER OCCUR !
 		default:
