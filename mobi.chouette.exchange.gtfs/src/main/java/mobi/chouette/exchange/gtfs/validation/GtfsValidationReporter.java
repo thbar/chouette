@@ -36,9 +36,9 @@ public class GtfsValidationReporter implements Constant{
 		reporter.addItemToValidationReport(context, "1-GTFS-", "CSV", 7, "E","E","E","E","E","E","W");
 		reporter.addItemToValidationReport(context, "1-GTFS-", "Common", 16, "E","E","W","W","E","E","W","E","E","W","W","E","E","W","E","E");
 		reporter.addItemToValidationReport(context, "1-GTFS-", "Calendar", 2, "W","E");
-		reporter.addItemToValidationReport(context, "1-GTFS-", "Route", 2, "E","E");
+		reporter.addItemToValidationReport(context, "1-GTFS-", "Route", 3, "E","E","W");
 
-		reporter.addItemToValidationReport(context, "2-GTFS-", "Common", 5, "E","W","E","W","W");
+		reporter.addItemToValidationReport(context, "2-GTFS-", "Common", 4, "E","W","E","W");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 5, "E","W","E","E","E");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Route", 4, "W","W","W","W");
 }
@@ -570,7 +570,7 @@ public class GtfsValidationReporter implements Constant{
 			break;
 
 		case MISSING_ROUTE_SHORT_NAME:
-			// 2-GTFS-Common-5
+			// 1-GTFS-Route-3
 			checkPointName = checkPointName(name, GtfsException.ERROR.MISSING_ROUTE_SHORT_NAME);
 			fieldName = ex.getField();
 			validationReporter.addCheckPointReportError(context,checkPointName,
@@ -653,7 +653,7 @@ public class GtfsValidationReporter implements Constant{
 		case SHARED_VALUE:
 			return GTFS_2_GTFS_Common_4;
 		case MISSING_ROUTE_SHORT_NAME:
-			return GTFS_2_GTFS_Common_5;
+			return GTFS_1_GTFS_Route_3;
 
 		case BAD_REFERENCED_ID:
 			return GTFS_2_GTFS_Stop_1;
