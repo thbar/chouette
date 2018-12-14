@@ -651,6 +651,8 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Common_3;
 		case SHARED_VALUE:
 			return GTFS_2_GTFS_Common_4;
+		case ROUTE_SHORT_NAME_MISSING:
+			return GTFS_1_GTFS_Common_17;
 
 		case BAD_REFERENCED_ID:
 			return GTFS_2_GTFS_Stop_1;
@@ -670,8 +672,6 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Route_3;
 		case INVERSE_DUPLICATE_ROUTE_NAMES:
 			return GTFS_2_GTFS_Route_4;
-		case ROUTE_SHORT_NAME_MISSING:
-			return GTFS_1_GTFS_Common_12;
 
 		default:
 			return null;
