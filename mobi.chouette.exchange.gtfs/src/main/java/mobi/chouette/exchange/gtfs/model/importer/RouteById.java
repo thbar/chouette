@@ -117,7 +117,15 @@ public class RouteById extends IndexImpl<GtfsRoute> implements GtfsConverter {
 		value = array[i++];
 		testExtraSpace(FIELDS.route_short_name.name(), value, bean);
 		if (value == null || value.trim().isEmpty()) {
-			noShortName = true;
+			if (bean.getRouteId() != null){
+				bean.setRouteShortName(bean.getRouteId());
+				bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.route_short_name.name()),
+						FIELDS.route_short_name.name(), GtfsException.ERROR.MISSING_FIELD, null,
+						null));
+			}
+			else{
+				noShortName = true;
+			}
 		} else {
 			bean.setRouteShortName(STRING_CONVERTER.from(context, FIELDS.route_short_name, value, false));
 		}
