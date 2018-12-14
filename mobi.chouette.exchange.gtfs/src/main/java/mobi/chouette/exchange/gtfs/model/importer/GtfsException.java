@@ -57,8 +57,7 @@ public class GtfsException extends RuntimeException {
 		ALL_DAYS_ARE_INVALID, 
 		START_DATE_AFTER_END_DATE, 
 		EMPTY_SERVICE,
-        COORDINATES_STOP_0_0,
-		ROUTE_SHORT_NAME_MISSING
+        COORDINATES_STOP_0_0
 	}
 
 	@Getter
