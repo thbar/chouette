@@ -38,7 +38,7 @@ public class NetworksNames {
         producers.put("BDA","Baïa");
         producers.put("VIL","Elios");
         producers.put("LIB","Calibus");
-        producers.put("MAR","TMA");
+        producers.put("MDM","TMA");
 //        producers.put("PBA","Réseau Pays Basque(Chronoplus et Hegobus)"); // à voir
         producers.put("GUE","agglo'Bus");
         producers.put("BBR","agglo2B");
