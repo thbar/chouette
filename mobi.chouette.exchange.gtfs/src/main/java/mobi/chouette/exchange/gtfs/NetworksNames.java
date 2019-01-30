@@ -31,7 +31,7 @@ public class NetworksNames {
 //        producers.put("COU","Couralin");
         producers.put("PER","Péribus");
         producers.put("VIT","Vitalis");
-        producers.put("MAC","Yego");
+        producers.put("YEG","Yego");
         producers.put("BER","TUB");
         producers.put("AGE","Tempo");
         producers.put("VDG","Evalys");
