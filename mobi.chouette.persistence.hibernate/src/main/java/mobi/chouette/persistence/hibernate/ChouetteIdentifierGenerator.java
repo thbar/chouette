@@ -106,10 +106,15 @@ public class ChouetteIdentifierGenerator implements IdentifierGenerator,
 					result.initialize(rs, 1);
 					return result;
 				} finally {
-					session.getJdbcCoordinator().close();
+                    try {
+                        session.getJdbcCoordinator().getLogicalConnection().getResourceRegistry().release(rs, st);
+                    } catch (Throwable ignore) {
+                        // intentionally empty
+                    }
 				}
 			} finally {
-				session.getJdbcCoordinator().close();
+                session.getJdbcCoordinator().getLogicalConnection().getResourceRegistry().release(st);
+                session.getJdbcCoordinator().afterStatementExecution();
 			}
 
 		} catch (SQLException sqle) {
