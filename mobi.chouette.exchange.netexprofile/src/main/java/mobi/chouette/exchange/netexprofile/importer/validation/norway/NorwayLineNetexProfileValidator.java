@@ -362,9 +362,9 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 	private void validateFlexibleLineMandatoryValues(Context context, XPathCompiler xpath, XdmNode subLevel) throws XPathExpressionException, SaxonApiException {
 		validateElementNotPresent(context, xpath, subLevel, "lines/FlexibleLine[not(FlexibleLineType)]", _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_FLEXIBLELINETYPE);
 
-		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookingMethods", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGMETHODS);
+		//validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookingMethods", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGMETHODS);
 		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookingContact", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGCONTACT);
-		validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookWhen", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKWHEN);
+		//validateMandatoryValueSetOnServiceJourneyOrAllStopPointsInJourneyPattern(context, xpath, subLevel, "BookWhen", _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKWHEN);
 	}
 
 
