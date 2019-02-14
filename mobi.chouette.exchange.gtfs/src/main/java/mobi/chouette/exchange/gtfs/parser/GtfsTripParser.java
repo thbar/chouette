@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
@@ -24,6 +23,7 @@ import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
+
 import mobi.chouette.model.*;
 import mobi.chouette.model.type.*;
 import mobi.chouette.model.util.NeptuneUtil;
@@ -33,7 +33,6 @@ import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Stream;
@@ -46,6 +45,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
     @Getter
     @Setter
     private String gtfsRouteId;
+
 
     @Override
     public void validate(Context context) throws Exception {
@@ -462,6 +462,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         Referential referential = (Referential) context.get(REFERENTIAL);
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
         GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        Map<String, Boolean> duplicateIds = (Map<String, Boolean>) context.get(DUPLICATE_ID);
 
         Map<String, JourneyPattern> journeyPatternByStopSequence = new HashMap<String, JourneyPattern>();
 
@@ -489,6 +490,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
             String objectId = AbstractConverter.composeObjectId(configuration,
                     VehicleJourney.VEHICLEJOURNEY_KEY, gtfsTrip.getTripId(), log);
+
             VehicleJourney vehicleJourney = ObjectFactory.getVehicleJourney(referential, objectId);
             convert(context, gtfsTrip, vehicleJourney);
 
@@ -525,6 +527,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
             // JourneyPattern
             String journeyKey = gtfsTrip.getRouteId() + "_" + gtfsTrip.getDirectionId().ordinal();
+
             Iterable<GtfsShape> gtfsShapes = null;
             if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
                     && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
@@ -1010,6 +1013,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         }
 
         String routeKey = gtfsTrip.getRouteId() + "_" + gtfsTrip.getDirectionId().ordinal();
+
         if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty())
             routeKey += "_" + gtfsTrip.getShapeId();
         routeKey += "_" + line.getRoutes().size();
@@ -1120,13 +1124,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     /**
      * create stopPoints for Route
-     *
+     * @param route
+     * @param journeyPattern
+     * @param list
      * @param referential
      * @param configuration
-     * @param routeId              route objectId
-     * @param stopTimesOfATrip     first trip's ordered GTFS StopTimes
-     * @param mapStopAreasByStopId stopAreas to attach created StopPoints (parent relationship)
-     * @return
      */
     private void createStopPoint(Route route, JourneyPattern journeyPattern, List<VehicleJourneyAtStop> list,
                                  Referential referential, GtfsImportParameters configuration) {

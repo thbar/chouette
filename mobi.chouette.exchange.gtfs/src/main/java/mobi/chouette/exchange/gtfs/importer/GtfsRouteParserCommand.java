@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import java.util.Calendar;
 
+import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 
 import lombok.Getter;

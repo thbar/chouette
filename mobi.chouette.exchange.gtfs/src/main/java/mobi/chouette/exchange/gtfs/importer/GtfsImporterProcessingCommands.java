@@ -53,6 +53,8 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             commands.add(CommandFactory.create(initialContext, GtfsValidationRulesCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, GtfsInitImportCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, GtfsValidationCommand.class.getName()));
+//            commands.add(CommandFactory.create(initialContext, GtfsDuplicateIdCommand.class.getName()));
+
         } catch (Exception e) {
             log.error(e, e);
             throw new RuntimeException("unable to call factories");
@@ -71,6 +73,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         try {
             {
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+
                 chain.add(CommandFactory.create(initialContext, GtfsStopParserCommand.class.getName()));
 //				if (withDao && !parameters.isNoSave() && parameters.getStopAreaImportMode().shouldCreateMissingStopAreas()) {
 //					Command saveArea = CommandFactory.create(initialContext, StopAreaRegisterCommand.class.getName());

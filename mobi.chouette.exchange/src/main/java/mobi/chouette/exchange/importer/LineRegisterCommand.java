@@ -9,7 +9,9 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.JourneyPatternDAO;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.RouteDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
 import mobi.chouette.exchange.importer.updater.*;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
@@ -20,6 +22,7 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.*;
 import mobi.chouette.model.util.NamingUtil;
+import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -35,7 +38,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 @Log4j
 @Stateless(name = LineRegisterCommand.COMMAND)
@@ -54,6 +60,12 @@ public class LineRegisterCommand implements Command {
 
 	@EJB
 	private VehicleJourneyDAO vehicleJourneyDAO;
+
+	@EJB
+	private JourneyPatternDAO journeyPatternDAO;
+
+	@EJB
+	private RouteDAO routeDAO;
 
 	@EJB(beanName = LineUpdater.BEAN_NAME)
 	private Updater<Line> lineUpdater;
@@ -110,27 +122,28 @@ public class LineRegisterCommand implements Command {
 			log.info("register line : " + newValue.getObjectId() + " " + newValue.getName() + " vehicleJourney count = "
 					+ referential.getVehicleJourneys().size());
 			try {
-	
+
 				optimiser.initialize(cache, referential);
-	
+
 				Line oldValue = cache.getLines().get(newValue.getObjectId());
+
 				lineUpdater.update(context, oldValue, newValue);
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
-	
+
 				if (optimized) {
 					Monitor wMonitor = MonitorFactory.start("prepareCopy");
 					StringWriter buffer = new StringWriter(1024);
 					final List<String> list = new ArrayList<String>(referential.getVehicleJourneys().keySet());
 					for (VehicleJourney item : referential.getVehicleJourneys().values()) {
 						VehicleJourney vehicleJourney = cache.getVehicleJourneys().get(item.getObjectId());
-	
+
 						List<VehicleJourneyAtStop> vehicleJourneyAtStops = item.getVehicleJourneyAtStops();
 						for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourneyAtStops) {
-	
+
 							StopPoint stopPoint = cache.getStopPoints().get(
 									vehicleJourneyAtStop.getStopPoint().getObjectId());
-	
+
 							write(buffer, vehicleJourney, stopPoint, vehicleJourneyAtStop);
 						}
 					}
@@ -142,7 +155,7 @@ public class LineRegisterCommand implements Command {
 			} catch (Exception ex) {
 				log.error(ex.getMessage());
 				ActionReporter reporter = ActionReporter.Factory.getInstance();
-				reporter.addObjectReport(context, newValue.getObjectId(), 
+				reporter.addObjectReport(context, newValue.getObjectId(),
 						OBJECT_TYPE.LINE, NamingUtil.getName(newValue), OBJECT_STATE.ERROR, IO_TYPE.INPUT);
 				if (ex.getCause() != null) {
 					Throwable e = ex.getCause();
@@ -153,7 +166,7 @@ public class LineRegisterCommand implements Command {
 					if (e instanceof SQLException) {
 						e = ((SQLException) e).getNextException();
 						reporter.addErrorToObjectReport(context, newValue.getObjectId(), OBJECT_TYPE.LINE, ERROR_CODE.WRITE_ERROR,  e.getMessage());
-						
+
 					} else {
 						reporter.addErrorToObjectReport(context, newValue.getObjectId(), OBJECT_TYPE.LINE, ERROR_CODE.INTERNAL_ERROR,  e.getMessage());
 					}
@@ -163,7 +176,7 @@ public class LineRegisterCommand implements Command {
 				throw ex;
 			} finally {
 				log.info(Color.MAGENTA + monitor.stop() + Color.NORMAL);
-				
+
 	//			monitor = MonitorFactory.getTimeMonitor("LineOptimiser");
 	//			if (monitor != null)
 	//				log.info(Color.LIGHT_GREEN + monitor.toString() + Color.NORMAL);
@@ -211,7 +224,7 @@ public class LineRegisterCommand implements Command {
 	private boolean isLineValidInFuture(Line line) {
 
 		LocalDate today = LocalDate.now();
-		
+
 		for(Route r : (line.getRoutes() == null? new ArrayList<Route>() : line.getRoutes())) {
 			for(JourneyPattern jp : (r.getJourneyPatterns() == null? new ArrayList<JourneyPattern>() : r.getJourneyPatterns())) {
 				for(VehicleJourney vj : (jp.getVehicleJourneys() == null? new ArrayList<VehicleJourney>() : jp.getVehicleJourneys())) {
@@ -224,23 +237,23 @@ public class LineRegisterCommand implements Command {
 				}
 			}
 		}
-		
-		
+
+
 		return false;
 	}
-	
-	
+
+
 	protected void write(StringWriter buffer, VehicleJourney vehicleJourney, StopPoint stopPoint,
 			VehicleJourneyAtStop vehicleJourneyAtStop) throws IOException {
 		// The list of fields to synchronize with
 		// VehicleJourneyAtStopUpdater.update(Context context,
 		// VehicleJourneyAtStop oldValue,
 		// VehicleJourneyAtStop newValue)
-		
+
 
 		DateTimeFormatter timeFormat = DateTimeFormat.forPattern("HH:mm:ss");
 		DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
-		
+
 		buffer.write(vehicleJourneyAtStop.getObjectId().replace('|', '_'));
 		buffer.append(SEP);
 		buffer.write(vehicleJourneyAtStop.getObjectVersion().toString());
@@ -303,4 +316,5 @@ public class LineRegisterCommand implements Command {
 	static {
 		CommandFactory.factories.put(LineRegisterCommand.class.getName(), new DefaultCommandFactory());
 	}
+
 }

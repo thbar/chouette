@@ -47,6 +47,7 @@ public interface Constant {
 	public static final String PARSER = "parser";
 	public static final String AREA_BLOC = "area_bloc";
 	public static final String CONNECTION_LINK_BLOC = "connection_link_bloc";
+	public static final String DUPLICATE_ID = "duplicate_id";
 
 	
 	public static final String VALIDATION_DATA = "validation_data";
