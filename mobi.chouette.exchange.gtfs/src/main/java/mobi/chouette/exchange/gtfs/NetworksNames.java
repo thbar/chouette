@@ -26,7 +26,7 @@ public class NetworksNames {
         producers.put("NIO","TANlib");
         producers.put("PAU","Idelis");
         producers.put("ROC","R'Bus");
-        producers.put("ROY","Cara'bus");
+        producers.put("CAR","Cara'bus");
         producers.put("TUT","TuT");
 //        producers.put("COU","Couralin");
         producers.put("PER","Péribus");
