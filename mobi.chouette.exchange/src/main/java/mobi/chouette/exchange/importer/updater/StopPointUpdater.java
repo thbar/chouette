@@ -105,16 +105,21 @@ public class StopPointUpdater implements Updater<StopPoint> {
 		}
 
 		String scheduledStopPointId = newValue.getScheduledStopPoint().getObjectId();
+		log.info(">>>>>>>>>>>>>>>>>>>>> ScheduledStopPointId: " + scheduledStopPointId);
 		ScheduledStopPoint scheduledStopPoint = cache.getScheduledStopPoints().get(scheduledStopPointId);
+		log.info(">>>>>>>>>>>>>>>>>>>>> ScheduledStopPoint: " + scheduledStopPoint.getObjectId());
 		if (scheduledStopPoint==null) {
 			scheduledStopPoint = scheduledStopPointDAO.findByObjectId(scheduledStopPointId);
+			log.info(">>>>>>>>>>>>>>>>>>>> ScheduledStopPoint: " + scheduledStopPoint.getObjectId());
 			if (scheduledStopPoint != null) {
 				cache.getScheduledStopPoints().put(scheduledStopPointId, scheduledStopPoint);
 			}
 		}
 		if (scheduledStopPoint == null) {
 			scheduledStopPoint = ObjectFactory.getScheduledStopPoint(cache, scheduledStopPointId);
+			log.info(">>>>>>>>>>>>>>>>>>>>>>>>>> ScheduledStopPoint: " + scheduledStopPoint.getObjectId());
 		}
+		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ScheduledStopPoint: " + scheduledStopPoint.getObjectId());
 		oldValue.setScheduledStopPoint(scheduledStopPoint);
 
 		scheduledStopPointUpdater.update(context, oldValue.getScheduledStopPoint(), newValue.getScheduledStopPoint());
