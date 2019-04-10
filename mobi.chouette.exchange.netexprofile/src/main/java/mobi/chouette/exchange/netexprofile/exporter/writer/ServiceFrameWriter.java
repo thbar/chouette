@@ -61,7 +61,6 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 				writeRoutesElement(writer, exportableNetexData, marshaller);
 				writeLinesElement(writer, exportableNetexData, marshaller);
 				writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
-				writeGroupOfLinesElement(writer, exportableNetexData, marshaller);
 				ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
 			} else { // shared data
 				writeNetworks(writer, exportableNetexData, marshaller);
@@ -216,18 +215,6 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 			writer.writeStartElement(JOURNEY_PATTERNS);
 			for (JourneyPattern journeyPattern : exportableData.getJourneyPatterns()) {
 				marshaller.marshal(netexFactory.createJourneyPattern(journeyPattern), writer);
-			}
-			writer.writeEndElement();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static void writeGroupOfLinesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
-		try {
-			writer.writeStartElement(GROUP_OF_LINES);
-			for(GroupOfLines groupOfLine : exportableData.getSharedGroupsOfLines().values()) {
-				marshaller.marshal(netexFactory.createGroupOfLines(groupOfLine), writer);
 			}
 			writer.writeEndElement();
 		} catch (Exception e) {
