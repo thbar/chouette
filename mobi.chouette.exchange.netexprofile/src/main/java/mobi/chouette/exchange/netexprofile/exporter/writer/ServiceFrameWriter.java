@@ -16,6 +16,7 @@ import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 import org.apache.commons.collections.MapUtils;
 import org.rutebanken.netex.model.DestinationDisplay;
 import org.rutebanken.netex.model.FlexibleLine;
+import org.rutebanken.netex.model.GroupOfLines;
 import org.rutebanken.netex.model.JourneyPattern;
 import org.rutebanken.netex.model.Line;
 import org.rutebanken.netex.model.Line_VersionStructure;
@@ -69,6 +70,7 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 				writeServiceLinkElements(writer, exportableNetexData, marshaller);
 				writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
 				writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
+				writeGroupOfLinesElement(writer, exportableNetexData, marshaller);
 			}
 
 			writer.writeEndElement();
@@ -214,6 +216,18 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 			writer.writeStartElement(JOURNEY_PATTERNS);
 			for (JourneyPattern journeyPattern : exportableData.getJourneyPatterns()) {
 				marshaller.marshal(netexFactory.createJourneyPattern(journeyPattern), writer);
+			}
+			writer.writeEndElement();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void writeGroupOfLinesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+		try {
+			writer.writeStartElement(GROUP_OF_LINES);
+			for(GroupOfLines groupOfLine : exportableData.getSharedGroupsOfLines().values()) {
+				marshaller.marshal(netexFactory.createGroupOfLines(groupOfLine), writer);
 			}
 			writer.writeEndElement();
 		} catch (Exception e) {
