@@ -36,6 +36,7 @@ public final class NetexObjectIdTypes {
     public static final String DESTINATION_DISPLAYS = "destinationDisplays";
     public static final String JOURNEY_INTERCHANGES = "journeyInterchanges";
     public static final String SERVICE_LINKS = "serviceLinks";
+    public static final String GROUPS_OF_LINES = "groupsOfLines";
 
     // frame id keys
     public static final String COMPOSITE_FRAME = "CompositeFrame";
