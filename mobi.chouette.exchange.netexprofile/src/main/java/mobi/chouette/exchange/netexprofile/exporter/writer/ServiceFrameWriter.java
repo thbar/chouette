@@ -70,7 +70,7 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 				writeServiceLinkElements(writer, exportableNetexData, marshaller);
 				writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
 				writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
-				writeGroupOfLinesElement(writer, exportableNetexData, marshaller);
+//				writeGroupOfLinesElement(writer, exportableNetexData, marshaller);
 			}
 
 			writer.writeEndElement();
