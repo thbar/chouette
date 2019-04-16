@@ -155,7 +155,7 @@ public class NorwayLineNetexProfileValidator extends AbstractNorwayNetexProfileV
 
 		List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("Codespace")));
 		Set<IdVersion> localIds = new HashSet<>(localIdList);
-		List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("GroupOfLines")));
+		List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("RepresentedByGroupRef")));
 
 		for (IdVersion id : localIds) {
 			data.getDataLocations().put(id.getId(), DataLocationHelper.findDataLocation(id));
