@@ -1,12 +1,24 @@
 package mobi.chouette.exchange.exporter;
 
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.*;
+import mobi.chouette.model.AccessLink;
+import mobi.chouette.model.AccessPoint;
+import mobi.chouette.model.ConnectionLink;
+import mobi.chouette.model.Footnote;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NeptuneUtil;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Log4j
 public class DataCollector {
@@ -104,7 +116,15 @@ public class DataCollector {
 			if (validRoute) {
 				collection.getRoutes().add(route);
 				route.getOppositeRoute(); // to avoid lazy loading afterward
-				for (StopPoint stopPoint : route.getStopPoints()) {
+
+				// MHI :
+				Set<StopPoint> collectedStopPoints = new HashSet<>();
+				for (JourneyPattern journeyPattern : route.getJourneyPatterns()) {
+					collectedStopPoints.addAll(journeyPattern.getStopPoints());
+				}
+
+
+				for (StopPoint stopPoint : collectedStopPoints) {
 					if (stopPoint == null)
 						continue; // protection from missing stopPoint ranks
 					collection.getStopPoints().add(stopPoint);
