@@ -85,6 +85,7 @@
 				<configuration>
 					<filename>${earName}.ear</filename>
 					<skip>${skipWildfly}</skip>
+					<port>9990</port>
 				</configuration>
 				<executions>
 					<execution>
@@ -167,6 +168,12 @@
          <type>ejb</type>        
          <version>${project.version}</version>
       </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mobi.chouette.exchange.regtopp</artifactId>
+			<type>ejb</type>
+			<version>${project.version}</version>
+		</dependency>
       <dependency>
          <groupId>${project.groupId}</groupId>
          <artifactId>mobi.chouette.exchange.validator</artifactId>
