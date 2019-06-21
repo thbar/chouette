@@ -25,8 +25,8 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 
 	public static final String EXPORT_PROFILE_ID = PROFILE_NORWAY_NETWORKTIMETABLE_108_13; // Update when new profile version is implemented
 	
-	public static String NSR_XMLNSURL = "http://rmr.nouvelle-aquitaine.pro/naq";
-	public static String NSR_XMLNS = "NAQ";
+	public static String NSR_XMLNSURL = "http://dev-2.okina.fr//mosaic";
+	public static String NSR_XMLNS = "MOSAIC";
 
 	public static final String _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT = "1-NETEXPROFILE-ReferenceToIllegalElement";
 
