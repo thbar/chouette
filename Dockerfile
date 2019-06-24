@@ -10,7 +10,7 @@ USER jboss
 RUN mkdir /opt/jboss/wildfly/customization/
 RUN echo "Downloading with user ${NEXUS_USER}"
 
-COPY docker/files/postgresql-9.3-1103.jdbc41.jar /opt/jboss/wildfly/customization/postgresql-42.2.6.jar
+COPY docker/files/postgresql-42.2.6.jar /opt/jboss/wildfly/customization/postgresql-42.2.6.jar
 COPY docker/files/postgis-jdbc-2.1.7.2.jar /opt/jboss/wildfly/customization/postgis-jdbc-2.1.7.2.jar
 COPY docker/files/hibernate-spatial-4.3.jar /opt/jboss/wildfly/modules/system/layers/base/org/hibernate/main/hibernate-spatial-4.3.jar
 COPY docker/files/jts-1.13.jar /opt/jboss/wildfly/modules/system/layers/base/org/hibernate/main/jts-1.13.jar
