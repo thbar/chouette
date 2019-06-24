@@ -35,7 +35,7 @@
     - { filename: "jaxb-xjc-2.2.11.jar" }
     - { filename: "jaxb-xjc-2.2.11.jar" }
     - { filename: "xercesImpl-2.11.0.SP6-RB.jar" }
-    - { filename: "postgresql-9.3-1103.jdbc41.jar" }
+    - { filename: "postgresql-42.2.6.jar" }
 
 #- name: Log into okina registry
 #  shell: echo {{okina_docker_registry_password}} | docker login -u {{okina_docker_registry_user}} --password-stdin registry.okina.fr
