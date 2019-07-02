@@ -61,9 +61,9 @@ public class NetworksNames {
         producers.put("BAC","Transports Maritimes Départementaux de la Gironde");
         producers.put("FAI","Liaison maritime Aix-Fouras");
 //        producers.put("SNC","SNCF");
-        producers.put("T1", "Test 1");
-        producers.put("T2", "Test 2");
-        producers.put("T3", "Test 3");
+        producers.put("TUN", "Test 1");
+        producers.put("TDE", "Test 2");
+        producers.put("TTR", "Test 3");
 
 
         producersExceptionNameNetwork.add("COU");
