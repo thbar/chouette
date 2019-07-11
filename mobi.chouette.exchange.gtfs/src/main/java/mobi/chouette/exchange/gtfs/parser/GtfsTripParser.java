@@ -757,7 +757,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         JourneyPattern journeyPattern;
 
         // Route
-        Route route = createRoute(referential, configuration, gtfsTrip);
+        Route route = createRoute(referential, configuration, gtfsTrip, vehicleJourney);
 
         // JourneyPattern
         String journeyPatternId = route.getObjectId().replace(Route.ROUTE_KEY, JourneyPattern.JOURNEYPATTERN_KEY);
@@ -1000,7 +1000,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * @param gtfsTrip
      * @return
      */
-    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip) {
+    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip, VehicleJourney vehicleJourney) {
         String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
                 gtfsTrip.getRouteId(), log);
         Line line = ObjectFactory.getLine(referential, lineId);
@@ -1012,7 +1012,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             log.info("Set sub transport mode for line " + line.getName() + " - " + line.getObjectId() + " to : " + subModeFromTripHeadSign);
         }
 
-        String routeKey = gtfsTrip.getRouteId() + "_" + gtfsTrip.getDirectionId().ordinal();
+        StringBuilder routeKeyBuilder = new StringBuilder(gtfsTrip.getRouteId());
+        for(VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()){
+            VehicleJourneyAtStopWrapper vehicleJourneyAtStopWrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
+            routeKeyBuilder.append("_").append(vehicleJourneyAtStopWrapper.stopId);
+        }
+        String routeKey = routeKeyBuilder.toString();
+
 
         if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty())
             routeKey += "_" + gtfsTrip.getShapeId();
