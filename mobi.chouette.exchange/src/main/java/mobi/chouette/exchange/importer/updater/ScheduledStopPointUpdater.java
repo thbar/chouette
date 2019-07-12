@@ -85,7 +85,7 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 
 			if (stopArea==null) {
 				// If stop area is not cache, check whether referential contains mapping for id
-				String mappedId = (String) ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
+				String mappedId = ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
 				if (mappedId != null) {
 					stopArea = cache.getStopAreas().get(mappedId);
 				}
@@ -103,7 +103,7 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 				log.warn("Created new stop area for objectId: " + objectId);
 			}
 
-			oldValue.setContainedInStopAreaRef(new SimpleObjectReference(stopArea));
+			oldValue.setContainedInStopAreaRef(new SimpleObjectReference<>(stopArea));
 
 			if (!context.containsKey(AREA_BLOC))
 			   stopAreaUpdater.update(context, oldValue.getContainedInStopAreaRef().getObject(), newValue.getContainedInStopAreaRef().getObject());
