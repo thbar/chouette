@@ -80,28 +80,27 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 		if (newValue.getContainedInStopAreaRef().getObject() == null) {
 			oldValue.setContainedInStopAreaRef(null);
 		} else {
-			String objectId = newValue.getContainedInStopAreaRef().getObjectId();
-			StopArea stopArea = cache.getStopAreas().get(objectId);
+			StopArea stopArea = newValue.getContainedInStopAreaRef().getObject();
 
-			if (stopArea==null) {
-				// If stop area is not cache, check whether referential contains mapping for id
-				String mappedId = (String) ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
-				if (mappedId != null) {
-					stopArea = cache.getStopAreas().get(mappedId);
-				}
-			}
-
-			if (stopArea == null) {
-				stopArea = stopAreaDAO.findByObjectId(objectId);
-				if (stopArea != null) {
-					cache.getStopAreas().put(objectId, stopArea);
-				}
-			}
-
-			if (stopArea == null) {
-				stopArea = ObjectFactory.getStopArea(cache, objectId);
-				log.warn("Created new stop area for objectId: " + objectId);
-			}
+//			if (stopArea==null) {
+//				// If stop area is not cache, check whether referential contains mapping for id
+//				String mappedId = (String) ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
+//				if (mappedId != null) {
+//					stopArea = cache.getStopAreas().get(mappedId);
+//				}
+//			}
+//
+//			if (stopArea == null) {
+//				stopArea = stopAreaDAO.findByObjectId(objectId);
+//				if (stopArea != null) {
+//					cache.getStopAreas().put(objectId, stopArea);
+//				}
+//			}
+//
+//			if (stopArea == null) {
+//				stopArea = ObjectFactory.getStopArea(cache, objectId);
+//				log.warn("Created new stop area for objectId: " + objectId);
+//			}
 
 			oldValue.setContainedInStopAreaRef(new SimpleObjectReference(stopArea));
 
