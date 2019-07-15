@@ -80,27 +80,28 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 		if (newValue.getContainedInStopAreaRef().getObject() == null) {
 			oldValue.setContainedInStopAreaRef(null);
 		} else {
-			StopArea stopArea = newValue.getContainedInStopAreaRef().getObject();
+			String objectId = newValue.getContainedInStopAreaRef().getObjectId();
+			StopArea stopArea = cache.getStopAreas().get(objectId);
 
-//			if (stopArea==null) {
-//				// If stop area is not cache, check whether referential contains mapping for id
-//				String mappedId = (String) ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
-//				if (mappedId != null) {
-//					stopArea = cache.getStopAreas().get(mappedId);
-//				}
-//			}
-//
-//			if (stopArea == null) {
-//				stopArea = stopAreaDAO.findByObjectId(objectId);
-//				if (stopArea != null) {
-//					cache.getStopAreas().put(objectId, stopArea);
-//				}
-//			}
-//
-//			if (stopArea == null) {
-//				stopArea = ObjectFactory.getStopArea(cache, objectId);
-//				log.warn("Created new stop area for objectId: " + objectId);
-//			}
+			if (stopArea==null) {
+				// If stop area is not cache, check whether referential contains mapping for id
+				String mappedId = (String) ((Referential) context.get(REFERENTIAL)).getStopAreaMapping().get(objectId);
+				if (mappedId != null) {
+					stopArea = cache.getStopAreas().get(mappedId);
+				}
+			}
+
+			if (stopArea == null) {
+				stopArea = stopAreaDAO.findByObjectId(objectId);
+				if (stopArea != null) {
+					cache.getStopAreas().put(objectId, stopArea);
+				}
+			}
+
+			if (stopArea == null) {
+				stopArea = ObjectFactory.getStopArea(cache, objectId);
+				log.warn("Created new stop area for objectId: " + objectId);
+			}
 
 			oldValue.setContainedInStopAreaRef(new SimpleObjectReference(stopArea));
 
@@ -115,8 +116,9 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 	 * Test 2-DATABASE-StopPoint-3
 	 * @param validationReporter
 	 * @param context
-	 * @param oldSp
-	 * @param newSp
+	 * @param oldSA
+	 * @param newSA
+	 * @param data
 	 */
 	private void twoDatabaseStopPointThreeTest(ValidationReporter validationReporter, Context context, StopArea oldSA, StopArea newSA, ValidationData data) {
 		if(!NeptuneUtil.sameValue(oldSA, newSA)) {
