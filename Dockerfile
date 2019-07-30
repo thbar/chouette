@@ -1,14 +1,8 @@
 FROM jboss/wildfly:8.2.1.Final
 
-#ARG NEXUS_USER
-#ARG NEXUS_PASS
-
-#USER root
-#RUN yum -y update && yum -y install wget && yum clean all
 USER jboss
 
 RUN mkdir /opt/jboss/wildfly/customization/
-RUN echo "Downloading with user ${NEXUS_USER}"
 
 COPY docker/files/postgresql-42.2.6.jar /opt/jboss/wildfly/customization/postgresql-42.2.6.jar
 COPY docker/files/postgis-jdbc-2.1.7.2.jar /opt/jboss/wildfly/customization/postgis-jdbc-2.1.7.2.jar
@@ -24,19 +18,24 @@ COPY docker/files/jaxb-core-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/
 COPY docker/files/jaxb-xjc-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/jaxb-xjc-2.2.11.jar
 COPY docker/files/wildfly/jaxb_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/module.xml
 
-COPY xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
-#COPY files/wildfly/xerces_module.xml /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/module.xml
-
-#Copy iev.properties
-COPY docker/files/wildfly/iev.properties /etc/chouette/iev/
+COPY docker/files/xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
+COPY docker/files/wildfly/xerces_module.xml /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/module.xml
 
 RUN touch /opt/jboss/wildfly/build.log
 RUN chmod a+w /opt/jboss/wildfly/build.log
 
+
+
+
+
+
+
+
+
+
 # Wildfly container configurations, copy and execute
-COPY docker/files/wildfly/*.cli /opt/jboss/wildfly/customization/
-COPY docker/files/wildfly/execute.sh /opt/jboss/wildfly/customization/
-RUN /opt/jboss/wildfly/customization/execute.sh
+COPY docker/files/wildfly/wildfly_db.cli /tmp/
+
 
 # Overriding previously installed java version:
 RUN curl -L http://static.okina.fr/jdk-8u144-linux-x64.tar.gz > jdk.tgz
@@ -44,7 +43,7 @@ RUN tar xzf jdk.tgz
 ENV JAVA_HOME /opt/jboss/jdk1.8.0_144/
 
 # Deploying by copying to deployment directory
-COPY chouette_iev/target/chouette.ear /opt/jboss/wildfly/standalone/deployments/
+COPY chouette_iev/target/chouette.ear /tmp/chouette.ear
 
 # Copy standalone customizations
 COPY docker/files/wildfly/standalone.conf /opt/jboss/wildfly/bin
@@ -53,29 +52,12 @@ RUN rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history \
   && mkdir -p /opt/jboss/data \
   && chown jboss:jboss /opt/jboss/data
 
-# Agent-bond setup largely copied from:
-# https://hub.docker.com/r/fabric8/java-jboss-openjdk8-jdk/~/dockerfile/
-RUN mkdir -p /opt/jboss/wildfly/agent-bond \
- && curl http://central.maven.org/maven2/io/fabric8/agent-bond-agent/1.0.2/agent-bond-agent-1.0.2.jar \
-          -o /opt/jboss/wildfly/agent-bond/agent-bond.jar \
- && chmod 444 /opt/jboss/wildfly/agent-bond/agent-bond.jar
-ADD docker/files/jmx_exporter_config.yml /opt/jboss/wildfly/agent-bond/
-EXPOSE 8778 9779
-
 # Running as root, in order to get mounted volume writable:
 USER root
 
-COPY docker/files/disk_usage_notifier.sh /disk_usage_notifier.sh
-RUN chmod a+x /disk_usage_notifier.sh
+RUN /opt/jboss/wildfly/bin/add-user.sh admin password --silent
 
-COPY docker/files/disk_usage_notifier.sh /disk_usage_notifier.sh
+COPY docker/docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
-
-
-
-
-
-# This argument comes from https://github.com/jboss-dockerfiles/wildfly
-# It enables the admin interface.
-
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--read-only-server-config=standalone.xml"]
+CMD [ "/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
