@@ -110,7 +110,7 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
                 gtfsAgency.setAgencyId("1");
             }
 
-            if(StringUtils.isEmpty(gtfsAgency.getAgencyName().trim())){
+            if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
             	gtfsAgency.setAgencyName(configuration.getReferentialName());
 			}
 
