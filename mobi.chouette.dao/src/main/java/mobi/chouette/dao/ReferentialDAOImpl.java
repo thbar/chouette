@@ -1,23 +1,40 @@
 package mobi.chouette.dao;
 
-import java.util.List;
+import mobi.chouette.model.Referential;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 @Stateless
-public class ReferentialDAOImpl implements ReferentialDAO {
+public class ReferentialDAOImpl extends GenericDAOImpl<Referential> implements ReferentialDAO {
 
-    public static final String SQL = "SELECT SLUG FROM PUBLIC.REFERENTIALS";
+    public ReferentialDAOImpl() { super(Referential.class); }
 
     @PersistenceContext(unitName = "public")
-    private EntityManager em;
+    EntityManager em;
+
+
+//    @PersistenceContext(unitName = "public")
+//    public void setEntityManager(EntityManager em) {
+//        this.em = em;
+//    }
 
     @Override
     public List<String> getReferentials() {
-        Query query = em.createNativeQuery(SQL);
+        Query query = em.createNativeQuery("SELECT SLUG FROM PUBLIC.REFERENTIALS");
         return query.getResultList();
+    }
+
+    @Override
+    public String getReferentialNameBySlug(String slug) {
+        String result = (String) em.createNativeQuery("SELECT name " +
+                " FROM PUBLIC.REFERENTIALS " +
+                "WHERE LOWER(slug) = :slug")
+                .setParameter("slug", slug.toLowerCase())
+                .getSingleResult();
+        return result;
     }
 }
