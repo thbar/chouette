@@ -27,12 +27,6 @@ RUN chmod a+w /opt/jboss/wildfly/build.log
 
 
 
-
-
-
-
-
-
 # Wildfly container configurations, copy and execute
 COPY docker/files/wildfly/wildfly_db.cli /tmp/
 
