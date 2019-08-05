@@ -229,7 +229,7 @@ public class GtfsValidationReporter implements Constant{
 			filenameInfo2 = "calendar_dates.txt";
 			reporter.addFileReport(context, filenameInfo, IO_TYPE.INPUT);
 			reporter.addFileErrorInReport(context, filenameInfo, FILE_ERROR_CODE.FILE_NOT_FOUND,
-					"One of the files \"" + filenameInfo + "\" or \"" + filenameInfo2 + "\"must be provided (rule "
+					"File \"" + filenameInfo  + "\"must be provided (rule "
 							+ checkPointName + ")");
 			validationReporter.addCheckPointReportError(context,checkPointName, new DataLocation(filenameInfo), filenameInfo + "," + filenameInfo2);
 			throw ex;
