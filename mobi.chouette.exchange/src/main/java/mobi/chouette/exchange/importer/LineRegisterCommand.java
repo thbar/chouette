@@ -10,6 +10,7 @@ import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
 import mobi.chouette.exchange.importer.updater.*;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
@@ -50,6 +51,9 @@ public class LineRegisterCommand implements Command {
 	private LineDAO lineDAO;
 
 	@EJB
+	private VariationsDAO variationsDAO;
+
+	@EJB
 	private ContenerChecker checker;
 
 	@EJB
@@ -81,7 +85,15 @@ public class LineRegisterCommand implements Command {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 
 		// Use property based enabling of stop place updater, but allow disabling if property exist in context
-		Line newValue = referential.getLines().values().iterator().next();
+		Line newValue  = referential.getLines().values().iterator().next();
+		Line oldValue1 = lineDAO.findByObjectId(newValue.getObjectId());
+
+		Long jobid = (Long) context.get(JOB_ID);
+		if(oldValue1 == null) {
+			variationsDAO.makeLineInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
+		} else if(!oldValue1.equals(newValue)) {
+			variationsDAO.makeLineUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
+		}
 
 		AbstractImportParameter importParameter = (AbstractImportParameter) context.get(CONFIGURATION);
 		context.put(StopArea.IMPORT_MODE, importParameter.getStopAreaImportMode());
