@@ -2762,6 +2762,26 @@ ALTER TABLE ONLY chouette_gui.companies
     ADD CONSTRAINT companies_brandings_fkey FOREIGN KEY (branding_id) REFERENCES chouette_gui.brandings(id) ON DELETE CASCADE;
 
 
+-- sch variations
+
+CREATE SEQUENCE chouette_gui.variations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE chouette_gui.variations_id_seq OWNER TO chouette;
+
+
+CREATE TABLE chouette_gui.variations (
+    id bigint NOT NULL DEFAULT nextval('variations_id_seq'::regclass),
+    type character varying(255) NOT NULL,
+    description character varying(255) NOT NULL,
+    job bigint
+);
+
+ALTER TABLE chouette_gui.variations OWNER TO chouette;
+
 
 --
 -- TOC entry 4251 (class 0 OID 0)
