@@ -700,4 +700,25 @@ public class StopArea extends NeptuneLocalizedObject {
 			routingConstraintAreas.remove(area);
 	}
 
+	public boolean equals(Object o){
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		StopArea newArea = (StopArea) o;
+
+		if (this.getLatitude()  != newArea.getLatitude())  return false;
+		if (this.getLongitude() != newArea.getLongitude()) return false;
+		return true;
+	}
+
+	public String getVariations(Object o){
+		String variations = null;
+		if (this == o) return null;
+		if (o == null || getClass() != o.getClass()) return null;
+		StopArea newArea = (StopArea) o;
+
+		if (this.getLatitude() != newArea.getLatitude() || this.getLongitude() != newArea.getLongitude()){
+			variations = "Les coordonnées du point d'arrêt " + newArea.getName() + " ont changé";
+		}
+		return variations;
+	}
 }

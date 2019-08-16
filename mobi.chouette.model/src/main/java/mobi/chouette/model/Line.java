@@ -507,8 +507,8 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 		if (o == null || getClass() != o.getClass()) return null;
 		Line l = (Line) o;
 		if(!StringUtils.equals(this.getName(),               l.getName()))               variations =  addVariation(variations, "Changement de nom("                    + this.getName()               + " => " + l.getName());
-		if(!StringUtils.equals(this.getNumber(),             l.getNumber()))             variations =  addVariation(variations, "Changement de numéro("                 + this.getNumber()             + " => " + l.getNumber();
-		if(!StringUtils.equals(this.getPublishedName(),      l.getPublishedName()))      variations =  addVariation(variations, "Changement de nom public("             + this.getPublishedName()      + " => " + l.getPublishedName();
+		if(!StringUtils.equals(this.getNumber(),             l.getNumber()))             variations =  addVariation(variations, "Changement de numéro("                 + this.getNumber()             + " => " + l.getNumber());
+		if(!StringUtils.equals(this.getPublishedName(),      l.getPublishedName()))      variations =  addVariation(variations, "Changement de nom public("             + this.getPublishedName()      + " => " + l.getPublishedName());
 		if(!StringUtils.equals(this.getRegistrationNumber(), l.getRegistrationNumber())) variations =  addVariation(variations, "Changement de numéro de registration(" + this.getRegistrationNumber() + " => " + l.getRegistrationNumber());
 		if(!StringUtils.equals(this.getColor(),              l.getColor()))              variations =  addVariation(variations, "Changement de couleur("                + this.getColor()              + " => " + l.getColor());
 		if(!StringUtils.equals(this.getTextColor(),          l.getTextColor()))          variations =  addVariation(variations, "Changement de couleur de texte("       + this.getTextColor()          + " => " + l.getTextColor());
@@ -522,5 +522,6 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 		} else {
 			variations = variations + " - " + newVariation;
 		}
+		return variations;
 	}
 }

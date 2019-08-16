@@ -35,7 +35,7 @@ public class Variations extends NeptuneObject {
      */
     @Getter
     @Setter
-    @Column(name = "type")
+    @Column(name = "typev")
     private String type;
 
     /**
@@ -45,7 +45,7 @@ public class Variations extends NeptuneObject {
      */
     @Getter
     @Setter
-    @Column(name = "description")
+    @Column(name = "descriptionv")
     private String description;
 
     /**
@@ -55,7 +55,7 @@ public class Variations extends NeptuneObject {
      */
     @Getter
     @Setter
-    @Column(name = "job")
+    @Column(name = "jobv")
     private Long job;
 }
 

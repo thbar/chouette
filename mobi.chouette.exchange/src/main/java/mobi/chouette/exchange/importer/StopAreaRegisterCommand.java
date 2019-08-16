@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 
 import lombok.extern.log4j.Log4j;
@@ -12,6 +13,8 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.StopArea;
@@ -26,6 +29,12 @@ import com.jamonapi.MonitorFactory;
 
 @Log4j
 public class StopAreaRegisterCommand implements Command {
+
+	@EJB
+	private VariationsDAO variationsDAO;
+
+	@EJB
+	private StopAreaDAO stopAreaDAO;
 
 	private Predicate<StopArea> predicate = new Predicate<StopArea>() {
 		@Override
@@ -55,6 +64,7 @@ public class StopAreaRegisterCommand implements Command {
 			Iterable<List<StopArea>> iterator = Iterables.partition(orderedAreas, batchSizeA);
 			int count = 0;
 			for (List<StopArea> areas : iterator) {
+				checkForVariations(areas, context);
 				count += areas.size();
 				context.put(AREA_BLOC, areas);
 				command.execute(context);
@@ -95,6 +105,18 @@ public class StopAreaRegisterCommand implements Command {
 		}
 		return result;
 
+	}
+
+	private void checkForVariations(List<StopArea> areas, Context context) {
+		Long jobid = (Long) context.get(JOB_ID);
+		areas.forEach(area -> {
+			StopArea oldArea = stopAreaDAO.findByObjectId(area.getObjectId());
+			if(oldArea == null) {
+				variationsDAO.makeLineInsert("Nouveau point d'arrêt " + area.getName(), "", jobid);
+			} else if(!oldArea.equals(area)) {
+				variationsDAO.makeLineUpdate("Mise à jour point d'arrêt " + area.getName(), oldArea.getVariations(area), jobid);
+			}
+		});
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
