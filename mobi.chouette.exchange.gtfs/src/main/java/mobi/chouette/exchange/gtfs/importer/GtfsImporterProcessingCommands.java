@@ -68,6 +68,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         List<Command> commands = new ArrayList<>();
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
         Index<GtfsRoute> index = importer.getRouteById();
+
         try {
             {
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
@@ -78,6 +79,15 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 //				}
                 commands.add(chain);
             }
+
+            {
+                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
+                chain.add(productionPeriods);
+                commands.add(chain);
+            }
+
+
             for (GtfsRoute gtfsRoute : index) {
 
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
@@ -103,6 +113,8 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 }
                 commands.add(chain);
             }
+            Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+
         } catch (Exception e) {
             log.error(e, e);
             throw new RuntimeException("unable to call factories");
