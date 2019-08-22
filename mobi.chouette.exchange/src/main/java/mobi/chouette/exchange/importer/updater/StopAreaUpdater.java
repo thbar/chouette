@@ -16,6 +16,7 @@ import mobi.chouette.dao.AccessLinkDAO;
 import mobi.chouette.dao.AccessPointDAO;
 import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.model.AccessLink;
@@ -29,6 +30,8 @@ import mobi.chouette.model.util.Referential;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import static mobi.chouette.model.type.ChouetteAreaEnum.*;
 
 @Stateless(name = StopAreaUpdater.BEAN_NAME)
 @Log4j
@@ -60,6 +63,9 @@ public class StopAreaUpdater implements Updater<StopArea> {
 	@EJB(beanName = ConnectionLinkUpdater.BEAN_NAME)
 	private Updater<ConnectionLink> connectionLinkUpdater;
 
+	@EJB
+	private VariationsDAO variationsDAO;
+
 	@Override
 	public void update(Context context, StopArea oldValue, StopArea newValue) throws Exception {
 
@@ -73,6 +79,15 @@ public class StopAreaUpdater implements Updater<StopArea> {
 		if (oldValue.getId() != null && !oldValue.getImportMode().shouldUpdateStopAreas()) {
 			log.debug("Skip update of existing stop area: " + oldValue.getObjectId());
 			return;
+		}
+
+		Long jobid = (Long) context.get(JOB_ID);
+
+		if(oldValue.getId() == null) {
+			variationsDAO.makeLineInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
+		} else if(oldValue.getAreaType().equals(BoardingPosition)) {
+			if(oldValue.getLatitude().equals(newValue.getLatitude()) || oldValue.getLongitude().equals(newValue.getLongitude()))
+			variationsDAO.makeLineUpdate("Mise à jour du point d'arrêt " + newValue.getName(), oldValue.getVariations(newValue), jobid);
 		}
 
 		Monitor monitor = MonitorFactory.start(BEAN_NAME);
