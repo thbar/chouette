@@ -19,7 +19,7 @@ public class VariationsDAOImpl extends GenericDAOImpl<Variations> implements Var
     }
 
     @Override
-    public void makeLineInsert(String type, String description, Long numJob) {
+    public void makeVariationsInsert(String type, String description, Long numJob) {
         Variations variation = new Variations();
         variation.setType(type);
         variation.setDescription(description);
@@ -28,7 +28,7 @@ public class VariationsDAOImpl extends GenericDAOImpl<Variations> implements Var
     }
 
     @Override
-    public void makeLineUpdate(String type, String description, Long numjob) {
+    public void makeVariationsUpdate(String type, String description, Long numjob) {
         Variations variation = new Variations();
         variation.setType(type);
         variation.setDescription(description);

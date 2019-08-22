@@ -90,9 +90,9 @@ public class LineRegisterCommand implements Command {
 
 		Long jobid = (Long) context.get(JOB_ID);
 		if(oldValue1 == null) {
-			variationsDAO.makeLineInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
+			variationsDAO.makeVariationsInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
 		} else if(!oldValue1.equals(newValue)) {
-			variationsDAO.makeLineUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
+			variationsDAO.makeVariationsUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
 		}
 
 		AbstractImportParameter importParameter = (AbstractImportParameter) context.get(CONFIGURATION);

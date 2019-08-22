@@ -112,9 +112,9 @@ public class StopAreaRegisterCommand implements Command {
 		areas.forEach(area -> {
 			StopArea oldArea = stopAreaDAO.findByObjectId(area.getObjectId());
 			if(oldArea == null) {
-				variationsDAO.makeLineInsert("Nouveau point d'arrêt " + area.getName(), "", jobid);
+				variationsDAO.makeVariationsInsert("Nouveau point d'arrêt " + area.getName(), "", jobid);
 			} else if(!oldArea.equals(area)) {
-				variationsDAO.makeLineUpdate("Mise à jour point d'arrêt " + area.getName(), oldArea.getVariations(area), jobid);
+				variationsDAO.makeVariationsUpdate("Mise à jour point d'arrêt " + area.getName(), oldArea.getVariations(area), jobid);
 			}
 		});
 	}

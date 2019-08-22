@@ -83,11 +83,21 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 		Long jobid = (Long) context.get(JOB_ID);
 
+		// Gestion journal de variations des points d'arrêt
+
+		// Nouveau point d'arrêt
 		if(oldValue.getId() == null) {
-			variationsDAO.makeLineInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
-		} else if(oldValue.getAreaType().equals(BoardingPosition)) {
-			if(!oldValue.getLatitude().equals(newValue.getLatitude()) || !oldValue.getLongitude().equals(newValue.getLongitude()))
-			variationsDAO.makeLineUpdate("Mise à jour du point d'arrêt " + newValue.getName(), oldValue.getVariations(newValue), jobid);
+			variationsDAO.makeVariationsInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
+		}
+
+		// Point d'arrêt existant
+		else if(oldValue.getId() != null) {
+				if(!oldValue.getLatitude().equals(newValue.getLatitude())
+						|| !oldValue.getLongitude().equals(newValue.getLongitude())
+						|| !oldValue.getName().equals(newValue.getName())
+						|| !oldValue.getComment().equals(newValue.getComment())
+						|| !oldValue.getRegistrationNumber().equals(newValue.getRegistrationNumber()))
+					variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValue.getName(), oldValue.getVariations(newValue), jobid);
 		}
 
 		Monitor monitor = MonitorFactory.start(BEAN_NAME);
@@ -429,11 +439,11 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	/**
 	 * Test 2-DATABASE-StopArea-1
-	 * 
 	 * @param validationReporter
 	 * @param context
-	 * @param oldParent
-	 * @param newParent
+	 * @param oldValue
+	 * @param newValue
+	 * @param data
 	 */
 	private void twoDatabaseStopAreaOneTest(ValidationReporter validationReporter, Context context, StopArea oldValue,
 			StopArea newValue, ValidationData data) {
