@@ -86,7 +86,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 		if(oldValue.getId() == null) {
 			variationsDAO.makeLineInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
 		} else if(oldValue.getAreaType().equals(BoardingPosition)) {
-			if(oldValue.getLatitude().equals(newValue.getLatitude()) || oldValue.getLongitude().equals(newValue.getLongitude()))
+			if(!oldValue.getLatitude().equals(newValue.getLatitude()) || !oldValue.getLongitude().equals(newValue.getLongitude()))
 			variationsDAO.makeLineUpdate("Mise à jour du point d'arrêt " + newValue.getName(), oldValue.getVariations(newValue), jobid);
 		}
 
