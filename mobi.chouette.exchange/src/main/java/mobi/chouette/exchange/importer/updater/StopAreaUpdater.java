@@ -86,12 +86,12 @@ public class StopAreaUpdater implements Updater<StopArea> {
 		// Gestion journal de variations des points d'arrêt
 
 		// Nouveau point d'arrêt
-		if(oldValue.getId() == null) {
+		if(oldValue.getId() == null && jobid != null) {
 			variationsDAO.makeVariationsInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
 		}
 
 		// Point d'arrêt existant
-		else if(oldValue.getId() != null) {
+		else if(oldValue.getId() != null && jobid != null) {
 				if(!oldValue.getLatitude().equals(newValue.getLatitude())
 						|| !oldValue.getLongitude().equals(newValue.getLongitude())
 						|| !oldValue.getName().equals(newValue.getName())
