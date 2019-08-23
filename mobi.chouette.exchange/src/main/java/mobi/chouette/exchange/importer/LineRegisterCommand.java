@@ -128,12 +128,14 @@ public class LineRegisterCommand implements Command {
 				// Point d'arrêt existant
 				for(StopArea oldValueStopArea : cache.getStopAreas().values()){
 					for(StopArea newValueStopArea : referential.getStopAreas().values()){
+						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
 							if(!oldValueStopArea.getLatitude().equals(newValueStopArea.getLatitude())
 									|| !oldValueStopArea.getLongitude().equals(newValueStopArea.getLongitude())
 									|| !oldValueStopArea.getName().equals(newValueStopArea.getName())
 									|| !oldValueStopArea.getComment().equals(newValueStopArea.getComment())
 									|| !oldValueStopArea.getRegistrationNumber().equals(newValueStopArea.getRegistrationNumber()))
 								variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValueStopArea.getName(), oldValueStopArea.getVariations(newValueStopArea), jobid);
+						}
 					}
 				}
 
