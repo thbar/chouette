@@ -125,7 +125,7 @@ public class NeTExStopPlaceRegisterUpdater {
 
         final Map<String, String> m = stopPlaceRegisterMap;
 
-        Predicate<StopArea> fullStopAreaNotCahced = t -> {
+        Predicate<StopArea> fullStopAreaNotCached = t -> {
             if (m.containsKey(t.getObjectId())) {
                 for (StopArea child : t.getContainedStopAreas()) {
                     if (!m.containsKey(child.getObjectId())) {
@@ -138,7 +138,7 @@ public class NeTExStopPlaceRegisterUpdater {
         };
 
         List<StopArea> boardingPositionsWithoutParents = referential.getStopAreas().values().stream()
-                .filter(stopArea -> fullStopAreaNotCahced.test(stopArea))
+                .filter(stopArea -> fullStopAreaNotCached.test(stopArea))
                 .filter(stopArea -> stopArea.getAreaType() == ChouetteAreaEnum.BoardingPosition)
                 .filter(stopArea -> stopArea.getParent() == null).filter(stopArea -> stopArea.getObjectId() != null)
                 .collect(Collectors.toList());
@@ -154,7 +154,7 @@ public class NeTExStopPlaceRegisterUpdater {
         // Find and convert valid StopAreas
         List<StopPlace> stopPlaces = referential.getStopAreas().values().stream()
                 .map(stopArea -> stopArea.getParent() == null ? stopArea : stopArea.getParent())
-                .filter(fullStopAreaNotCahced)
+                .filter(fullStopAreaNotCached)
                 .filter(stopArea -> stopArea.getObjectId() != null)
                 .filter(stopArea -> stopArea.getAreaType() == ChouetteAreaEnum.CommercialStopPoint)
                 .distinct()

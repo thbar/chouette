@@ -90,16 +90,6 @@ public class StopAreaUpdater implements Updater<StopArea> {
 			variationsDAO.makeVariationsInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
 		}
 
-		// Point d'arrêt existant
-		else if(oldValue.getId() != null && jobid != null) {
-				if(!oldValue.getLatitude().equals(newValue.getLatitude())
-						|| !oldValue.getLongitude().equals(newValue.getLongitude())
-						|| !oldValue.getName().equals(newValue.getName())
-						|| !oldValue.getComment().equals(newValue.getComment())
-						|| !oldValue.getRegistrationNumber().equals(newValue.getRegistrationNumber()))
-					variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValue.getName(), oldValue.getVariations(newValue), jobid);
-		}
-
 		Monitor monitor = MonitorFactory.start(BEAN_NAME);
 		Referential cache = (Referential) context.get(CACHE);
 		Referential referential = (Referential) context.get(REFERENTIAL);
