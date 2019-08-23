@@ -716,7 +716,7 @@ public class StopArea extends NeptuneLocalizedObject {
 		if (o == null || getClass() != o.getClass()) return null;
 		StopArea newArea = (StopArea) o;
 
-		if(this.getLatitude().compareTo(newArea.getLatitude()) == 0 || this.getLongitude().compareTo(newArea.getLongitude()) == 0) variations =  addVariation(variations, "Les coordonnées du point d'arrêt " + newArea.getName() + " ont changé");
+		if(this.getLatitude().compareTo(newArea.getLatitude()) != 0 || this.getLongitude().compareTo(newArea.getLongitude()) != 0) variations =  addVariation(variations, "Les coordonnées du point d'arrêt " + newArea.getName() + " ont changé");
 		if(!StringUtils.equals(this.getName(),               newArea.getName()))               variations =  addVariation(variations, "Changement de nom("                    + this.getName()               + " => " + newArea.getName() + ")");
 		if(!StringUtils.equals(this.getComment(),             newArea.getComment()))             variations =  addVariation(variations, "Changement de description("                 + this.getComment()             + " => " + newArea.getComment() + ")");
 		if(!StringUtils.equals(this.getRegistrationNumber(),             newArea.getRegistrationNumber()))             variations =  addVariation(variations, "Changement de stop code("                 + this.getRegistrationNumber()             + " => " + newArea.getRegistrationNumber() + ")");
