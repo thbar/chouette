@@ -22,6 +22,7 @@ import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.*;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -131,9 +132,9 @@ public class LineRegisterCommand implements Command {
 						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
 							if(oldValueStopArea.getLatitude().compareTo(newValueStopArea.getLatitude()) != 0
 									|| oldValueStopArea.getLongitude().compareTo(newValueStopArea.getLongitude()) != 0
-									|| !oldValueStopArea.getName().equals(newValueStopArea.getName())
-									|| !oldValueStopArea.getComment().equals(newValueStopArea.getComment())
-									|| !oldValueStopArea.getRegistrationNumber().equals(newValueStopArea.getRegistrationNumber()))
+									|| !StringUtils.equals(oldValueStopArea.getName(), newValueStopArea.getName())
+									|| !StringUtils.equals(oldValueStopArea.getComment(), newValueStopArea.getComment())
+									|| !StringUtils.equals(oldValueStopArea.getRegistrationNumber(), newValueStopArea.getRegistrationNumber()))
 								variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValueStopArea.getName(), oldValueStopArea.getVariations(newValueStopArea), jobid);
 						}
 					}
