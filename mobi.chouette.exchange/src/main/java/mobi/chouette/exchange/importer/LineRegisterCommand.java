@@ -129,8 +129,8 @@ public class LineRegisterCommand implements Command {
 				for(StopArea oldValueStopArea : cache.getStopAreas().values()){
 					for(StopArea newValueStopArea : referential.getStopAreas().values()){
 						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
-							if(!oldValueStopArea.getLatitude().equals(newValueStopArea.getLatitude())
-									|| !oldValueStopArea.getLongitude().equals(newValueStopArea.getLongitude())
+							if(oldValueStopArea.getLatitude().compareTo(newValueStopArea.getLatitude()) != 0
+									|| oldValueStopArea.getLongitude().compareTo(newValueStopArea.getLongitude()) != 0
 									|| !oldValueStopArea.getName().equals(newValueStopArea.getName())
 									|| !oldValueStopArea.getComment().equals(newValueStopArea.getComment())
 									|| !oldValueStopArea.getRegistrationNumber().equals(newValueStopArea.getRegistrationNumber()))
