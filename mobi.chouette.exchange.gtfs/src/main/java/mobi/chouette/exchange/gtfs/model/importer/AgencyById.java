@@ -6,9 +6,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import mobi.chouette.common.HTMLTagValidator;
+import mobi.chouette.dao.ReferentialDAO;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 
+import javax.ejb.EJB;
+
 public class AgencyById extends IndexImpl<GtfsAgency> implements GtfsConverter {
+
+	@EJB
+	private ReferentialDAO referentialDAO;
 
 	public static enum FIELDS {
 		agency_id, agency_name, agency_url, agency_timezone, agency_phone, agency_lang, agency_fare_url;
@@ -61,19 +67,15 @@ public class AgencyById extends IndexImpl<GtfsAgency> implements GtfsConverter {
 		// checks for ubiquitous header fields : 1-GTFS-Agency-2,
 		// 1-GTFS-Agency-4 error
 		if (fields.get(FIELDS.agency_id.name()) == null) {
-			getErrors().add(
-					new GtfsException(_path, 1, FIELDS.agency_id.name(), GtfsException.ERROR.MISSING_OPTIONAL_FIELD,
-							null, null));
+
 		} else {
 			getOkTests().add(GtfsException.ERROR.MISSING_OPTIONAL_FIELD);
 		}
 
-		if (fields.get(FIELDS.agency_name.name()) == null || fields.get(FIELDS.agency_url.name()) == null
+		if (fields.get(FIELDS.agency_url.name()) == null
 				|| fields.get(FIELDS.agency_timezone.name()) == null) {
 			String name = "";
-			if (fields.get(FIELDS.agency_name.name()) == null)
-				name = FIELDS.agency_name.name();
-			else if (fields.get(FIELDS.agency_url.name()) == null)
+			if (fields.get(FIELDS.agency_url.name()) == null)
 				name = FIELDS.agency_url.name();
 			else if (fields.get(FIELDS.agency_timezone.name()) == null)
 				name = FIELDS.agency_timezone.name();
@@ -119,15 +121,14 @@ public class AgencyById extends IndexImpl<GtfsAgency> implements GtfsConverter {
 
 		// check the existance of agency_name, agency_url and agency_timezone
 		// values for this bean : 1-GTFS-Agency-5
-		// 1-GTFS-Agency-5
+		// 1-GTFS-Agency-5 tototo
 		value = array[i++];
 		if (withValidation)
 			testExtraSpace(FIELDS.agency_name.name(), value, bean);
 		if (value == null || value.trim().isEmpty()) {
-			if (withValidation)
-				bean.getErrors().add(
-						new GtfsException(_path, id, getIndex(FIELDS.agency_name.name()), FIELDS.agency_name.name(),
-								GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
+//			String referential = ((String) context.get(Context.PATH)).split("referentials/")[1].split("/")[0];
+//			value = referentialDAO.getReferentialNameBySlug(referential);
+//			bean.setAgencyName(STRING_CONVERTER.from(context, FIELDS.agency_name, value, true));
 		} else {
 			if (withValidation)
 				bean.getOkTests().add(GtfsException.ERROR.MISSING_REQUIRED_VALUES);
@@ -158,28 +159,25 @@ public class AgencyById extends IndexImpl<GtfsAgency> implements GtfsConverter {
 			}
 		}
 
-		// 1-GTFS-Agency-5
+		// 1-GTFS-Agency-5 tatata
 		value = array[i++];
 		if (withValidation)
 			testExtraSpace(FIELDS.agency_timezone.name(), value, bean);
 		if (value == null || value.trim().isEmpty()) {
+//			String referential = ((String) context.get(Context.PATH)).split("referentials/")[1].split("/")[0];
+//			value = referentialDAO.getReferentialNameBySlug(referential);
+		}
+		try {
+			bean.setAgencyTimezone(TIMEZONE_CONVERTER.from(context, FIELDS.agency_timezone, value, true));
+		} catch (GtfsException e) {
+			// 1-GTFS-Agency-6 warning
 			if (withValidation)
 				bean.getErrors().add(
-						new GtfsException(_path, id, FIELDS.agency_timezone.name(),
-								GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
-		} else {
-			try {
-				bean.setAgencyTimezone(TIMEZONE_CONVERTER.from(context, FIELDS.agency_timezone, value, true));
-			} catch (GtfsException e) {
-				// 1-GTFS-Agency-6 warning
-				if (withValidation)
-					bean.getErrors().add(
-							new GtfsException(_path, id, getIndex(FIELDS.agency_timezone.name()), FIELDS.agency_timezone
-									.name(), GtfsException.ERROR.INVALID_FORMAT, null, value));
-			} finally {
-				if (withValidation)
-					bean.getOkTests().add(GtfsException.ERROR.INVALID_FORMAT);
-			}
+						new GtfsException(_path, id, getIndex(FIELDS.agency_timezone.name()), FIELDS.agency_timezone
+								.name(), GtfsException.ERROR.INVALID_FORMAT, null, value));
+		} finally {
+			if (withValidation)
+				bean.getOkTests().add(GtfsException.ERROR.INVALID_FORMAT);
 		}
 
 		value = array[i++];

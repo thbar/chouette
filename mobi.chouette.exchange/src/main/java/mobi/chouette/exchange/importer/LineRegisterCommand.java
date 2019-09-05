@@ -10,6 +10,7 @@ import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
 import mobi.chouette.exchange.importer.updater.*;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
@@ -21,6 +22,7 @@ import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.*;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -48,6 +50,9 @@ public class LineRegisterCommand implements Command {
 
 	@EJB
 	private LineDAO lineDAO;
+
+	@EJB
+	private VariationsDAO variationsDAO;
 
 	@EJB
 	private ContenerChecker checker;
@@ -81,7 +86,15 @@ public class LineRegisterCommand implements Command {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 
 		// Use property based enabling of stop place updater, but allow disabling if property exist in context
-		Line newValue = referential.getLines().values().iterator().next();
+		Line newValue  = referential.getLines().values().iterator().next();
+		Line oldValue1 = lineDAO.findByObjectId(newValue.getObjectId());
+
+		Long jobid = (Long) context.get(JOB_ID);
+		if(oldValue1 == null) {
+			variationsDAO.makeVariationsInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
+		} else if(!oldValue1.equals(newValue)) {
+			variationsDAO.makeVariationsUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
+		}
 
 		AbstractImportParameter importParameter = (AbstractImportParameter) context.get(CONFIGURATION);
 		context.put(StopArea.IMPORT_MODE, importParameter.getStopAreaImportMode());
@@ -112,6 +125,21 @@ public class LineRegisterCommand implements Command {
 			try {
 	
 				optimiser.initialize(cache, referential);
+
+				// Point d'arrêt existant
+				for(StopArea oldValueStopArea : cache.getStopAreas().values()){
+					for(StopArea newValueStopArea : referential.getStopAreas().values()){
+						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
+							if(oldValueStopArea.getLatitude().compareTo(newValueStopArea.getLatitude()) != 0
+									|| oldValueStopArea.getLongitude().compareTo(newValueStopArea.getLongitude()) != 0
+									|| !StringUtils.equals(oldValueStopArea.getName(), newValueStopArea.getName())
+									|| !StringUtils.equals(oldValueStopArea.getComment(), newValueStopArea.getComment())
+									|| !StringUtils.equals(oldValueStopArea.getRegistrationNumber(), newValueStopArea.getRegistrationNumber()))
+								variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValueStopArea.getName(), oldValueStopArea.getVariations(newValueStopArea), jobid);
+						}
+					}
+				}
+
 	
 				Line oldValue = cache.getLines().get(newValue.getObjectId());
 				lineUpdater.update(context, oldValue, newValue);

@@ -7,3 +7,4 @@ MVN_VERSION=$(mvn -q \
 
 #mvn  install -DskipTests -DskipWildfly=true -DskipInitDb=true
 docker build -t registry.okina.fr/mosaic/chouette:$MVN_VERSION .
+docker push registry.okina.fr/mosaic/chouette:$MVN_VERSION

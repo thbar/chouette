@@ -700,4 +700,37 @@ public class StopArea extends NeptuneLocalizedObject {
 			routingConstraintAreas.remove(area);
 	}
 
+//	public boolean equals(Object o){
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//		StopArea newArea = (StopArea) o;
+//
+//		if (!this.getLatitude().equals(newArea.getLatitude()))  return false;
+//		if (!this.getLongitude().equals(newArea.getLongitude())) return false;
+//		return true;
+//	}
+
+	public String getVariations(Object o){
+		String variations = null;
+		if (this == o) return null;
+		if (o == null || getClass() != o.getClass()) return null;
+		StopArea newArea = (StopArea) o;
+
+		if(this.getLatitude().compareTo(newArea.getLatitude()) != 0 || this.getLongitude().compareTo(newArea.getLongitude()) != 0) variations =  addVariation(variations, "Les coordonnées du point d'arrêt " + newArea.getName() + " ont changé");
+		if(!StringUtils.equals(this.getName(),               newArea.getName()))               variations =  addVariation(variations, "Changement de nom("                    + this.getName()               + " => " + newArea.getName() + ")");
+		if(!StringUtils.equals(this.getComment(),             newArea.getComment()))             variations =  addVariation(variations, "Changement de description("                 + this.getComment()             + " => " + newArea.getComment() + ")");
+		if(!StringUtils.equals(this.getRegistrationNumber(),             newArea.getRegistrationNumber()))             variations =  addVariation(variations, "Changement de stop code("                 + this.getRegistrationNumber()             + " => " + newArea.getRegistrationNumber() + ")");
+
+		return variations;
+	}
+
+	private String addVariation(String variations, String newVariation){
+		if(StringUtils.isEmpty(newVariation)) return variations;
+		if(StringUtils.isEmpty(variations)){
+			variations = newVariation;
+		} else {
+			variations = variations + " - " + newVariation;
+		}
+		return variations;
+	}
 }

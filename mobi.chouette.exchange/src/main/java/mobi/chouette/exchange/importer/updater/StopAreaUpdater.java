@@ -16,6 +16,7 @@ import mobi.chouette.dao.AccessLinkDAO;
 import mobi.chouette.dao.AccessPointDAO;
 import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.model.AccessLink;
@@ -29,6 +30,8 @@ import mobi.chouette.model.util.Referential;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import static mobi.chouette.model.type.ChouetteAreaEnum.*;
 
 @Stateless(name = StopAreaUpdater.BEAN_NAME)
 @Log4j
@@ -60,6 +63,9 @@ public class StopAreaUpdater implements Updater<StopArea> {
 	@EJB(beanName = ConnectionLinkUpdater.BEAN_NAME)
 	private Updater<ConnectionLink> connectionLinkUpdater;
 
+	@EJB
+	private VariationsDAO variationsDAO;
+
 	@Override
 	public void update(Context context, StopArea oldValue, StopArea newValue) throws Exception {
 
@@ -73,6 +79,15 @@ public class StopAreaUpdater implements Updater<StopArea> {
 		if (oldValue.getId() != null && !oldValue.getImportMode().shouldUpdateStopAreas()) {
 			log.debug("Skip update of existing stop area: " + oldValue.getObjectId());
 			return;
+		}
+
+		Long jobid = (Long) context.get(JOB_ID);
+
+		// Gestion journal de variations des points d'arrêt
+
+		// Nouveau point d'arrêt
+		if(oldValue.getId() == null && jobid != null) {
+			variationsDAO.makeVariationsInsert("Nouveau point d'arrêt " + newValue.getName(), "", jobid);
 		}
 
 		Monitor monitor = MonitorFactory.start(BEAN_NAME);
@@ -414,11 +429,11 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	/**
 	 * Test 2-DATABASE-StopArea-1
-	 * 
 	 * @param validationReporter
 	 * @param context
-	 * @param oldParent
-	 * @param newParent
+	 * @param oldValue
+	 * @param newValue
+	 * @param data
 	 */
 	private void twoDatabaseStopAreaOneTest(ValidationReporter validationReporter, Context context, StopArea oldValue,
 			StopArea newValue, ValidationData data) {
