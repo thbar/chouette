@@ -127,18 +127,20 @@ public class LineRegisterCommand implements Command {
 				optimiser.initialize(cache, referential);
 
 				// Point d'arrêt existant
-				for(StopArea oldValueStopArea : cache.getStopAreas().values()){
-					for(StopArea newValueStopArea : referential.getStopAreas().values()){
-						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
-							if(oldValueStopArea.getLatitude().compareTo(newValueStopArea.getLatitude()) != 0
-									|| oldValueStopArea.getLongitude().compareTo(newValueStopArea.getLongitude()) != 0
-									|| !StringUtils.equals(oldValueStopArea.getName(), newValueStopArea.getName())
-									|| !StringUtils.equals(oldValueStopArea.getComment(), newValueStopArea.getComment())
-									|| !StringUtils.equals(oldValueStopArea.getRegistrationNumber(), newValueStopArea.getRegistrationNumber()))
-								variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValueStopArea.getName(), oldValueStopArea.getVariations(newValueStopArea), jobid);
-						}
-					}
-				}
+
+				// TODO okina : à revoir, pas stable a priori
+//				for(StopArea oldValueStopArea : cache.getStopAreas().values()){
+//					for(StopArea newValueStopArea : referential.getStopAreas().values()){
+//						if(oldValueStopArea.getObjectId().equals(newValueStopArea.getObjectId())){
+//							if(oldValueStopArea.getLatitude().compareTo(newValueStopArea.getLatitude()) != 0
+//									|| oldValueStopArea.getLongitude().compareTo(newValueStopArea.getLongitude()) != 0
+//									|| !StringUtils.equals(oldValueStopArea.getName(), newValueStopArea.getName())
+//									|| !StringUtils.equals(oldValueStopArea.getComment(), newValueStopArea.getComment())
+//									|| !StringUtils.equals(oldValueStopArea.getRegistrationNumber(), newValueStopArea.getRegistrationNumber()))
+//								variationsDAO.makeVariationsUpdate("Mise à jour du point d'arrêt " + newValueStopArea.getName(), oldValueStopArea.getVariations(newValueStopArea), jobid);
+//						}
+//					}
+//				}
 
 	
 				Line oldValue = cache.getLines().get(newValue.getObjectId());
