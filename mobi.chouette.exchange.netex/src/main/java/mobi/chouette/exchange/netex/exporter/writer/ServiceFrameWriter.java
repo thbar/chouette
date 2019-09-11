@@ -32,11 +32,15 @@ public class ServiceFrameWriter extends AbstractWriter{
 		Line line = data.getLine();
 		Network network = line.getNetwork();
 		ModelTranslator modelTranslator = new ModelTranslator();
+		String networkVersionDate = "";
+		if(line.getNetwork().getVersionDate() != null) {
+			networkVersionDate = dateFormat.format(line.getNetwork().getVersionDate());
+		}
 		writer.write("  ");
 		writer.write("<!-- ServiceFrame to map the PTNetwork  NEPTUNE Object -->\n");
 		writer.write("<ServiceFrame version=\"any\"  id=\""+line.objectIdPrefix()+":ServiceFrame:"+line.objectIdSuffix()+"\">\n");
 		writer.write("  <!-- NEPTUNE PTNetwork Mappling =========================================== -->\n");
-		writer.write("  <Network version=\""+network.getObjectVersion()+"\" changed=\""+dateFormat.format(line.getNetwork().getVersionDate())+"\" \n");
+		writer.write("  <Network version=\""+network.getObjectVersion()+"\" changed=\""+networkVersionDate+"\" \n");
 		writer.write("           id=\""+modelTranslator.netexId(network)+"\" >\n");
 		//      #if ( $network.comment )
 		if (isSet(network.getComment()))

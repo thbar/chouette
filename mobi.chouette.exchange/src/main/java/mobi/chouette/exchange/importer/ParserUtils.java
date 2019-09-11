@@ -15,6 +15,7 @@ import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang.StringUtils;
 
 @Log4j
 public class ParserUtils {
@@ -129,9 +130,9 @@ public class ParserUtils {
 	public static java.util.Date getDate(DateFormat format, String value)
 			throws ParseException {
 		java.util.Date result = null;
-		assert value != null : "[DSU] invalid value : " + value;
+		assert !StringUtils.isEmpty(value) : "[DSU] invalid value : " + value;
 
-		if (value != null) {
+		if (!StringUtils.isEmpty(value)) {
 			result = format.parse(value);
 		}
 		return result;

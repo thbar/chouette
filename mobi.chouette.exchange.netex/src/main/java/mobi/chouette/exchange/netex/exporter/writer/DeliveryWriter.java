@@ -17,6 +17,10 @@ public class DeliveryWriter extends AbstractWriter{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		Line line = data.getLine();
 		Calendar now = Calendar.getInstance();
+		String networkVersionDate = "";
+		if(line.getNetwork().getVersionDate() != null) {
+			networkVersionDate = dateFormat.format(line.getNetwork().getVersionDate());
+		}
 		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		writer.write("<!-- \n");
 		writer.write("This mapping involves :\n");
@@ -65,7 +69,7 @@ public class DeliveryWriter extends AbstractWriter{
 		writer.write("  <!--- =============== RESULTS =========== -->\n");
 		writer.write("  <dataObjects>\n");
 		writer.write("    <!-- =========================================== -->    \n");   
-		writer.write("    <CompositeFrame version=\"1\" created=\""+dateFormat.format(line.getNetwork().getVersionDate())+"\" " +
+		writer.write("    <CompositeFrame version=\"1\" created=\""+networkVersionDate+"\" " +
 				"id=\""+line.objectIdPrefix()+":Neptune:CompositeFrame:"+line.objectIdSuffix()+"\">\n");
 		writer.write("      <Name>NEPTUNE Mapping Frame</Name>\n");
 		writer.write("      <!-- NEPTUNE [mapping:fixed] : This is a NEPTUNE to NeTEx mapping frame -->\n");
