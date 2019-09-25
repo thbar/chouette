@@ -17,7 +17,7 @@
 	<dependencies>
 
         <dependency>
-            <groupId>com.okina</groupId>
+            <groupId>org.entur</groupId>
             <artifactId>netex-java-model</artifactId>
         </dependency>
         <dependency>
