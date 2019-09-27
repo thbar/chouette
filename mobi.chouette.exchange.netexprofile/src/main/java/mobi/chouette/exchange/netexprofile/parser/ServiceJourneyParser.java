@@ -162,7 +162,7 @@ public class ServiceJourneyParser extends NetexParser implements Parser, Constan
 				bookingArrangement.setLatestBookingTime(TimeUtil.toJodaLocalTime(netexFSP.getLatestBookingTime()));
 				bookingArrangement.setMinimumBookingPeriod(TimeUtil.toJodaDuration(netexFSP.getMinimumBookingPeriod()));
 
-				bookingArrangement.setBookingContact(contactStructureParser.parse(netexFSP.getBookingContact()));
+				//bookingArrangement.setBookingContact(contactStructureParser.parse(netexFSP.getBookingContact()));
 
 				chouetteFSP.setBookingArrangement(bookingArrangement);
 				vehicleJourney.setFlexibleServiceProperties(chouetteFSP);
