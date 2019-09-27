@@ -150,7 +150,7 @@ public class JourneyPatternParser extends NetexParser implements Parser, Constan
 				}
 			}
 
-			if (pointInPattern.getBookingArrangements()!=null) {
+/*			if (pointInPattern.getBookingArrangements()!=null) {
 				BookingArrangementsStructure netexBookingArrangement = pointInPattern.getBookingArrangements();
 				BookingArrangement bookingArrangement = new BookingArrangement();
 				if (netexBookingArrangement.getBookingNote() != null) {
@@ -166,7 +166,7 @@ public class JourneyPatternParser extends NetexParser implements Parser, Constan
 				bookingArrangement.setBookingContact(contactStructureParser.parse(netexBookingArrangement.getBookingContact()));
 
 				stopPointInJourneyPattern.setBookingArrangement(bookingArrangement);
-			}
+			}*/
 
 			chouetteJourneyPattern.addStopPoint(stopPointInJourneyPattern);
 		}

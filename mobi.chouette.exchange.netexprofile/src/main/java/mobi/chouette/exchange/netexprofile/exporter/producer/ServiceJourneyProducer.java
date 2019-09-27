@@ -145,7 +145,7 @@ public class ServiceJourneyProducer extends NetexProducer {
 					netexFSP.setLatestBookingTime(TimeUtil.toLocalTimeFromJoda(bookingArrangement.getLatestBookingTime()));
 					netexFSP.setMinimumBookingPeriod(TimeUtil.toDurationFromJodaDuration(bookingArrangement.getMinimumBookingPeriod()));
 
-					netexFSP.setBookingContact(contactStructureProducer.produce(bookingArrangement.getBookingContact()));
+					//netexFSP.setBookingContact(contactStructureProducer.produce(bookingArrangement.getBookingContact()));
 				}
 			}
 
