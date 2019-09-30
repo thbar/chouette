@@ -215,8 +215,8 @@ public class ConversionUtil {
 				/**
 				 * Rail sub modes
 				 */
-				case International:
-					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.INTERNATIONAL);
+//				case International:
+//					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.INTERNATIONAL);
 				case InterregionalRail:
 					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.INTERREGIONAL_RAIL);
 				case Local:
@@ -229,8 +229,8 @@ public class ConversionUtil {
 					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.REGIONAL_RAIL);
 				case TouristRailway:
 					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.TOURIST_RAILWAY);
-				case AirportLinkRail:
-					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.AIRPORT_LINK_RAIL);
+//				case AirportLinkRail:
+//					return new TransportSubmodeStructure().withRailSubmode(RailSubmodeEnumeration.AIRPORT_LINK_RAIL);
 				/**
 				 * Metro sub modes
 				 */

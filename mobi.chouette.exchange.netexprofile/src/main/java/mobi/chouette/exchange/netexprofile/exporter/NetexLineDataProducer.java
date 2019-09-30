@@ -398,7 +398,7 @@ public class NetexLineDataProducer extends NetexProducer implements Constant {
 
 		ScheduledStopPointRefStructure scheduledStopPointRef = netexFactory.createScheduledStopPointRefStructure();
 		NetexProducerUtils.populateReference(scheduledStopPoint, scheduledStopPointRef, true);
-		stopAssignment.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(scheduledStopPointRef));
+		stopAssignment.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(scheduledStopPointRef).getValue());
 
 		if (isSet(scheduledStopPoint.getContainedInStopAreaRef().getObject())) {
 			mobi.chouette.model.StopArea containedInStopArea = scheduledStopPoint.getContainedInStopAreaRef().getObject();
