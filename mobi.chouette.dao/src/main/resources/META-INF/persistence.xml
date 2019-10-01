@@ -69,6 +69,7 @@
 		<class>mobi.chouette.model.Interchange</class>
 		<class>mobi.chouette.model.Referential</class>
 		<class>mobi.chouette.model.Variations</class>
+		<class>mobi.chouette.model.ZdepPlage</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<validation-mode>NONE</validation-mode>
 
