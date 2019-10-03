@@ -22,8 +22,9 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	public static final String PROFILE_NORWAY_NETWORKTIMETABLE_108_11 = "1.08:NO-NeTEx-networktimetable:1.1";
 	public static final String PROFILE_NORWAY_NETWORKTIMETABLE_108_12 = "1.08:NO-NeTEx-networktimetable:1.2";
 	public static final String PROFILE_NORWAY_NETWORKTIMETABLE_108_13 = "1.08:NO-NeTEx-networktimetable:1.3";
+	public static final String PROFILE_IDFM_FR1 = "1.04:FR1-NETEX-2.0-z";
 
-	public static final String EXPORT_PROFILE_ID = PROFILE_NORWAY_NETWORKTIMETABLE_108_13; // Update when new profile version is implemented
+	public static final String EXPORT_PROFILE_ID = PROFILE_IDFM_FR1; // Update when new profile version is implemented
 	
 	public static String NSR_XMLNSURL = "http://ratp.mosaic.pro/mosaic";
 	public static String NSR_XMLNS = "MOSAIC";

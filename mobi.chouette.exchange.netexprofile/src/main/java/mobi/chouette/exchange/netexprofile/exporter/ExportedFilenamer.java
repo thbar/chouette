@@ -27,14 +27,9 @@ public class ExportedFilenamer {
 		NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
 
 		StringBuilder b = new StringBuilder();
-		b.append(parameters.getDefaultCodespacePrefix());
-		b.append(UNDERSCORE);
+		b.append("offre_");
 		b.append(line.getObjectId().replaceAll(":", DASH));
 		b.append(UNDERSCORE);
-		if (line.getNumber() != null) {
-			b.append(line.getNumber().replaceAll(UNDERSCORE, DASH));
-			b.append(UNDERSCORE);
-		}
 		if (line.getName() != null) {
 			b.append(line.getName());
 		} else if (line.getPublishedName() != null) {

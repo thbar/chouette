@@ -40,13 +40,8 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			writer.writeAttribute(VERSION, NETEX_PROFILE_VERSION);
 
 			writeElement(writer, PUBLICATION_TIMESTAMP, timestampFormatted);
+			// TODO mettre le codespace à la place du participant_ref_content
 			writeElement(writer, PARTICIPANT_REF, PARTICIPANT_REF_CONTENT);
-
-			if (fragmentMode.equals(NetexFragmentMode.LINE)) {
-				writeElement(writer, DESCRIPTION,  NamingUtil.getName(exportableData.getLine()));
-			} else {
-				writeElement(writer, DESCRIPTION, "Shared data used across line files");
-			}
 
 			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
 			writer.writeEndElement();
@@ -169,15 +164,18 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			if (fragmentMode.equals(NetexFragmentMode.LINE)) {
 				ServiceFrameWriter.write(writer, context, exportableNetexData, NetexFragmentMode.LINE, marshaller);
 				TimetableFrameWriter.write(writer, context, exportableNetexData, marshaller);
-			} else { // shared data
+			} else {
 				ResourceFrameWriter.write(writer, context, exportableNetexData, marshaller);
 
 				if (configuration.isExportStops()) {
 					SiteFrameWriter.write(writer, context, exportableNetexData, marshaller);
 				}
-
-				ServiceFrameWriter.write(writer, context, exportableNetexData, NetexFragmentMode.SHARED, marshaller);
-				ServiceCalendarFrameWriter.write(writer, context, exportableNetexData, marshaller);
+				if (fragmentMode.equals(NetexFragmentMode.COMMON)){
+					ServiceFrameWriter.write(writer, context, exportableNetexData, NetexFragmentMode.COMMON, marshaller);
+				}
+				else{
+					ServiceCalendarFrameWriter.write(writer, context, exportableNetexData, marshaller);
+				}
 			}
 
 			writer.writeEndElement();
