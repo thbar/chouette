@@ -61,7 +61,7 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 				writeRoutesElement(writer, exportableNetexData, marshaller);
 				writeLinesElement(writer, exportableNetexData, marshaller);
 				writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
-//				writeNetworks(writer, exportableNetexData, marshaller);
+				writeNetworks(writer, exportableNetexData, marshaller);
 				writeRoutePointsElement(writer, exportableNetexData, marshaller);
 				writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
 				writeScheduledStopPointsElement(writer, exportableNetexData, marshaller);
