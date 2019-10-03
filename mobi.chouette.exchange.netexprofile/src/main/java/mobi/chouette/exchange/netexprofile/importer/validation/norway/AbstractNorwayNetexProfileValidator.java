@@ -350,7 +350,7 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	public Collection<String> getSupportedProfiles() {
 		return Arrays.asList(new String[] { PROFILE_NORWAY_NETWORKTIMETABLE_104_10,PROFILE_NORWAY_NETWORKTIMETABLE_104_11,
 				PROFILE_NORWAY_NETWORKTIMETABLE_107_11, PROFILE_NORWAY_NETWORKTIMETABLE_108_11,  PROFILE_NORWAY_NETWORKTIMETABLE_108_12,
-				PROFILE_NORWAY_NETWORKTIMETABLE_108_13});
+				PROFILE_NORWAY_NETWORKTIMETABLE_108_13, PROFILE_IDFM_FR1});
 	}
 
 	protected void verifyReferencesToCorrectEntityTypes(Context context, List<IdVersion> localRefs) {
