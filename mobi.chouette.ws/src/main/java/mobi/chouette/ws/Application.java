@@ -1,17 +1,18 @@
 package mobi.chouette.ws;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.interceptors.CorsFilter;
+import org.keycloak.admin.client.resource.UsersResource;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Application extends javax.ws.rs.core.Application implements
 		ServletContextListener {
@@ -33,6 +34,10 @@ public class Application extends javax.ws.rs.core.Application implements
 	@Override
 	public Set<Object> getSingletons() {
 		Set<Object> result = new HashSet<Object>();
+		CorsFilter corsFilter = new CorsFilter();
+		corsFilter.getAllowedOrigins().add("*");
+		corsFilter.setAllowedMethods("OPTIONS, GET, POST, DELETE, PUT, PATCH");
+		result.add(corsFilter);
 		return result;
 	}
 

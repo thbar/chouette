@@ -454,6 +454,11 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 	@Transient
 	private List<StopArea> routingConstraints = new ArrayList<StopArea>(0);
 
+	@Getter
+	@ManyToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "categories_for_line_id")
+	private CategoryForLine categoryForLine;
+
 	/* -------------------------------------- */
 
 	/**

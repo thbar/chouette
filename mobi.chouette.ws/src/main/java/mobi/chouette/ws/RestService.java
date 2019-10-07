@@ -1,15 +1,31 @@
 package mobi.chouette.ws;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
+import mobi.chouette.common.Constant;
+import mobi.chouette.common.Pair;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.common.file.FileStoreFactory;
+import mobi.chouette.exchange.importer.CleanRepositoryCommand;
+import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
+import mobi.chouette.model.CategoryForLine;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.iev.Job;
+import mobi.chouette.model.iev.Job.STATUS;
+import mobi.chouette.model.iev.Link;
+import mobi.chouette.persistence.hibernate.ContextHolder;
+import mobi.chouette.service.JobService;
+import mobi.chouette.service.JobServiceManager;
+import mobi.chouette.service.LineService;
+import mobi.chouette.service.RequestExceptionCode;
+import mobi.chouette.service.RequestServiceException;
+import mobi.chouette.service.ServiceException;
+import mobi.chouette.service.ServiceExceptionCode;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,30 +49,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
-import mobi.chouette.common.Constant;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.common.file.FileStoreFactory;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
-import mobi.chouette.model.iev.Job;
-import mobi.chouette.model.iev.Job.STATUS;
-import mobi.chouette.model.iev.Link;
-import mobi.chouette.persistence.hibernate.ContextHolder;
-import mobi.chouette.service.JobService;
-import mobi.chouette.service.JobServiceManager;
-import mobi.chouette.service.RequestExceptionCode;
-import mobi.chouette.service.RequestServiceException;
-import mobi.chouette.service.ServiceException;
-import mobi.chouette.service.ServiceExceptionCode;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Path("/referentials")
 @Log4j
@@ -70,6 +73,9 @@ public class RestService implements Constant {
 
 	@Inject
 	JobServiceManager jobServiceManager;
+
+	@Inject
+	LineService lineService;
 
 	@Context
 	UriInfo uriInfo;
@@ -548,6 +554,17 @@ public class RestService implements Constant {
 			log.error(ex.getMessage(), ex);
 			throw new WebApplicationException("INTERNAL_ERROR", Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GET
+	@Path("/{ref}/lines")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response lines(@PathParam("ref") String referential) {
+		return Response.ok(lineService.getLines(referential)
+				.stream()
+				.collect(Collectors.toMap(Line::getId, line -> new Pair<>(line.getName(), line.getCategoryForLine()))))
+				.header("Access-Control-Allow-Origin", "*")
+				.build();
 	}
 
 	private String getFilename(String header) {
