@@ -14,7 +14,7 @@ public class AbstractNetexWriter {
     static final String DEFAULT_ZONE_ID = "Europe/Paris";
     static final String DEFAULT_LANGUAGE_CODE = "fr";
     static final String NSR_XMLNS = "MOSAIC";
-	static final String PARTICIPANT_REF_CONTENT = "RB";
+	static final String PARTICIPANT_REF_CONTENT = "FR1";
 
 
 
@@ -24,7 +24,7 @@ public class AbstractNetexWriter {
     static final String XMLNS = "Xmlns";
     static final String XMLNSURL = "XmlnsUrl";
     
-    final static DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+    final static DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .optionalStart().appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).optionalEnd()
             .optionalStart().appendPattern("XXXXX")
             .optionalEnd().toFormatter();

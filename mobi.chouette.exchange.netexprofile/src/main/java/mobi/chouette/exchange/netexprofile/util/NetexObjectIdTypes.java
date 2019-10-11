@@ -45,6 +45,13 @@ public final class NetexObjectIdTypes {
     public static final String SERVICE_FRAME = "ServiceFrame";
     public static final String SERVICE_CALENDAR_FRAME = "ServiceCalendarFrame";
     public static final String TIMETABLE_FRAME = "TimetableFrame";
+    public static final String GENERAL_FRAME = "GeneralFrame";
+
+    public static final String NETEX_STRUCTURE = "NETEX_STRUCTURE";
+    public static final String NETEX_HORAIRE = "NETEX_HORAIRE";
+    public static final String NETEX_OFFRE_LIGNE = "NETEX_OFFRE_LIGNE";
+    public static final String NETEX_CALENDAR = "NETEX_CALENDAR";
+    public static final String NETEX_COMMUN = "NETEX_COMMUN";
 
     // entity id keys
     public static final String AUTHORITY = "Authority";

@@ -41,7 +41,12 @@ import mobi.chouette.model.type.OrganisationTypeEnum;
 public class NetexProducerUtils {
 
 	private static final String OBJECT_ID_SPLIT_CHAR = ":";
-	
+
+	private static final String OBJECT_ID_SPLIT_DASH = "-";
+
+
+	private static final String LOC = ":LOC";
+
 	public static boolean isSet(Object... objects) {
 		for (Object val : objects) {
 			if (val != null) {
@@ -138,8 +143,24 @@ public class NetexProducerUtils {
 	
 	public static String createUniqueId(Context context, String type) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
-		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+idCounter.incrementAndGet();
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+idCounter.incrementAndGet()+LOC;
 	}
+
+	public static String createUniqueGeneralFrameId(Context context, String type, String typeFile, String time) {
+		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
+	}
+
+	public static String createUniqueGeneralFrameInLineId(Context context, String type, String time) {
+		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
+	}
+
+	public static String createUniquCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {
+		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+idLine+OBJECT_ID_SPLIT_CHAR+LOC;
+	}
+
 
 	public static String translateType(NeptuneObject v) {
 		if (v instanceof Timetable) {
