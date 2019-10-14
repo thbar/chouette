@@ -106,14 +106,6 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
         NetworksNames networksNames = new NetworksNames();
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-            if(networksNames.getPrefixOutList(configuration.getObjectIdPrefix())) {
-                gtfsAgency.setAgencyId("1");
-            }
-
-            if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
-            	gtfsAgency.setAgencyName(configuration.getReferentialName());
-			}
-
 			// Create both as operator and as authority
 			String objectIdOperator = AbstractConverter.composeObjectId(configuration, Company.OPERATOR_KEY,
 					gtfsAgency.getAgencyId()+"o", log);
