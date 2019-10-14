@@ -42,6 +42,7 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.common.file.FileStoreFactory;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
 import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
+import mobi.chouette.model.Company;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
@@ -549,6 +550,20 @@ public class RestService implements Constant {
 			throw new WebApplicationException("INTERNAL_ERROR", Status.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@GET
+	@Path("/{ref}/informations")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getReferentialInformations(@PathParam("ref") String referential){
+		ContextHolder.setContext(referential);
+		Company informations = jobServiceManager.getReferentialInformations();
+		ResponseBuilder builder = Response.ok(informations);
+		MediaType type = MediaType.APPLICATION_JSON_TYPE;
+		builder.header(api_version_key, api_version);
+		return builder.type(type).build();
+	}
+
 
 	private String getFilename(String header) {
 		String result = null;

@@ -106,13 +106,14 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
         NetworksNames networksNames = new NetworksNames();
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-            if(networksNames.getPrefixOutList(configuration.getObjectIdPrefix())) {
-                gtfsAgency.setAgencyId("1");
-            }
-
-            if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
-            	gtfsAgency.setAgencyName(configuration.getReferentialName());
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
 			}
+
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
+			}
+
 
 			// Create both as operator and as authority
 			String objectIdOperator = AbstractConverter.composeObjectId(configuration, Company.OPERATOR_KEY,
@@ -134,7 +135,9 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
             company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
         }
         else{
-            company.setName(networksNames.getNetworkName(configuration.getObjectIdPrefix()));
+        	String companyName = networksNames.getNetworkName(configuration.getObjectIdPrefix());
+        	if(!StringUtils.isEmpty( gtfsAgency.getAgencyName())) companyName = AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName());
+            company.setName(companyName);
         }
 		company.setUrl(AbstractConverter.toString(gtfsAgency.getAgencyUrl()));
 		company.setPhone(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyPhone()));
