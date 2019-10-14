@@ -103,7 +103,6 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		GtfsImporter importer = (GtfsImporter) context.get(PARSER);
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
-        NetworksNames networksNames = new NetworksNames();
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
 			// Create both as operator and as authority

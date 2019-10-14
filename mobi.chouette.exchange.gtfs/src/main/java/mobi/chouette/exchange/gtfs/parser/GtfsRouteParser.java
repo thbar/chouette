@@ -246,12 +246,8 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 //			line.setName(line.getNumber());
 //		}
 
-        if(networksNames.getTerritorializedSites(configuration.getObjectIdPrefix())){
-            line.setTransportModeName(TransportModeNameEnum.Coach);
-        }
-        else{
-            line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
-        }
+
+        line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
 		line.setTransportSubModeName(gtfsRoute.getRouteType().getSubMode());
 
         String[] token = line.getObjectId().split(":");
