@@ -120,14 +120,7 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 	}
 	
 	private void convert(Context context, GtfsAgency gtfsAgency, Company company, OrganisationTypeEnum organisationType) {
-        GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
-        NetworksNames networksNames = new NetworksNames();
-        if(networksNames.getPrefixInList(configuration.getObjectIdPrefix())){
-            company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
-        }
-        else{
-            company.setName(networksNames.getNetworkName(configuration.getObjectIdPrefix()));
-        }
+		company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
 		company.setUrl(AbstractConverter.toString(gtfsAgency.getAgencyUrl()));
 		company.setPhone(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyPhone()));
 		String[] token = company.getObjectId().split(":");
