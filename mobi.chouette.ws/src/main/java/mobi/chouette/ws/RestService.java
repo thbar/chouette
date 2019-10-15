@@ -1,15 +1,30 @@
 package mobi.chouette.ws;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
+import mobi.chouette.common.Constant;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.common.file.FileStoreFactory;
+import mobi.chouette.exchange.importer.CleanRepositoryCommand;
+import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
+import mobi.chouette.exchange.importer.MappingZdepHastusPlageCommand;
+import mobi.chouette.exchange.importer.UpdateStopareasForIdfmLineCommand;
+import mobi.chouette.model.Company;
+import mobi.chouette.model.iev.Job;
+import mobi.chouette.model.iev.Job.STATUS;
+import mobi.chouette.model.iev.Link;
+import mobi.chouette.persistence.hibernate.ContextHolder;
+import mobi.chouette.service.JobService;
+import mobi.chouette.service.JobServiceManager;
+import mobi.chouette.service.RequestExceptionCode;
+import mobi.chouette.service.RequestServiceException;
+import mobi.chouette.service.ServiceException;
+import mobi.chouette.service.ServiceExceptionCode;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -33,31 +48,16 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
-import mobi.chouette.common.Constant;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.common.file.FileStoreFactory;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
-import mobi.chouette.model.Company;
-import mobi.chouette.model.iev.Job;
-import mobi.chouette.model.iev.Job.STATUS;
-import mobi.chouette.model.iev.Link;
-import mobi.chouette.persistence.hibernate.ContextHolder;
-import mobi.chouette.service.JobService;
-import mobi.chouette.service.JobServiceManager;
-import mobi.chouette.service.RequestExceptionCode;
-import mobi.chouette.service.RequestServiceException;
-import mobi.chouette.service.ServiceException;
-import mobi.chouette.service.ServiceExceptionCode;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/referentials")
 @Log4j
@@ -133,8 +133,82 @@ public class RestService implements Constant {
 		}
 	}
 
+	/**
+	 * Import d'une nouvelle plage de csv ou csv de mapping
+	 * @param referential
+	 * @param input
+	 * @return
+	 */
+	@POST
+	@Path("/{ref}/import-mapping-zdep-hastus")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response importMappingZdepHastus(@PathParam("ref") String referential, MultipartFormDataInput input) {
+		return getMappingZdepResponse(referential, input);
+	}
 
+	/**
+	 * Méthode générique pour gérer les différents imports zdep
+	 * @param referential
+	 * @param input
+	 * @return
+	 */
+	private Response getMappingZdepResponse(String referential, MultipartFormDataInput input) {
+		Map<String, InputStream> inputStreamByName = null;
+		try {
+			inputStreamByName = readParts(input);
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			context.put("inputStreamByName", inputStreamByName);
+			try {
+				ContextHolder.setContext(referential);
+				Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
+				command.execute(context);
+				return Response.ok().build();
+			} catch (Exception e) {
+				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+			} finally {
+				ContextHolder.setContext(null);
+			}
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			if (inputStreamByName != null) {
+				for (InputStream is : inputStreamByName.values()) {
+					try {
+						is.close();
+					} catch (Exception e) {
+						Logger.getLogger(RestService.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+					}
+				}
+			}
+		}
+	}
 
+	@POST
+	@Path("/{ref}/update-stopareas-for-idfm-line")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateStopareasForIdfmLine(@PathParam("ref") String referential,
+											   MultipartFormDataInput input) {
+		try {
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			Map<String, Long> map = readLongVarParts(input);
+			context.put("referential", referential);
+			context.put("lineId", map.get("lineId"));
+			try {
+				ContextHolder.setContext(referential);
+				Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineCommand.class.getName());
+				command.execute(context);
+				return Response.ok().build();
+			} catch (Exception e) {
+				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+			} finally {
+				ContextHolder.setContext(null);
+			}
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	private WebApplicationException toWebApplicationException(ServiceException exception) {
 		return new WebApplicationException(exception.getMessage(), toWebApplicationCode(exception.getExceptionCode()));
@@ -204,6 +278,23 @@ public class RestService implements Constant {
 			// protect filename from invalid url chars
 			filename = removeSpecialChars(filename);
 			result.put(filename, part.getBody(InputStream.class, null));
+		}
+		return result;
+	}
+
+	private Map<String, Long> readLongVarParts(MultipartFormDataInput input) throws Exception {
+
+		Map<String, Long> result = new HashMap<String, Long>();
+		for (InputPart part : input.getParts()) {
+			MultivaluedMap<String, String> headers = part.getHeaders();
+			String header = headers.getFirst(HttpHeaders.CONTENT_DISPOSITION);
+			String varName = getVarName(header);
+
+			if (varName == null) {
+				throw new ServiceException(ServiceExceptionCode.INVALID_REQUEST, "missing varName in part");
+			}
+			// protect filename from invalid url chars
+			result.put(varName, part.getBody(Long.class, null));
 		}
 		return result;
 	}
@@ -566,11 +657,18 @@ public class RestService implements Constant {
 
 
 	private String getFilename(String header) {
-		String result = null;
+		return getName(header, "filename");
+	}
 
+	private String getVarName(String header){
+		return getName(header, "name");
+	}
+
+	private String getName(String header, String name) {
+		String result = null;
 		if (header != null) {
 			for (String token : header.split(";")) {
-				if (token.trim().startsWith("filename")) {
+				if (token.trim().startsWith(name)) {
 					result = token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
 					break;
 				}

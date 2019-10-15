@@ -12,7 +12,8 @@
 		<class>mobi.chouette.model.AccessPoint</class>
 		<class>mobi.chouette.model.ConnectionLink</class>
 		<class>mobi.chouette.model.StopArea</class>
-		<class>mobi.chouette.model.Referential</class>
+		<!--<class>mobi.chouette.model.Referential</class>-->
+		<class>mobi.chouette.model.MappingHastusZdep</class>
 
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<validation-mode>NONE</validation-mode>

@@ -516,6 +516,16 @@ public class StopArea extends NeptuneLocalizedObject {
 	@OneToMany(mappedBy = "containedIn", cascade = { CascadeType.PERSIST })
 	private List<AccessPoint> accessPoints = new ArrayList<AccessPoint>(0);
 
+	/**
+	 * mapping_hastus_zdep_id
+	 *
+	 */
+	@Getter
+	@Setter
+	@OneToOne(cascade = { CascadeType.ALL})
+	@JoinColumn(name = "mapping_hastus_zdep_id")
+	private MappingHastusZdep mappingHastusZdep;
+
 	// /**
 	// * add a child StopArea if not already present
 	// *
