@@ -58,7 +58,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 				writeCompositeFrameElement(context, writer, exportableData, exportableNetexData, timestamp, fragmentMode, marshaller);
 			}
 			else{
-				writeGeneralFrameElement(context, writer, exportableData, exportableNetexData, timestamp, fragmentMode, marshaller);
+				writeGeneralFrameElement(context, writer, exportableNetexData, timestamp, fragmentMode, marshaller);
 			}
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
@@ -66,33 +66,19 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 		}
 	}
 
-	private static void writeGeneralFrameElement(Context context, XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
-
-		String generalFrameId = NetexProducerUtils.createUniqueId(context, GENERAL_FRAME);
+	private static void writeGeneralFrameElement(Context context, XMLStreamWriter writer, ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
 
 		if(fragmentMode.equals(NetexFragmentMode.LINE)){
-			generalFrameId = NetexProducerUtils.createUniqueGeneralFrameInLineId(context, NETEX_STRUCTURE, timestamp);
+			GeneralFrameWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_STRUCTURE);
+			GeneralFrameWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_HORAIRE);
 		}
 
 		if(fragmentMode.equals(NetexFragmentMode.CALENDAR)){
-			generalFrameId = NetexProducerUtils.createUniqueGeneralFrameId(context, GENERAL_FRAME, NETEX_CALENDAR, timestamp);
+			GeneralFrameWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_CALENDAR);
 		}
 
 		if(fragmentMode.equals(NetexFragmentMode.COMMON)){
-			generalFrameId = NetexProducerUtils.createUniqueGeneralFrameId(context, GENERAL_FRAME, NETEX_COMMUN, timestamp);
-		}
-
-		try {
-			writer.writeStartElement(GENERAL_FRAME);
-			writer.writeAttribute(CREATED, timestamp);
-			writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
-			writer.writeAttribute(ID, generalFrameId);
-
-			GeneralFrameWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp);
-
-			writer.writeEndElement();
-		} catch (XMLStreamException e) {
-			throw new RuntimeException(e);
+			GeneralFrameWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_COMMUN);
 		}
 	}
 
@@ -122,7 +108,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			writeValidityConditionsElement(writer, exportableNetexData, fragmentMode, marshaller);
 			writeCodespacesElement(writer, exportableData, exportableNetexData, fragmentMode, marshaller);
 			writeFrameDefaultsElement(writer);
-			writeGeneralFrameElement(context, writer, exportableData, exportableNetexData, timestamp, fragmentMode, marshaller);
+			writeGeneralFrameElement(context, writer, exportableNetexData, timestamp, fragmentMode, marshaller);
 
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
