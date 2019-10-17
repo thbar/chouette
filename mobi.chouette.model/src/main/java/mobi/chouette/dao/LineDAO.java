@@ -4,6 +4,6 @@ import mobi.chouette.model.Line;
 
 public interface LineDAO extends GenericDAO<Line> {
 
-    void updateStopareasForIdfmLineCommand(String referential, Long lineId) throws Exception;
+    String updateStopareasForIdfmLineCommand(String referential, Long lineId) throws Exception;
 
 }

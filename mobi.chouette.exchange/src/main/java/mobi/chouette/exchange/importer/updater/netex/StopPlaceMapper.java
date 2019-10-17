@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.importer.updater.netex;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
 import mobi.chouette.exchange.importer.updater.NeTExStopPlaceRegisterUpdater;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
@@ -156,6 +157,23 @@ public class StopPlaceMapper {
                     .withKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID)
                     .withValue(importedId)));
         }
+        return stopPlace;
+    }
+
+    public StopPlace addImportedIdfmInfo(StopPlace stopPlace, Referential referential, String zdep) {
+        Map<String, String> stopAreaMappingInverse = new HashMap<>();
+        for(Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()){
+            stopAreaMappingInverse.put(entry.getValue(), entry.getKey());
+        }
+        String importedId = stopAreaMappingInverse.get(stopPlace.getId());
+        if (StringUtils.isNotBlank(importedId)) {
+            stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+                    .withKey(NeTExIdfmStopPlaceRegisterUpdater.IMPORTED_ID)
+                    .withValue(importedId)));
+        }
+        stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+                .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
+                .withValue(zdep)));
         return stopPlace;
     }
 }

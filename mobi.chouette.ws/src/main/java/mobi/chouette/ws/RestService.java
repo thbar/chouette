@@ -13,6 +13,7 @@ import mobi.chouette.exchange.importer.UpdateStopareasForIdfmLineCommand;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
+import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 import mobi.chouette.service.JobService;
 import mobi.chouette.service.JobServiceManager;
@@ -158,6 +159,7 @@ public class RestService implements Constant {
 			inputStreamByName = readParts(input);
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			context.put("inputStreamByName", inputStreamByName);
+
 			try {
 				ContextHolder.setContext(referential);
 				Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
@@ -184,18 +186,20 @@ public class RestService implements Constant {
 	}
 
 	@POST
-	@Path("/{ref}/update-stopareas-for-idfm-line")
+	@Path("/{ref}/update-stopareas-for-idfm-line/{lineId}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response updateStopareasForIdfmLine(@PathParam("ref") String referential,
+	public Response updateStopareasForIdfmLine(@PathParam("ref") String ref,
+											   @PathParam("lineId") Long lineId,
 											   MultipartFormDataInput input) {
 		try {
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
-			Map<String, Long> map = readLongVarParts(input);
-			context.put("referential", referential);
-			context.put("lineId", map.get("lineId"));
+			Referential referential = new Referential();
+			context.put("ref", ref);
+			context.put("lineId", lineId);
+			context.put(REFERENTIAL, referential);
 			try {
-				ContextHolder.setContext(referential);
+				ContextHolder.setContext(ref);
 				Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineCommand.class.getName());
 				command.execute(context);
 				return Response.ok().build();

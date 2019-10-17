@@ -19,10 +19,11 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 		this.em = em;
 	}
 
-	public void updateStopareasForIdfmLineCommand(String referential, Long lineId) throws Exception
+	public String updateStopareasForIdfmLineCommand(String referential, Long lineId) throws Exception
 	{
+		String retour;
 		try {
-			em.createNativeQuery("SELECT 1 FROM public.update_sa_for_idfm_line(:ref, :lineId);")
+			retour = (String) em.createNativeQuery("SELECT update_sa_for_idfm_line FROM public.update_sa_for_idfm_line(:ref, :lineId);")
 					.setParameter("ref", referential)
 					.setParameter("lineId", lineId)
 					.getSingleResult();
@@ -30,6 +31,7 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 			throw new Exception(e.getCause());
 		}
 
+		return retour;
 	}
 	
 }

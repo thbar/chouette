@@ -5,6 +5,9 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
+import mobi.chouette.model.util.Referential;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -13,7 +16,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
-
 
 @Log4j
 @Stateless(name = UpdateStopareasForIdfmLineCommand.COMMAND)
@@ -24,16 +26,25 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@EJB
 	private LineDAO lineDAO;
 
+	@EJB
+	private StopAreaDAO stopAreaDAO;
+
+	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
+	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
 		try {
-			boolean result = ERROR;
-			String referential = (String) context.get("referential");
+			String ref = (String) context.get("ref");
 			Long lineId = (Long) context.get("lineId");
-			lineDAO.updateStopareasForIdfmLineCommand(referential, lineId);
-			result = SUCCESS;
-			return result;
+			Referential referential = (Referential) context.get(REFERENTIAL);
+			// - stop areas maj avec zdep
+			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(ref, lineId);
+			lineDAO.flush();
+			neTExIdfmStopPlaceRegisterUpdater.setStopAreaDAO(stopAreaDAO);
+			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, updatedStopArea);
+			return SUCCESS;
 		} catch (Exception e){
 			throw new Exception(e.getCause());
 		}
