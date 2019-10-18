@@ -185,13 +185,11 @@ public class RestService implements Constant {
 		}
 	}
 
-	@POST
+	@GET
 	@Path("/{ref}/update-stopareas-for-idfm-line/{lineId}")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateStopareasForIdfmLine(@PathParam("ref") String ref,
-											   @PathParam("lineId") Long lineId,
-											   MultipartFormDataInput input) {
+											   @PathParam("lineId") Long lineId) {
 		try {
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			Referential referential = new Referential();

@@ -4,13 +4,11 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.ContenerChecker;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.PropertyNames;
-import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.importer.updater.netex.StopPlaceMapper;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
-import org.hibernate.Hibernate;
 import org.rutebanken.netex.client.PublicationDeliveryClient;
 import org.rutebanken.netex.client.TokenService;
 import org.rutebanken.netex.model.MultilingualString;
@@ -33,10 +31,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -78,13 +74,6 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
     @EJB
     private ContenerChecker contenerChecker;
 
-    @EJB
-    StopAreaDAO stopAreaDAO;
-
-    public void setStopAreaDAO(StopAreaDAO stopAreaDAO){
-        this.stopAreaDAO = stopAreaDAO;
-    }
-
     @PostConstruct
     public void postConstruct() {
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
@@ -96,11 +85,11 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
         /**
          * WORKAROUND
          */
-        url = "http://kong:8000/api/stop_places/1.0/netex";
-        clientId = "chouette";
-        clientSecret = "314a5096-ed83-45ae-8dd6-904639a68806";
-        realm = "Naq";
-        authServerUrl = "https://auth-rmr.nouvelle-aquitaine.pro/auth/";
+//        url = "http://kong:8000/api/stop_places/1.0/netex";
+//        clientId = "chouette";
+//        clientSecret = "314a5096-ed83-45ae-8dd6-904639a68806";
+//        realm = "Naq";
+//        authServerUrl = "https://auth-rmr.nouvelle-aquitaine.pro/auth/";
 
         try {
              this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
@@ -111,44 +100,28 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
 
     }
 
-    public void update(Context context, Referential referential, String stopAreaIds) throws JAXBException, DatatypeConfigurationException,
+    public void update(Context context, Referential referential, List<StopArea> stopAreas) throws JAXBException, DatatypeConfigurationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         if (client == null) {
             throw new RuntimeException("Looks like PublicationDeliveryClient is not set up correctly. Aborting.");
         }
 
-        // Use a correlation ID that will be set as ID on the site frame sent to
-        // the stop place register.
-        // This correlation ID shall be defined in every log line related to
-        // this publication delivery
-        // to be able to trace logs both in chouette and the stop place
-        // register.
         final String correlationId = UUID.randomUUID().toString();
 
-        @SuppressWarnings("unchecked")
-        Map<String, String> stopPlaceRegisterMap = (Map<String, String>) context.get(STOP_PLACE_REGISTER_MAP);
-        if (stopPlaceRegisterMap == null) {
-            stopPlaceRegisterMap = new HashMap<>();
-            context.put(STOP_PLACE_REGISTER_MAP, stopPlaceRegisterMap);
-        }
-
-        final Map<String, String> m = stopPlaceRegisterMap;
-
-        List<String> stopAreaIdList = Arrays.asList(stopAreaIds.split("-"));
         // Find and convert valid StopAreas
         List<StopPlace> stopPlaces = null;
-        for(String stopAreaId : stopAreaIdList){
-            Long id = Long.parseLong(stopAreaId);
-            StopArea area = stopAreaDAO.find(id);
-            if(area.getParent() == null) Hibernate.initialize(area.getParent());
+        for(StopArea area : stopAreas){
+            StopArea finalStopArea;
+            if(area.getParent() != null)
+                finalStopArea = area.getParent();
+            else
+                finalStopArea = area;
             String zdep = area.getMappingHastusZdep().getZdep();
-            if(area.getObjectId() == null) continue;
+            if(finalStopArea.getObjectId() == null) continue;
+            if(finalStopArea.getAreaType() != ChouetteAreaEnum.CommercialStopPoint) continue;
 
-            List<StopPlace> stopPlaceList =  Arrays.asList(area).stream()
-                    .map(stopArea -> stopArea.getParent() == null ? stopArea : stopArea.getParent())
-                    .filter(stopArea -> stopArea.getAreaType() == ChouetteAreaEnum.CommercialStopPoint)
-                    .distinct()
+            List<StopPlace> stopPlaceList =  Arrays.asList(finalStopArea).stream()
                     .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
                     .map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, zdep))
