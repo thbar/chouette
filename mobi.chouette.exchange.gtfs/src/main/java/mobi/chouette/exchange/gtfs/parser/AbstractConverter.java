@@ -59,11 +59,13 @@ public abstract class AbstractConverter implements Constant{
 			String[] tokens = id.split("\\.");
 			if (tokens.length == 2) {
 				// id should be produced by Chouette
-				return tokens[0].trim().replaceAll("[^a-zA-Z_0-9]", "_") + ":" + type + ":"+ tokens[1].trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
+ 				return tokens[0].trim() + ":" + type + ":"+ tokens[1].trim();
+				//return tokens[0].trim().replaceAll("[^a-zA-Z_0-9]", "_") + ":" + type + ":"+ tokens[1].trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
 			}
 		}
-		return configuration.getObjectIdPrefix() + ":" + type + ":" + id.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
-			
+		return configuration.getObjectIdPrefix() + ":" + type + ":" + id.trim();
+		//return configuration.getObjectIdPrefix() + ":" + type + ":" + id.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
+
 	}
 
 	public static String toString(URL url) {

@@ -25,7 +25,9 @@ public abstract class AbstractProducer
     	  return neptuneId;
       } else {
     	  String[] tokens = neptuneId.split(":");
-	      if (tokens[0].equals(prefix))
+    	  if(tokens.length == 1)
+    	     return tokens[0];
+	      else if (tokens[0].equals(prefix))
 	         return tokens[2];
 	      else
 	         return tokens[0] + "." + tokens[2];

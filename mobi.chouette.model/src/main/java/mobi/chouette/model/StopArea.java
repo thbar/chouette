@@ -286,7 +286,7 @@ public class StopArea extends NeptuneLocalizedObject {
 	@Getter
 	@Setter
 	@Column(name = "mobility_restricted_suitability")
-	private Boolean mobilityRestrictedSuitable = false;
+	private Boolean mobilityRestrictedSuitable;
 
 	/**
 	 * stairs indicator <br/>
