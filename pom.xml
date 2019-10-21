@@ -324,6 +324,7 @@
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/main/java</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
                             <verbose>false</verbose>
                             <skip>${skipDelombok}</skip>
                         </configuration>
