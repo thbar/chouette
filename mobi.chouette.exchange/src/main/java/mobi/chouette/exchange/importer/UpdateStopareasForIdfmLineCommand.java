@@ -42,11 +42,10 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
 		try {
-			String ref = (String) context.get("ref");
 			Long lineId = (Long) context.get("lineId");
 			Referential referential = (Referential) context.get(REFERENTIAL);
 			// - stop areas maj avec zdep
-			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(ref, lineId);
+			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
 			lineDAO.flush();
 			// - send to tiamat
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
