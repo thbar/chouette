@@ -86,7 +86,12 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
 
     private void initializeClient(String ref){
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
-        if(!StringUtils.isEmpty(ref)) url = url + "?providerCode=" + ref;
+        if(!StringUtils.isEmpty(ref)) {
+            if(url.contains("?"))
+                url = url + "?providerCode=" + ref;
+            else
+                url = url + "&providerCode=" + ref;
+        }
         String clientId = getAndValidateProperty(KC_CLIENT_ID);
         String clientSecret = getAndValidateProperty(KC_CLIENT_SECRET);
         String realm = getAndValidateProperty(KC_CLIENT_REALM);
