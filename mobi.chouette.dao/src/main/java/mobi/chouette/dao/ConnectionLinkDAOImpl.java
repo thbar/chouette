@@ -1,7 +1,7 @@
 package mobi.chouette.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+import mobi.chouette.model.ConnectionLink;
+import mobi.chouette.model.ConnectionLink_;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,9 +11,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.ConnectionLink_;
+import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 public class ConnectionLinkDAOImpl extends GenericDAOImpl<ConnectionLink> implements ConnectionLinkDAO{
@@ -22,7 +21,7 @@ public class ConnectionLinkDAOImpl extends GenericDAOImpl<ConnectionLink> implem
 		super(ConnectionLink.class);
 	}
 
-	@PersistenceContext(unitName = "public")
+	@PersistenceContext(unitName = "referential")
 	public void setEntityManager(EntityManager em) {
 		this.em = em;
 	}
@@ -40,10 +39,5 @@ public class ConnectionLinkDAOImpl extends GenericDAOImpl<ConnectionLink> implem
 		Query query = em.createQuery(delete);
 		result = query.executeUpdate();
 		return result;
-	}
-
-	@Override
-	protected String getTableName() {
-		return "public." + super.getTableName();
 	}
 }

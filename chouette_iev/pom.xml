@@ -1,228 +1,195 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>mobi.chouette</groupId>
-		<artifactId>mobi.chouette</artifactId>
-		<version>3.7_OKINA-SNAPSHOT</version>
-	</parent>
-	<artifactId>chouette_iev</artifactId>
-	<packaging>ear</packaging>
-   <properties>
-      <project.rootDir>${project.basedir}/..</project.rootDir>
-      <skipInitDb>true</skipInitDb>
-      <earName>chouette</earName>
-      <wildfly.port>9990</wildfly.port>
-   </properties>
-	<build>
-      <resources>
-         <resource>
-            <directory>${basedir}/src/main/resources</directory>
-            <filtering>false</filtering>
-            <includes>
-               <include>*.properties</include>
-            </includes>
-            <targetPath>${project.build.directory}</targetPath>
-         </resource>
-      </resources>
-		<finalName>${earName}</finalName>
-		<plugins>
-         <plugin>
-            <groupId>pl.project13.maven</groupId>
-            <artifactId>git-commit-id-plugin</artifactId>
-            <executions>
-               <execution>
-                  <goals>
-                     <goal>revision</goal>
-                  </goals>
-               </execution>
-            </executions>
-            <configuration>
-               <verbose>false</verbose>
-               <useNativeGit>true</useNativeGit>
-               <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-               <generateGitPropertiesFile>true</generateGitPropertiesFile>
-               <generateGitPropertiesFilename>target/git.properties</generateGitPropertiesFilename>
-               <failOnNoGitDirectory>false</failOnNoGitDirectory>
-               <skip>false</skip>
-               <excludeProperties>
-                  <excludeProperty>git.commit.user.name</excludeProperty>
-                  <excludeProperty>git.commit.user.email</excludeProperty>
-                  <excludeProperty>git.build.user.name</excludeProperty>
-                  <excludeProperty>git.build.user.email</excludeProperty>
-               </excludeProperties>
-               <gitDescribe>
-                  <skip>false</skip>
-                  <always>false</always>
-                  <abbrev>7</abbrev>
-                  <dirty>-dirty</dirty>
-                  <forceLongFormat>false</forceLongFormat>
-               </gitDescribe>
-            </configuration>
-         </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-ear-plugin</artifactId>
-				<version>${version.ear.plugin}</version>
-				<configuration>
-					<version>6</version>
-					<defaultLibBundleDir>lib</defaultLibBundleDir>
-					<fileNameMapping>no-version</fileNameMapping>
-		        <modules>
-		            <webModule>
-		                <groupId>mobi.chouette</groupId>
-		                <artifactId>mobi.chouette.ws</artifactId>
-		                <uri>mobi.chouette.ws.war</uri>
-		                <bundleFileName>mobi.chouette.ws.war</bundleFileName>
-		                <contextRoot>/chouette_iev</contextRoot>
-		            </webModule>
-		        </modules>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>${version.wildfly.maven.plugin}</version>
-				<configuration>
-					<filename>${earName}.ear</filename>
-					<skip>${skipWildfly}</skip>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>mobi.chouette</groupId>
+        <artifactId>mobi.chouette</artifactId>
+        <version>3.7_OKINA-SNAPSHOT</version>
+    </parent>
+    <artifactId>chouette_iev</artifactId>
+    <packaging>ear</packaging>
+    <properties>
+        <project.rootDir>${project.basedir}/..</project.rootDir>
+        <skipInitDb>true</skipInitDb>
+        <earName>chouette</earName>
+        <wildfly.port>9990</wildfly.port>
+    </properties>
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
+        </resources>
+        <finalName>${earName}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>${version.ear.plugin}</version>
+                <configuration>
+                    <version>6</version>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <fileNameMapping>no-version</fileNameMapping>
+                    <modules>
+                        <webModule>
+                            <groupId>mobi.chouette</groupId>
+                            <artifactId>mobi.chouette.ws</artifactId>
+                            <uri>mobi.chouette.ws.war</uri>
+                            <bundleFileName>mobi.chouette.ws.war</bundleFileName>
+                            <contextRoot>/chouette_iev</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <configuration>
+                    <filename>${earName}.ear</filename>
+                    <skip>${skipWildfly}</skip>
                     <port>${wildfly.port}</port>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-         <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <configuration>
-               <finalName>chouette-iev_${project.version}</finalName>
-               <appendAssemblyId>false</appendAssemblyId>
-               <descriptors>
-                  <descriptor>src/main/resources/assemblies/afimb.xml</descriptor>
-               </descriptors>
-            </configuration>
-            <executions>
-               <execution>
-                  <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                  <phase>package</phase> <!-- append to the packaging phase. -->
-                  <goals>
-                     <goal>single</goal> <!-- goals == mojos -->
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-		</plugins>
-	</build>
-	<dependencies>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>chouette-iev_${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/resources/assemblies/afimb.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- append to the packaging phase. -->
+                        <goals>
+                            <goal>single</goal> <!-- goals == mojos -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
 
-		<!-- Modules -->
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.dao</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency>
-<!-- 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.neptune</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency> -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.gtfs</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency>
-<!-- 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.geojson</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.netex</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency> -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.netexprofile</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency>
-<!--       <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.kml</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.sig</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency> -->
+        <!-- Modules -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.dao</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.neptune</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.gtfs</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>${project.groupId}</groupId>-->
+        <!--            <artifactId>mobi.chouette.exchange.geojson</artifactId>-->
+        <!--            <type>ejb</type>-->
+        <!--            <version>${project.version}</version>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.netex</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.netexprofile</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <!--       <dependency>
+                 <groupId>${project.groupId}</groupId>
+                 <artifactId>mobi.chouette.exchange.kml</artifactId>
+                 <type>ejb</type>
+                 <version>${project.version}</version>
+              </dependency>
+              <dependency>
+                 <groupId>${project.groupId}</groupId>
+                 <artifactId>mobi.chouette.exchange.sig</artifactId>
+                 <type>ejb</type>
+                 <version>${project.version}</version>
+              </dependency> -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mobi.chouette.exchange.stopplace</artifactId>
             <type>ejb</type>
             <version>${project.version}</version>
         </dependency>
-  <!--     <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.hub</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency> -->
+        <!--     <dependency>
+               <groupId>${project.groupId}</groupId>
+               <artifactId>mobi.chouette.exchange.hub</artifactId>
+               <type>ejb</type>
+               <version>${project.version}</version>
+            </dependency> -->
+        <!--        <dependency>-->
+        <!--            <groupId>${project.groupId}</groupId>-->
+        <!--            <artifactId>mobi.chouette.exchange.regtopp</artifactId>-->
+        <!--            <type>ejb</type>-->
+        <!--            <version>${project.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.exchange.regtopp</artifactId>
-			<type>ejb</type>
-			<version>${project.version}</version>
-		</dependency>
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.validator</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency>
- <!--      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.converter</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency> -->
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.exchange.transfer</artifactId>
-         <type>ejb</type>        
-         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.schema.checker</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.validator</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <!--      <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mobi.chouette.exchange.converter</artifactId>
+                <type>ejb</type>
+                <version>${project.version}</version>
+             </dependency> -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.transfer</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.schema.checker</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
 
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>mobi.chouette.service</artifactId>
-         <type>ejb</type>
-         <version>${project.version}</version>
-      </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>mobi.chouette.ws</artifactId>
-			<type>war</type>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.service</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.ws</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
