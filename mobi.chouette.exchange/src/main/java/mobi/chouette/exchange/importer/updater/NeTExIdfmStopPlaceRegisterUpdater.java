@@ -135,7 +135,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
         SiteFrame siteFrame = new SiteFrame();
         siteFrame.setVersion(VERSION);
 
-        if (!stopPlaces.isEmpty()) {
+        if (stopPlaces != null && !stopPlaces.isEmpty()) {
 
             // Only keep uniqueIds to avoid duplicate processing
             Set<String> uniqueIds = stopPlaces.stream().map(s -> s.getId()).collect(Collectors.toSet());
