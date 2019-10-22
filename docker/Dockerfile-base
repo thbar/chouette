@@ -37,7 +37,10 @@ RUN tar xzf jdk.tgz
 ENV JAVA_HOME /opt/jboss/jdk1.8.0_144/
 
 # Deploying by copying to deployment directory
-COPY chouette_iev/target/chouette.ear /tmp/chouette.ear
+#COPY chouette_iev/target/chouette.ear /tmp/chouette.ear # now done in Dockerfile-build
+
+# COPY default properties, override in build image
+COPY chouette_iev/src/main/resources/iev.properties /etc/chouette/iev/iev.properties
 
 # Copy standalone customizations
 COPY docker/files/wildfly/standalone.conf /opt/jboss/wildfly/bin
@@ -53,5 +56,7 @@ RUN /opt/jboss/wildfly/bin/add-user.sh admin password --silent
 
 COPY docker/docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
+
+EXPOSE 8080 9990 8787
 
 CMD [ "/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
