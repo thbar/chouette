@@ -9,6 +9,7 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 import org.rutebanken.netex.client.PublicationDeliveryClient;
 import org.rutebanken.netex.client.TokenService;
 import org.rutebanken.netex.model.MultilingualString;
@@ -76,7 +77,21 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
 
     @PostConstruct
     public void postConstruct() {
+        initializeClient();
+    }
+
+    private void initializeClient(){
+        initializeClient(null);
+    }
+
+    private void initializeClient(String ref){
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
+        if(!StringUtils.isEmpty(ref)) {
+            if(url.contains("?"))
+                url = url + "&providerCode=" + ref;
+            else
+                url = url + "?providerCode=" + ref;
+        }
         String clientId = getAndValidateProperty(KC_CLIENT_ID);
         String clientSecret = getAndValidateProperty(KC_CLIENT_SECRET);
         String realm = getAndValidateProperty(KC_CLIENT_REALM);
@@ -92,16 +107,17 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
 //        authServerUrl = "https://auth-rmr.nouvelle-aquitaine.pro/auth/";
 
         try {
-             this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
+            this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
         } catch (JAXBException | SAXException | IOException e) {
             log.warn("Cannot initialize publication delivery client with URL '" + url + "'", e);
         }
-
-
     }
 
     public void update(Context context, Referential referential, List<StopArea> stopAreas) throws JAXBException, DatatypeConfigurationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        String ref = (String) context.get("ref");
+        initializeClient(ref);
 
         if (client == null) {
             throw new RuntimeException("Looks like PublicationDeliveryClient is not set up correctly. Aborting.");
