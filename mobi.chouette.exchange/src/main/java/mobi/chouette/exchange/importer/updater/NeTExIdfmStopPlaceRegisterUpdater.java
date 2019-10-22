@@ -162,7 +162,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             siteFrame.setStopPlaces(new StopPlacesInFrame_RelStructure().withStopPlace(stopPlaces));
         }
 
-        if (!stopPlaces.isEmpty()) {
+        if (stopPlaces != null && !stopPlaces.isEmpty()) {
             siteFrame.setCreated(LocalDateTime.now());
             siteFrame.setId(correlationId);
 

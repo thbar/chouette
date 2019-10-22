@@ -186,6 +186,7 @@ public class RestService implements Constant {
 		}
 	}
 
+	//  https://mosaic.dev-2.okina.fr/api-proxy/api/chouette-iev/1.0/chouette_iev/referentials/test/update-stopareas-for-idfm-line/232
 	@GET
 	@Path("/{ref}/update-stopareas-for-idfm-line/{lineId}")
 	@Produces({ MediaType.APPLICATION_JSON })
