@@ -12,17 +12,28 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
-import mobi.chouette.exchange.importer.updater.*;
+import mobi.chouette.exchange.importer.updater.LineOptimiser;
+import mobi.chouette.exchange.importer.updater.LineUpdater;
+import mobi.chouette.exchange.importer.updater.NeTExStopPlaceRegisterUpdater;
+import mobi.chouette.exchange.importer.updater.StopAreaIdMapper;
+import mobi.chouette.exchange.importer.updater.Updater;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
-import mobi.chouette.model.*;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
-import org.apache.commons.lang.StringUtils;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -82,6 +93,9 @@ public class LineRegisterCommand implements Command {
 		Boolean optimized = (Boolean) context.get(OPTIMIZED);
 		Referential cache = new Referential();
 		context.put(CACHE, cache);
+
+		String ref = ContextHolder.getContext();
+		context.put("ref", ref);
 
 		Referential referential = (Referential) context.get(REFERENTIAL);
 
