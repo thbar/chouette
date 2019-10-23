@@ -86,23 +86,43 @@ public class NeTExStopPlaceRegisterUpdater {
 
     @PostConstruct
     public void postConstruct() {
+        initializeClient(null);
+    }
+
+    private void initializeClient(String ref){
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
+        if(!StringUtils.isEmpty(ref)) {
+            if(url.contains("?"))
+                url = url + "&providerCode=" + ref;
+            else
+                url = url + "?providerCode=" + ref;
+        }
         String clientId = getAndValidateProperty(KC_CLIENT_ID);
         String clientSecret = getAndValidateProperty(KC_CLIENT_SECRET);
         String realm = getAndValidateProperty(KC_CLIENT_REALM);
         String authServerUrl = getAndValidateProperty(KC_CLIENT_AUTH_URL);
+
+        /**
+         * WORKAROUND
+         */
+//        url = "http://kong:8000/api/stop_places/1.0/netex";
+//        clientId = "chouette";
+//        clientSecret = "314a5096-ed83-45ae-8dd6-904639a68806";
+//        realm = "Naq";
+//        authServerUrl = "https://auth-rmr.nouvelle-aquitaine.pro/auth/";
 
         try {
             this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
         } catch (JAXBException | SAXException | IOException e) {
             log.warn("Cannot initialize publication delivery client with URL '" + url + "'", e);
         }
-
-
     }
 
     public void update(Context context, Referential referential) throws JAXBException, DatatypeConfigurationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+        String ref = (String) context.get("ref");
+        initializeClient(ref);
 
         if (client == null) {
             throw new RuntimeException("Looks like PublicationDeliveryClient is not set up correctly. Aborting.");
