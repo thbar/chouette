@@ -11,7 +11,7 @@
 		<class>mobi.chouette.model.AccessLink</class>
 		<class>mobi.chouette.model.AccessPoint</class>
 		<class>mobi.chouette.model.ConnectionLink</class>
-		<class>mobi.chouette.model.StopArea</class>
+<!--		<class>mobi.chouette.model.StopArea</class>-->
 		<!--<class>mobi.chouette.model.Referential</class>-->
 		<class>mobi.chouette.model.MappingHastusZdep</class>
 
@@ -63,6 +63,7 @@
       	<class>mobi.chouette.model.RouteSection</class>
 		<class>mobi.chouette.model.StopPoint</class>
 		<class>mobi.chouette.model.ScheduledStopPoint</class>
+		<class>mobi.chouette.model.StopArea</class>
 		<class>mobi.chouette.model.Timeband</class>
 		<class>mobi.chouette.model.Timetable</class>
 		<class>mobi.chouette.model.VehicleJourneyAtStop</class>
