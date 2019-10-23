@@ -14,14 +14,9 @@ public class MappingHastusZdepDAOImpl extends GenericDAOImpl<MappingHastusZdep> 
         super(MappingHastusZdep.class);
     }
 
-    @PersistenceContext(unitName = "public")
+    @PersistenceContext(unitName = "referential")
     public void setEntityManager(EntityManager em) {
         this.em = em;
-    }
-
-    @Override
-    protected String getTableName() {
-        return "public." + super.getTableName();
     }
 
     @Override
