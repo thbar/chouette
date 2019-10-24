@@ -24,6 +24,9 @@ public abstract class AbstractConverter implements Constant{
 		if (source == null)
 			return null;
 		String target = source.trim();
+		target = target.replace("\'\"", "");
+		target = target.replace("\"\'", "");
+		target = target.replace("\'\'", "\'");
 		return (target.length() == 0 ? null : target);
 	}
 
