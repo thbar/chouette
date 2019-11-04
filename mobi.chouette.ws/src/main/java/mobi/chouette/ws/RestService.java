@@ -500,6 +500,47 @@ public class RestService implements Constant {
 		}
 	}
 
+	// view one job
+	@GET
+	@Path("/{ref}/one-job/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getOneJob(@PathParam("ref") String referential, @PathParam("id") Long id) {
+		try {
+			log.info(Color.CYAN + "Call One referential = " + referential + ", id = " + id + Color.NORMAL);
+
+			Response result = null;
+			ResponseBuilder builder = null;
+
+			{
+				JobService jobService = jobServiceManager.getJobService(referential, id);
+
+				// build response
+				JobInfo info = new JobInfo(jobService, true, uriInfo);
+				builder = Response.ok(info);
+
+				// add links
+				for (Link link : jobService.getJob().getLinks()) {
+					URI uri = URI.create(uriInfo.getBaseUri() + link.getHref());
+					builder.link(URI.create(uri.toASCIIString()), link.getRel());
+				}
+			}
+
+			builder.header(api_version_key, api_version);
+			result = builder.build();
+			return result;
+
+		} catch (RequestServiceException ex) {
+			log.info("RequestCode = " + ex.getRequestCode() + ", Message = " + ex.getMessage());
+			throw toWebApplicationException(ex);
+		} catch (ServiceException e) {
+			log.error("Code = " + e.getCode() + ", Message = " + e.getMessage());
+			throw toWebApplicationException(e);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+			throw new WebApplicationException("INTERNAL_ERROR", Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	// cancel job
 	@DELETE
 	@Path("/{ref}/scheduled_jobs/{id}")

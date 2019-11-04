@@ -486,7 +486,7 @@ public class JobServiceManager {
 		return jobService;
 	}
 
-	private JobService getJobService(String referential, Long id) throws ServiceException {
+	public JobService getJobService(String referential, Long id) throws ServiceException {
 
 		Job job = jobDAO.find(id);
 		if (job != null && job.getReferential().equals(referential)) {
