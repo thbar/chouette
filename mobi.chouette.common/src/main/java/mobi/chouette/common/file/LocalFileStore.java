@@ -1,17 +1,15 @@
 package mobi.chouette.common.file;
 
+import lombok.extern.log4j.Log4j;
+import org.apache.commons.io.FileUtils;
+
+import javax.ejb.Stateless;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import javax.ejb.Stateless;
-
-import lombok.extern.log4j.Log4j;
-
-import org.apache.commons.io.FileUtils;
 
 import static mobi.chouette.common.file.LocalFileStore.BEAN_NAME;
 
@@ -32,6 +30,7 @@ public class LocalFileStore implements FileStore {
 			throw new FileServiceException("Failed to read from file: " + ioE.getMessage(), ioE);
 		}
 	}
+
 
 
 	@Override

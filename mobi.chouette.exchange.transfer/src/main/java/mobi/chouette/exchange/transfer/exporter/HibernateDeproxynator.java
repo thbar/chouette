@@ -1,5 +1,13 @@
 package mobi.chouette.exchange.transfer.exporter;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.model.NeptuneObject;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
+
+import javax.persistence.Embeddable;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -10,20 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.persistence.Embeddable;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.AccessLink;
-import mobi.chouette.model.AccessPoint;
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.NeptuneObject;
-import mobi.chouette.model.StopArea;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.proxy.LazyInitializer;
 
 @Log4j
 public class HibernateDeproxynator<T> {
@@ -246,7 +240,7 @@ public class HibernateDeproxynator<T> {
 	}
 
 	private boolean isReferentialObject(Object ret) {
-		return ret instanceof NeptuneObject && !(ret instanceof StopArea || ret instanceof AccessLink || ret instanceof AccessPoint || ret instanceof ConnectionLink);
+		return ret instanceof NeptuneObject;
 	}
 
 	private boolean isEmbeddable(Object ret){

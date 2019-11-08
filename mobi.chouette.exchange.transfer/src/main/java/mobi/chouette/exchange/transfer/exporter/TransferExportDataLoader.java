@@ -1,10 +1,15 @@
 package mobi.chouette.exchange.transfer.exporter;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Context;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.exchange.transfer.Constant;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.StopArea;
+import org.jboss.ejb3.annotation.TransactionTimeout;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -14,16 +19,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.jboss.ejb3.annotation.TransactionTimeout;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Context;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.LineDAO;
-import mobi.chouette.exchange.transfer.Constant;
-import mobi.chouette.model.Line;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Log4j
 @Stateless(name = TransferExportDataLoader.COMMAND)
@@ -34,6 +33,9 @@ public class TransferExportDataLoader implements Command, Constant {
 	@EJB
 	private LineDAO lineDAO;
 
+	@EJB
+	private StopAreaDAO stopAreaDAO;
+
 	@PersistenceContext(unitName = "referential")
 	private EntityManager em;
 
@@ -43,12 +45,12 @@ public class TransferExportDataLoader implements Command, Constant {
 
 		List<Line> lineToTransfer = prepareLines(context);
 		context.put(LINES, lineToTransfer);
-	     
+	    List<StopArea> stopAreaToTransfer = prepareStopAreas(context);
+		context.put(STOP_AREAS, stopAreaToTransfer);
 		return true;
 	}
 
-	protected List<Line> prepareLines(Context context) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	protected List<Line> prepareLines(Context context) throws IllegalArgumentException, SecurityException {
 		if (!em.isJoinedToTransaction()) {
 			throw new RuntimeException("No transaction");
 		}
@@ -83,6 +85,27 @@ public class TransferExportDataLoader implements Command, Constant {
 		em.clear();
 		return lineToTransfer;
 	}
+
+	protected List<StopArea> prepareStopAreas(Context context) throws IllegalArgumentException, SecurityException {
+		if (!em.isJoinedToTransaction()) {
+			throw new RuntimeException("No transaction");
+		}
+
+		TransferExportParameters configuration = (TransferExportParameters) context.get(CONFIGURATION);
+
+		log.info("Loading all stop areas...");
+		List<StopArea> allStopAreas = stopAreaDAO.findAll();
+
+		log.info("Removing Hibernate proxies");
+		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
+		allStopAreas = deProxy.deepDeproxy(allStopAreas);
+		log.info("Removing Hibernate proxies completed");
+
+
+		em.clear();
+		return allStopAreas;
+	}
+
 
 	public static class DefaultCommandFactory extends CommandFactory {
 

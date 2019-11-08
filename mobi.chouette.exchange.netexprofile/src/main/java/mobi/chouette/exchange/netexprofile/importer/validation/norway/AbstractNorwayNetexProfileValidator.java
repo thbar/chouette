@@ -139,7 +139,7 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	public static final String _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_JOURNEYS = "1-NETEXPROFILE-VehicleScheduleFrame_Block_journeys";
 	public static final String _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_DAYTYPES = "1-NETEXPROFILE-VehicleScheduleFrame_Block_dayTypes";
 	
-	protected static final String ID_STRUCTURE_REGEXP = "^([A-Z]{3}):([A-Za-z]*):([0-9A-Za-z_\\-]*)$";
+	protected static final String ID_STRUCTURE_REGEXP = "^([A-Z]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*)$";
 	public static final String _1_NETEX_VALIDBETWEEN_INCOMPLETE = "1-NETEXPROFILE-ValidBetween_Incomplete";
 	public static final String _1_NETEX_VALIDBETWEEN_TODATE_BEFORE_FROMDATE = "1-NETEXPROFILE-ValidBetween_FromDateAfterToDate";
 	public static final String _1_NETEX_AVAILABILITYCONDITION_TODATE_BEFORE_FROMDATE = "1-NETEXPROFILE-AvailabilityCondition_FromDateAfterToDate";

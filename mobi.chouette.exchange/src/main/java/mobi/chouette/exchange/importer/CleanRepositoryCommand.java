@@ -1,22 +1,18 @@
 package mobi.chouette.exchange.importer;
 
-import java.io.IOException;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.AccessLinkDAO;
+import mobi.chouette.dao.AccessPointDAO;
 import mobi.chouette.dao.BookingArrangementDAO;
 import mobi.chouette.dao.BrandingDAO;
 import mobi.chouette.dao.CompanyDAO;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.ContactStructureDAO;
 import mobi.chouette.dao.DestinationDisplayDAO;
 import mobi.chouette.dao.FlexibleServicePropertiesDAO;
@@ -31,14 +27,20 @@ import mobi.chouette.dao.RouteDAO;
 import mobi.chouette.dao.RoutePointDAO;
 import mobi.chouette.dao.RouteSectionDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
+import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.dao.TimebandDAO;
 import mobi.chouette.dao.TimetableDAO;
 import mobi.chouette.dao.VehicleJourneyAtStopDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
 
 @Log4j
 @Stateless(name = CleanRepositoryCommand.COMMAND)
@@ -112,6 +114,18 @@ public class CleanRepositoryCommand implements Command {
 	@EJB
 	private FlexibleServicePropertiesDAO flexibleServicePropertiesDAO;
 
+	@EJB
+	private StopAreaDAO stopAreaDAO;
+
+	@EJB
+	AccessLinkDAO accessLinkDao;
+
+	@EJB
+	AccessPointDAO accessPointDAO;
+
+	@EJB
+	ConnectionLinkDAO connectionLinkDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
@@ -144,6 +158,10 @@ public class CleanRepositoryCommand implements Command {
 			flexibleServicePropertiesDAO.truncate();
 			bookingArrangementDAO.truncate();
 			contactStructureDAO.truncate();
+			accessLinkDao.truncate();
+			accessPointDAO.truncate();
+			connectionLinkDAO.truncate();
+			stopAreaDAO.truncate();
 
 			result = SUCCESS;
 		} catch (Exception e) {
