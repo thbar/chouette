@@ -24,7 +24,7 @@
 			<property name="hibernate.default_schema" value="public" />
 			<property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect" />
 
-<!--			<property name="hibernate.ejb.interceptor" value="mobi.chouette.dao.interceptor.StopAreaRelationInterceptor"/>-->
+			<property name="hibernate.ejb.interceptor" value="mobi.chouette.dao.interceptor.StopAreaRelationInterceptor"/>
 			<property name="jadira.usertype.autoRegisterUserTypes" value="true" />
 		</properties>
 		
@@ -89,7 +89,7 @@
          <property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect" />
 			<property name="javax.persistence.validation.mode" value="none" />
             <property name="jadira.usertype.autoRegisterUserTypes" value="true" />
-<!--			<property name="hibernate.ejb.interceptor" value="mobi.chouette.dao.interceptor.RelationsToStopAreaInterceptor"/>-->
+			<property name="hibernate.ejb.interceptor" value="mobi.chouette.dao.interceptor.RelationsToStopAreaInterceptor"/>
 		</properties>
 	</persistence-unit>
 
