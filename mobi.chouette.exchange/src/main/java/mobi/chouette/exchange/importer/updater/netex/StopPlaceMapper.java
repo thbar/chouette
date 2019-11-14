@@ -31,7 +31,8 @@ public class StopPlaceMapper {
         if (stopArea.getContainedStopAreas().size() > 0) {
             stopPlace.setQuays(new Quays_RelStructure());
             for (StopArea children : stopArea.getContainedStopAreas()) {
-                Quay quay = mapQuay(children);
+                String zdep = children.getMappingHastusZdep().getZdep();
+                Quay quay = mapQuay(children, zdep);
                 stopPlace.getQuays().getQuayRefOrQuay().add(quay);
             }
         }
@@ -39,7 +40,7 @@ public class StopPlaceMapper {
         return stopPlace;
     }
 
-    protected Quay mapQuay(StopArea stopArea) {
+    protected Quay mapQuay(StopArea stopArea, String zdep) {
         Quay quay = new Quay();
         mapId(stopArea, quay);
         setVersion(stopArea, quay);
@@ -50,6 +51,9 @@ public class StopPlaceMapper {
         if (StringUtils.isNotBlank(stopArea.getComment())) {
             quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
         }
+        quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+                .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
+                .withValue(zdep)));
         return quay;
     }
 
@@ -160,7 +164,7 @@ public class StopPlaceMapper {
         return stopPlace;
     }
 
-    public StopPlace addImportedIdfmInfo(StopPlace stopPlace, Referential referential, String zdep) {
+    public StopPlace addImportedIdfmInfo(StopPlace stopPlace, Referential referential) {
         Map<String, String> stopAreaMappingInverse = new HashMap<>();
         for(Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()){
             stopAreaMappingInverse.put(entry.getValue(), entry.getKey());
@@ -171,9 +175,7 @@ public class StopPlaceMapper {
                     .withKey(NeTExIdfmStopPlaceRegisterUpdater.IMPORTED_ID)
                     .withValue(importedId)));
         }
-        stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
-                .withValue(zdep)));
+
         return stopPlace;
     }
 }

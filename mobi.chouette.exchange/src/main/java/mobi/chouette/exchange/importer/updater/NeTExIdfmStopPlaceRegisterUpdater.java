@@ -133,14 +133,14 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
                 finalStopArea = area.getParent();
             else
                 finalStopArea = area;
-            String zdep = area.getMappingHastusZdep().getZdep();
+
             if(finalStopArea.getObjectId() == null) continue;
             if(finalStopArea.getAreaType() != ChouetteAreaEnum.CommercialStopPoint) continue;
 
             List<StopPlace> stopPlaceList =  Arrays.asList(finalStopArea).stream()
                     .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
-                    .map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, zdep))
+                    .map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential))
                     .collect(Collectors.toList());
             if(stopPlaces == null || stopPlaces.size() == 0)
                 stopPlaces = stopPlaceList;
