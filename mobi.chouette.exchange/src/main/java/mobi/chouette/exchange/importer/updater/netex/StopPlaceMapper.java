@@ -3,12 +3,23 @@ package mobi.chouette.exchange.importer.updater.netex;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
 import mobi.chouette.exchange.importer.updater.NeTExStopPlaceRegisterUpdater;
+import mobi.chouette.model.MappingHastusZdep;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
-import org.rutebanken.netex.model.*;
+import org.rutebanken.netex.model.EntityInVersionStructure;
+import org.rutebanken.netex.model.KeyListStructure;
+import org.rutebanken.netex.model.KeyValueStructure;
+import org.rutebanken.netex.model.LocationStructure;
+import org.rutebanken.netex.model.MultilingualString;
+import org.rutebanken.netex.model.Quay;
+import org.rutebanken.netex.model.Quays_RelStructure;
+import org.rutebanken.netex.model.SimplePoint_VersionStructure;
+import org.rutebanken.netex.model.StopPlace;
+import org.rutebanken.netex.model.StopTypeEnumeration;
+import org.rutebanken.netex.model.Zone_VersionStructure;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +29,8 @@ import java.util.Map;
  */
 @Log4j
 public class StopPlaceMapper {
+
+    private static final String VERSION = "1";
 
     /**
      * Map stop area with contained stop areas.
@@ -31,13 +44,33 @@ public class StopPlaceMapper {
         if (stopArea.getContainedStopAreas().size() > 0) {
             stopPlace.setQuays(new Quays_RelStructure());
             for (StopArea children : stopArea.getContainedStopAreas()) {
-                String zdep = children.getMappingHastusZdep().getZdep();
-                Quay quay = mapQuay(children, zdep);
+                MappingHastusZdep mappingHastusZdep = children.getMappingHastusZdep();
+                Quay quay;
+                if (mappingHastusZdep != null) {
+                    String zdep = mappingHastusZdep.getZdep();
+                     quay = mapQuay(children, zdep);
+                } else {
+                    quay = mapQuay(children);
+                }
                 stopPlace.getQuays().getQuayRefOrQuay().add(quay);
             }
         }
 
         return stopPlace;
+    }
+
+    protected Quay mapQuay(StopArea stopArea) {
+        Quay quay = new Quay();
+        mapId(stopArea, quay);
+        setVersion(quay);
+        mapCentroid(stopArea, quay);
+        mapQuayName(stopArea, quay);
+        mapPublicCode(stopArea, quay);
+        mapCompassBearing(stopArea, quay);
+        if (StringUtils.isNotBlank(stopArea.getComment())) {
+            quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
+        }
+        return quay;
     }
 
     protected Quay mapQuay(StopArea stopArea, String zdep) {
@@ -83,14 +116,16 @@ public class StopPlaceMapper {
         entity.setVersion(String.valueOf(stopArea.getObjectVersion()));
     }
 
+    public void setVersion(EntityInVersionStructure entity) {
+        entity.setVersion(VERSION);
+    }
+
     private void mapId(StopArea stopArea, Zone_VersionStructure zone) {
         zone.setId(stopArea.getObjectId());
     }
 
     public void replaceIdIfQuayOrStopPlace(Zone_VersionStructure zone) {
         zone.setId(zone.getId());
-
-
     }
 
     private void mapCentroid(StopArea stopArea, Zone_VersionStructure zone) {
@@ -152,7 +187,7 @@ public class StopPlaceMapper {
      */
     public StopPlace addImportedIdInfo(StopPlace stopPlace, Referential referential) {
         Map<String, String> stopAreaMappingInverse = new HashMap<>();
-        for(Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()){
+        for (Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()) {
             stopAreaMappingInverse.put(entry.getValue(), entry.getKey());
         }
         String importedId = stopAreaMappingInverse.get(stopPlace.getId());
@@ -166,7 +201,7 @@ public class StopPlaceMapper {
 
     public StopPlace addImportedIdfmInfo(StopPlace stopPlace, Referential referential) {
         Map<String, String> stopAreaMappingInverse = new HashMap<>();
-        for(Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()){
+        for (Map.Entry<String, String> entry : referential.getStopAreaMapping().entrySet()) {
             stopAreaMappingInverse.put(entry.getValue(), entry.getKey());
         }
         String importedId = stopAreaMappingInverse.get(stopPlace.getId());
