@@ -170,6 +170,9 @@ public class ValidationParameters {
 	@XmlElement(name = "mode_funicular")
 	private TransportModeParameters modeFunicular;
 
+	@XmlElement(name = "mode_cableway")
+	private TransportModeParameters modeCableway;
+
 	@XmlElement(name = "mode_other")
 	private TransportModeParameters modeOther;
 
