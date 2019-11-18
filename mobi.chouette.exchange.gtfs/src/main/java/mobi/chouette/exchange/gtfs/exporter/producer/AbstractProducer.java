@@ -30,7 +30,9 @@ public abstract class AbstractProducer
 	      else if (tokens[0].equals(prefix))
 	         return tokens[2];
 	      else
-	         return tokens[0] + "." + tokens[2];
+	         // pour idfm car nos prefix sont MOSAIC et absolument pas SQYBUS ou autre
+             // sinon return tokens[0] + "." + tokens[2];
+             return tokens[2];
 	      }
    }
 

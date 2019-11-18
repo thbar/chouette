@@ -1,13 +1,7 @@
 package mobi.chouette.exchange.gtfs.importer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -30,8 +24,12 @@ import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
 import mobi.chouette.exchange.report.ActionReporter.FILE_STATE;
 import mobi.chouette.exchange.report.IO_TYPE;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 @Log4j
 public class GtfsValidationCommand implements Command, Constant {
