@@ -36,6 +36,7 @@ import lombok.Data;
 		"modeCoach",
 		"modeFerry",
 		"modeFunicular",
+		"modeCableway",
 		"modeRail",
 		"modeMetro",
 		"modePrivateVehicle",
