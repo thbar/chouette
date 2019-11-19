@@ -13,10 +13,6 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
       <file>
-         <source>${project.build.directory}/git.properties</source>
-         <outputDirectory>/</outputDirectory>
-		</file>
-      <file>
          <source>${project.build.directory}/iev.properties</source>
          <outputDirectory>/</outputDirectory>
       </file>

@@ -103,8 +103,18 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		GtfsImporter importer = (GtfsImporter) context.get(PARSER);
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        NetworksNames networksNames = new NetworksNames();
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
+			}
+
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
+			}
+
+
 			// Create both as operator and as authority
 			String objectIdOperator = AbstractConverter.composeObjectId(configuration, Company.OPERATOR_KEY,
 					gtfsAgency.getAgencyId()+"o", log);
@@ -119,7 +129,16 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 	}
 	
 	private void convert(Context context, GtfsAgency gtfsAgency, Company company, OrganisationTypeEnum organisationType) {
-		company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
+        GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        NetworksNames networksNames = new NetworksNames();
+        if(networksNames.getPrefixInList(configuration.getObjectIdPrefix())){
+            company.setName(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName()));
+        }
+        else{
+        	String companyName = networksNames.getNetworkName(configuration.getObjectIdPrefix());
+        	if(!StringUtils.isEmpty( gtfsAgency.getAgencyName())) companyName = AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyName());
+            company.setName(companyName);
+        }
 		company.setUrl(AbstractConverter.toString(gtfsAgency.getAgencyUrl()));
 		company.setPhone(AbstractConverter.getNonEmptyTrimedString(gtfsAgency.getAgencyPhone()));
 		String[] token = company.getObjectId().split(":");

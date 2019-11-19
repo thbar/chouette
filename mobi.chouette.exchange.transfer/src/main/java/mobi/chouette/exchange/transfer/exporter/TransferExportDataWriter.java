@@ -1,12 +1,27 @@
 package mobi.chouette.exchange.transfer.exporter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Context;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.InterchangeDAO;
+import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.RouteSectionDAO;
+import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.exchange.ProgressionCommand;
+import mobi.chouette.exchange.importer.CleanRepositoryCommand;
+import mobi.chouette.exchange.transfer.Constant;
+import mobi.chouette.model.Interchange;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.RouteSection;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.util.Referential;
+import org.jboss.ejb3.annotation.TransactionTimeout;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,28 +31,13 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Context;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.InterchangeDAO;
-import mobi.chouette.dao.LineDAO;
-import mobi.chouette.dao.RouteSectionDAO;
-import mobi.chouette.exchange.ProgressionCommand;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.transfer.Constant;
-import mobi.chouette.model.Interchange;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.RouteSection;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
-import mobi.chouette.model.util.Referential;
-
-import org.jboss.ejb3.annotation.TransactionTimeout;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Log4j
 @Stateless(name = TransferExportDataWriter.COMMAND)
@@ -49,6 +49,9 @@ public class TransferExportDataWriter implements Command, Constant {
 
 	@EJB
 	private LineDAO lineDAO;
+
+	@EJB
+	private StopAreaDAO stopAreaDAO;
 
 	@EJB
 	private RouteSectionDAO routeSectionDAO;
@@ -67,6 +70,7 @@ public class TransferExportDataWriter implements Command, Constant {
 		}
 
 		List<Line> lineToTransfer = (List<Line>) context.get(LINES);
+		List<StopArea> stopAreasToTransfer = (List<StopArea>) context.get(STOP_AREAS);
 		ProgressionCommand progression = (ProgressionCommand) context.get(PROGRESSION);
 
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
@@ -79,6 +83,11 @@ public class TransferExportDataWriter implements Command, Constant {
 		}
 		
 		// Persist
+		log.info("Starting to persist Stop Areas, count=" + stopAreasToTransfer.size());
+		stopAreasToTransfer.forEach(stopArea -> stopAreaDAO.create(stopArea));
+		stopAreaDAO.flush();
+		progression.execute(context);
+
 		log.info("Starting to persist lines, count=" + lineToTransfer.size());
 
 		List<Interchange> interchanges=new ArrayList<>();

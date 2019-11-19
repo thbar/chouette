@@ -1,13 +1,12 @@
 package mobi.chouette.dao;
 
-import java.util.List;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.type.ChouetteAreaEnum;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.type.ChouetteAreaEnum;
+import java.util.List;
 
 @Stateless
 public class StopAreaDAOImpl extends GenericDAOImpl<StopArea> implements StopAreaDAO {
@@ -16,16 +15,10 @@ public class StopAreaDAOImpl extends GenericDAOImpl<StopArea> implements StopAre
         super(StopArea.class);
     }
 
-    @PersistenceContext(unitName = "public")
+    @PersistenceContext(unitName = "referential")
     public void setEntityManager(EntityManager em) {
         this.em = em;
     }
-
-    @Override
-    protected String getTableName() {
-        return "public." + super.getTableName();
-    }
-
 
     @Override
     public List<String> getBoardingPositionObjectIds() {

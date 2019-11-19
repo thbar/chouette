@@ -16,6 +16,7 @@ import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.type.OrganisationTypeEnum;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -51,7 +52,10 @@ public class GtfsRouteProducer extends AbstractProducer
        if (c == null) {
            agencyId = neptuneObject.getNetwork().getObjectId();
        } else {
-           agencyId = c.getObjectId();
+           if (StringUtils.isEmpty(c.getName()))
+               agencyId = c.getObjectId();
+           else
+               agencyId = c.getName();
        }
        route.setAgencyId(toGtfsId(agencyId, prefix, keepOriginalId));
        route.setRouteShortName(null);

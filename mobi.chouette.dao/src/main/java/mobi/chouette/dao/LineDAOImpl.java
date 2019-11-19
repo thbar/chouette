@@ -1,10 +1,11 @@
 package mobi.chouette.dao;
 
+import mobi.chouette.model.Line;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import mobi.chouette.model.Line;
+import javax.persistence.PersistenceException;
 
 @Stateless (name="LineDAO")
 public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
@@ -16,6 +17,20 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 	@PersistenceContext(unitName = "referential")
 	public void setEntityManager(EntityManager em) {
 		this.em = em;
+	}
+
+	public String updateStopareasForIdfmLineCommand(Long lineId) throws Exception
+	{
+		String retour;
+		try {
+			retour = (String) em.createNativeQuery("SELECT update_sa_for_idfm_line FROM update_sa_for_idfm_line(:lineId);")
+					.setParameter("lineId", lineId)
+					.getSingleResult();
+		} catch (PersistenceException e){
+			throw new Exception(e.getCause());
+		}
+
+		return retour;
 	}
 	
 }

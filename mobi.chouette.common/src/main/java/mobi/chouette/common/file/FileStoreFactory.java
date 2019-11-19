@@ -3,6 +3,7 @@ package mobi.chouette.common.file;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.ContenerChecker;
 import mobi.chouette.common.PropertyNames;
+import org.apache.commons.lang.StringUtils;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -31,9 +32,9 @@ public class FileStoreFactory {
 					if (contenerChecker != null) {
 						String implBeanName = System.getProperty(contenerChecker.getContext() + PropertyNames.FILE_STORE_IMPLEMENTATION);
 
-						log.info(">>>> Impl Bean Name : " + implBeanName);
+						log.info("FileStore implementation name : " + implBeanName);
 
-						if (implBeanName != null) {
+						if (StringUtils.isNotBlank(implBeanName)) {
 							Set<Bean<?>> beans = CDI.current().getBeanManager().getBeans(implBeanName);
 
 							if (beans.size() > 0) {

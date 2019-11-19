@@ -10,10 +10,12 @@ import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.file.FileServiceException;
 import mobi.chouette.common.file.FileStore;
 import mobi.chouette.common.file.FileStoreFactory;
+import mobi.chouette.dao.CompanyDAO;
 import mobi.chouette.dao.iev.JobDAO;
 import mobi.chouette.dao.iev.StatDAO;
 import mobi.chouette.exchange.InputValidator;
 import mobi.chouette.exchange.TestDescription;
+import mobi.chouette.model.Company;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
@@ -59,6 +61,8 @@ public class JobServiceManager {
 	@EJB
 	Scheduler scheduler;
 
+	@EJB
+	CompanyDAO companyDAO;
 
 	private Set<Object> referentials = Collections.synchronizedSet(new HashSet<>());
 
@@ -482,7 +486,7 @@ public class JobServiceManager {
 		return jobService;
 	}
 
-	private JobService getJobService(String referential, Long id) throws ServiceException {
+	public JobService getJobService(String referential, Long id) throws ServiceException {
 
 		Job job = jobDAO.find(id);
 		if (job != null && job.getReferential().equals(referential)) {
@@ -547,4 +551,7 @@ public class JobServiceManager {
 		return jobDAO.findByStatusesAndUpdatedSince(STATUS.getCompletedStatuses(),since);
 	}
 
+    public Company getReferentialInformations() {
+		return companyDAO.findAll().get(0);
+    }
 }

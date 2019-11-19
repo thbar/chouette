@@ -73,10 +73,10 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 			for (GtfsStop bean : parser) {
 				try {
 					if (bean.getLocationType() == null)
-						bean.setLocationType(LocationType.Stop);
+						;//bean.setLocationType(LocationType.Stop);
 					else
 						hasLocationType = true;
-					parser.validate(bean, importer);
+					if(hasLocationType) parser.validate(bean, importer);
 				} catch (Exception ex) {
 					if (ex instanceof GtfsException) {
 						gtfsValidationReporter.reportError(context, (GtfsException)ex, GTFS_STOPS_FILE);
@@ -163,7 +163,7 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 		} else {
 			stopArea.setRegistrationNumber(gtfsStop.getStopCode());
 		}
-		stopArea.setMobilityRestrictedSuitable(WheelchairBoardingType.Allowed.equals(gtfsStop.getWheelchairBoarding()));
+		stopArea.setMobilityRestrictedSuitable(gtfsStop.getWheelchairBoarding() == null ? null : WheelchairBoardingType.Allowed.equals(gtfsStop.getWheelchairBoarding()));
 		stopArea.setStreetName(gtfsStop.getAddressLine());
 		stopArea.setCityName(gtfsStop.getLocality());
 		stopArea.setZipCode(gtfsStop.getPostalCode());

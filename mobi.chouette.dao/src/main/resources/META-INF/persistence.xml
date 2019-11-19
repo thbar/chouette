@@ -7,13 +7,6 @@
 	<persistence-unit name="public" transaction-type="JTA">
 
 		<jta-data-source>java:jboss/datasources/chouette</jta-data-source>
-
-		<class>mobi.chouette.model.AccessLink</class>
-		<class>mobi.chouette.model.AccessPoint</class>
-		<class>mobi.chouette.model.ConnectionLink</class>
-		<class>mobi.chouette.model.StopArea</class>
-		<class>mobi.chouette.model.Referential</class>
-
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<validation-mode>NONE</validation-mode>
 
@@ -41,12 +34,16 @@
 	<persistence-unit name="referential" transaction-type="JTA">
 
 		<jta-data-source>java:jboss/datasources/chouette</jta-data-source>
-        <class>mobi.chouette.model.BookingArrangement</class>
+
+		<class>mobi.chouette.model.AccessLink</class>
+		<class>mobi.chouette.model.AccessPoint</class>
+		<class>mobi.chouette.model.BookingArrangement</class>
 		<class>mobi.chouette.model.Branding</class>
 		<class>mobi.chouette.model.CalendarDay</class>
 		<class>mobi.chouette.model.Codespace</class>
 		<class>mobi.chouette.model.Company</class>
-        <class>mobi.chouette.model.ContactStructure</class>
+		<class>mobi.chouette.model.ConnectionLink</class>
+		<class>mobi.chouette.model.ContactStructure</class>
     	<class>mobi.chouette.model.DestinationDisplay</class>
         <class>mobi.chouette.model.FlexibleServiceProperties</class>
         <class>mobi.chouette.model.Footnote</class>
@@ -55,13 +52,16 @@
 		<class>mobi.chouette.model.JourneyPattern</class>
 		<class>mobi.chouette.model.KeyValue</class>
 		<class>mobi.chouette.model.Line</class>
+		<class>mobi.chouette.model.MappingHastusZdep</class>
 		<class>mobi.chouette.model.Period</class>
 		<class>mobi.chouette.model.Network</class>
 		<class>mobi.chouette.model.Route</class>
 		<class>mobi.chouette.model.RoutePoint</class>
       	<class>mobi.chouette.model.RouteSection</class>
+		<class>mobi.chouette.model.StopArea</class>
 		<class>mobi.chouette.model.StopPoint</class>
 		<class>mobi.chouette.model.ScheduledStopPoint</class>
+		<class>mobi.chouette.model.StopArea</class>
 		<class>mobi.chouette.model.Timeband</class>
 		<class>mobi.chouette.model.Timetable</class>
 		<class>mobi.chouette.model.VehicleJourneyAtStop</class>

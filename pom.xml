@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.7-SNAPSHOT</version>
+    <version>3.7_OKINA_MOSAIC</version>
 
     <packaging>pom</packaging>
 
@@ -176,7 +176,9 @@
                                     <artifactId>postgresql</artifactId>
                                     <version>${postgresql.version}</version>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main</outputDirectory>
+                                    <outputDirectory>
+                                        ${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main
+                                    </outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>net.postgis</groupId>
@@ -270,8 +272,8 @@
                 <version>2.17</version>
                 <configuration>
                     <argLine>-Djboss.socket.binding.port-offset=300
-                        -XX:MaxPermSize=256m</argLine>
-                    <runOrder>alphabetical</runOrder>
+                        -XX:MaxPermSize=256m
+                    </argLine>
                     <!-- Fork every test because it will launch a separate AS instance -->
                     <forkCount>1</forkCount>
                     <systemPropertyVariables>
@@ -324,6 +326,7 @@
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/main/java</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/delombok</outputDirectory>
                             <verbose>false</verbose>
                             <skip>${skipDelombok}</skip>
                         </configuration>
@@ -393,27 +396,6 @@
                                         </versionRange>
                                         <goals>
                                             <goal>process</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.maven.plugins
-                                        </groupId>
-                                        <artifactId>
-                                            maven-ear-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.9.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>
-                                                generate-application-xml
-                                            </goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
@@ -554,21 +536,21 @@
                 <artifactId>mobi.chouette.exchange.netexprofile</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- 	<dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>mobi.chouette.exchange.kml</artifactId>
-                    <version>${project.version}</version>
-                </dependency> -->
-            <!-- 	<dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>mobi.chouette.exchange.hub</artifactId>
-                    <version>${project.version}</version>
-                </dependency> -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>mobi.chouette.exchange.regtopp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>${project.groupId}</groupId>-->
+<!--                <artifactId>mobi.chouette.exchange.kml</artifactId>-->
+<!--                <version>${project.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>${project.groupId}</groupId>-->
+<!--                <artifactId>mobi.chouette.exchange.hub</artifactId>-->
+<!--                <version>${project.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>${project.groupId}</groupId>-->
+<!--                <artifactId>mobi.chouette.exchange.regtopp</artifactId>-->
+<!--                <version>${project.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>mobi.chouette.exchange.validator</artifactId>
@@ -584,16 +566,16 @@
                 <artifactId>mobi.chouette.exchange.stopplace</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- 			<dependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>mobi.chouette.exchange.converter</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-             -->			<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>mobi.chouette.service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mobi.chouette.exchange.converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>mobi.chouette.service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>mobi.chouette.ws</artifactId>
@@ -617,7 +599,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.okina</groupId>
+                <groupId>org.entur</groupId>
                 <artifactId>netex-java-model</artifactId>
                 <version>${netex-java-model.version}</version>
             </dependency>
@@ -908,20 +890,20 @@
         <module>mobi.chouette.exchange.neptune</module>
         <module>mobi.chouette.exchange.netex</module>
         <module>mobi.chouette.exchange.netexprofile</module>
-        <!-- 		<module>mobi.chouette.exchange.kml</module> -->
-        <!-- 		<module>mobi.chouette.exchange.hub</module> -->
+<!--        <module>mobi.chouette.exchange.kml</module>-->
+<!--        <module>mobi.chouette.exchange.hub</module>-->
         <module>mobi.chouette.exchange.gtfs</module>
-        <!-- 		<module>mobi.chouette.exchange.geojson</module> -->
-        <!--         <module>mobi.chouette.exchange.sig</module> -->
-        <module>mobi.chouette.exchange.regtopp</module>
+<!--        <module>mobi.chouette.exchange.geojson</module>-->
+<!--        <module>mobi.chouette.exchange.sig</module>-->
+<!--        <module>mobi.chouette.exchange.regtopp</module>-->
         <module>mobi.chouette.exchange.stopplace</module>
         <module>mobi.chouette.exchange.validator</module>
-        <!-- 		<module>mobi.chouette.exchange.converter</module> -->
+        <module>mobi.chouette.exchange.converter</module>
         <module>mobi.chouette.exchange.transfer</module>
         <module>mobi.chouette.service</module>
         <module>mobi.chouette.schema.checker</module>
         <module>mobi.chouette.ws</module>
-        <!-- 		<module>mobi.chouette.command</module> -->
+<!--        <module>mobi.chouette.command</module>-->
         <module>chouette_iev</module>
     </modules>
 </project>

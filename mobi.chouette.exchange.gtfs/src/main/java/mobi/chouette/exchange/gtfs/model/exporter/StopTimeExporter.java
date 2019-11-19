@@ -13,7 +13,7 @@ import mobi.chouette.exchange.gtfs.model.importer.GtfsConverter;
 public class StopTimeExporter extends ExporterImpl<GtfsStopTime> implements GtfsConverter {
 
 	public static enum FIELDS {
-		trip_id, stop_id, stop_sequence, arrival_time, departure_time, pickup_type, drop_off_type, shape_dist_traveled,stop_headsign;
+		trip_id, arrival_time, departure_time, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled;
 	};
 
 	public static final String FILENAME = "stop_times.txt";
@@ -60,14 +60,14 @@ public class StopTimeExporter extends ExporterImpl<GtfsStopTime> implements Gtfs
 			String result = null;
 			List<String> values = new ArrayList<String>();
 			values.add(STRING_CONVERTER.to(context, FIELDS.trip_id, input.getTripId(), true));
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_id, input.getStopId(), true));
-			values.add(INTEGER_CONVERTER.to(context, FIELDS.stop_sequence, input.getStopSequence(), true));
 			values.add(GTFSTIME_CONVERTER.to(context, FIELDS.arrival_time, input.getArrivalTime(), true));
 			values.add(GTFSTIME_CONVERTER.to(context, FIELDS.departure_time, input.getDepartureTime(), true));
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_id, input.getStopId(), true));
+			values.add(INTEGER_CONVERTER.to(context, FIELDS.stop_sequence, input.getStopSequence() + 1, true)); // bougé ici car peut-être avant et on peut re avoir 0
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_headsign, input.getStopHeadsign(), false));
 			values.add(PICKUP_CONVERTER.to(context, FIELDS.pickup_type, input.getPickupType(), false));
 			values.add(DROPOFFTYPE_CONVERTER.to(context, FIELDS.drop_off_type, input.getDropOffType(), false));
  			values.add(FLOAT_CONVERTER.to(context, FIELDS.shape_dist_traveled, input.getShapeDistTraveled(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_headsign, input.getStopHeadsign(), false));
 
 			result = Tokenizer.untokenize(values);
 			return result;

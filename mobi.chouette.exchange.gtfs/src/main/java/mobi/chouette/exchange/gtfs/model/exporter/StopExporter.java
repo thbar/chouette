@@ -14,7 +14,7 @@ import mobi.chouette.exchange.gtfs.model.importer.GtfsConverter;
 public class StopExporter extends ExporterImpl<GtfsStop> implements
 		GtfsConverter {
 	public static enum FIELDS {
-		stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, wheelchair_boarding, stop_timezone, platform_code, vehicle_type;
+		stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, stop_timezone, wheelchair_boarding, level_id, platform_code
 	};
 
 	public static final String FILENAME = "stops.txt";
@@ -69,7 +69,7 @@ public class StopExporter extends ExporterImpl<GtfsStop> implements
 			 FIELDS.stop_timezone, values.get(i++), false));
 			bean.setPlatformCode(STRING_CONVERTER.from(context, FIELDS.platform_code,
 					values.get(i++), false));
-			bean.setVehicleType(ROUTETYPE_CONVERTER.from(context, FIELDS.vehicle_type,
+			bean.setVehicleType(ROUTETYPE_CONVERTER.from(context, FIELDS.level_id,
 					values.get(i++), false));
 
 			return bean;
@@ -79,36 +79,20 @@ public class StopExporter extends ExporterImpl<GtfsStop> implements
 		public String to(Context context, GtfsStop input) {
 			String result = null;
 			List<String> values = new ArrayList<String>();
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_id,
-					input.getStopId(), true));
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_code,
-					input.getStopCode(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_name,
-					input.getStopName(), true));
-			values.add(STRING_CONVERTER.to(context, FIELDS.stop_desc,
-					input.getStopDesc(), false));
-			values.add(FLOAT_CONVERTER.to(context, FIELDS.stop_lat, input
-					.getStopLat().floatValue(), true));
-			values.add(FLOAT_CONVERTER.to(context, FIELDS.stop_lon, input
-					.getStopLon().floatValue(), true));
-			values.add(STRING_CONVERTER.to(context, FIELDS.zone_id,
-					input.getZoneId(), false));
-			values.add(URL_CONVERTER.to(context, FIELDS.stop_url,
-					input.getStopUrl(), false));
-			values.add(LOCATIONTYPE_CONVERTER.to(context, FIELDS.location_type,
-					input.getLocationType(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.parent_station,
-					input.getParentStation(), false));
-			values.add(WHEELCHAIRBOARDINGTYPE_CONVERTER.to(context,
-					FIELDS.wheelchair_boarding, input.getWheelchairBoarding(),
-					false));
-			values.add(TIMEZONE_CONVERTER.to(context, FIELDS.stop_timezone,
-					input.getStopTimezone(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.platform_code,
-					input.getPlatformCode(), false));
-			values.add(ROUTETYPE_CONVERTER.to(context, FIELDS.vehicle_type,
-					input.getVehicleType(), false));
-			
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_id,                             input.getStopId(), true));
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_code,                           input.getStopCode(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_name,                           input.getStopName(), true));
+			values.add(STRING_CONVERTER.to(context, FIELDS.stop_desc,                           input.getStopDesc(), false));
+			values.add(FLOAT_CONVERTER.to(context, FIELDS.stop_lat,                             input.getStopLat().floatValue(), true));
+			values.add(FLOAT_CONVERTER.to(context, FIELDS.stop_lon,                             input.getStopLon().floatValue(), true));
+			values.add(STRING_CONVERTER.to(context, FIELDS.zone_id,                             input.getZoneId(), false));
+			values.add(URL_CONVERTER.to(context, FIELDS.stop_url,                               input.getStopUrl(), false));
+			values.add(LOCATIONTYPE_CONVERTER.to(context, FIELDS.location_type,                 input.getLocationType(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.parent_station,                      input.getParentStation(), false));
+			values.add(TIMEZONE_CONVERTER.to(context, FIELDS.stop_timezone,                     input.getStopTimezone(), false));
+			values.add(WHEELCHAIRBOARDINGTYPE_CONVERTER.to(context, FIELDS.wheelchair_boarding, input.getWheelchairBoarding(),false));
+			values.add(ROUTETYPE_CONVERTER.to(context, FIELDS.level_id,                         input.getVehicleType(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.platform_code,                       input.getPlatformCode(), false));
 
 			result = Tokenizer.untokenize(values);
 			return result;

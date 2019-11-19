@@ -8,7 +8,7 @@ Chouette is a java project for handling public transport (PT) data in different 
 
 The Import, Export and Validation services are provided as Web Services and performed asynchronously.
 
-The Chouette Web Service API is specified here :
+The Chouette Web Service API is specified here  :
 * [Interface Specification Document](./doc/interface/Chouette-API serveur IEV-1.0.pdf)
 * inputs and outputs data structures [Jobs](./doc/interface/Jobs.xsd), [Reports](./doc/interface/Reports.xsd)
 
