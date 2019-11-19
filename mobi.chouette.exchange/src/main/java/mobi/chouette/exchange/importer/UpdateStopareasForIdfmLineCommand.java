@@ -6,6 +6,7 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
@@ -34,6 +35,9 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@EJB
 	private StopAreaDAO stopAreaDAO;
 
+	@EJB
+	private StopPointDAO stopPointDAO;
+
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
 
@@ -44,6 +48,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 		try {
 			Long lineId = (Long) context.get("lineId");
 			Referential referential = (Referential) context.get(REFERENTIAL);
+			referential = initRefential(referential);
 			// - stop areas maj avec zdep
 			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
 			lineDAO.flush();
@@ -56,6 +61,18 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 		} catch (Exception e){
 			throw new Exception(e.getCause());
 		}
+	}
+
+	public Referential initRefential(Referential referential){
+		referential.setLines(lineDAO.findAll().stream().collect(Collectors.toMap(l -> l.getObjectId(), l -> l)));
+		referential.setStopAreas(stopAreaDAO.findAll().stream().collect(Collectors.toMap(l -> l.getObjectId(), l -> l)));
+		referential.setStopPoints(stopPointDAO.findAll().stream().collect(Collectors.toMap(l -> l.getObjectId(), l -> l)));
+		referential.setSharedStopAreas(stopAreaDAO.findAll().stream().collect(Collectors.toMap(l -> l.getObjectId(), l -> l)));
+		referential.getSharedStopAreas().forEach((k, area) -> {
+			Hibernate.initialize(area.getContainedScheduledStopPoints());
+			area.getContainedScheduledStopPoints().forEach(sp -> Hibernate.initialize(sp.getStopPoints()));
+		});
+		return referential;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
