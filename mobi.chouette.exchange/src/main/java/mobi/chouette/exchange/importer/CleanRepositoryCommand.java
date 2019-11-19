@@ -22,6 +22,7 @@ import mobi.chouette.dao.InterchangeDAO;
 import mobi.chouette.dao.JourneyFrequencyDAO;
 import mobi.chouette.dao.JourneyPatternDAO;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.MappingHastusZdepDAO;
 import mobi.chouette.dao.NetworkDAO;
 import mobi.chouette.dao.RouteDAO;
 import mobi.chouette.dao.RoutePointDAO;
@@ -126,6 +127,9 @@ public class CleanRepositoryCommand implements Command {
 	@EJB
 	ConnectionLinkDAO connectionLinkDAO;
 
+	@EJB
+	MappingHastusZdepDAO mappingHastusZdepDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
@@ -162,6 +166,7 @@ public class CleanRepositoryCommand implements Command {
 			accessPointDAO.truncate();
 			connectionLinkDAO.truncate();
 			stopAreaDAO.truncate();
+			mappingHastusZdepDAO.truncate();
 
 			result = SUCCESS;
 		} catch (Exception e) {
