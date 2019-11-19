@@ -50,8 +50,6 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	public boolean execute(Context context) throws Exception {
 		try {
 			Long lineId = (Long) context.get("lineId");
-			Referential referential = (Referential) context.get(REFERENTIAL);
-			referential = initRefential(referential);
 			// - stop areas maj avec zdep
 			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
 			lineDAO.flush();
@@ -59,6 +57,10 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
 			List<StopArea> areas = stopAreaDAO.findAll(idList);
 			areas.forEach(sa -> Hibernate.initialize(sa.getParent()));
+
+            Referential referential = (Referential) context.get(REFERENTIAL);
+            referential = initRefential(referential, areas);
+
 			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 			return SUCCESS;
 		} catch (Exception e){
@@ -66,14 +68,11 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 		}
 	}
 
-	public Referential initRefential(Referential referential){
+	public Referential initRefential(Referential referential, List<StopArea> areas){
 		referential.setLines(lineDAO.findAll().stream().collect(Collectors.toMap(Line::getObjectId, l -> l)));
 
-		List<StopArea> listStopArea = stopAreaDAO.findAll();
-		listStopArea.forEach(sa -> Hibernate.initialize(sa.getParent()));
-
-		referential.setStopAreas(listStopArea.stream().collect(Collectors.toMap(StopArea::getObjectId, l -> l)));
-		referential.setSharedStopAreas(listStopArea
+		referential.setStopAreas(areas.stream().collect(Collectors.toMap(StopArea::getObjectId, l -> l)));
+		referential.setSharedStopAreas(areas
 				.stream()
 				.filter(sa -> sa.getParent() != null)
 				.map(StopArea::getParent)
