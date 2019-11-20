@@ -9,6 +9,7 @@
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import mobi.chouette.exchange.gtfs.model.GtfsStop;
@@ -35,6 +36,13 @@ public class GtfsStopProducer extends AbstractProducer
 
 	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes)
 	{
+		Optional<StopArea> parent = Optional.ofNullable(neptuneObject.getParent());
+		if(parent.isPresent()){
+			if(parent.get().getId() == neptuneObject.getId()) {
+				return false;
+			}
+		}
+
 		ChouetteAreaEnum chouetteAreaType = neptuneObject.getAreaType();
 		if (chouetteAreaType.compareTo(ChouetteAreaEnum.BoardingPosition) == 0)
 			stop.setLocationType(GtfsStop.LocationType.Stop);
