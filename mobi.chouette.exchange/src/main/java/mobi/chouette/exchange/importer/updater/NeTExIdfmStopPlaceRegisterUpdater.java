@@ -140,7 +140,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             List<StopPlace> stopPlaceList =  Arrays.asList(finalStopArea).stream()
                     .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
-                    .map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential))
+                    //.map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, stopAreas))
                     .collect(Collectors.toList());
             if(stopPlaces == null || stopPlaces.size() == 0)
                 stopPlaces = stopPlaceList;

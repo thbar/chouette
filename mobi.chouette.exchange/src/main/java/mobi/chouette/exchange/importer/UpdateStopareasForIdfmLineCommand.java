@@ -56,10 +56,14 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			// - send to tiamat
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
 			List<StopArea> areas = stopAreaDAO.findAll(idList);
-			areas.forEach(sa -> Hibernate.initialize(sa.getParent()));
+			areas.forEach(sa -> {
+				Hibernate.initialize(sa.getParent().getContainedScheduledStopPoints());
+				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
+			});
+
 
             Referential referential = (Referential) context.get(REFERENTIAL);
-            referential = initRefential(referential, areas);
+            //referential = initRefential(referential, areas);
 
 			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 			return SUCCESS;
