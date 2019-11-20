@@ -179,24 +179,24 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             Set<String> uniqueIds = stopPlaces.stream().map(s -> s.getId()).collect(Collectors.toSet());
             stopPlaces = stopPlaces.stream().filter(s -> uniqueIds.remove(s.getId())).collect(Collectors.toList());
 
-            // Find transport mode for stop place
-            for (StopPlace stopPlace : stopPlaces) {
-                StopArea stopArea = referential.getSharedStopAreas().get(stopPlace.getId());
-                if (stopArea != null) {
-
-                    // Recursively find all transportModes
-                    Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
-                    if (transportMode.size() > 1) {
-                        if (busEnums.equals(transportMode)) {
-                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Bus);
-                        } else {
-                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Other);
-                        }
-                    } else if (transportMode.size() == 1) {
-                        stopPlaceMapper.mapTransportMode(stopPlace, transportMode.iterator().next());
-                    }
-                }
-            }
+//            // Find transport mode for stop place
+//            for (StopPlace stopPlace : stopPlaces) {
+//                StopArea stopArea = referential.getSharedStopAreas().get(stopPlace.getId());
+//                if (stopArea != null) {
+//
+//                    // Recursively find all transportModes
+//                    Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
+//                    if (transportMode.size() > 1) {
+//                        if (busEnums.equals(transportMode)) {
+//                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Bus);
+//                        } else {
+//                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Other);
+//                        }
+//                    } else if (transportMode.size() == 1) {
+//                        stopPlaceMapper.mapTransportMode(stopPlace, transportMode.iterator().next());
+//                    }
+//                }
+//            }
 
             siteFrame.setStopPlaces(new StopPlacesInFrame_RelStructure().withStopPlace(stopPlaces));
         }
