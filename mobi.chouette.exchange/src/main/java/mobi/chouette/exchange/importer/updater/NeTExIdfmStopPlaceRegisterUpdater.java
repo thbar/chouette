@@ -161,6 +161,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             for (StopPlace stopPlace : stopPlaces) {
                 StopArea stopArea = referential.getSharedStopAreas().get(stopPlace.getId());
                 if (stopArea != null) {
+
                     // Recursively find all transportModes
                     Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
                     if (transportMode.size() > 1) {

@@ -5,11 +5,13 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.NeptuneIdentifiedObject;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.util.Referential;
@@ -41,6 +43,9 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@EJB
 	private StopPointDAO stopPointDAO;
 
+	@EJB
+	ScheduledStopPointDAO scheduledStopPointDAO;
+
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
 
@@ -56,8 +61,14 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			// - send to tiamat
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
 			List<StopArea> areas = stopAreaDAO.findAll(idList);
+
 			areas.forEach(sa -> {
-				Hibernate.initialize(sa.getParent().getContainedScheduledStopPoints());
+				List<ScheduledStopPoint> scheduledStopPointsContainedInStopArea = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getObjectId());
+				sa.setContainedScheduledStopPoints(scheduledStopPointsContainedInStopArea);
+				sa.getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
+
+				List<ScheduledStopPoint> scheduledStopPointsContainedInStopAreaParent = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getParent().getObjectId());
+				sa.getParent().setContainedScheduledStopPoints(scheduledStopPointsContainedInStopAreaParent);
 				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
 			});
 
