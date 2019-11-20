@@ -18,6 +18,7 @@ import mobi.chouette.exchange.gtfs.model.GtfsStop.WheelchairBoardingType;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -36,17 +37,6 @@ public class GtfsStopProducer extends AbstractProducer
 
 	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes)
 	{
-		Optional<StopArea> parent = Optional.ofNullable(neptuneObject.getParent());
-		if(!validParents.isEmpty() && parent.isPresent()){
-			StopArea stopArea = parent.get();
-			StopArea areaParent = stopArea.getParent();
-			String idSa = (stopArea.getObjectId().split(":"))[stopArea.getObjectId().split(":").length - 1];
-			String idSaParent = (areaParent.getObjectId().split(":"))[areaParent.getObjectId().split(":").length - 1];
-			if(idSa.equals(idSaParent)){
-				return false;
-			}
-		}
-
 		ChouetteAreaEnum chouetteAreaType = neptuneObject.getAreaType();
 		if (chouetteAreaType.compareTo(ChouetteAreaEnum.BoardingPosition) == 0)
 			stop.setLocationType(GtfsStop.LocationType.Stop);
@@ -124,6 +114,9 @@ public class GtfsStopProducer extends AbstractProducer
 				stop.setParentStation(toGtfsId(neptuneObject.getParent()
 						.getObjectId(),prefix, keepOriginalId));
 			}
+		}
+		if(!StringUtils.isEmpty(stop.getParentStation()) && stop.getStopId().equals(stop.getParentStation())){
+			return false;
 		}
 
 		if (neptuneObject.getMobilityRestrictedSuitable() != null)
