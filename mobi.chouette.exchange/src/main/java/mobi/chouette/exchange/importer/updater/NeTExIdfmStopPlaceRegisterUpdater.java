@@ -5,7 +5,9 @@ import mobi.chouette.common.ContenerChecker;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.PropertyNames;
 import mobi.chouette.exchange.importer.updater.netex.StopPlaceMapper;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
@@ -42,6 +44,7 @@ import static mobi.chouette.common.PropertyNames.KC_CLIENT_AUTH_URL;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_ID;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_REALM;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_SECRET;
+import static mobi.chouette.exchange.importer.updater.NeTExStopPlaceUtil.findTransportModeForStopArea;
 
 @Log4j
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -142,6 +145,25 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
                     //.map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, stopAreas))
                     .collect(Collectors.toList());
+            /*
+            SCH
+             */
+            List<StopPoint> stopPoints = area.getContainedScheduledStopPoints().stream().map(ScheduledStopPoint::getStopPoints).flatMap(List::stream).collect(Collectors.toList());
+            Set<TransportModeNameEnum> transportMode = findTransportModeForStopArea(new HashSet<>(), area);
+
+            if (transportMode.size() > 1) {
+                if (busEnums.equals(transportMode)) {
+                    stopPlaceMapper.mapTransportMode(stopPlaceList.get(0), TransportModeNameEnum.Bus);
+                } else {
+                    stopPlaceMapper.mapTransportMode(stopPlaceList.get(0), TransportModeNameEnum.Other);
+                }
+            } else if (transportMode.size() == 1) {
+                stopPlaceMapper.mapTransportMode(stopPlaceList.get(0), transportMode.iterator().next());
+            }
+            /*
+            SCH
+             */
+
             if(stopPlaces == null || stopPlaces.size() == 0)
                 stopPlaces = stopPlaceList;
             else
