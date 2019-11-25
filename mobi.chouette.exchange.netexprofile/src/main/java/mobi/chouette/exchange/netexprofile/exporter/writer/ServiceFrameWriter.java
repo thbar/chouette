@@ -40,7 +40,7 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 			writer.writeStartElement(SERVICE_FRAME);
 			writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
 			writer.writeAttribute(ID, serviceFrameId);
-			ElementsWriter.writeNetworkElement(writer, network, marshaller);
+			writeNetworkElement(writer, network, marshaller);
 			writer.writeEndElement();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -58,18 +58,18 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 			writer.writeAttribute(ID, serviceFrameId);
 
 			if (fragmentMode.equals(NetexFragmentMode.LINE)) {
-				ElementsWriter.writeRoutesElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeLinesElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
-				ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
+				writeRoutesElement(writer, exportableNetexData, marshaller);
+				writeLinesElement(writer, exportableNetexData, marshaller);
+				writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
+				writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
 			} else { // shared data
-				ElementsWriter.writeNetworks(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeRoutePointsElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeScheduledStopPointsElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeServiceLinkElements(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
-				ElementsWriter.writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
+				writeNetworks(writer, exportableNetexData, marshaller);
+				writeRoutePointsElement(writer, exportableNetexData, marshaller);
+				writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
+				writeScheduledStopPointsElement(writer, exportableNetexData, marshaller);
+				writeServiceLinkElements(writer, exportableNetexData, marshaller);
+				writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
+				writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
 			}
 
 			writer.writeEndElement();

@@ -35,7 +35,7 @@ public class OrganisationParser implements Parser, Constant {
 			company.setRegistrationNumber(StringUtils.trimToNull(organisationStruct.getCompanyNumber()));
 
 			if(organisationStruct.getPublicCode() != null) {
-				company.setCode(organisationStruct.getPublicCode());
+				company.setCode(organisationStruct.getPublicCode().getValue());
 			}
 			
 			// Find type of organisation

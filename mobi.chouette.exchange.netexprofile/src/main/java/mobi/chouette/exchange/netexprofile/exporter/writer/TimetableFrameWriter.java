@@ -28,7 +28,7 @@ public class TimetableFrameWriter extends AbstractNetexWriter {
 			writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
 			writer.writeAttribute(ID, timetableFrameId);
 			writeVehicleJourneysElement(writer, exportableNetexData, marshaller);
-			ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsTimetableFrame(), marshaller);
+			writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsTimetableFrame(), marshaller);
 
 			if (CollectionUtils.isNotEmpty(exportableNetexData.getServiceJourneyInterchanges())) {
 				writeServiceJourneyInterchangesElement(writer, exportableNetexData, marshaller);

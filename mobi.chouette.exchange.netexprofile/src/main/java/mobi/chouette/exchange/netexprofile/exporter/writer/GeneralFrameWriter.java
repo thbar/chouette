@@ -34,21 +34,21 @@ public class GeneralFrameWriter extends AbstractNetexWriter {
                 writer.writeAttribute(ID, generalFrameId);
 
 
-                ElementsWriter.writeNetworks(writer, exportableNetexData, marshaller);
+                writeNetworks(writer, exportableNetexData, marshaller);
 
-                ElementsWriter.writeLinesElement(writer, exportableNetexData, marshaller);
+                writeLinesElement(writer, exportableNetexData, marshaller);
 
-                ElementsWriter.writeRoutesElement(writer, exportableNetexData, marshaller);
-                ElementsWriter.writeRoutePointsElement(writer, exportableNetexData, marshaller);
+                writeRoutesElement(writer, exportableNetexData, marshaller);
+                writeRoutePointsElement(writer, exportableNetexData, marshaller);
 
-                ElementsWriter.writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
-                ElementsWriter.writeScheduledStopPointsElement(writer, exportableNetexData, marshaller);
+                writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
+                writeScheduledStopPointsElement(writer, exportableNetexData, marshaller);
 
-                ElementsWriter.writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
-                ElementsWriter.writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
-                ElementsWriter.writeServiceLinkElements(writer, exportableNetexData, marshaller);
+                writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
+                writeStopAssignmentsElement(writer, exportableNetexData, marshaller);
+                writeServiceLinkElements(writer, exportableNetexData, marshaller);
 
-                ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
+                writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
 
             }
 
@@ -72,7 +72,7 @@ public class GeneralFrameWriter extends AbstractNetexWriter {
                 generalFrameId = NetexProducerUtils.createUniqueGeneralFrameId(context, GENERAL_FRAME, NETEX_COMMUN, timestamp);
                 writer.writeAttribute(ID, generalFrameId);
 
-                ElementsWriter.writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
+                writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
 
             }
 

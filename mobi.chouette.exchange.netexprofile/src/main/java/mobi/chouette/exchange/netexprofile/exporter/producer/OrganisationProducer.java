@@ -42,7 +42,7 @@ public class OrganisationProducer extends NetexProducer implements NetexEntityPr
 
 		if(company.getCode() != null) {
 			PrivateCodeStructure privateCodeStructure = netexFactory.createPrivateCodeStructure().withValue(company.getCode());
-			organisation.setPublicCode(privateCodeStructure.getValue());
+			organisation.setPublicCode(privateCodeStructure);
 		}
 		organisation.setCompanyNumber(company.getRegistrationNumber());
 		organisation.setName(ConversionUtil.getMultiLingualString(company.getName()));
