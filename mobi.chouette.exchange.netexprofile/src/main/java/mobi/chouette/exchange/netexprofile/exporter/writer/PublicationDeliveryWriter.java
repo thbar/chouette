@@ -43,7 +43,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			// TODO mettre le codespace à la place du participant_ref_content
 			writeElement(writer, PARTICIPANT_REF, PARTICIPANT_REF_CONTENT);
 
-			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
+//			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
 			throw new RuntimeException(e);
