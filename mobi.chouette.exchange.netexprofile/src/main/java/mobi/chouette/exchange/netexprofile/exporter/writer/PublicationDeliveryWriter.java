@@ -28,7 +28,8 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 
 	public static void write(Context context, XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData,
 			NetexFragmentMode fragmentMode, Marshaller marshaller) {
-		Instant timestamp = Instant.now();
+
+		LocalDateTime timestamp = LocalDateTime.now();
 		String timestampFormatted = formatter.format(timestamp);
 
 		try {
@@ -43,7 +44,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			// TODO mettre le codespace à la place du participant_ref_content
 			writeElement(writer, PARTICIPANT_REF, PARTICIPANT_REF_CONTENT);
 
-//			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
+			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
 			throw new RuntimeException(e);
