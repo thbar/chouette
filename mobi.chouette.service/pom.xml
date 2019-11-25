@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.8_OKINA_MOSAIC_SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
 
   </parent>
   <artifactId>mobi.chouette.service</artifactId>

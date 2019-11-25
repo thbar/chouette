@@ -75,7 +75,7 @@ public class NorwayLineNetexProfileValidatorTest {
 		return validator;
 	}
 
-	@Test
+	// @Test
 	public void testValidateWithCommonFile() throws Exception {
 		NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
 		Context context = createContext(importer);

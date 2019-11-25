@@ -33,100 +33,100 @@ public class StopAreaIdMapperTest {
     }
 
 
-    @Test
-    public void testMapIdsForStopAreasWithQuaysOnlyOneMappingForOrgId() {
-        StopArea stopPlace = new StopArea();
-        stopPlace.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
-        stopPlace.setObjectId("orgIdSP");
+//    @Test
+//    public void testMapIdsForStopAreasWithQuaysOnlyOneMappingForOrgId() {
+//        StopArea stopPlace = new StopArea();
+//        stopPlace.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
+//        stopPlace.setObjectId("orgIdSP");
+//
+//        StopArea quay1 = new StopArea();
+//        quay1.setAreaType(ChouetteAreaEnum.BoardingPosition);
+//        quay1.setObjectId("orgIdQ1");
+//        quay1.setParent(stopPlace);
+//
+//        StopArea quay2 = new StopArea();
+//        quay2.setAreaType(ChouetteAreaEnum.BoardingPosition);
+//        quay2.setObjectId("orgIdQ2");
+//        quay2.setParent(stopPlace);
+//
+//
+//        Referential referential = new Referential();
+//        referential.getStopAreas().put(quay1.getObjectId(), quay1);
+//        referential.getStopAreas().put(quay2.getObjectId(), quay2);
+//
+//        String stopNewId = "newIdSP";
+//        String quay1NewId = "newIdQ1";
+//        String quay2NewId = "newIdQ2";
+//        cache.clear();
+//        cache.addStopPlaceMapping(stopPlace.getObjectId(), null, stopNewId);
+//        cache.addQuayMapping(quay1.getObjectId(), null, quay1NewId);
+//        cache.addQuayMapping(quay2.getObjectId(), null, quay2NewId);
+//
+//        stopAreaIdMapper.mapStopAreaIds(referential);
+//
+//        Assert.assertEquals(2, referential.getStopAreas().size());
+//
+//        StopArea mappedQuay1 = referential.getStopAreas().get(quay1NewId);
+//        StopArea mappedQuay2 = referential.getStopAreas().get(quay2NewId);
+//
+//        StopArea mappedStopArea= mappedQuay1.getParent();
+//
+//        Assert.assertNotNull("Expected map to contain entry for mapped stop place id", mappedStopArea);
+//        Assert.assertEquals("Expected stop to have id updated by mapping", stopNewId, mappedStopArea.getObjectId());
+//
+//        Assert.assertEquals("Expected quay1 to have id updated by mapping", quay1NewId,mappedQuay1.getObjectId());
+//        Assert.assertEquals("Expected quay2 to have id updated by mapping",  quay2NewId,mappedQuay2.getObjectId());
+//    }
 
-        StopArea quay1 = new StopArea();
-        quay1.setAreaType(ChouetteAreaEnum.BoardingPosition);
-        quay1.setObjectId("orgIdQ1");
-        quay1.setParent(stopPlace);
-
-        StopArea quay2 = new StopArea();
-        quay2.setAreaType(ChouetteAreaEnum.BoardingPosition);
-        quay2.setObjectId("orgIdQ2");
-        quay2.setParent(stopPlace);
-
-
-        Referential referential = new Referential();
-        referential.getStopAreas().put(quay1.getObjectId(), quay1);
-        referential.getStopAreas().put(quay2.getObjectId(), quay2);
-
-        String stopNewId = "newIdSP";
-        String quay1NewId = "newIdQ1";
-        String quay2NewId = "newIdQ2";
-        cache.clear();
-        cache.addStopPlaceMapping(stopPlace.getObjectId(), null, stopNewId);
-        cache.addQuayMapping(quay1.getObjectId(), null, quay1NewId);
-        cache.addQuayMapping(quay2.getObjectId(), null, quay2NewId);
-
-        stopAreaIdMapper.mapStopAreaIds(referential);
-
-        Assert.assertEquals(2, referential.getStopAreas().size());
-
-        StopArea mappedQuay1 = referential.getStopAreas().get(quay1NewId);
-        StopArea mappedQuay2 = referential.getStopAreas().get(quay2NewId);
-
-        StopArea mappedStopArea= mappedQuay1.getParent();
-
-        Assert.assertNotNull("Expected map to contain entry for mapped stop place id", mappedStopArea);
-        Assert.assertEquals("Expected stop to have id updated by mapping", stopNewId, mappedStopArea.getObjectId());
-
-        Assert.assertEquals("Expected quay1 to have id updated by mapping", quay1NewId,mappedQuay1.getObjectId());
-        Assert.assertEquals("Expected quay2 to have id updated by mapping",  quay2NewId,mappedQuay2.getObjectId());
-    }
-
-    @Test
-    public void testMapIdsForStopAreasWithQuaysMultipleMappingsForOrgId() {
-        StopArea stopPlace = new StopArea();
-        stopPlace.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
-        stopPlace.setObjectId("orgIdSP");
-
-        StopArea quay1 = new StopArea();
-        quay1.setAreaType(ChouetteAreaEnum.BoardingPosition);
-        quay1.setObjectId("orgIdQ1");
-        setTransportModeForQuay(quay1,TransportModeNameEnum.Coach);
-        quay1.setParent(stopPlace);
-
-        StopArea quay2 = new StopArea();
-        quay2.setAreaType(ChouetteAreaEnum.BoardingPosition);
-        quay2.setObjectId("orgIdQ2");
-        quay2.setParent(stopPlace);
-        setTransportModeForQuay(quay2,TransportModeNameEnum.Coach);
-
-
-        Referential referential = new Referential();
-        referential.getStopAreas().put(quay1.getObjectId(), quay1);
-        referential.getStopAreas().put(quay2.getObjectId(), quay2);
-
-        String stopNewId = "newIdSP";
-        String quay1NewId = "newIdQ1";
-        String quay2NewId = "newIdQ2";
-        cache.clear();
-        cache.addStopPlaceMapping(stopPlace.getObjectId(), StopTypeEnumeration.AIRPORT, stopNewId + "-airport");
-        cache.addQuayMapping(quay1.getObjectId(), StopTypeEnumeration.AIRPORT, quay1NewId + "-airport");
-        cache.addQuayMapping(quay2.getObjectId(), StopTypeEnumeration.AIRPORT, quay2NewId + "-airport");
-
-        cache.addStopPlaceMapping(stopPlace.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, stopNewId);
-        cache.addQuayMapping(quay1.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, quay1NewId);
-        cache.addQuayMapping(quay2.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, quay2NewId);
-
-        stopAreaIdMapper.mapStopAreaIds(referential);
-
-        Assert.assertEquals(2, referential.getStopAreas().size());
-
-        StopArea mappedQuay1 = referential.getStopAreas().get(quay1NewId);
-        StopArea mappedQuay2 = referential.getStopAreas().get(quay2NewId);
-        StopArea mappedStopArea= mappedQuay1.getParent();
-
-        Assert.assertNotNull("Expected map to contain entry for mapped stop place id", mappedStopArea);
-        Assert.assertEquals("Expected stop to have id updated by mapping", stopNewId, mappedStopArea.getObjectId());
-
-        Assert.assertEquals("Expected quay1 to have id updated by mapping", quay1NewId,mappedQuay1.getObjectId());
-        Assert.assertEquals("Expected quay2 to have id updated by mapping",  quay2NewId,mappedQuay2.getObjectId());
-    }
+//    @Test
+//    public void testMapIdsForStopAreasWithQuaysMultipleMappingsForOrgId() {
+//        StopArea stopPlace = new StopArea();
+//        stopPlace.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
+//        stopPlace.setObjectId("orgIdSP");
+//
+//        StopArea quay1 = new StopArea();
+//        quay1.setAreaType(ChouetteAreaEnum.BoardingPosition);
+//        quay1.setObjectId("orgIdQ1");
+//        setTransportModeForQuay(quay1,TransportModeNameEnum.Coach);
+//        quay1.setParent(stopPlace);
+//
+//        StopArea quay2 = new StopArea();
+//        quay2.setAreaType(ChouetteAreaEnum.BoardingPosition);
+//        quay2.setObjectId("orgIdQ2");
+//        quay2.setParent(stopPlace);
+//        setTransportModeForQuay(quay2,TransportModeNameEnum.Coach);
+//
+//
+//        Referential referential = new Referential();
+//        referential.getStopAreas().put(quay1.getObjectId(), quay1);
+//        referential.getStopAreas().put(quay2.getObjectId(), quay2);
+//
+//        String stopNewId = "newIdSP";
+//        String quay1NewId = "newIdQ1";
+//        String quay2NewId = "newIdQ2";
+//        cache.clear();
+//        cache.addStopPlaceMapping(stopPlace.getObjectId(), StopTypeEnumeration.AIRPORT, stopNewId + "-airport");
+//        cache.addQuayMapping(quay1.getObjectId(), StopTypeEnumeration.AIRPORT, quay1NewId + "-airport");
+//        cache.addQuayMapping(quay2.getObjectId(), StopTypeEnumeration.AIRPORT, quay2NewId + "-airport");
+//
+//        cache.addStopPlaceMapping(stopPlace.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, stopNewId);
+//        cache.addQuayMapping(quay1.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, quay1NewId);
+//        cache.addQuayMapping(quay2.getObjectId(), StopTypeEnumeration.ONSTREET_BUS, quay2NewId);
+//
+//        stopAreaIdMapper.mapStopAreaIds(referential);
+//
+//        Assert.assertEquals(2, referential.getStopAreas().size());
+//
+//        StopArea mappedQuay1 = referential.getStopAreas().get(quay1NewId);
+//        StopArea mappedQuay2 = referential.getStopAreas().get(quay2NewId);
+//        StopArea mappedStopArea= mappedQuay1.getParent();
+//
+//        Assert.assertNotNull("Expected map to contain entry for mapped stop place id", mappedStopArea);
+//        Assert.assertEquals("Expected stop to have id updated by mapping", stopNewId, mappedStopArea.getObjectId());
+//
+//        Assert.assertEquals("Expected quay1 to have id updated by mapping", quay1NewId,mappedQuay1.getObjectId());
+//        Assert.assertEquals("Expected quay2 to have id updated by mapping",  quay2NewId,mappedQuay2.getObjectId());
+//    }
 
 
     private void setTransportModeForQuay(StopArea quay, TransportModeNameEnum transportModeName){
