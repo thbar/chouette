@@ -30,7 +30,8 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 			NetexFragmentMode fragmentMode, Marshaller marshaller) {
 
 		LocalDateTime timestamp = LocalDateTime.now();
-		String timestampFormatted = formatter.format(timestamp);
+		String [] splitTimestampFormatted = formatter.format(timestamp).split(".");
+		String timestampFormatted = splitTimestampFormatted[0];
 
 		try {
 			writer.writeStartElement(PUBLICATION_DELIVERY);
