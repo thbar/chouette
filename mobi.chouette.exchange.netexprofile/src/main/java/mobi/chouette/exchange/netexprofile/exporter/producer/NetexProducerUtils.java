@@ -37,15 +37,12 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.DayTypeEnum;
 import mobi.chouette.model.type.OrganisationTypeEnum;
 
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.LOC;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.OBJECT_ID_SPLIT_CHAR;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.OBJECT_ID_SPLIT_DASH;
+
 @Log4j
 public class NetexProducerUtils {
-
-	private static final String OBJECT_ID_SPLIT_CHAR = ":";
-
-	private static final String OBJECT_ID_SPLIT_DASH = "-";
-
-
-	private static final String LOC = ":LOC";
 
 	public static boolean isSet(Object... objects) {
 		for (Object val : objects) {

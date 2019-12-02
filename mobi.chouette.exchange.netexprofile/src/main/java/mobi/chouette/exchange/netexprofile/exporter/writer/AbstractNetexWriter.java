@@ -26,14 +26,18 @@ import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.netexFactory;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.ADDITIONAL_NETWORKS;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.DESTINATION_DISPLAYS;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.DIRECTION;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.JOURNEY_PATTERNS;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.LINES;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.LOC;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NOTICES;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NOTICE_ASSIGNMENTS;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.ROUTES;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.OBJECT_ID_SPLIT_CHAR;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.ROUTE;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.ROUTE_POINTS;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.SCHEDULED_STOP_POINTS;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.SERVICE_LINKS;
@@ -54,7 +58,7 @@ public class AbstractNetexWriter {
     static final String CREATED = "created";
     static final String XMLNS = "Xmlns";
     static final String XMLNSURL = "XmlnsUrl";
-    
+
     final static DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
             .optionalStart().appendFraction(ChronoField.MILLI_OF_SECOND, 0, 3, true).optionalEnd()
             .optionalStart().appendPattern("XXXXX")
@@ -107,14 +111,14 @@ public class AbstractNetexWriter {
         }
     }
 
-    static void writeDestinationDisplaysElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+    static void writeDestinationDisplaysElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller, String codespace) {
         try {
             if (exportableData.getSharedDestinationDisplays().values().size() > 0) {
-                writer.writeStartElement(DESTINATION_DISPLAYS);
                 for (DestinationDisplay destinationDisplay : exportableData.getSharedDestinationDisplays().values()) {
+                    destinationDisplay.withId(codespace + OBJECT_ID_SPLIT_CHAR + DIRECTION + OBJECT_ID_SPLIT_CHAR + destinationDisplay.getId() + OBJECT_ID_SPLIT_CHAR + LOC);
+                    destinationDisplay.withVersion(NETEX_DEFAULT_OBJECT_VERSION);
                     marshaller.marshal(netexFactory.createDestinationDisplay(destinationDisplay), writer);
                 }
-                writer.writeEndElement();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -135,13 +139,13 @@ public class AbstractNetexWriter {
         }
     }
 
-    static void writeRoutesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+    static void writeRoutesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller, String codespace) {
         try {
-            writer.writeStartElement(ROUTES);
             for (org.rutebanken.netex.model.Route route : exportableData.getRoutes()) {
+                route.withId(codespace + OBJECT_ID_SPLIT_CHAR + ROUTE + OBJECT_ID_SPLIT_CHAR + route.getId() + OBJECT_ID_SPLIT_CHAR + LOC);
+                route.withVersion(NETEX_DEFAULT_OBJECT_VERSION);
                 marshaller.marshal(netexFactory.createRoute(route), writer);
             }
-            writer.writeEndElement();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

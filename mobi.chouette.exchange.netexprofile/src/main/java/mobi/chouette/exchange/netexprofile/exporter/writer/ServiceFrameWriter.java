@@ -60,7 +60,6 @@ public class ServiceFrameWriter extends AbstractNetexWriter {
 			if (fragmentMode.equals(NetexFragmentMode.LINE)) {
 				writeRoutesElement(writer, exportableNetexData, marshaller);
 				writeLinesElement(writer, exportableNetexData, marshaller);
-				writeJourneyPatternsElement(writer, exportableNetexData, marshaller);
 				writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsServiceFrame(), marshaller);
 			} else { // shared data
 				writeNetworks(writer, exportableNetexData, marshaller);

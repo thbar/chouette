@@ -18,6 +18,7 @@ import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 
 import org.rutebanken.netex.model.AvailabilityCondition;
 import org.rutebanken.netex.model.Codespace;
+import org.rutebanken.netex.model.TypeOfFrameRefStructure;
 
 import static mobi.chouette.common.Constant.CONFIGURATION;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
@@ -42,8 +43,8 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 
 			writeElement(writer, PUBLICATION_TIMESTAMP, timestampFormatted);
 
-			// TODO mettre le codespace à la place du participant_ref_content
-			writeElement(writer, PARTICIPANT_REF, PARTICIPANT_REF_CONTENT);
+			NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+			writeElement(writer, PARTICIPANT_REF, configuration.getDefaultCodespacePrefix());
 
 			writeDataObjectsElement(context, writer, exportableData, exportableNetexData, timestampFormatted, fragmentMode, marshaller);
 			writer.writeEndElement();
@@ -93,24 +94,21 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 		try {
 			writer.writeStartElement(COMPOSITE_FRAME);
 
-			if (fragmentMode.equals(NetexFragmentMode.LINE)) {
-				if (line.getNetwork().getVersionDate() != null) {
-					LocalDateTime createdDateTime = TimeUtil.toLocalDateFromJoda(line.getNetwork().getVersionDate()).atStartOfDay();
-					writer.writeAttribute(CREATED, formatter.format(createdDateTime));
-				} else {
-					writer.writeAttribute(CREATED, timestamp);
-				}
-			} else {
-				writer.writeAttribute(CREATED, timestamp);
-			}
-
 			writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
 			writer.writeAttribute(ID, compositeFrameId);
 
-			writeValidityConditionsElement(writer, exportableNetexData, fragmentMode, marshaller);
-			writeCodespacesElement(writer, exportableData, exportableNetexData, fragmentMode, marshaller);
-			writeFrameDefaultsElement(writer);
+			TypeOfFrameRefStructure typeOfFrameRefStructure = new TypeOfFrameRefStructure();
+			typeOfFrameRefStructure.withRef(PARTICIPANT_REF_CONTENT + ":TypeOfFrame:" + NETEX_OFFRE_LIGNE + ":");
+			typeOfFrameRefStructure.withValue("version=\"1.04:FR1-NETEX_OFFRE_LIGNE-2.1\"");
+			netexFactory.createTypeOfFrameRef(typeOfFrameRefStructure);
+
+			writer.writeStartElement(FRAMES);
+
 			writeGeneralFrameElement(context, writer, exportableNetexData, timestamp, fragmentMode, marshaller);
+
+//			writeValidityConditionsElement(writer, exportableNetexData, fragmentMode, marshaller);
+//			writeCodespacesElement(writer, exportableData, exportableNetexData, fragmentMode, marshaller);
+//			writeFrameDefaultsElement(writer);
 
 			writer.writeEndElement();
 		} catch (XMLStreamException e) {
