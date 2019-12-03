@@ -40,6 +40,8 @@ import mobi.chouette.model.Route;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
 import org.apache.commons.collections.CollectionUtils;
 import org.rutebanken.netex.model.AvailabilityCondition;
 import org.rutebanken.netex.model.DestinationDisplay;
@@ -86,6 +88,8 @@ public class NetexLineDataProducer extends NetexProducer implements Constant {
 		ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(EXPORTABLE_NETEX_DATA);
 		mobi.chouette.model.Line neptuneLine = exportableData.getLine();
 
+		deleteSpacesInIds(exportableData);
+
 		produceAndCollectLineData(context, exportableData, exportableNetexData);
 		produceAndCollectSharedData(context, exportableData, exportableNetexData);
 
@@ -103,6 +107,33 @@ public class NetexLineDataProducer extends NetexProducer implements Constant {
 				metadata.getResources().add(
 						metadata.new Resource(fileName, NeptuneObjectPresenter.getName(neptuneLine.getNetwork()), NeptuneObjectPresenter.getName(neptuneLine)));
 			}
+		}
+	}
+
+	private void deleteSpacesInIds(ExportableData exportableData) {
+		for(Route route: exportableData.getRoutes()){
+			route.setObjectId(route.getObjectId().replaceAll("\\s+", ""));
+			route.getLine().setObjectId(route.getLine().getObjectId().replaceAll("\\s+", ""));
+			for(mobi.chouette.model.RoutePoint routePoint: route.getRoutePoints()){
+				routePoint.setObjectId(routePoint.getObjectId().replaceAll("\\s+", ""));
+				routePoint.getScheduledStopPoint().setObjectId(routePoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
+			}
+		}
+		for(JourneyPattern journeyPattern: exportableData.getJourneyPatterns()){
+			journeyPattern.setObjectId(journeyPattern.getObjectId().replaceAll("\\s+", ""));
+			for(StopPoint stopPoint: journeyPattern.getStopPoints()){
+				stopPoint.setObjectId(stopPoint.getObjectId().replaceAll("\\s+", ""));
+				stopPoint.getScheduledStopPoint().setObjectId(stopPoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
+				if(stopPoint.getDestinationDisplay() != null){
+					stopPoint.getDestinationDisplay().setObjectId(stopPoint.getDestinationDisplay().getObjectId().replaceAll("\\s+", ""));
+				}
+			}
+		}
+		for(Timetable timetable: exportableData.getTimetables()){
+			timetable.setObjectId(timetable.getObjectId().replaceAll("\\s+", ""));
+		}
+		for(VehicleJourney vehicleJourney: exportableData.getVehicleJourneys()){
+			vehicleJourney.setObjectId(vehicleJourney.getObjectId().replaceAll("\\s+", ""));
 		}
 	}
 
