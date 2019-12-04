@@ -20,6 +20,7 @@ import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.Route;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
@@ -94,6 +95,8 @@ public class ExportableData {
 	@Getter
 	@Setter
 	private Set<Footnote> footnotes = new HashSet<>();
+	@Getter
+	@Setter Set<ScheduledStopPoint> scheduledStopPoints = new HashSet<>();
 
 	// prevent lazy loading for non complete connectionlinks
 	@Getter
@@ -138,5 +141,6 @@ public class ExportableData {
 		sharedStops.clear();
 		interchanges.clear();
 		footnotes.clear();
+		scheduledStopPoints.clear();
 	}
 }

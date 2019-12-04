@@ -8,16 +8,17 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.TimeZone;
-
 import mobi.chouette.exchange.gtfs.model.GtfsStop;
-import mobi.chouette.exchange.gtfs.model.RouteTypeEnum;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.WheelchairBoardingType;
+import mobi.chouette.exchange.gtfs.model.RouteTypeEnum;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -34,15 +35,15 @@ public class GtfsStopProducer extends AbstractProducer
 		super(exporter);
 	}
 
-	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes)
+    public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes){
+        return save(neptuneObject, prefix, validParents, keepOriginalId, useTPEGRouteTypes, null);
+    }
+
+	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes, String newStopId)
 	{
 		Optional<StopArea> parent = Optional.ofNullable(neptuneObject.getParent());
-		if(!validParents.isEmpty() && parent.isPresent()){
-			StopArea stopArea = parent.get();
-			StopArea areaParent = stopArea.getParent();
-			String idSa = (stopArea.getObjectId().split(":"))[stopArea.getObjectId().split(":").length - 1];
-			String idSaParent = (areaParent.getObjectId().split(":"))[areaParent.getObjectId().split(":").length - 1];
-			if(idSa.equals(idSaParent)){
+		if(validParents != null && !validParents.isEmpty() && parent.isPresent()){
+			if(parent.get().getObjectId() == neptuneObject.getObjectId()) {
 				return false;
 			}
 		}
@@ -58,7 +59,11 @@ public class GtfsStopProducer extends AbstractProducer
 		// stop.setLocationType(GtfsStop.STATION);
 		else
 			return false; // StopPlaces and ITL type not available
-		stop.setStopId(toGtfsId(neptuneObject.getObjectId(),prefix, keepOriginalId));
+        if(StringUtils.isEmpty(newStopId)) {
+            stop.setStopId(toGtfsId(neptuneObject.getObjectId(), prefix, keepOriginalId));
+        } else {
+            stop.setStopId(newStopId);
+        }
 		
 		// If name is empty, try to use parent name
 		String name = neptuneObject.getName();

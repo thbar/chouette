@@ -8,13 +8,8 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.exchange.gtfs.exporter.GtfsStopUtils;
 import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
 import mobi.chouette.exchange.gtfs.model.GtfsShape;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
@@ -37,8 +32,13 @@ import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
 import mobi.chouette.model.type.SectionStatusEnum;
-
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalTime;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * produce Trips and stop_times for vehicleJourney
@@ -84,9 +84,13 @@ public class GtfsTripProducer extends AbstractProducer {
 		List<RouteSection> routeSections = vj.getJourneyPattern().getRouteSections();
 		int index = 0;
 		for (VehicleJourneyAtStop vjas : lvjas) {
-
 			if (vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject() != null) {
-				time.setStopId(toGtfsId(vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), sharedPrefix, keepOriginalId));
+				String newStopId = GtfsStopUtils.getNewStopId(vjas.getStopPoint().getObjectId());
+				if(StringUtils.isEmpty(newStopId)) {
+					time.setStopId(toGtfsId(vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), sharedPrefix, keepOriginalId));
+				} else {
+					time.setStopId(newStopId);
+				}
 			}
 
 			LocalTime arrival = vjas.getArrivalTime();

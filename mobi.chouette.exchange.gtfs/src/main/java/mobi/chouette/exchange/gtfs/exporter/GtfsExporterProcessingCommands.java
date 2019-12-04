@@ -52,6 +52,7 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
+			initialContext.addToEnvironment(SCHEDULED_STOP_POINTS, context.get(SCHEDULED_STOP_POINTS));
 			if (withDao)
 				commands.add(CommandFactory.create(initialContext, DaoGtfsLineProducerCommand.class.getName()));
 			else

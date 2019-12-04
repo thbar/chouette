@@ -51,6 +51,7 @@ public interface Constant {
 	
 	public static final String VALIDATION_DATA = "validation_data";
 	public static final String EXPORTABLE_DATA = "exportable_data";
+	public static final String SCHEDULED_STOP_POINTS = "scheduled_stop_points";
 	public static final String SHARED_DATA_KEYS = "shared_data_keys";
 	public static final String SHARED_DATA = "shared_data";
 	public static final String METADATA = "metadata";
