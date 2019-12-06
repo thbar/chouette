@@ -36,11 +36,14 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -128,6 +131,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 					.findFirst()
 					.orElse(null);
 			String newStopId = GtfsStopUtils.getNewStopId(longStopId);
+
 			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId)) {
 				iterator.remove();
 			} else {
@@ -138,19 +142,27 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		}
 		for (StopArea stop : physicalStops) {
 			String objectId = stop.getObjectId();
-			String longStopId = scheduledStopPoints
-						.stream()
-						.filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
-										&& StringUtils.equals(objectId , scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
-						.map(ScheduledStopPoint::getObjectId)
-						.findFirst()
-						.orElse(null);
-			String newStopId = GtfsStopUtils.getNewStopId(longStopId);
+            Set<String> existing = new HashSet<>();
 
-			stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
-			if (metadata != null && stop.hasCoordinates())
-				metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
-						stop.getLatitude().doubleValue());
+            List<String> collect = scheduledStopPoints
+                    .stream()
+                    .filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
+                            && StringUtils.equals(objectId, scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
+                    .map(ScheduledStopPoint::getObjectId)
+                    .collect(Collectors.toList());
+
+            List<String> stopGenerated = new ArrayList<>();
+            collect.forEach(s ->{
+                String newStopId = GtfsStopUtils.getNewStopId(s);
+                if(!stopGenerated.contains(newStopId)){
+                    stopGenerated.add(newStopId);
+                    stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
+                    if (metadata != null && stop.hasCoordinates()) {
+                        metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
+                                stop.getLatitude().doubleValue());
+                    }
+                }
+            });
 		}
 		// remove incomplete connectionlinks
 		for (ConnectionLink link : connectionLinks) {
