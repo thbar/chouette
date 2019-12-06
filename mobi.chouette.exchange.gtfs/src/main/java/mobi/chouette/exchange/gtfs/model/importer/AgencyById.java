@@ -121,7 +121,7 @@ public class AgencyById extends IndexImpl<GtfsAgency> implements GtfsConverter {
 
 		// check the existance of agency_name, agency_url and agency_timezone
 		// values for this bean : 1-GTFS-Agency-5
-		// 1-GTFS-Agency-5 tototo
+		// 1-GTFS-Agency-5
 		value = array[i++];
 		if (withValidation)
 			testExtraSpace(FIELDS.agency_name.name(), value, bean);
