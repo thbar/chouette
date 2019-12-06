@@ -56,7 +56,7 @@ public class GtfsAgencyProducer extends AbstractProducer
          return false;
       }
 
-      if(StringUtils.isEmpty(agency.getAgencyId()) || agency.getAgencyId().equals("default")){
+      if(StringUtils.isEmpty(agency.getAgencyId()) || agency.getAgencyId().endsWith("default")){
           agency.setAgencyId(name);
       }
       agency.setAgencyName(name);

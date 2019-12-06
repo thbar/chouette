@@ -27,7 +27,7 @@ public abstract class AbstractProducer
     	  String[] tokens = neptuneId.split(":");
     	  if(tokens.length == 1)
     	     return tokens[0];
-	      else if (tokens[0].equals(prefix))
+	      else if (tokens[0].equalsIgnoreCase(prefix) || tokens[0].equalsIgnoreCase("MOSAIC"))
 	         return tokens[2];
 	      else
 	         // pour idfm car nos prefix sont MOSAIC et absolument pas SQYBUS ou autre
