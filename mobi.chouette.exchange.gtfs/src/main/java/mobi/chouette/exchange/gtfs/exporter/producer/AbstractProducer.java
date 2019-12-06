@@ -21,9 +21,10 @@ public abstract class AbstractProducer
 
    static protected String toGtfsId(String neptuneId, String prefix, boolean keepOriginal)
    {
-      if(keepOriginal) {
+      // @todo OKINA revoir ce foutu truc de keepOriginal
+      /*if(false && keepOriginal) {
     	  return neptuneId;
-      } else {
+      } else */{
     	  String[] tokens = neptuneId.split(":");
     	  if(tokens.length == 1)
     	     return tokens[0];
