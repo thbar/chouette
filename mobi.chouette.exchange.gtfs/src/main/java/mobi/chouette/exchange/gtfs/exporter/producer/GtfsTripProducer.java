@@ -315,13 +315,13 @@ public class GtfsTripProducer extends AbstractProducer {
 		DestinationDisplay startDestinationDisplay = lvjas.get(0).getStopPoint().getDestinationDisplay();
 		boolean changesDestinationDisplay = allDestinationDisplays.size() > 1;
 
-		if(startDestinationDisplay != null) {
-			trip.setTripHeadSign(startDestinationDisplay.getFrontTextWithComputedVias());
-		} else if (!isEmpty(vj.getPublishedJourneyName()))
+		if(!isEmpty(vj.getPublishedJourneyName())) {
 			trip.setTripHeadSign(vj.getPublishedJourneyName());
-		else if (!isEmpty(jp.getPublishedName()))
+		} else if(startDestinationDisplay != null) {
+			trip.setTripHeadSign(startDestinationDisplay.getFrontTextWithComputedVias());
+		} else if (!isEmpty(jp.getPublishedName())) {
 			trip.setTripHeadSign(jp.getPublishedName());
-		else
+		} else
 			trip.setTripHeadSign(null);
 
 		if (vj.getMobilityRestrictedSuitability() != null)
