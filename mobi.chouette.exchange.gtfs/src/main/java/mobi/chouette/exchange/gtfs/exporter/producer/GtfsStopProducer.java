@@ -37,7 +37,7 @@ public class GtfsStopProducer extends AbstractProducer
 	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes)
 	{
 		Optional<StopArea> parent = Optional.ofNullable(neptuneObject.getParent());
-		if(!validParents.isEmpty() && parent.isPresent()){
+		if(validParents != null && !validParents.isEmpty() && parent.isPresent()){
 			StopArea stopArea = parent.get();
 			StopArea areaParent = stopArea.getParent();
 			String idSa = (stopArea.getObjectId().split(":"))[stopArea.getObjectId().split(":").length - 1];
