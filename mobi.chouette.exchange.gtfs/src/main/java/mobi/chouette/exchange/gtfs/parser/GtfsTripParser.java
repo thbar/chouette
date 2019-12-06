@@ -1137,7 +1137,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
             String stopIdKeyFragment = createJourneyKeyFragment(wrapper);
             String baseKey = route.getObjectId().replace(Route.ROUTE_KEY, StopPoint.STOPPOINT_KEY) + "a"
-                    + stopIdKeyFragment.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
+                    + stopIdKeyFragment.trim();//.replaceAll("[^a-zA-Z_0-9\\-]", "_");
             String stopKey = baseKey;
             int dup = 1;
             while (stopPointKeys.contains(stopKey)) {
