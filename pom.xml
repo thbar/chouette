@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.8_OKINA_MOSAIC</version>
+    <version>3.9-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 

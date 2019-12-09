@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>3.8_OKINA_MOSAIC</version>
+		<version>3.9-SNAPSHOT</version>
 
 	</parent>
 	<artifactId>mobi.chouette.model</artifactId>
