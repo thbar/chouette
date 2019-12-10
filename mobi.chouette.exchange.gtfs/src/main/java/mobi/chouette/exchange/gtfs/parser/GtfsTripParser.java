@@ -1120,13 +1120,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     /**
      * create stopPoints for Route
-     *
+     * @param route
+     * @param journeyPattern
+     * @param list
      * @param referential
      * @param configuration
-     * @param routeId              route objectId
-     * @param stopTimesOfATrip     first trip's ordered GTFS StopTimes
-     * @param mapStopAreasByStopId stopAreas to attach created StopPoints (parent relationship)
-     * @return
      */
     private void createStopPoint(Route route, JourneyPattern journeyPattern, List<VehicleJourneyAtStop> list,
                                  Referential referential, GtfsImportParameters configuration) {

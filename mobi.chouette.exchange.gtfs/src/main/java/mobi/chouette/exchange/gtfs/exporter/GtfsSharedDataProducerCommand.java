@@ -140,9 +140,10 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 							stop.getLatitude().doubleValue());
 			}
 		}
+
+		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
 			String objectId = stop.getObjectId();
-            Set<String> existing = new HashSet<>();
 
             List<String> collect = scheduledStopPoints
                     .stream()
@@ -151,7 +152,6 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
                     .map(ScheduledStopPoint::getObjectId)
                     .collect(Collectors.toList());
 
-            List<String> stopGenerated = new ArrayList<>();
             collect.forEach(s ->{
                 String newStopId = GtfsStopUtils.getNewStopId(s);
                 if(!stopGenerated.contains(newStopId)){
