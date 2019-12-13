@@ -722,4 +722,40 @@ public class RestService implements Constant {
 		return result;
 	}
 
+//	// post asynchronous job
+//	@POST
+//	@Path("/{ref}/{action}{type:(/[^/]+?)?}")
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	@Produces({ MediaType.APPLICATION_JSON })
+//	public Response variations(@PathParam("ref") String ref, @PathParam("action") String action,
+//						   @PathParam("type") String type, MultipartFormDataInput input) {
+//		try {
+//			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+//			Referential referential = new Referential();
+//			context.put("ref", ref);
+//			context.put(REFERENTIAL, referential);
+//			try {
+//				ContextHolder.setContext(ref);
+//				ChainCommand master = (ChainCommand) CommandFactory
+//						.create(initialContext, ChainCommand.class.getName());
+//				master.setIgnored(continueProcesingOnError);
+//
+//				for (Command command : lineProcessingCommands) {
+//					master.add(progression);
+//					master.add(command);
+//				}
+//				progression.execute(context);
+//				Command command = CommandFactory.create(new InitialContext(), VariationsCommand.class.getName());
+//				command.execute(context);
+//				return Response.ok().build();
+//			} catch (Exception e) {
+//				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+//			} finally {
+//				ContextHolder.setContext(null);
+//			}
+//		} catch (Exception e) {
+//			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+//		}
+//	}
+
 }
