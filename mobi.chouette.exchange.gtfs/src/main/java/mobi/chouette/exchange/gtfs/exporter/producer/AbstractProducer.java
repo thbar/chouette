@@ -21,13 +21,14 @@ public abstract class AbstractProducer
 
    static protected String toGtfsId(String neptuneId, String prefix, boolean keepOriginal)
    {
-      if(keepOriginal) {
+      // @todo OKINA revoir ce foutu truc de keepOriginal
+      /*if(false && keepOriginal) {
     	  return neptuneId;
-      } else {
+      } else */{
     	  String[] tokens = neptuneId.split(":");
     	  if(tokens.length == 1)
     	     return tokens[0];
-	      else if (tokens[0].equals(prefix))
+	      else if (tokens[0].equalsIgnoreCase(prefix) || tokens[0].equalsIgnoreCase("MOSAIC"))
 	         return tokens[2];
 	      else
 	         // pour idfm car nos prefix sont MOSAIC et absolument pas SQYBUS ou autre

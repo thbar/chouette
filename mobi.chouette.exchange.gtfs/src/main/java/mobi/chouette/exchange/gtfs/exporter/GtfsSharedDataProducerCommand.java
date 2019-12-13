@@ -8,18 +8,8 @@
 
 package mobi.chouette.exchange.gtfs.exporter;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.naming.InitialContext;
-
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -39,8 +29,21 @@ import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.Interchange;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.Timetable;
+import org.apache.commons.lang.StringUtils;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -106,6 +109,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		Set<StopArea> commercialStops = collection.getCommercialStops();
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		Set<ConnectionLink> connectionLinks = collection.getConnectionLinks();
+		Set<ScheduledStopPoint> scheduledStopPoints = collection.getScheduledStopPoints();
 		// Only export companies (agencies) actually referred to by routes.
 		Set<Company> companies = collection.getAgencyCompanies();
 		Set<Interchange> interchanges = collection.getInterchanges();
@@ -118,7 +122,17 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
 			StopArea stop = iterator.next();
-			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt())) {
+			String objectId = stop.getObjectId();
+			String longStopId = scheduledStopPoints
+					.stream()
+					.filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
+							&& StringUtils.equals(objectId , scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
+					.map(ScheduledStopPoint::getObjectId)
+					.findFirst()
+					.orElse(null);
+			String newStopId = GtfsStopUtils.getNewStopId(longStopId);
+
+			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId)) {
 				iterator.remove();
 			} else {
 				if (metadata != null && stop.hasCoordinates())
@@ -126,11 +140,29 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 							stop.getLatitude().doubleValue());
 			}
 		}
+
+		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
-			stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt());
-			if (metadata != null && stop.hasCoordinates())
-				metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
-						stop.getLatitude().doubleValue());
+			String objectId = stop.getObjectId();
+
+            List<String> collect = scheduledStopPoints
+                    .stream()
+                    .filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
+                            && StringUtils.equals(objectId, scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
+                    .map(ScheduledStopPoint::getObjectId)
+                    .collect(Collectors.toList());
+
+            collect.forEach(s ->{
+                String newStopId = GtfsStopUtils.getNewStopId(s);
+                if(!stopGenerated.contains(newStopId)){
+                    stopGenerated.add(newStopId);
+                    stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
+                    if (metadata != null && stop.hasCoordinates()) {
+                        metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
+                                stop.getLatitude().doubleValue());
+                    }
+                }
+            });
 		}
 		// remove incomplete connectionlinks
 		for (ConnectionLink link : connectionLinks) {

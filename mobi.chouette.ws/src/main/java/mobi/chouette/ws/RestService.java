@@ -279,6 +279,7 @@ public class RestService implements Constant {
 				throw new ServiceException(ServiceExceptionCode.INVALID_REQUEST, "missing filename in part");
 			}
 			// protect filename from invalid url chars
+			// @todo OKINA enlever les accents du nom des fichiers
 			filename = removeSpecialChars(filename);
 			result.put(filename, part.getBody(InputStream.class, null));
 		}

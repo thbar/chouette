@@ -1120,13 +1120,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     /**
      * create stopPoints for Route
-     *
+     * @param route
+     * @param journeyPattern
+     * @param list
      * @param referential
      * @param configuration
-     * @param routeId              route objectId
-     * @param stopTimesOfATrip     first trip's ordered GTFS StopTimes
-     * @param mapStopAreasByStopId stopAreas to attach created StopPoints (parent relationship)
-     * @return
      */
     private void createStopPoint(Route route, JourneyPattern journeyPattern, List<VehicleJourneyAtStop> list,
                                  Referential referential, GtfsImportParameters configuration) {
@@ -1137,7 +1135,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
             String stopIdKeyFragment = createJourneyKeyFragment(wrapper);
             String baseKey = route.getObjectId().replace(Route.ROUTE_KEY, StopPoint.STOPPOINT_KEY) + "a"
-                    + stopIdKeyFragment.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
+                    + stopIdKeyFragment.trim();//.replaceAll("[^a-zA-Z_0-9\\-]", "_");
             String stopKey = baseKey;
             int dup = 1;
             while (stopPointKeys.contains(stopKey)) {

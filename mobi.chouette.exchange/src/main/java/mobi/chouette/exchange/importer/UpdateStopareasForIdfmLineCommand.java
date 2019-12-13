@@ -5,9 +5,15 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
+import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.NeptuneIdentifiedObject;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.util.Referential;
 import org.hibernate.Hibernate;
 
@@ -34,6 +40,12 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@EJB
 	private StopAreaDAO stopAreaDAO;
 
+	@EJB
+	private StopPointDAO stopPointDAO;
+
+	@EJB
+	ScheduledStopPointDAO scheduledStopPointDAO;
+
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
 
@@ -43,19 +55,51 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	public boolean execute(Context context) throws Exception {
 		try {
 			Long lineId = (Long) context.get("lineId");
-			Referential referential = (Referential) context.get(REFERENTIAL);
 			// - stop areas maj avec zdep
 			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
 			lineDAO.flush();
 			// - send to tiamat
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
 			List<StopArea> areas = stopAreaDAO.findAll(idList);
-			areas.forEach(sa -> Hibernate.initialize(sa.getParent()));
+
+			areas.forEach(sa -> {
+				List<ScheduledStopPoint> scheduledStopPointsContainedInStopArea = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getObjectId());
+				sa.setContainedScheduledStopPoints(scheduledStopPointsContainedInStopArea);
+				sa.getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
+
+				List<ScheduledStopPoint> scheduledStopPointsContainedInStopAreaParent = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getParent().getObjectId());
+				sa.getParent().setContainedScheduledStopPoints(scheduledStopPointsContainedInStopAreaParent);
+				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
+			});
+
+
+            Referential referential = (Referential) context.get(REFERENTIAL);
+            //referential = initRefential(referential, areas);
+
 			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 			return SUCCESS;
 		} catch (Exception e){
 			throw new Exception(e.getCause());
 		}
+	}
+
+	public Referential initRefential(Referential referential, List<StopArea> areas){
+		referential.setLines(lineDAO.findAll().stream().collect(Collectors.toMap(Line::getObjectId, l -> l)));
+
+		referential.setStopAreas(areas.stream().collect(Collectors.toMap(StopArea::getObjectId, l -> l)));
+		referential.setSharedStopAreas(areas
+				.stream()
+				.filter(sa -> sa.getParent() != null)
+				.map(StopArea::getParent)
+				.collect(Collectors.toMap(sa -> sa.getId().toString(), sa -> sa)));
+
+		referential.setStopPoints(stopPointDAO.findAll().stream().collect(Collectors.toMap(StopPoint::getObjectId, l -> l)));
+
+		referential.getSharedStopAreas().forEach((k, area) -> {
+			Hibernate.initialize(area.getContainedScheduledStopPoints());
+			area.getContainedScheduledStopPoints().forEach(sp -> Hibernate.initialize(sp.getStopPoints()));
+		});
+		return referential;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {

@@ -36,6 +36,7 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
+import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NamingUtil;
@@ -65,6 +66,8 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 			if (collection == null) {
 				collection = new ExportableData();
+                List<ScheduledStopPoint> scheduledStopPoints = (List<ScheduledStopPoint>) context.get(SCHEDULED_STOP_POINTS);
+				collection.getScheduledStopPoints().addAll(scheduledStopPoints);
 				context.put(EXPORTABLE_DATA, collection);
 			}
 			reporter.addObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, NamingUtil.getName(line),

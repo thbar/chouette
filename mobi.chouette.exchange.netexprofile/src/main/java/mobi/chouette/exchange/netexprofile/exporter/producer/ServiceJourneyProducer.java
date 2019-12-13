@@ -66,10 +66,12 @@ public class ServiceJourneyProducer extends NetexProducer {
 			serviceJourney.setDayTypes(dayTypeStruct);
 
 			for (Timetable t : vehicleJourney.getTimetables()) {
-				if (exportableData.getTimetables().contains(t)) {
-					DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
-					NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
-					dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
+				for(Timetable timetable: exportableData.getTimetables()){
+					if(timetable.getObjectId().equals(t.getObjectId())){
+						DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
+						NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
+						dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
+					}
 				}
 			}
 		}

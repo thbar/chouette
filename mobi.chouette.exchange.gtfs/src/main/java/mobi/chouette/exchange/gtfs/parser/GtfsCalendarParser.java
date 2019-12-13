@@ -164,7 +164,7 @@ public class GtfsCalendarParser implements Parser, Validator, Constant {
 				throw fatalException;
 		}
 		
-		if (!importer.hasCalendarImporter()) {
+		if (!importer.hasCalendarImporter() && !importer.hasCalendarDateImporter()) {
 			gtfsValidationReporter.reportError(context, new GtfsException(GTFS_CALENDAR_FILE, 1, null, GtfsException.ERROR.MISSING_FILES, null, null), GTFS_CALENDAR_FILE);
 		} else if ( (calendarDateParser == null && calendarParser.getLength() == 0) ||
 				(calendarParser == null && calendarDateParser.getLength() == 0) ||
