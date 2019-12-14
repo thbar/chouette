@@ -28,8 +28,8 @@ public class ServiceJourneyProducer extends NetexProducer {
 	private static ContactStructureProducer contactStructureProducer = new ContactStructureProducer();
 
 	public ServiceJourney produce(Context context, VehicleJourney vehicleJourney, Line line) {
-        ExportableData exportableData = (ExportableData) context.get(Constant.EXPORTABLE_DATA);
-        ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(Constant.EXPORTABLE_NETEX_DATA);
+		ExportableData exportableData = (ExportableData) context.get(Constant.EXPORTABLE_DATA);
+		ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(Constant.EXPORTABLE_NETEX_DATA);
 
 		ServiceJourney serviceJourney = netexFactory.createServiceJourney();
 		NetexProducerUtils.populateId(vehicleJourney, serviceJourney);
@@ -53,7 +53,7 @@ public class ServiceJourneyProducer extends NetexProducer {
 		serviceJourney.setLineRef(NetexProducerUtils.createLineRef(line, netexFactory));
 
 		NoticeProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, exportableNetexData.getNoticeAssignmentsTimetableFrame(), vehicleJourney.getFootnotes(), vehicleJourney);
-		
+
 		if (vehicleJourney.getCompany() != null) {
 			OperatorRefStructure operatorRefStruct = netexFactory.createOperatorRefStructure();
 			NetexProducerUtils.populateReference(vehicleJourney.getCompany(), operatorRefStruct, false);
@@ -66,12 +66,10 @@ public class ServiceJourneyProducer extends NetexProducer {
 			serviceJourney.setDayTypes(dayTypeStruct);
 
 			for (Timetable t : vehicleJourney.getTimetables()) {
-				for(Timetable timetable: exportableData.getTimetables()){
-					if(timetable.getObjectId().equals(t.getObjectId())){
-						DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
-						NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
-						dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
-					}
+				if (exportableData.getTimetables().contains(t)) {
+					DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
+					NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
+					dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
 				}
 			}
 		}
@@ -91,7 +89,8 @@ public class ServiceJourneyProducer extends NetexProducer {
 				StopPoint stopPoint = vehicleJourneyAtStop.getStopPoint();
 				StopPointInJourneyPatternRefStructure pointInPatternRefStruct = netexFactory.createStopPointInJourneyPatternRefStructure();
 				NetexProducerUtils.populateReference(stopPoint, pointInPatternRefStruct, true);
-                pointInPatternRefStruct.setRef(pointInPatternRefStruct.getRef().concat(journeyPatternRefStruct.getRef().substring(journeyPatternRefStruct.getRef().lastIndexOf(":")+1)));
+				//TODO profil IDFM/Norvégien
+				pointInPatternRefStruct.setRef(pointInPatternRefStruct.getRef().concat(journeyPatternRefStruct.getRef().substring(journeyPatternRefStruct.getRef().lastIndexOf(":")+1)));
 				timetabledPassingTime.setPointInJourneyPatternRef(netexFactory.createStopPointInJourneyPatternRef(pointInPatternRefStruct));
 
 				LocalTime departureTime = vehicleJourneyAtStop.getDepartureTime();
@@ -118,7 +117,7 @@ public class ServiceJourneyProducer extends NetexProducer {
 				}
 
 				passingTimesStruct.getTimetabledPassingTime().add(timetabledPassingTime);
-				
+
 				NoticeProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, exportableNetexData.getNoticeAssignmentsTimetableFrame(), vehicleJourneyAtStop.getFootnotes(), vehicleJourneyAtStop);
 			}
 
@@ -147,6 +146,7 @@ public class ServiceJourneyProducer extends NetexProducer {
 					netexFSP.setLatestBookingTime(TimeUtil.toLocalTimeFromJoda(bookingArrangement.getLatestBookingTime()));
 					netexFSP.setMinimumBookingPeriod(TimeUtil.toDurationFromJodaDuration(bookingArrangement.getMinimumBookingPeriod()));
 
+					// TODO à vérifier profil IDFM/Norvégien
 					//netexFSP.setBookingContact(contactStructureProducer.produce(bookingArrangement.getBookingContact()));
 				}
 			}

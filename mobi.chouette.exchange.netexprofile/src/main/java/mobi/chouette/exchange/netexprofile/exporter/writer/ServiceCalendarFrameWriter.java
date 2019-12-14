@@ -23,12 +23,7 @@ public class ServiceCalendarFrameWriter extends AbstractNetexWriter {
 
     public static void write(XMLStreamWriter writer, Context context, ExportableNetexData exportableNetexData, Marshaller marshaller) {
 
-		String serviceCalendarFrameId = NetexProducerUtils.createUniqueId(context, SERVICE_CALENDAR_FRAME);
-
         try {
-            writer.writeStartElement(SERVICE_CALENDAR_FRAME);
-            writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
-            writer.writeAttribute(ID, serviceCalendarFrameId);
             writeDayTypesElement(writer, exportableNetexData,marshaller);
 
             if (MapUtils.isNotEmpty(exportableNetexData.getSharedOperatingPeriods())) {
@@ -36,7 +31,6 @@ public class ServiceCalendarFrameWriter extends AbstractNetexWriter {
             }
 
             writeDayTypeAssignmentsElement(writer, exportableNetexData,marshaller);
-            writer.writeEndElement();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -44,11 +38,9 @@ public class ServiceCalendarFrameWriter extends AbstractNetexWriter {
 
     private static void writeDayTypesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
         try {
-            writer.writeStartElement(DAY_TYPES);
             for (DayType dayType : exportableData.getSharedDayTypes().values()) {
                 marshaller.marshal(netexFactory.createDayType(dayType), writer);
             }
-            writer.writeEndElement();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -56,25 +48,19 @@ public class ServiceCalendarFrameWriter extends AbstractNetexWriter {
 
     private static void writeDayTypeAssignmentsElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
         try {
-            int order=1;
-            writer.writeStartElement(DAY_TYPE_ASSIGNMENTS);
             for (DayTypeAssignment dayTypeAssignment : exportableData.getSharedDayTypeAssignments().stream().sorted(new DayTypeAssignmentExportComparator()).collect(Collectors.toList())) {
-                dayTypeAssignment.setOrder(BigInteger.valueOf(order++));
                 marshaller.marshal(netexFactory.createDayTypeAssignment(dayTypeAssignment), writer);
             }
-            writer.writeEndElement();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void writeOperatingPeriodsElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+    private static void writeOperatingPeriodsElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
         try {
-            writer.writeStartElement(OPERATING_PERIODS);
-            for (OperatingPeriod operatingPeriod : exportableData.getSharedOperatingPeriods().values()) {
+            for (OperatingPeriod operatingPeriod : exportableNetexData.getSharedOperatingPeriods().values()) {
                 marshaller.marshal(netexFactory.createOperatingPeriod(operatingPeriod), writer);
             }
-            writer.writeEndElement();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -12,18 +12,18 @@ import org.rutebanken.netex.model.NoticeAssignment;
 
 public class ReusedConstructsWriter {
 
-//	static void writeNoticeAssignmentsElement(XMLStreamWriter writer, Collection<NoticeAssignment> noticeAssignments, Marshaller marshaller) {
-//		try {
-//			if (!noticeAssignments.isEmpty()) {
-//				writer.writeStartElement(NOTICE_ASSIGNMENTS);
-//				for (NoticeAssignment noticeAssignment : noticeAssignments) {
-//					marshaller.marshal(netexFactory.createNoticeAssignment(noticeAssignment), writer);
-//				}
-//				writer.writeEndElement();
-//			}
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
+	static void writeNoticeAssignmentsElement(XMLStreamWriter writer, Collection<NoticeAssignment> noticeAssignments, Marshaller marshaller) {
+		try {
+			if (!noticeAssignments.isEmpty()) {
+				writer.writeStartElement(NOTICE_ASSIGNMENTS);
+				for (NoticeAssignment noticeAssignment : noticeAssignments) {
+					marshaller.marshal(netexFactory.createNoticeAssignment(noticeAssignment), writer);
+				}
+				writer.writeEndElement();
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

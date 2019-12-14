@@ -53,7 +53,7 @@ public final class NetexObjectIdTypes {
     public static final String NETEX_STRUCTURE = "NETEX_STRUCTURE";
     public static final String NETEX_HORAIRE = "NETEX_HORAIRE";
     public static final String NETEX_OFFRE_LIGNE = "NETEX_OFFRE_LIGNE";
-    public static final String NETEX_CALENDAR = "NETEX_CALENDAR";
+    public static final String NETEX_CALENDRIER = "NETEX_CALENDRIER";
     public static final String NETEX_COMMUN = "NETEX_COMMUN";
 
     // entity id keys
@@ -89,6 +89,6 @@ public final class NetexObjectIdTypes {
 
     public static final String OBJECT_ID_SPLIT_CHAR = ":";
     public static final String OBJECT_ID_SPLIT_DASH = "-";
-    public static final String LOC = ":LOC";
+    public static final String LOC = "LOC";
 
 }

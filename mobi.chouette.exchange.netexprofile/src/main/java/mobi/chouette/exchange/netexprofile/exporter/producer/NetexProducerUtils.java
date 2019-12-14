@@ -37,6 +37,7 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.DayTypeEnum;
 import mobi.chouette.model.type.OrganisationTypeEnum;
 
+import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.LOC;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.OBJECT_ID_SPLIT_CHAR;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.OBJECT_ID_SPLIT_DASH;
@@ -137,7 +138,8 @@ public class NetexProducerUtils {
 			return original;
 		}
 	}
-	
+
+	// TODO changement de profil IDFM Norvégien changer l'ID
 	public static String createUniqueId(Context context, String type) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+idCounter.incrementAndGet()+LOC;
@@ -145,6 +147,9 @@ public class NetexProducerUtils {
 
 	public static String createUniqueGeneralFrameId(Context context, String type, String typeFile, String time) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+		time = time.replaceAll("-", "");
+		time = time.replaceAll("T", "");
+		time = time.replaceAll(":", "");
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
@@ -153,7 +158,7 @@ public class NetexProducerUtils {
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
-	public static String createUniquCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {
+	public static String createUniqueCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+idLine+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
@@ -213,6 +218,8 @@ public class NetexProducerUtils {
 		}
 	}
 
+
+	// TODO changement de profil IDFM Norvégien changer l'ID
 	public static void populateId(NeptuneIdentifiedObject source, EntityInVersionStructure destination) {
 		if(source == null || destination == null) {
 			log.error("Cannot set id since either source or destination is null");
@@ -224,7 +231,8 @@ public class NetexProducerUtils {
 		} else {
 			destination.setId(source.getObjectId());
 		}
-		destination.setVersion(source.getObjectVersion() == null ? "1" : source.getObjectVersion().toString());
+		destination.setId(destination.getId() + ":LOC");
+		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
 	}
 
 	public static void populateReference(NeptuneIdentifiedObject source, VersionOfObjectRefStructure destination, boolean withVersion) {

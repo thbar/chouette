@@ -16,6 +16,7 @@ import mobi.chouette.exchange.netexprofile.exporter.NetexprofileExportParameters
 
 public class NetexProducer {
 
+	//TODO à changer pour changement de profil IDFM/Norvégien
 	public static final String NETEX_DEFAULT_OBJECT_VERSION = "any";
 
 	public static ObjectFactory netexFactory = null;

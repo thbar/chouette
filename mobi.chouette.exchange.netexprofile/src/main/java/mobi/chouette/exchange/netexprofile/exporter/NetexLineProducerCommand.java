@@ -86,7 +86,9 @@ public class NetexLineProducerCommand implements Command, Constant {
 
             if (cont) {
                 try {
-                    NetexLineDataProducer producer = new NetexLineDataProducer();
+                    // TODO changer d'un data producer à l'autre pour changer de PROFIL IDFM Norvégien
+//                    NetexLineDataProducer producer = new NetexLineDataProducer();
+                    NetexLineDataIDFMProducer  producer = new NetexLineDataIDFMProducer();
                     producer.produce(context);
 
                     reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.LINE, 1);
