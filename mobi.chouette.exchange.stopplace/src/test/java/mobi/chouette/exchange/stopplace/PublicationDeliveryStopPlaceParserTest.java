@@ -3,10 +3,11 @@ package mobi.chouette.exchange.stopplace;
 import com.google.common.collect.Sets;
 
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
+import mobi.chouette.exchange.netexprofile.util.NetexObjectUtil;
 import mobi.chouette.model.StopArea;
 
-import net.sf.saxon.s9api.XdmNode;
-import org.rutebanken.netex.model.PublicationDeliveryStructure;
+import net.sf.saxon.s9api.*;
+import org.rutebanken.netex.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -16,11 +17,14 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Collections.*;
 import static javax.xml.bind.JAXBContext.newInstance;
 
 public class PublicationDeliveryStopPlaceParserTest {
@@ -49,19 +53,152 @@ public class PublicationDeliveryStopPlaceParserTest {
 
     }
 
+    public int getQuayIdFromXdmItem(String xdmItem) {
+        Pattern p = Pattern.compile("Quay:([0-9]+)");
+        Matcher m = p.matcher(xdmItem);
+        String group = null;
+        while (m.find()) {
+            /*System.out.println(m.group());
+            System.out.println(m.group(1));*/
+            group = m.group(1);
+        }
+        return Integer.parseInt(group);
+    }
 
+    public int getStopPlaceIdFromXdmItem(String xdmItem) {
+        Pattern  p = Pattern.compile("monomodalStopPlace:([0-9]+)");
+        Matcher m = p.matcher(xdmItem);
+        String group = null;
+        while (m.find()) {
+            /*System.out.println(m.group());
+            System.out.println(m.group(1));*/
+            group = m.group(1);
+        }
+        return Integer.parseInt(group);
+    }
 
     @Test
     public void testIDFM() throws Exception {
 
-        NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
-        File file = new File("src/test/resources/netex/IDFM_Reflex_all.xml");
+        Processor proc = new Processor(false);
+        File file = new File("src/test/resources/netex/getAll.xml");
+        XdmNode document = proc.newDocumentBuilder().build(file);
+        XPathCompiler xPathCompiler = proc.newXPathCompiler();
+        xPathCompiler.declareNamespace("", "http://www.netex.org.uk/netex");
 
-        XdmNode dom = importer.parseFileToXdmNode(file, new HashSet<>());
-        PublicationDeliveryStructure unmarshal = importer.unmarshal(file, new HashSet<>());
+        //Grabb all ZDEP Quays
+        String xpathRequestZdep = "//Quay[@derivedFromObjectRef]/@id";
+        XPathExecutable getZdep = xPathCompiler.compile(xpathRequestZdep);
+        XPathSelector zdepSelector = getZdep.load();
+        zdepSelector.setContextItem(document);
+        XdmValue xdmItemsZdep = zdepSelector.evaluate();
+        //int nbZdep = xdmItemsZdep.size();
 
-        System.out.println(unmarshal.getDataObjects());
+        XdmSequenceIterator iterator = xdmItemsZdep.iterator();
+        HashMap<Integer, Map<Integer, Integer>> dataFromXml = new HashMap<>(); //Final map Zdep -> Zder:Zdlr
+        /*while (iterator.hasNext()) {
+            j++;
+            int id = getQuayIdFromXdmItem(iterator.next().getStringValue());
+            String xpathRequestZder = String.format("//Quay[contains(@id, '%d')]/@derivedFromObjectRef[1]", id);
+            XPathExecutable getZderFromZdep = xPathCompiler.compile(xpathRequestZder);
+            XPathSelector zderSelector = getZderFromZdep.load();
+            zderSelector.setContextItem(document);
+            XdmValue xdmItemsZder = zderSelector.evaluate();
+            Map<Integer, Integer> zderAndZdlr = new HashMap<>(); //Zder->Zdlr
+            zderAndZdlr.put(getQuayIdFromXdmItem(xdmItemsZder.toString()),-1);
+            dataFromXml.put(getQuayIdFromXdmItem(iterator.next().getStringValue()), zderAndZdlr);
+
+        }*/
+        for (XdmItem it: xdmItemsZdep) {
+            //Grabb ZDER of the CURRENT ZDEP
+            int id = getQuayIdFromXdmItem(it.getStringValue());
+            String xpathRequestZder = String.format("//Quay[contains(@id, '%d')]/@derivedFromObjectRef[1]", id);
+            XPathExecutable getZderFromZdep = xPathCompiler.compile(xpathRequestZder);
+            XPathSelector zderSelector = getZderFromZdep.load();
+            zderSelector.setContextItem(document);
+            XdmValue xdmItemsZder = zderSelector.evaluate();
+
+            //Grabb ZDLR of the CURRENT ZDER
+            int idZder = getQuayIdFromXdmItem(xdmItemsZder.toString());
+            String xpathRequestZdlr = String.format("//Quay[contains(@id, '%d')]/ParentZoneRef/@ref[1]", idZder);
+            XPathExecutable getZdlrFromZder = xPathCompiler.compile(xpathRequestZdlr);
+            XPathSelector zdlrSelector = getZdlrFromZder.load();
+            zdlrSelector.setContextItem(document);
+            XdmValue xdmItemsZdlr = zdlrSelector.evaluate();
+
+            //Mapped ZDEP -> ZDER:ZDLR
+            Map<Integer, Integer> zderAndZdlr = new HashMap<>(); //Zder->Zdlr
+            zderAndZdlr.put(getQuayIdFromXdmItem(xdmItemsZder.toString()),getStopPlaceIdFromXdmItem(xdmItemsZdlr.toString()));
+            dataFromXml.put(getQuayIdFromXdmItem(it.getStringValue()), zderAndZdlr);
+        }
+
+
+        int nbdataXml = dataFromXml.size();
+        int i = 0;
+
+
+
+
+        //XPathExecutable exec2 = xPathCompiler.compile("//Quay[@derivedFromObjectRef]/@derivedFromObjectRef/");
+        //XPathSelector selector2 = exec2.load();
+        //selector2.setContextItem(document);
+
+        /*HashMap<Integer, Set<Map.Entry<Integer, Integer>>> xmlParsedDataPublicationDeliveryStopPlace = new HashMap<>();
+        List<XdmItem> listOfXdmItemsFromXdmValue = new ArrayList<XdmItem>();
+
+        XdmSequenceIterator iterator = result.iterator();
+        while (iterator.hasNext()) {
+            listOfXdmItemsFromXdmValue.add(iterator.next());
+        }
+        reverse(listOfXdmItemsFromXdmValue);*/
+
+
+        /*Iterator<XdmItem> it = listOfXdmItemsFromXdmValue.iterator();
+        Map<Integer, Integer> zderAndZdlr = new HashMap<>();
+        while (it.hasNext()) {
+            zderAndZdlr.put(-1,-1);
+            xmlParsedDataPublicationDeliveryStopPlace.put(getQuayIdFromXdmItem(it.next().getStringValue()), zderAndZdlr.entrySet());
+        }*/
+        /*listOfXdmItemsFromXdmValue.forEach(xdmItem -> {
+            System.out.println(xdmItem);
+        });*/
+
+
+
+        //result.forEach();
+        //result.forEach();
+
+        //XdmValue result2 = selector2.evaluate();
+
+        //System.out.println(result2);
+
+
+
+//        NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
+//        File file = new File("src/test/resources/netex/getAll.xml");
+//        PublicationDeliveryStructure unmarshal = importer.unmarshal(file, new HashSet<>());
+//        PublicationDeliveryStructure test = (PublicationDeliveryStructure) unmarshal;
+//
+//        Common_VersionFrameStructure value = test.getDataObjects().getCompositeFrameOrCommonFrame().get(0).getValue();
+//
+//        List<JAXBElement<? extends Common_VersionFrameStructure>> dataObjectFrames = test.getDataObjects().getCompositeFrameOrCommonFrame();
+//        List<CompositeFrame> compositeFrames = NetexObjectUtil.getFrames(CompositeFrame.class, dataObjectFrames);
+//        Optional<JAXBElement<? extends Common_VersionFrameStructure>> generalFrameArrets =
+//                compositeFrames.get(0).getFrames().getCommonFrame().stream()
+//                        .filter(frame -> "FR1:TypeOfFrame:NETEX_ARRET_IDF:".equals(frame.getValue().getTypeOfFrameRef().getRef()))
+//                        .findAny();
+//
+//        List<SiteFrame> siteFrames = NetexObjectUtil.getFrames(SiteFrame.class, compositeFrames.get(0).getFrames().getCommonFrame());
+//
+//        if (generalFrameArrets.isPresent()) {
+//            Common_VersionFrameStructure frameArrets = generalFrameArrets.get().getValue();
+//        } else {
+//            //TODO
+//        }
+
 
     }
+
+
 
 }
