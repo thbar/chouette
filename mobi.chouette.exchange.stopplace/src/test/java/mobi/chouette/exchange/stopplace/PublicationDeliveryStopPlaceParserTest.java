@@ -58,8 +58,6 @@ public class PublicationDeliveryStopPlaceParserTest {
         Matcher m = p.matcher(xdmItem);
         String group = null;
         while (m.find()) {
-            /*System.out.println(m.group());
-            System.out.println(m.group(1));*/
             group = m.group(1);
         }
         return Integer.parseInt(group);
@@ -70,8 +68,6 @@ public class PublicationDeliveryStopPlaceParserTest {
         Matcher m = p.matcher(xdmItem);
         String group = null;
         while (m.find()) {
-            /*System.out.println(m.group());
-            System.out.println(m.group(1));*/
             group = m.group(1);
         }
         return Integer.parseInt(group);
@@ -92,23 +88,9 @@ public class PublicationDeliveryStopPlaceParserTest {
         XPathSelector zdepSelector = getZdep.load();
         zdepSelector.setContextItem(document);
         XdmValue xdmItemsZdep = zdepSelector.evaluate();
-        //int nbZdep = xdmItemsZdep.size();
 
         XdmSequenceIterator iterator = xdmItemsZdep.iterator();
         HashMap<Integer, Map<Integer, Integer>> dataFromXml = new HashMap<>(); //Final map Zdep -> Zder:Zdlr
-        /*while (iterator.hasNext()) {
-            j++;
-            int id = getQuayIdFromXdmItem(iterator.next().getStringValue());
-            String xpathRequestZder = String.format("//Quay[contains(@id, '%d')]/@derivedFromObjectRef[1]", id);
-            XPathExecutable getZderFromZdep = xPathCompiler.compile(xpathRequestZder);
-            XPathSelector zderSelector = getZderFromZdep.load();
-            zderSelector.setContextItem(document);
-            XdmValue xdmItemsZder = zderSelector.evaluate();
-            Map<Integer, Integer> zderAndZdlr = new HashMap<>(); //Zder->Zdlr
-            zderAndZdlr.put(getQuayIdFromXdmItem(xdmItemsZder.toString()),-1);
-            dataFromXml.put(getQuayIdFromXdmItem(iterator.next().getStringValue()), zderAndZdlr);
-
-        }*/
         for (XdmItem it: xdmItemsZdep) {
             //Grabb ZDER of the CURRENT ZDEP
             int id = getQuayIdFromXdmItem(it.getStringValue());
@@ -131,48 +113,6 @@ public class PublicationDeliveryStopPlaceParserTest {
             zderAndZdlr.put(getQuayIdFromXdmItem(xdmItemsZder.toString()),getStopPlaceIdFromXdmItem(xdmItemsZdlr.toString()));
             dataFromXml.put(getQuayIdFromXdmItem(it.getStringValue()), zderAndZdlr);
         }
-
-
-        int nbdataXml = dataFromXml.size();
-        int i = 0;
-
-
-
-
-        //XPathExecutable exec2 = xPathCompiler.compile("//Quay[@derivedFromObjectRef]/@derivedFromObjectRef/");
-        //XPathSelector selector2 = exec2.load();
-        //selector2.setContextItem(document);
-
-        /*HashMap<Integer, Set<Map.Entry<Integer, Integer>>> xmlParsedDataPublicationDeliveryStopPlace = new HashMap<>();
-        List<XdmItem> listOfXdmItemsFromXdmValue = new ArrayList<XdmItem>();
-
-        XdmSequenceIterator iterator = result.iterator();
-        while (iterator.hasNext()) {
-            listOfXdmItemsFromXdmValue.add(iterator.next());
-        }
-        reverse(listOfXdmItemsFromXdmValue);*/
-
-
-        /*Iterator<XdmItem> it = listOfXdmItemsFromXdmValue.iterator();
-        Map<Integer, Integer> zderAndZdlr = new HashMap<>();
-        while (it.hasNext()) {
-            zderAndZdlr.put(-1,-1);
-            xmlParsedDataPublicationDeliveryStopPlace.put(getQuayIdFromXdmItem(it.next().getStringValue()), zderAndZdlr.entrySet());
-        }*/
-        /*listOfXdmItemsFromXdmValue.forEach(xdmItem -> {
-            System.out.println(xdmItem);
-        });*/
-
-
-
-        //result.forEach();
-        //result.forEach();
-
-        //XdmValue result2 = selector2.evaluate();
-
-        //System.out.println(result2);
-
-
 
 //        NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
 //        File file = new File("src/test/resources/netex/getAll.xml");

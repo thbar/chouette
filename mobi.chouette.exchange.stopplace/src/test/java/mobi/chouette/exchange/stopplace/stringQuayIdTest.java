@@ -11,8 +11,6 @@ public class stringQuayIdTest {
         Matcher m = p.matcher(xdmItem);
        String group = null;
         while (m.find()) {
-            /*System.out.println(m.group());
-            System.out.println(m.group(1));*/
             group = m.group(1);
         }
         return Integer.parseInt(group);
@@ -24,8 +22,6 @@ public class stringQuayIdTest {
         Matcher m = p.matcher(xdmItem);
         String group = null;
         while (m.find()) {
-            /*System.out.println(m.group());
-            System.out.println(m.group(1));*/
             group = m.group(1);
         }
         return Integer.parseInt(group);
