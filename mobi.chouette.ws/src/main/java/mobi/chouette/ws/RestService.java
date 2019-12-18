@@ -206,6 +206,11 @@ public class RestService implements Constant {
 			} catch (Exception e) {
 				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOSAIC_SQL_ERROR") != null){
 					String message = (String) context.get("MOSAIC_SQL_ERROR");
+					//@todo Okina revoir la manière de remonter les erreurs plus proprement
+					if(message.contains("Where:")){
+						String[] splitMessage = message.split("Where:");
+						message = splitMessage[0];
+					}
 					throw new WebApplicationException(message);
 				} else {
 					throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
