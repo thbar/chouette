@@ -10,6 +10,7 @@ import net.sf.saxon.s9api.*;
 import org.rutebanken.netex.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.internal.collections.Pair;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -53,29 +54,46 @@ public class PublicationDeliveryStopPlaceParserTest {
 
     }
 
-    public int getQuayIdFromXdmItem(String xdmItem) {
+    public String getQuayIdFromXdmItem(String xdmItem) {
         Pattern p = Pattern.compile("Quay:([0-9]+)");
         Matcher m = p.matcher(xdmItem);
         String group = null;
         while (m.find()) {
             group = m.group(1);
         }
-        return Integer.parseInt(group);
+        return group;
     }
 
-    public int getStopPlaceIdFromXdmItem(String xdmItem) {
+    public String getStopPlaceIdFromXdmItem(String xdmItem) {
         Pattern  p = Pattern.compile("monomodalStopPlace:([0-9]+)");
         Matcher m = p.matcher(xdmItem);
         String group = null;
         while (m.find()) {
             group = m.group(1);
         }
-        return Integer.parseInt(group);
+        return group;
     }
 
     @Test
-    public void testIDFM() throws Exception {
+    public void testGetStopPlaceIdFromXdmItem() {
 
+        String test = getStopPlaceIdFromXdmItem("FR::monomodalStopPlace:57130:FR1");
+        Assert.assertEquals(test, "57130");
+
+    }
+
+    @Test
+    public void testGetQuayIdFromXdmItem() {
+
+        String test = getQuayIdFromXdmItem("id=\"FR::Quay:50095399:FR1\"");
+        Assert.assertEquals(test, "50095399");
+
+    }
+
+
+    @Test
+    public void testIDFM() throws Exception {
+        //Config
         Processor proc = new Processor(false);
         File file = new File("src/test/resources/netex/getAll.xml");
         XdmNode document = proc.newDocumentBuilder().build(file);
@@ -89,31 +107,39 @@ public class PublicationDeliveryStopPlaceParserTest {
         zdepSelector.setContextItem(document);
         XdmValue xdmItemsZdep = zdepSelector.evaluate();
 
-        XdmSequenceIterator iterator = xdmItemsZdep.iterator();
-        HashMap<Integer, Map<Integer, Integer>> dataFromXml = new HashMap<>(); //Final map Zdep -> Zder:Zdlr
+        HashMap<String, Pair<String, String>> dataFromXml = new HashMap<>();
+
         for (XdmItem it: xdmItemsZdep) {
             //Grabb ZDER of the CURRENT ZDEP
-            int id = getQuayIdFromXdmItem(it.getStringValue());
-            String xpathRequestZder = String.format("//Quay[contains(@id, '%d')]/@derivedFromObjectRef[1]", id);
+            String zdep = it.getStringValue();
+            String xpathRequestZder = String.format("//Quay[contains(@id, '%s')]/@derivedFromObjectRef[1]", zdep);
             XPathExecutable getZderFromZdep = xPathCompiler.compile(xpathRequestZder);
             XPathSelector zderSelector = getZderFromZdep.load();
             zderSelector.setContextItem(document);
             XdmValue xdmItemsZder = zderSelector.evaluate();
+            String zder =  xdmItemsZder.itemAt(0).getStringValue();
 
             //Grabb ZDLR of the CURRENT ZDER
-            int idZder = getQuayIdFromXdmItem(xdmItemsZder.toString());
-            String xpathRequestZdlr = String.format("//Quay[contains(@id, '%d')]/ParentZoneRef/@ref[1]", idZder);
+            String xpathRequestZdlr = String.format("//Quay[contains(@id, '%s')]/ParentZoneRef/@ref[1]", zder);
             XPathExecutable getZdlrFromZder = xPathCompiler.compile(xpathRequestZdlr);
             XPathSelector zdlrSelector = getZdlrFromZder.load();
             zdlrSelector.setContextItem(document);
             XdmValue xdmItemsZdlr = zdlrSelector.evaluate();
+            String zdlr =  xdmItemsZdlr.itemAt(0).getStringValue();
 
-            //Mapped ZDEP -> ZDER:ZDLR
-            Map<Integer, Integer> zderAndZdlr = new HashMap<>(); //Zder->Zdlr
-            zderAndZdlr.put(getQuayIdFromXdmItem(xdmItemsZder.toString()),getStopPlaceIdFromXdmItem(xdmItemsZdlr.toString()));
-            dataFromXml.put(getQuayIdFromXdmItem(it.getStringValue()), zderAndZdlr);
+            String idZdep = getQuayIdFromXdmItem(it.getStringValue());
+            String idZder = getQuayIdFromXdmItem(zder);
+            String idZdlr = getStopPlaceIdFromXdmItem(zdlr);
+
+            Pair<String, String> zderAndZdlr = new Pair<>(idZder, idZdlr);
+            dataFromXml.put(idZdep, zderAndZdlr);
         }
 
+        dataFromXml.forEach((zdep, zderAndZdlr) -> {
+            System.out.print("Zdep: " + zdep+ " ");
+            System.out.print("Zder: " + zderAndZdlr.first() + " ");
+            System.out.println("Zdlr: " + zderAndZdlr.second() + " ");
+        });
 //        NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
 //        File file = new File("src/test/resources/netex/getAll.xml");
 //        PublicationDeliveryStructure unmarshal = importer.unmarshal(file, new HashSet<>());
