@@ -204,7 +204,12 @@ public class RestService implements Constant {
 				command.execute(context);
 				return Response.ok().build();
 			} catch (Exception e) {
-				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOSAIC_SQL_ERROR") != null){
+					String message = (String) context.get("MOSAIC_SQL_ERROR");
+					throw new WebApplicationException(message);
+				} else {
+					throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				}
 			} finally {
 				ContextHolder.setContext(null);
 			}
