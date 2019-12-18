@@ -389,4 +389,14 @@ public class Company extends NeptuneIdentifiedObject {
 	@JoinColumn(name = "branding_id")
 	private Branding branding;
 
+	@Getter
+	@Setter
+	@Column(name = "objectid_operator_idfm")
+	private String objectIdOperatorIdfm;
+
+	@Getter
+	@Setter
+	@Column(name = "objectid_operator_sae")
+	private String objectIdOperatorSae;
+
 }

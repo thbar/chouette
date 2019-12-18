@@ -2474,7 +2474,3 @@ GRANT ALL ON SCHEMA :SCH TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
-
-ALTER TABLE mapping_hastus_zdep
-    ADD COLUMN zder character varying(255),
-    ADD COLUMN zdlr character varying(255);
