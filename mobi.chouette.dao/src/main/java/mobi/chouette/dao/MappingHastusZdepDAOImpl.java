@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless(name = "MappingHastusZdepDAO")
 public class MappingHastusZdepDAOImpl extends GenericDAOImpl<MappingHastusZdep> implements MappingHastusZdepDAO {
@@ -20,12 +21,10 @@ public class MappingHastusZdepDAOImpl extends GenericDAOImpl<MappingHastusZdep> 
     }
 
     @Override
-    public MappingHastusZdep findByZdep(String zdep) {
+    public Optional<MappingHastusZdep> findByZdep(String zdep) {
         List<MappingHastusZdep> resultList = em.createQuery("SELECT m FROM MappingHastusZdep m WHERE m.zdep = :zdep", MappingHastusZdep.class)
                 .setParameter("zdep", zdep)
                 .getResultList();
-        if(!resultList.isEmpty())
-            return resultList.get(0);
-        return null;
+        return  resultList.stream().findFirst();
     }
 }

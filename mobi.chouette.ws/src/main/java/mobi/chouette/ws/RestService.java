@@ -6,10 +6,7 @@ import mobi.chouette.common.Constant;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.common.file.FileStoreFactory;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
-import mobi.chouette.exchange.importer.MappingZdepHastusPlageCommand;
-import mobi.chouette.exchange.importer.UpdateStopareasForIdfmLineCommand;
+import mobi.chouette.exchange.importer.*;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
@@ -146,6 +143,24 @@ public class RestService implements Constant {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response importMappingZdepHastus(@PathParam("ref") String referential, MultipartFormDataInput input) {
 		return getMappingZdepResponse(referential, input);
+	}
+
+	@POST
+	@Path("/{ref}/update-mapping-zdep-zder-zdlr")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateMappingZdepZderZdlr(@PathParam("ref") String referential) {
+		try {
+			ContextHolder.setContext(referential);
+			Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrCommand.class.getName());
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			context.put("ref", referential);
+			command.execute(new mobi.chouette.common.Context(context));
+			return Response.ok().build();
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			ContextHolder.setContext(null);
+		}
 	}
 
 	/**

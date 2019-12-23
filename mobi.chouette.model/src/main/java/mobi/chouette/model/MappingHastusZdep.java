@@ -57,6 +57,30 @@ public class MappingHastusZdep extends NeptuneObject {
 	private String zdep;
 
 	/**
+	 * zder
+	 *
+	 * @param zder
+	 * New value
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@Column(name = "zder")
+	private String zder;
+
+	/**
+	 * zdlr
+	 *
+	 * @param zdlr
+	 * New value
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@Column(name = "zdlr")
+	private String zdlr;
+
+	/**
 	 * hastusChouette
 	 *
 	 * @param hastusChouette

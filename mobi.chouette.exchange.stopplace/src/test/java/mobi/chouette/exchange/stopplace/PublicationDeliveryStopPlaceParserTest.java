@@ -2,16 +2,16 @@ package mobi.chouette.exchange.stopplace;
 
 import com.google.common.collect.Sets;
 
+import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
 import mobi.chouette.exchange.netexprofile.util.NetexObjectUtil;
 import mobi.chouette.model.StopArea;
-
 import net.sf.saxon.s9api.*;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.rutebanken.netex.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.internal.collections.Pair;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
@@ -90,78 +90,13 @@ public class PublicationDeliveryStopPlaceParserTest {
 
     }
 
+    IdfmReflexParser idfmReflexParser;
 
     @Test
     public void testIDFM() throws Exception {
         //Config
-        Processor proc = new Processor(false);
         File file = new File("src/test/resources/netex/getAll.xml");
-        XdmNode document = proc.newDocumentBuilder().build(file);
-        XPathCompiler xPathCompiler = proc.newXPathCompiler();
-        xPathCompiler.declareNamespace("", "http://www.netex.org.uk/netex");
-
-        //Grabb all ZDEP Quays
-        String xpathRequestZdep = "//Quay[@derivedFromObjectRef]/@id";
-        XPathExecutable getZdep = xPathCompiler.compile(xpathRequestZdep);
-        XPathSelector zdepSelector = getZdep.load();
-        zdepSelector.setContextItem(document);
-        XdmValue xdmItemsZdep = zdepSelector.evaluate();
-
-        HashMap<String, Pair<String, String>> dataFromXml = new HashMap<>();
-
-        for (XdmItem it: xdmItemsZdep) {
-            //Grabb ZDER of the CURRENT ZDEP
-            String zdep = it.getStringValue();
-            String xpathRequestZder = String.format("//Quay[contains(@id, '%s')]/@derivedFromObjectRef[1]", zdep);
-            XPathExecutable getZderFromZdep = xPathCompiler.compile(xpathRequestZder);
-            XPathSelector zderSelector = getZderFromZdep.load();
-            zderSelector.setContextItem(document);
-            XdmValue xdmItemsZder = zderSelector.evaluate();
-            String zder =  xdmItemsZder.itemAt(0).getStringValue();
-
-            //Grabb ZDLR of the CURRENT ZDER
-            String xpathRequestZdlr = String.format("//Quay[contains(@id, '%s')]/ParentZoneRef/@ref[1]", zder);
-            XPathExecutable getZdlrFromZder = xPathCompiler.compile(xpathRequestZdlr);
-            XPathSelector zdlrSelector = getZdlrFromZder.load();
-            zdlrSelector.setContextItem(document);
-            XdmValue xdmItemsZdlr = zdlrSelector.evaluate();
-            String zdlr =  xdmItemsZdlr.itemAt(0).getStringValue();
-
-            String idZdep = getQuayIdFromXdmItem(it.getStringValue());
-            String idZder = getQuayIdFromXdmItem(zder);
-            String idZdlr = getStopPlaceIdFromXdmItem(zdlr);
-
-            Pair<String, String> zderAndZdlr = new Pair<>(idZder, idZdlr);
-            dataFromXml.put(idZdep, zderAndZdlr);
-        }
-
-        dataFromXml.forEach((zdep, zderAndZdlr) -> {
-            System.out.print("Zdep: " + zdep+ " ");
-            System.out.print("Zder: " + zderAndZdlr.first() + " ");
-            System.out.println("Zdlr: " + zderAndZdlr.second() + " ");
-        });
-//        NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
-//        File file = new File("src/test/resources/netex/getAll.xml");
-//        PublicationDeliveryStructure unmarshal = importer.unmarshal(file, new HashSet<>());
-//        PublicationDeliveryStructure test = (PublicationDeliveryStructure) unmarshal;
-//
-//        Common_VersionFrameStructure value = test.getDataObjects().getCompositeFrameOrCommonFrame().get(0).getValue();
-//
-//        List<JAXBElement<? extends Common_VersionFrameStructure>> dataObjectFrames = test.getDataObjects().getCompositeFrameOrCommonFrame();
-//        List<CompositeFrame> compositeFrames = NetexObjectUtil.getFrames(CompositeFrame.class, dataObjectFrames);
-//        Optional<JAXBElement<? extends Common_VersionFrameStructure>> generalFrameArrets =
-//                compositeFrames.get(0).getFrames().getCommonFrame().stream()
-//                        .filter(frame -> "FR1:TypeOfFrame:NETEX_ARRET_IDF:".equals(frame.getValue().getTypeOfFrameRef().getRef()))
-//                        .findAny();
-//
-//        List<SiteFrame> siteFrames = NetexObjectUtil.getFrames(SiteFrame.class, compositeFrames.get(0).getFrames().getCommonFrame());
-//
-//        if (generalFrameArrets.isPresent()) {
-//            Common_VersionFrameStructure frameArrets = generalFrameArrets.get().getValue();
-//        } else {
-//            //TODO
-//        }
-
+        HashMap<String, Pair<String, String>> stringPairHashMap = idfmReflexParser.parseReflexResult(new FileInputStream(file));
 
     }
 

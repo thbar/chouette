@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Log4j
@@ -67,8 +68,8 @@ public class MappingZdepHastusPlageCommand implements Command {
 
 				if(csvRecord.size() > 1) hastus = csvRecord.get(1);
 
-				MappingHastusZdep daoByZdep = mappingHastusZdepDAO.findByZdep(zdep);
-				if(daoByZdep != null){
+				Optional<MappingHastusZdep> daoByZdep = mappingHastusZdepDAO.findByZdep(zdep);
+				if (daoByZdep.isPresent()) {
 					log.warn("Numéro ZDEP " + zdep + " déjà existant");
 					continue;
 				}
@@ -105,7 +106,7 @@ public class MappingZdepHastusPlageCommand implements Command {
 		mappingHastusZdep.setHastusOriginal(hastus);
 		mappingHastusZdep.setHastusChouette(objectId);
 		mappingHastusZdepDAO.create(mappingHastusZdep);
-		return mappingHastusZdepDAO.findByZdep(zdep);
+		return mappingHastusZdep;
 	}
 
 	private String selectDataInputStreamName(final Map<String, InputStream> inputStreamsByName) {
