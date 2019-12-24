@@ -36,7 +36,7 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 	public boolean execute(Context context) throws Exception {
 		boolean result = ERROR;
 		String id = ProviderReferentialID.providers.get(context.get("ref").toString().toUpperCase());
-		String requestHttpTarget = String.format("https://reflex.iledefrance-mobilites.fr/ws/rest/V2/getData?method=getAll&uo=%s", id);
+		String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
 		log.info("provider: " + context.get("ref") + "provider id: " + id);
 		log.info("http request : " + requestHttpTarget+ "id: " + id);
 		InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
