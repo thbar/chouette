@@ -35,7 +35,7 @@ public class ServiceJourneyPatternProducer extends NetexProducer {
                 mobi.chouette.model.DestinationDisplay dd = stopPoint.getDestinationDisplay();
                 if (dd != null && dd.getFrontText() != null && !dd.getFrontText().isEmpty()) {
                     DestinationDisplayRefStructure destinationDisplayRefStructure = new DestinationDisplayRefStructure();
-                    destinationDisplayRefStructure.setRef(dd.getFrontText());
+                    destinationDisplayRefStructure.setRef(dd.getObjectId() + ":LOC");
                     destinationDisplayRefStructure.setVersion("any");
                     netexServiceJourneyPattern.setDestinationDisplayRef(destinationDisplayRefStructure);
                 }

@@ -23,13 +23,34 @@ public class ExportedFilenamer {
 		return b.toString();
 	}
 
-	public static String createLineFilename(Context context, Line line) {
+	public static String createIDFMLineFilename(Context context, Line line) {
 		NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
 
 		StringBuilder b = new StringBuilder();
 		b.append("offre_");
+		if(line.getRegistrationNumber() != null){
+			b.append(line.getRegistrationNumber().replaceAll(UNDERSCORE, DASH));
+			b.append(UNDERSCORE);
+		}
+		if(line.getNumber() != null){
+			b.append(line.getNumber().replaceAll(UNDERSCORE, DASH));
+		}
+
+		return utftoasci(b.toString()).replaceAll("/", DASH).replace(SPACE, DASH).replaceAll("\\.", DASH) + ".xml";
+	}
+
+	public static String createLineFilename(Context context, Line line) {
+		NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+
+		StringBuilder b = new StringBuilder();
+		b.append(parameters.getDefaultCodespacePrefix());
+		b.append(UNDERSCORE);
 		b.append(line.getObjectId().replaceAll(":", DASH));
 		b.append(UNDERSCORE);
+		if (line.getNumber() != null) {
+			b.append(line.getNumber().replaceAll(UNDERSCORE, DASH));
+			b.append(UNDERSCORE);
+		}
 		if (line.getName() != null) {
 			b.append(line.getName());
 		} else if (line.getPublishedName() != null) {

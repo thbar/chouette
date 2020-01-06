@@ -17,7 +17,7 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.MEMBER
 public class NetexHoraireWriter extends AbstractNetexWriter {
 
     public static void writer(XMLStreamWriter writer, Context context, ExportableNetexData exportableNetexData, Marshaller marshaller, String timestamp, String typeNetex) throws XMLStreamException, JAXBException {
-        writer.writeAttribute(ID, NetexProducerUtils.createUniqueGeneralFrameId(context, GENERAL_FRAME, typeNetex, timestamp));
+        writer.writeAttribute(ID, NetexProducerUtils.createUniqueGeneralFrameInLineId(context, typeNetex, timestamp));
 
         TypeOfFrameWriter.typeOfFrameWriter(writer, marshaller, typeNetex);
 

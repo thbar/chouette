@@ -153,9 +153,12 @@ public class NetexProducerUtils {
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
-	public static String createUniqueGeneralFrameInLineId(Context context, String type, String time) {
+	public static String createUniqueGeneralFrameInLineId(Context context, String typeFile, String time) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
-		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
+		time = time.replaceAll("-", "");
+		time = time.replaceAll("T", "");
+		time = time.replaceAll(":", "");
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
 	public static String createUniqueCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {

@@ -69,6 +69,8 @@ public class ServiceJourneyIDFMProducer {
                     if (timetable.getObjectId().equals(t.getObjectId())) {
                         DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
                         NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
+                        dayTypeRefStruct.setRef(dayTypeRefStruct.getRef() + ":LOC");
+                        dayTypeRefStruct.setVersion("any");
                         dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
                     }
                 }

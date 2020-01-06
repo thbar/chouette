@@ -89,7 +89,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         produceAndCollectLineData(context, exportableData, exportableNetexData);
         produceAndCollectSharedData(context, exportableData, exportableNetexData);
 
-        String fileName = ExportedFilenamer.createLineFilename(context, neptuneLine);
+        String fileName = ExportedFilenamer.createIDFMLineFilename(context, neptuneLine);
         reporter.addFileReport(context, fileName, IO_TYPE.OUTPUT);
         Path filePath = new File(outputPath.toFile(), fileName).toPath();
 
