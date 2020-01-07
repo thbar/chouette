@@ -38,8 +38,6 @@ public class ProductionPeriodCommand implements Command, Constant {
     @EJB
     private TimetableDAO timetableDAO;
 
-    private TimetableUpdater timetableUpdater;
-
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean execute(Context context) throws Exception {
@@ -47,6 +45,8 @@ public class ProductionPeriodCommand implements Command, Constant {
 
         Referential referential = (Referential) context.get(REFERENTIAL);
         LocalDate minStartDate = null;
+        LocalDate maxEndDate = null;
+        LocalDate maxEndDateDatabase = null;
 
         try {
 
@@ -64,10 +64,23 @@ public class ProductionPeriodCommand implements Command, Constant {
                     for (Period period : timetable.getPeriods()) {
                         if (minStartDate == null) {
                             minStartDate = period.getStartDate();
-                        } else {
-                            if (period.getStartDate().compareTo(minStartDate) < 0) {
-                                minStartDate = period.getStartDate();
-                            }
+                        } else if (period.getStartDate().isBefore(minStartDate)){
+                            minStartDate = period.getStartDate();
+                        }
+                    }
+                }
+            }
+
+            // On parse l'ensemble des calendriers pour récupérer la end date la plus tard
+            // Cela va permettre de gérer les périodes de production au sein d'une autre période de production
+
+            if (referential != null) {
+                for (Timetable timetable : referential.getTimetables().values()) {
+                    for (Period period : timetable.getPeriods()) {
+                        if (maxEndDate == null) {
+                            maxEndDate = period.getEndDate();
+                        } else if (period.getEndDate().isAfter(maxEndDate)) {
+                            maxEndDate = period.getEndDate();
                         }
                     }
                 }
@@ -75,6 +88,18 @@ public class ProductionPeriodCommand implements Command, Constant {
 
             // On retaille les calendriers déjà présents en base avec le start date récupéré plus haut
             List<Timetable> timetableList = timetableDAO.findAll();
+
+            // On récupère la end date la plus tardive déjà en base
+            for (Timetable oldTimetable : timetableList) {
+                for (Period period : oldTimetable.getPeriods()) {
+                    if (maxEndDateDatabase == null) {
+                        maxEndDateDatabase = period.getEndDate();
+                    } else if (period.getEndDate().isAfter(maxEndDateDatabase)) {
+                        maxEndDateDatabase = period.getEndDate();
+                    }
+                }
+            }
+
 
             for (Timetable oldTimetable : timetableList) {
                 LocalDate finalMinStartDate = minStartDate != null ? minStartDate.minusDays(1) : null;
