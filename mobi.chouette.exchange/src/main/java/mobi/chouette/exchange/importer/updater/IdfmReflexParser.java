@@ -1,21 +1,29 @@
 package mobi.chouette.exchange.importer.updater;
 
-import net.sf.saxon.s9api.*;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XPathCompiler;
+import net.sf.saxon.s9api.XPathExecutable;
+import net.sf.saxon.s9api.XPathSelector;
+import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.xml.sax.InputSource;
 
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IdfmReflexParser {
+    private static final Pattern patQuayId = Pattern.compile("Quay:([0-9]+)");
+    private static final Pattern  patStopPlace = Pattern.compile("monomodalStopPlace:([0-9]+)");
 
     private static String getQuayIdFromXdmItem(String xdmItem) {
-        Pattern p = Pattern.compile("Quay:([0-9]+)");
-        Matcher m = p.matcher(xdmItem);
+        Matcher m = patQuayId.matcher(xdmItem);
         String group = null;
         while (m.find()) {
             group = m.group(1);
@@ -24,8 +32,7 @@ public class IdfmReflexParser {
     }
 
     private static String getStopPlaceIdFromXdmItem(String xdmItem) {
-        Pattern  p = Pattern.compile("monomodalStopPlace:([0-9]+)");
-        Matcher m = p.matcher(xdmItem);
+        Matcher m = patStopPlace.matcher(xdmItem);
         String group = null;
         while (m.find()) {
             group = m.group(1);
