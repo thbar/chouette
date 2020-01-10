@@ -12,7 +12,6 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -41,7 +40,7 @@ public class IdfmReflexParser {
     }
 
 
-    public static HashMap<String, Pair<String, String>> parseReflexResult(InputStream reflexResult) throws SaxonApiException, IOException {
+    public static HashMap<String, Pair<String, String>> parseReflexResult(InputStream reflexResult) throws SaxonApiException{
         Processor proc = new Processor(false);
         XdmNode document = proc.newDocumentBuilder().build(new StreamSource(reflexResult));
         XPathCompiler xPathCompiler = proc.newXPathCompiler();

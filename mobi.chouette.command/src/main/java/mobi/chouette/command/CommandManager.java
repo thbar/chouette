@@ -1,10 +1,5 @@
 package mobi.chouette.command;
 
-import java.io.File;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
@@ -12,8 +7,6 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.gtfs.exporter.GtfsExportParameters;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.hub.exporter.HubExportParameters;
-import mobi.chouette.exchange.kml.exporter.KmlExportParameters;
 import mobi.chouette.exchange.neptune.exporter.NeptuneExportParameters;
 import mobi.chouette.exchange.neptune.importer.NeptuneImportParameters;
 import mobi.chouette.exchange.netex.exporter.NetexExportParameters;
@@ -25,7 +18,6 @@ import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.exchange.validation.report.ValidationReport;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.Referential;
-
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -34,6 +26,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class CommandManager implements Constant {
 
@@ -367,10 +364,6 @@ public class CommandManager implements Constant {
 				data.setType("netex");
 			} else if (configuration instanceof GtfsExportParameters) {
 				data.setType("gtfs");
-			} else if (configuration instanceof HubExportParameters) {
-				data.setType("hub");
-			} else if (configuration instanceof KmlExportParameters) {
-				data.setType("kml");
 			} else {
 				System.err.println("invalid output options type" + outputParametersFilename);
 				return null;
