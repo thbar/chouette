@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PublicationDelivery xsi:schemaLocation="D:/xsdNETEX/xsd/NeTEx_publication.xsd" xmlns="http://www.netex.org.uk/netex" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ifopt="http://www.ifopt.org.uk/ifopt" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:core="http://www.govtalk.gov.uk/core" xmlns:siri="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.04:FR1-NETEX-2.0-d">
+ <PublicationTimestamp>2019-12-13T14:04:05Z</PublicationTimestamp>
+ <ParticipantRef>FR1-ARRET</ParticipantRef>
+ <dataObjects>
+  <CompositeFrame version="2.0" created="2019-12-13T14:04:05Z" id="FR1:CompositeFrame:NETEX_IDF-20191213140405Z:LOC">
+   <TypeOfFrameRef ref="FR1:TypeOfFrame:NETEX_IDF:">version="1.04:FR1-NETEX_IDF-2.0"</TypeOfFrameRef>
+   <frames>
+    <GeneralFrame version="2.0" id="FR1:CompositeFrame:NETEX_ARRET_IDF-20191213140405Z:LOC">
+     <TypeOfFrameRef ref="FR1:TypeOfFrame:NETEX_ARRET_IDF:">version="1.04:FR1-NETEX_ARRET_IDF-2.1"</TypeOfFrameRef>
+     <members>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="59132-1086049" created="2014-12-29T14:31:51Z" changed="2019-10-23T09:24:42Z" id="FR::monomodalStopPlace:59132:FR1">
+             <Name>Collège les Nenuphars</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">592792.0 6872472.5</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:59132:">
+                 <Town>Bréval</Town>
+                 <PostalRegion>78107</PostalRegion>
+             </PostalAddress>
+             <ParentSiteRef ref="FR::multimodalStopPlace:74208:FR1"/>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="1086049" created="2014-12-28T23:00:00Z" changed="2019-10-23T09:33:47Z" id="FR::multimodalStopPlace:74208:FR1">
+             <Name>Collège les Nenuphars / Puce</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">592863.0 6872461.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:74208:">
+                 <Town>Bréval</Town>
+                 <PostalRegion>78107</PostalRegion>
+             </PostalAddress>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="65321" created="2014-12-29T14:31:51Z" changed="2019-10-23T09:24:31Z" id="FR::multimodalStopPlace:65321:FR1">
+             <Name>Eglise</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:65321:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="56660-65321" created="2014-12-29T14:31:51Z" changed="2019-10-23T09:24:31Z" id="FR::monomodalStopPlace:56660:FR1">
+             <Name>Eglise</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:56660:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <ParentSiteRef ref="FR::multimodalStopPlace:65321:FR1"/>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="56660-65321" created="2014-12-29T14:31:51Z" changed="2019-10-23T09:24:31Z" id="FR::monomodalStopPlace:56660:FR1">
+             <Name>Eglise</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:56660:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <ParentSiteRef ref="FR::multimodalStopPlace:65321:FR1"/>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <StopPlace dataSourceRef="FR1-ARRET_AUTO" version="65321" created="2014-12-29T14:31:51Z" changed="2019-10-23T09:24:31Z" id="FR::multimodalStopPlace:65321:FR1">
+             <Name>Eglise</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:65321:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <StopPlaceType>onstreetBus</StopPlaceType>
+         </StopPlace>
+         <Quay dataSourceRef="FR1-ARRET_AUTO" version="744395-59132" changed="2019-10-22T14:00:14Z" id="FR::Quay:420966:FR1">
+             <Name>Collège les Nénuphars</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">592762.0 6872487.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <ParentZoneRef ref="FR::monomodalStopPlace:59132:FR1"/>
+             <PostalAddress version="any" id="FR1:PostalAddress:420966:">
+                 <Town>Bréval</Town>
+                 <PostalRegion>78107</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:420966:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+         <Quay dataSourceRef="FR1-ARRET_AUTO" version="17479-56660" created="2014-12-29T14:31:51Z" changed="2019-10-22T14:00:14Z" id="FR::Quay:17479:FR1">
+             <Name>Boissy Église</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <ParentZoneRef ref="FR::monomodalStopPlace:56660:FR1"/>
+             <PostalAddress version="any" id="FR1:PostalAddress:17479:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:17479:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>91</Name>
+                     <PrivateCode>057318120</PrivateCode>
+                 </DestinationDisplayView>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+         <Quay dataSourceRef="FR1-ARRET_AUTO" version="17478-56660" created="2014-12-29T14:31:51Z" changed="2019-10-22T14:00:14Z" id="FR::Quay:17478:FR1">
+             <Name>Boissy Église</Name>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <ParentZoneRef ref="FR::monomodalStopPlace:56660:FR1"/>
+             <PostalAddress version="any" id="FR1:PostalAddress:17478:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:17478:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>91</Name>
+                     <PrivateCode>057318120</PrivateCode>
+                 </DestinationDisplayView>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+         <Quay dataSourceRef="FR1:OrganisationalUnit:81:" version="1165783-744395" created="2015-03-30T12:17:50Z" changed="2019-10-22T13:57:27Z" derivedFromObjectRef="FR::Quay:420966:FR1" id="FR::Quay:50095399:FR1">
+             <keyList>
+                 <KeyValue typeOfKey="LOCATION">
+                     <Key>EPSG_27572</Key>
+                     <Value>541322.0 2438654.0</Value>
+                 </KeyValue>
+             </keyList>
+             <Name>Collège les Nénuphars</Name>
+             <Description>Sens retour</Description>
+             <PrivateCode>15685</PrivateCode>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">592762.0 6872487.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:50095399:">
+                 <Town>Bréval</Town>
+                 <PostalRegion>78107</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:50095399:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+         <Quay dataSourceRef="FR1:OrganisationalUnit:81:" version="1165782-17479" created="2015-03-30T12:44:06Z" changed="2019-10-22T13:57:27Z" derivedFromObjectRef="FR::Quay:17479:FR1" id="FR::Quay:50095398:FR1">
+             <keyList>
+                 <KeyValue typeOfKey="LOCATION">
+                     <Key>EPSG_27572</Key>
+                     <Value>544539.0 2440881.0</Value>
+                 </KeyValue>
+             </keyList>
+             <Name>Boissy Eglise</Name>
+             <Description>Sens retour</Description>
+             <PrivateCode>15683</PrivateCode>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:50095398:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:50095398:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+                 <DestinationDisplayView>
+                     <Name>91</Name>
+                     <PrivateCode>057318120</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+         <Quay dataSourceRef="FR1:OrganisationalUnit:81:" version="1165781-17478" created="2015-03-30T12:44:04Z" changed="2019-10-22T13:57:26Z" derivedFromObjectRef="FR::Quay:17478:FR1" id="FR::Quay:50095397:FR1">
+             <keyList>
+                 <KeyValue typeOfKey="LOCATION">
+                     <Key>EPSG_27572</Key>
+                     <Value>544539.0 2440881.0</Value>
+                 </KeyValue>
+             </keyList>
+             <Name>Boissy Eglise</Name>
+             <Description>Sens aller</Description>
+             <PrivateCode>15682</PrivateCode>
+             <Centroid>
+                 <Location>
+                     <gml:pos srsName="EPSG:2154">595995.0 6874685.0</gml:pos>
+                 </Location>
+             </Centroid>
+             <PostalAddress version="any" id="FR1:PostalAddress:50095397:">
+                 <Town>Boissy-Mauvoisin</Town>
+                 <PostalRegion>78082</PostalRegion>
+             </PostalAddress>
+             <AccessibilityAssessment version="any" id="FR1:AccessibilityAssessment:50095397:">
+                 <MobilityImpairedAccess>unknown</MobilityImpairedAccess>
+                 <limitations>
+                     <AccessibilityLimitation>
+                         <WheelchairAccess>false</WheelchairAccess>
+                         <AudibleSignalsAvailable>unknown</AudibleSignalsAvailable>
+                         <VisualSignsAvailable>unknown</VisualSignsAvailable>
+                     </AccessibilityLimitation>
+                 </limitations>
+             </AccessibilityAssessment>
+             <TransportMode>bus</TransportMode>
+             <tariffZones>
+                 <TariffZoneRef ref="FR1:TariffZone:5:LOC"/>
+             </tariffZones>
+             <destinations>
+                 <DestinationDisplayView>
+                     <Name>89</Name>
+                     <PrivateCode>057318118</PrivateCode>
+                 </DestinationDisplayView>
+                 <DestinationDisplayView>
+                     <Name>91</Name>
+                     <PrivateCode>057318120</PrivateCode>
+                 </DestinationDisplayView>
+             </destinations>
+         </Quay>
+     </members>
+    </GeneralFrame>
+   </frames>
+  </CompositeFrame>
+ </dataObjects>
+</PublicationDelivery>

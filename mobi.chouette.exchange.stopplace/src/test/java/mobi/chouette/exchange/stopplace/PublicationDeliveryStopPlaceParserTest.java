@@ -2,15 +2,31 @@ package mobi.chouette.exchange.stopplace;
 
 import com.google.common.collect.Sets;
 
+import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
+import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
+import mobi.chouette.exchange.netexprofile.util.NetexObjectUtil;
 import mobi.chouette.model.StopArea;
-
+import net.sf.saxon.s9api.*;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.rutebanken.netex.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Collections.*;
+import static javax.xml.bind.JAXBContext.newInstance;
 
 public class PublicationDeliveryStopPlaceParserTest {
 
@@ -37,4 +53,53 @@ public class PublicationDeliveryStopPlaceParserTest {
 
 
     }
+
+    public String getQuayIdFromXdmItem(String xdmItem) {
+        Pattern p = Pattern.compile("Quay:([0-9]+)");
+        Matcher m = p.matcher(xdmItem);
+        String group = null;
+        while (m.find()) {
+            group = m.group(1);
+        }
+        return group;
+    }
+
+    public String getStopPlaceIdFromXdmItem(String xdmItem) {
+        Pattern  p = Pattern.compile("monomodalStopPlace:([0-9]+)");
+        Matcher m = p.matcher(xdmItem);
+        String group = null;
+        while (m.find()) {
+            group = m.group(1);
+        }
+        return group;
+    }
+
+    @Test
+    public void testGetStopPlaceIdFromXdmItem() {
+
+        String test = getStopPlaceIdFromXdmItem("FR::monomodalStopPlace:57130:FR1");
+        Assert.assertEquals(test, "57130");
+
+    }
+
+    @Test
+    public void testGetQuayIdFromXdmItem() {
+
+        String test = getQuayIdFromXdmItem("id=\"FR::Quay:50095399:FR1\"");
+        Assert.assertEquals(test, "50095399");
+
+    }
+
+    IdfmReflexParser idfmReflexParser;
+
+    @Test
+    public void testIDFM() throws Exception {
+        //Config
+        File file = new File("src/test/resources/netex/getAll.xml");
+        HashMap<String, Pair<String, String>> stringPairHashMap = idfmReflexParser.parseReflexResult(new FileInputStream(file));
+
+    }
+
+
+
 }
