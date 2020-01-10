@@ -145,9 +145,8 @@ public class RestService implements Constant {
 		return getMappingZdepResponse(referential, input);
 	}
 
-	@POST
+	@GET
 	@Path("/{ref}/update-mapping-zdep-zder-zdlr")
-	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateMappingZdepZderZdlr(@PathParam("ref") String referential) {
 		try {
