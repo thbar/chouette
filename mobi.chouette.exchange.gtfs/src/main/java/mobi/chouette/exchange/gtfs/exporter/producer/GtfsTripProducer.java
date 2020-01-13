@@ -8,34 +8,18 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
-import mobi.chouette.exchange.gtfs.model.GtfsShape;
-import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
+import mobi.chouette.exchange.gtfs.model.*;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.DropOffType;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.PickupType;
-import mobi.chouette.exchange.gtfs.model.GtfsTime;
-import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
-import mobi.chouette.model.JourneyFrequency;
-import mobi.chouette.model.JourneyPattern;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Route;
-import mobi.chouette.model.RouteSection;
-import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.VehicleJourney;
-import mobi.chouette.model.VehicleJourneyAtStop;
-import mobi.chouette.model.type.AlightingPossibilityEnum;
-import mobi.chouette.model.type.BoardingPossibilityEnum;
+import mobi.chouette.model.*;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.SectionStatusEnum;
+
+import java.sql.Time;
+import java.util.*;
 
 /**
  * produce Trips and stop_times for vehicleJourney
@@ -171,55 +155,55 @@ public class GtfsTripProducer extends AbstractProducer {
 			time.setDropOffType(DropOffType.Scheduled);
 		}
 		// check stoppoint specifications
-		StopPoint point = vjas.getStopPoint();
-		if (point.getForBoarding() != null) {
-			time.setPickupType(toPickUpType(point.getForBoarding(), time.getPickupType()));
+		if (vjas.getBoardingAlightingPossibility() != null) {
+			time.setPickupType(toPickUpType(vjas.getBoardingAlightingPossibility(), time.getPickupType()));
+			time.setDropOffType(toDropOffType(vjas.getBoardingAlightingPossibility(), time.getDropOffType()));
 		} else {
 		    // Set to default "Scheduled" if it's null
             time.setPickupType(PickupType.Scheduled);
-        }
-		if (point.getForAlighting() != null) {
-			time.setDropOffType(toDropOffType(point.getForAlighting(), time.getDropOffType()));
-		} else {
-            // Set to default "Scheduled" if it's null
-            time.setDropOffType(DropOffType.Scheduled);
+			// Set to default "Scheduled" if it's null
+			time.setDropOffType(DropOffType.Scheduled);
         }
 	}
 
-	private DropOffType toDropOffType(AlightingPossibilityEnum forAlighting, DropOffType defaultValue) {
-		if(forAlighting == null) {
+	private DropOffType toDropOffType(BoardingAlightingPossibilityEnum boardingAlightingPossibilityEnum, DropOffType defaultValue) {
+		if(boardingAlightingPossibilityEnum == null) {
 			// If not set on StopPoint return defaultValue (that is, the previous value) or if not set; Scheduled
 			return defaultValue == null ? DropOffType.Scheduled : defaultValue;
 		}
 		
-		switch (forAlighting) {
-		case normal:
-			return DropOffType.Scheduled;
-		case forbidden:
-			return DropOffType.NoAvailable;
-		case is_flexible:
-			return DropOffType.AgencyCall;
-		case request_stop:
-			return DropOffType.DriverCall;
+		switch (boardingAlightingPossibilityEnum) {
+			case AlightOnly:
+			case BoardAndAlight:
+				return DropOffType.Scheduled;
+			case BoardOnly:
+			case BoardOnRequest:
+			case NeitherBoardOrAlight:
+				return DropOffType.NoAvailable;
+			case AlightOnRequest:
+			case BoardAndAlightOnRequest:
+				return DropOffType.DriverCall;
 		}
 		return defaultValue;
 	}
 
-	private PickupType toPickUpType(BoardingPossibilityEnum forBoarding, PickupType defaultValue) {
-		if(forBoarding == null) {
+	private PickupType toPickUpType(BoardingAlightingPossibilityEnum boardingAlightingPossibilityEnum, PickupType defaultValue) {
+		if(boardingAlightingPossibilityEnum == null) {
 			// If not set on StopPoint return defaultValue (that is, the previous value) or if not set; Scheduled
 			return defaultValue == null ? PickupType.Scheduled : defaultValue;
 		}
 		
-		switch (forBoarding) {
-		case normal:
-			return PickupType.Scheduled;
-		case forbidden:
-			return PickupType.NoAvailable;
-		case is_flexible:
-			return PickupType.AgencyCall;
-		case request_stop:
-			return PickupType.DriverCall;
+		switch (boardingAlightingPossibilityEnum) {
+			case BoardOnly:
+			case BoardAndAlight:
+				return PickupType.Scheduled;
+			case AlightOnly:
+			case AlightOnRequest:
+			case NeitherBoardOrAlight:
+				return PickupType.NoAvailable;
+			case BoardOnRequest:
+			case BoardAndAlightOnRequest:
+				return PickupType.DriverCall;
 		}
 		return defaultValue;
 	}
