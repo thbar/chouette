@@ -116,8 +116,9 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 	 * Test 2-DATABASE-StopPoint-3
 	 * @param validationReporter
 	 * @param context
-	 * @param oldSp
-	 * @param newSp
+	 * @param oldSA
+	 * @param newSA
+	 * @param data
 	 */
 	private void twoDatabaseStopPointThreeTest(ValidationReporter validationReporter, Context context, StopArea oldSA, StopArea newSA, ValidationData data) {
 		if(!NeptuneUtil.sameValue(oldSA, newSA)) {

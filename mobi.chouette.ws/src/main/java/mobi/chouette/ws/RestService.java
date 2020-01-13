@@ -145,7 +145,7 @@ public class RestService implements Constant {
 		return getMappingZdepResponse(referential, input);
 	}
 
-	@POST
+	@GET
 	@Path("/{ref}/update-mapping-zdep-zder-zdlr")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateMappingZdepZderZdlr(@PathParam("ref") String referential) {
@@ -219,7 +219,17 @@ public class RestService implements Constant {
 				command.execute(context);
 				return Response.ok().build();
 			} catch (Exception e) {
-				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOSAIC_SQL_ERROR") != null){
+					String message = (String) context.get("MOSAIC_SQL_ERROR");
+					//@todo Okina revoir la manière de remonter les erreurs plus proprement
+					if(message.contains("Where:")){
+						String[] splitMessage = message.split("Where:");
+						message = splitMessage[0];
+					}
+					throw new WebApplicationException(message);
+				} else {
+					throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				}
 			} finally {
 				ContextHolder.setContext(null);
 			}

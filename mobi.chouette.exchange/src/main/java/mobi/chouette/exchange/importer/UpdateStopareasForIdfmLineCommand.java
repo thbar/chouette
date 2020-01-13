@@ -79,7 +79,11 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 			return SUCCESS;
 		} catch (Exception e){
-			throw new Exception(e.getCause());
+			if(e.getMessage().contains("MOSAIC_SQL_ERROR:")){
+				String[] splitErrors = e.getMessage().split("MOSAIC_SQL_ERROR:");
+				context.put("MOSAIC_SQL_ERROR", splitErrors[1]);
+			}
+			throw new Exception(e.getMessage());
 		}
 	}
 
