@@ -8,7 +8,6 @@ import mobi.chouette.dao.MappingHastusZdepDAO;
 import mobi.chouette.exchange.ProviderReferentialID;
 import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.model.MappingHastusZdep;
-import mobi.chouette.model.type.Utils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.ejb.EJB;
@@ -17,7 +16,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class UpdateMappingZdepZderZdlrCommand implements Command {
 
 	public static final String COMMAND = "UpdateMappingZdepZderZdlrCommand";
-
+	private static final String ievPropUrlServiceTarget = "iev.stop.place.zdep.zder.zdlr.mapping.by.ref";
 	@EJB
 	private MappingHastusZdepDAO mappingHastusZdepDAO;
 
@@ -36,7 +37,7 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 	public boolean execute(Context context) throws Exception {
 		boolean result = ERROR;
 		String id = ProviderReferentialID.providers.get(context.get("ref").toString().toUpperCase());
-		String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
+		String requestHttpTarget = String.format(System.getProperty(ievPropUrlServiceTarget), id);
 		log.info("provider: " + context.get("ref") + "provider id: " + id);
 		log.info("http request : " + requestHttpTarget+ "id: " + id);
 		InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
@@ -50,7 +51,7 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 				mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
 			}
 		});
-		log.info("zdeps of " + context.get("ref") + " are now updated and liked to their respectiv zder and zdlr on database!");
+		log.info("zdeps of " + context.get("ref") + " are now updated and linked to their respectiv zder and zdlr on database!");
 		return result;
 	}
 
