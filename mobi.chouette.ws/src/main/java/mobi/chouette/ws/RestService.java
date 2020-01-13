@@ -66,7 +66,7 @@ public class RestService implements Constant {
 
 	private static String api_version_key = "X-ChouetteIEV-Media-Type";
 	private static String api_version = "iev.v1.0; format=json";
-
+	private static String ref = "ref";
 	@Inject
 	JobServiceManager jobServiceManager;
 
@@ -153,7 +153,7 @@ public class RestService implements Constant {
 			ContextHolder.setContext(referential);
 			Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrCommand.class.getName());
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
-			context.put("ref", referential);
+			context.put(ref, referential);
 			command.execute(new mobi.chouette.common.Context(context));
 			return Response.ok().build();
 		} catch (Exception e) {
