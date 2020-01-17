@@ -6,10 +6,7 @@ import mobi.chouette.common.Constant;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.common.file.FileStoreFactory;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.importer.CleanStopAreaRepositoryCommand;
-import mobi.chouette.exchange.importer.MappingZdepHastusPlageCommand;
-import mobi.chouette.exchange.importer.UpdateStopareasForIdfmLineCommand;
+import mobi.chouette.exchange.importer.*;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
@@ -148,6 +145,24 @@ public class RestService implements Constant {
 		return getMappingZdepResponse(referential, input);
 	}
 
+	@GET
+	@Path("/{ref}/update-mapping-zdep-zder-zdlr")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateMappingZdepZderZdlr(@PathParam("ref") String referential) {
+		try {
+			ContextHolder.setContext(referential);
+			Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrCommand.class.getName());
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			context.put("ref", referential);
+			command.execute(new mobi.chouette.common.Context(context));
+			return Response.ok().build();
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		} finally {
+			ContextHolder.setContext(null);
+		}
+	}
+
 	/**
 	 * Méthode générique pour gérer les différents imports zdep
 	 * @param referential
@@ -204,7 +219,17 @@ public class RestService implements Constant {
 				command.execute(context);
 				return Response.ok().build();
 			} catch (Exception e) {
-				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOSAIC_SQL_ERROR") != null){
+					String message = (String) context.get("MOSAIC_SQL_ERROR");
+					//@todo Okina revoir la manière de remonter les erreurs plus proprement
+					if(message.contains("Where:")){
+						String[] splitMessage = message.split("Where:");
+						message = splitMessage[0];
+					}
+					throw new WebApplicationException(message);
+				} else {
+					throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+				}
 			} finally {
 				ContextHolder.setContext(null);
 			}

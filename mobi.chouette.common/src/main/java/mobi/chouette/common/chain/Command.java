@@ -1,9 +1,9 @@
 package mobi.chouette.common.chain;
 
-import javax.ejb.Local;
-
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
+
+import javax.ejb.Local;
 
 @Local
 public interface Command extends Constant {

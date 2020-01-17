@@ -22,7 +22,10 @@ import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Log4j
@@ -43,12 +46,13 @@ public class MappingZdepHastusPlageCommand implements Command {
 
 		boolean result = ERROR;
 		final Map<String, InputStream> inputStreamsByName = (Map<String, InputStream>) context.get("inputStreamByName");
+
 		String inputStreamName = selectDataInputStreamName(inputStreamsByName);
 		String hastus = null;
 		String zdep;
 
 		if (inputStreamName != null) {
-			CSVParser csvParser = new CSVParser(new InputStreamReader(inputStreamsByName.get(inputStreamName)), CSVFormat.DEFAULT);
+			CSVParser csvParser = new CSVParser(new InputStreamReader(inputStreamsByName.get(inputStreamName), StandardCharsets.UTF_8), CSVFormat.DEFAULT);
 			int headerNbLine = 1;
 			int cpt = 0;
 			for (CSVRecord csvRecord : csvParser) {
@@ -67,8 +71,8 @@ public class MappingZdepHastusPlageCommand implements Command {
 
 				if(csvRecord.size() > 1) hastus = csvRecord.get(1);
 
-				MappingHastusZdep daoByZdep = mappingHastusZdepDAO.findByZdep(zdep);
-				if(daoByZdep != null){
+				Optional<MappingHastusZdep> daoByZdep = mappingHastusZdepDAO.findByZdep(zdep);
+				if (daoByZdep.isPresent()) {
 					log.warn("Numéro ZDEP " + zdep + " déjà existant");
 					continue;
 				}
@@ -105,7 +109,7 @@ public class MappingZdepHastusPlageCommand implements Command {
 		mappingHastusZdep.setHastusOriginal(hastus);
 		mappingHastusZdep.setHastusChouette(objectId);
 		mappingHastusZdepDAO.create(mappingHastusZdep);
-		return mappingHastusZdepDAO.findByZdep(zdep);
+		return mappingHastusZdep;
 	}
 
 	private String selectDataInputStreamName(final Map<String, InputStream> inputStreamsByName) {

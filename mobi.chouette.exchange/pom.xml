@@ -157,6 +157,10 @@
             <version>5.3.7.Final</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+        </dependency>
     </dependencies>
 <!--  <build>
 	<plugins>
