@@ -157,7 +157,7 @@ public class PublicationDeliveryIDFMWriterTest {
         exportableNetexData.setLine(netexLine);
         exportableNetexData.getRoutes().add(netexRoute);
         exportableNetexData.getDirections().add(direction);
-        exportableNetexData.getServiceJourneyPattern().add(serviceJourneyPattern);
+        exportableNetexData.getServiceJourneyPatterns().add(serviceJourneyPattern);
         exportableNetexData.getSharedDestinationDisplays().put(destinationDisplay.getId(), destinationDisplay);
         exportableNetexData.getSharedScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
         exportableNetexData.getSharedStopAssignments().put(passengerStopAssignment.getId(), passengerStopAssignment);

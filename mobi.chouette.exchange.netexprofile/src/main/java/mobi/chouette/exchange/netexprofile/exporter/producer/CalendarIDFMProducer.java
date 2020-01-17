@@ -17,11 +17,13 @@ import org.rutebanken.netex.model.PropertiesOfDay_RelStructure;
 import org.rutebanken.netex.model.PropertyOfDay;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CalendarIDFMProducer extends NetexProducer {
 
-    public void produce(Context context, ExportableData exportableData, ExportableNetexData exportableNetexData) {
+    public void produce(ExportableData exportableData, ExportableNetexData exportableNetexData) {
 
         for (Timetable timetable : exportableData.getTimetables()) {
 
@@ -29,7 +31,7 @@ public class CalendarIDFMProducer extends NetexProducer {
             netexDaytypeId += ":LOC";
             if (!exportableNetexData.getSharedDayTypes().containsKey(netexDaytypeId)) {
                 DayType dayType = netexFactory.createDayType();
-                NetexProducerUtils.populateId(timetable, dayType);
+                NetexProducerUtils.populateIdAndVersionIDFM(timetable, dayType);
 
                 List<DayOfWeekEnumeration> dayOfWeekEnumerations = NetexProducerUtils.toDayOfWeekEnumeration(timetable.getDayTypes());
                 if (!dayOfWeekEnumerations.isEmpty()) {
@@ -39,9 +41,7 @@ public class CalendarIDFMProducer extends NetexProducer {
                 exportableNetexData.getSharedDayTypes().put(netexDaytypeId, dayType);
 
                 DayTypeRefStructure dayTypeRef = netexFactory.createDayTypeRefStructure();
-                NetexProducerUtils.populateReference(timetable, dayTypeRef, true);
-                dayTypeRef.setRef(dayTypeRef.getRef() + ":LOC");
-                dayTypeRef.setVersion("any");
+                NetexProducerUtils.populateReferenceIDFM(timetable, dayTypeRef);
 
                 // Operating periods
                 for (int i = 0; i < timetable.getPeriods().size(); i++) {

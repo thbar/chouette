@@ -28,8 +28,8 @@ public class ExportedFilenamer {
 
 		StringBuilder b = new StringBuilder();
 		b.append("offre_");
-		if(line.getRegistrationNumber() != null){
-			b.append(line.getRegistrationNumber().replaceAll(UNDERSCORE, DASH));
+		if(line.getCodifligne() != null){
+			b.append(line.getCodifligne().replaceAll(UNDERSCORE, DASH));
 			b.append(UNDERSCORE);
 		}
 		if(line.getNumber() != null){

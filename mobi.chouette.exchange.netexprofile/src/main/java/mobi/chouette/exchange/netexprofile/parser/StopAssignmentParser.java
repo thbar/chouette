@@ -32,6 +32,10 @@ public class StopAssignmentParser extends NetexParser implements Parser, Constan
 			for (JAXBElement<? extends StopAssignment_VersionStructure> stopAssignmentElement : assignmentStruct.getStopAssignment()) {
 				PassengerStopAssignment stopAssignment = (PassengerStopAssignment) stopAssignmentElement.getValue();
 				JAXBElement<? extends ScheduledStopPointRefStructure> scheduledStopPointRef = stopAssignment.getScheduledStopPointRef();
+
+				// TODO à revoir pour changement de profil
+//				ScheduledStopPointRefStructure scheduledStopPointRef = stopAssignment.getScheduledStopPointRef();
+
 				QuayRefStructure quayRef = stopAssignment.getQuayRef();
 
 				mobi.chouette.model.StopArea quay = ObjectFactory.getStopArea(referential, quayRef.getRef());
@@ -40,6 +44,10 @@ public class StopAssignmentParser extends NetexParser implements Parser, Constan
 				}
 
 				ScheduledStopPoint scheduledStopPoint = ObjectFactory.getScheduledStopPoint(referential, scheduledStopPointRef.toString());
+
+				// TODO à revoir pour changement de profil
+//				ScheduledStopPoint scheduledStopPoint = ObjectFactory.getScheduledStopPoint(referential, scheduledStopPointRef.getRef());
+
 				scheduledStopPoint.setContainedInStopAreaRef(new SimpleObjectReference<>(quay));
 
 				

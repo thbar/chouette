@@ -18,13 +18,11 @@ public class RouteIDFMProducer extends NetexProducer implements NetexEntityProdu
     @Override
     public org.rutebanken.netex.model.Route produce(Context context, mobi.chouette.model.Route neptuneRoute) {
         org.rutebanken.netex.model.Route netexRoute = netexFactory.createRoute();
-        NetexProducerUtils.populateId(neptuneRoute, netexRoute);
+        NetexProducerUtils.populateIdAndVersionIDFM(neptuneRoute, netexRoute);
 
         netexRoute.setName(ConversionUtil.getMultiLingualString(neptuneRoute.getName()));
 
-        netexRoute.setLineRef(NetexProducerUtils.createLineRef(neptuneRoute.getLine(), netexFactory));
-        netexRoute.getLineRef().getValue().setRef(netexRoute.getLineRef().getValue().getRef() + ":LOC");
-        netexRoute.getLineRef().getValue().setVersion("any");
+        netexRoute.setLineRef(NetexProducerUtils.createLineIDFMRef(neptuneRoute.getLine(), netexFactory));
 
         netexRoute.setDirectionType(mapDirectionType(neptuneRoute.getDirection()));
 

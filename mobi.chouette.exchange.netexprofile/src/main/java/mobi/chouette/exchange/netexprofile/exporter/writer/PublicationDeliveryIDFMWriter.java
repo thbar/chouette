@@ -91,8 +91,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
     private static void writeCompositeFrameElement(Context context, XMLStreamWriter writer, ExportableData exportableData,
                                                    ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
         mobi.chouette.model.Line line = exportableData.getLine();
-        String[] splitObjectidLine = line.getObjectId().split(":");
-        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_OFFRE_LIGNE, splitObjectidLine[2]);
+        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_OFFRE_LIGNE, line.getCodifligne());
 
         try {
             writer.writeStartElement(COMPOSITE_FRAME);
@@ -100,7 +99,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
             writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
             writer.writeAttribute(ID, compositeFrameId);
 
-            //TODO modification fin page 30
+            writeElement(writer, NAME, line.getName());
 
             TypeOfFrameRefStructure typeOfFrameRefStructure = new TypeOfFrameRefStructure();
             typeOfFrameRefStructure.withRef(PARTICIPANT_REF_CONTENT + ":TypeOfFrame:" + NETEX_OFFRE_LIGNE + ":");

@@ -257,11 +257,11 @@ public class PublicationDeliveryParser extends NetexParser implements Parser, Co
 				parseNetwork(context, network);
 			}
 
-//			if (serviceFrame.getAdditionalNetworks() != null && serviceFrame.getAdditionalNetworks().getNetwork() != null) {
-//				for (Network network : serviceFrame.getAdditionalNetworks().getNetwork()) {
-//					parseNetwork(context, network);
-//				}
-//			}
+			if (serviceFrame.getAdditionalNetworks() != null && serviceFrame.getAdditionalNetworks().getNetwork() != null) {
+				for (Network network : serviceFrame.getAdditionalNetworks().getNetwork()) {
+					parseNetwork(context, network);
+				}
+			}
 
 			if (serviceFrame.getDestinationDisplays() != null) {
 				DestinationDisplaysInFrame_RelStructure destinationDisplaysInFrameStruct = serviceFrame.getDestinationDisplays();

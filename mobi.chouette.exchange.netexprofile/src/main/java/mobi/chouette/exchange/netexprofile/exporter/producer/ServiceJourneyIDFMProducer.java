@@ -32,30 +32,25 @@ public class ServiceJourneyIDFMProducer {
 
     private static KeyListStructureProducer keyListStructureProducer = new KeyListStructureProducer();
 
-    private static ContactStructureProducer contactStructureProducer = new ContactStructureProducer();
-
-    public ServiceJourney produce(Context context, VehicleJourney vehicleJourney, Line line) {
+    public ServiceJourney produce(Context context, VehicleJourney vehicleJourney) {
         ExportableData exportableData = (ExportableData) context.get(Constant.EXPORTABLE_DATA);
         ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(Constant.EXPORTABLE_NETEX_DATA);
 
         ServiceJourney serviceJourney = netexFactory.createServiceJourney();
-        NetexProducerUtils.populateId(vehicleJourney, serviceJourney);
+        NetexProducerUtils.populateIdAndVersionIDFM(vehicleJourney, serviceJourney);
 
         serviceJourney.setName(ConversionUtil.getMultiLingualString(vehicleJourney.getPublishedJourneyName()));
 
         JourneyPattern journeyPattern = vehicleJourney.getJourneyPattern();
         JourneyPatternRefStructure journeyPatternRefStruct = netexFactory.createJourneyPatternRefStructure();
-        NetexProducerUtils.populateReference(journeyPattern, journeyPatternRefStruct, true);
-        journeyPatternRefStruct.setRef(journeyPatternRefStruct.getRef().replace("JourneyPattern", "ServiceJourneyPattern"));
-        journeyPatternRefStruct.setRef(journeyPatternRefStruct.getRef() + ":LOC");
-        journeyPatternRefStruct.setVersion("any");
+        NetexProducerUtils.populateReferenceIDFM(journeyPattern, journeyPatternRefStruct);
         serviceJourney.setJourneyPatternRef(netexFactory.createJourneyPatternRef(journeyPatternRefStruct));
 
-        NoticeProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, exportableNetexData.getNoticeAssignmentsTimetableFrame(), vehicleJourney.getFootnotes(), vehicleJourney);
+        NoticeIDFMProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, serviceJourney, vehicleJourney.getFootnotes());
 
         if (vehicleJourney.getCompany() != null) {
             OperatorRefStructure operatorRefStruct = netexFactory.createOperatorRefStructure();
-            NetexProducerUtils.populateReference(vehicleJourney.getCompany(), operatorRefStruct, false);
+            NetexProducerUtils.populateReferenceIDFM(vehicleJourney.getCompany(), operatorRefStruct);
             serviceJourney.setOperatorRef(operatorRefStruct);
         }
 
@@ -68,9 +63,7 @@ public class ServiceJourneyIDFMProducer {
                 for (Timetable timetable : exportableData.getTimetables()) {
                     if (timetable.getObjectId().equals(t.getObjectId())) {
                         DayTypeRefStructure dayTypeRefStruct = netexFactory.createDayTypeRefStructure();
-                        NetexProducerUtils.populateReference(t, dayTypeRefStruct, false);
-                        dayTypeRefStruct.setRef(dayTypeRefStruct.getRef() + ":LOC");
-                        dayTypeRefStruct.setVersion("any");
+                        NetexProducerUtils.populateReferenceIDFM(t, dayTypeRefStruct);
                         dayTypeStruct.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRefStruct));
                     }
                 }
@@ -94,7 +87,7 @@ public class ServiceJourneyIDFMProducer {
 
                 if (arrivalTime != null) {
                     if (arrivalTime.equals(departureTime)) {
-                        if (!(i + 1 < vehicleJourneyAtStops.size())) {
+                        if (i > 0) {
                             NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, true, vehicleJourneyAtStop);
                         }
                     } else {
@@ -113,8 +106,6 @@ public class ServiceJourneyIDFMProducer {
                 }
 
                 passingTimesStruct.getTimetabledPassingTime().add(timetabledPassingTime);
-
-                NoticeProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, exportableNetexData.getNoticeAssignmentsTimetableFrame(), vehicleJourneyAtStop.getFootnotes(), vehicleJourneyAtStop);
             }
 
             serviceJourney.setPassingTimes(passingTimesStruct);

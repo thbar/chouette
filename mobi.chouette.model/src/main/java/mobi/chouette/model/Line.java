@@ -524,4 +524,10 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 		}
 		return variations;
 	}
+
+
+	@Getter
+	@Setter
+	@Column(name = "codifligne")
+	private String codifligne;
 }

@@ -139,10 +139,14 @@ public class NetexProducerUtils {
 		}
 	}
 
-	// TODO changement de profil IDFM Norvégien changer l'ID
 	public static String createUniqueId(Context context, String type) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
-		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+idCounter.incrementAndGet()+LOC;
+		return configuration.getDefaultCodespacePrefix() + OBJECT_ID_SPLIT_CHAR + type + OBJECT_ID_SPLIT_CHAR + idCounter.incrementAndGet();
+	}
+
+	public static String createUniqueIDFMId(Context context, String type) {
+		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+idCounter.incrementAndGet()+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
 	public static String createUniqueGeneralFrameId(Context context, String type, String typeFile, String time) {
@@ -222,7 +226,6 @@ public class NetexProducerUtils {
 	}
 
 
-	// TODO changement de profil IDFM Norvégien changer l'ID
 	public static void populateId(NeptuneIdentifiedObject source, EntityInVersionStructure destination) {
 		if(source == null || destination == null) {
 			log.error("Cannot set id since either source or destination is null");
@@ -234,8 +237,7 @@ public class NetexProducerUtils {
 		} else {
 			destination.setId(source.getObjectId());
 		}
-		destination.setId(destination.getId() + ":LOC");
-		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
+		destination.setVersion(source.getObjectVersion() == null ? "1" : source.getObjectVersion().toString());
 	}
 
 	public static void populateReference(NeptuneIdentifiedObject source, VersionOfObjectRefStructure destination, boolean withVersion) {
@@ -276,6 +278,89 @@ public class NetexProducerUtils {
 		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
 		NetexProducerUtils.populateReference(neptuneLine, lineRefStruct, true);
 		return netexFactory.createLineRef(lineRefStruct);
+	}
+
+	public static JAXBElement<? extends LineRefStructure> createLineIDFMRef(Line neptuneLine, ObjectFactory netexFactory) {
+		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
+		NetexProducerUtils.populateReferenceIDFM(neptuneLine, lineRefStruct);
+		lineRefStruct.setRef(lineRefStruct.getRef().replace(neptuneLine.getRegistrationNumber(), neptuneLine.getCodifligne()));
+		return netexFactory.createLineRef(lineRefStruct);
+	}
+
+	public static void populateIdAndVersionIDFM(NeptuneIdentifiedObject source, EntityInVersionStructure destination){
+		if(source == null || destination == null) {
+			log.error("Cannot set id since either source or destination is null");
+			return;
+		}
+		String newType = translateTypeIDFM(source);
+		if (newType != null) {
+			destination.setId(translateObjectId(source.getObjectId(), newType));
+		} else {
+			destination.setId(source.getObjectId());
+		}
+
+		if (!destination.getId().endsWith(OBJECT_ID_SPLIT_CHAR + LOC)){
+			destination.setId(destination.getId() + OBJECT_ID_SPLIT_CHAR + LOC);
+		}
+		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
+	}
+
+	public static void populateReferenceIDFM(NeptuneIdentifiedObject source, VersionOfObjectRefStructure destination) {
+		if(source == null || destination == null) {
+			log.error("Cannot set reference since either source or destination is null");
+			return;
+		}
+		String newType = translateTypeIDFM(source);
+		if (newType != null) {
+			destination.setRef(translateObjectId(source.getObjectId(), newType));
+		} else {
+			destination.setRef(source.getObjectId());
+		}
+		if (!destination.getRef().endsWith(OBJECT_ID_SPLIT_CHAR + LOC)){
+			destination.setRef(destination.getRef() + OBJECT_ID_SPLIT_CHAR + LOC);
+		}
+		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
+
+	}
+
+	public static String translateTypeIDFM(NeptuneObject v) {
+		if (v instanceof Timetable) {
+			return "DayType";
+		} else if (v instanceof Company) {
+			Company c = (Company) v;
+			if (OrganisationTypeEnum.Authority.equals(c.getOrganisationType())) {
+				return "Authority";
+			} else if (OrganisationTypeEnum.Operator.equals(c.getOrganisationType())) {
+				return "Operator";
+			} else {
+				return "GeneralOrganisation";
+			}
+		} else if (v instanceof VehicleJourney) {
+			return "ServiceJourney";
+		} else if (v instanceof JourneyPattern) {
+			return "ServiceJourneyPattern";
+		} else if (v instanceof StopArea) {
+			StopArea sa = (StopArea) v;
+			if (ChouetteAreaEnum.BoardingPosition.equals(sa.getAreaType())) {
+				return "Quay";
+			} else if (ChouetteAreaEnum.CommercialStopPoint.equals(sa.getAreaType())) {
+				return "StopPlace";
+			}
+		} else if(v instanceof Footnote) {
+			return "Notice";
+		} else if(v instanceof StopPoint) {
+			return "StopPointInJourneyPattern";
+		} else if(v instanceof VehicleJourneyAtStop) {
+			return "TimetabledPassingTime";
+		} else if(v instanceof Network) {
+			return "Network";
+		} else if (v instanceof RouteSection) {
+			return "ServiceLink";
+		}
+
+		return null;
+
+
 	}
 
 }

@@ -8,7 +8,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.netexFactory;
 import static mobi.chouette.exchange.netexprofile.exporter.writer.AbstractNetexWriter.PARTICIPANT_REF_CONTENT;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_STRUCTURE;
 
 public class TypeOfFrameWriter {
 

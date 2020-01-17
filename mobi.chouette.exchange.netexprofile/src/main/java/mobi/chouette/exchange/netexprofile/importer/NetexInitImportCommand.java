@@ -26,6 +26,9 @@ import mobi.chouette.dao.CodespaceDAO;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidatorFactory;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCalendarNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCommonNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMLineNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayCommonNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayLineNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
@@ -65,13 +68,23 @@ public class NetexInitImportCommand implements Command, Constant {
 
 			Map<String, NetexProfileValidator> availableProfileValidators = new HashMap<>();
 
+
+			// TODO variabiliser à travers une variable dans le .env la possibilité de switcher d'un profil à l'autre
+
+			// Register profiles for IDFM
+
+			NetexProfileValidator idfmLineValidator = NetexProfileValidatorFactory.create(IDFMLineNetexProfileValidator.class.getName(), context);
+			NetexProfileValidator idfmCalendarValidator = NetexProfileValidatorFactory.create(IDFMCalendarNetexProfileValidator.class.getName(), context);
+			NetexProfileValidator idfmCommonFileValidator = NetexProfileValidatorFactory.create(IDFMCommonNetexProfileValidator.class.getName(), context);
+
 			// Register profiles for Norway
 
-			NetexProfileValidator norwayLineValidator = NetexProfileValidatorFactory.create(NorwayLineNetexProfileValidator.class.getName(), context);
-			NetexProfileValidator norwayCommonFileValidator = NetexProfileValidatorFactory.create(NorwayCommonNetexProfileValidator.class.getName(), context);
+//			NetexProfileValidator norwayLineValidator = NetexProfileValidatorFactory.create(NorwayLineNetexProfileValidator.class.getName(), context);
+//			NetexProfileValidator norwayCommonFileValidator = NetexProfileValidatorFactory.create(NorwayCommonNetexProfileValidator.class.getName(), context);
 
-			registerProfileValidator(availableProfileValidators, norwayLineValidator);
-			registerProfileValidator(availableProfileValidators, norwayCommonFileValidator);
+			registerProfileValidator(availableProfileValidators, idfmLineValidator);
+			registerProfileValidator(availableProfileValidators, idfmCalendarValidator);
+			registerProfileValidator(availableProfileValidators, idfmCommonFileValidator);
 
 			context.put(NETEX_PROFILE_VALIDATORS, availableProfileValidators);
 
@@ -104,6 +117,8 @@ public class NetexInitImportCommand implements Command, Constant {
 		return result;
 	}
 
+
+	// TODO à revoir pour la partie -common
 	private void registerProfileValidator(Map<String, NetexProfileValidator> availableProfileValidators, NetexProfileValidator profileValidator) {
 		for (String supportedProfile : profileValidator.getSupportedProfiles()) {
 			availableProfileValidators.put(supportedProfile + (profileValidator.isCommonFileValidator() ? "-common" : ""), profileValidator);

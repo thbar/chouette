@@ -39,8 +39,8 @@ public class NoticeProducer extends NetexProducer {
 			NetexProducerUtils.populateReference(noticedObject, noticedObjectRef, true);
 
 			String noticeAssignmentId = NetexProducerUtils.createUniqueId(context, NOTICE_ASSIGNMENT);
-			NoticeAssignment noticeAssignment = netexFactory.createNoticeAssignment().withVersion("any").withId(noticeAssignmentId)
-					.withOrder(BigInteger.valueOf(0)).withNoticeRef(noticeRefStruct).withNoticedObjectRef(noticedObjectRef);
+			NoticeAssignment noticeAssignment = netexFactory.createNoticeAssignment().withVersion("1").withId(noticeAssignmentId)
+					.withOrder(BigInteger.valueOf(destination.size() + 1)).withNoticeRef(noticeRefStruct).withNoticedObjectRef(noticedObjectRef);
 
 			destination.add(noticeAssignment);
 		}

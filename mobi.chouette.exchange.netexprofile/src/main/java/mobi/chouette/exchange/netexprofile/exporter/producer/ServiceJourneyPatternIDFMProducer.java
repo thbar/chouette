@@ -14,20 +14,19 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ServiceJourneyPatternProducer extends NetexProducer {
+public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
 
     public org.rutebanken.netex.model.ServiceJourneyPattern produce(JourneyPattern journeyPattern) {
         org.rutebanken.netex.model.ServiceJourneyPattern netexServiceJourneyPattern = netexFactory.createServiceJourneyPattern();
-        netexServiceJourneyPattern.setId(journeyPattern.getObjectId().replace("JourneyPattern", "ServiceJourneyPattern") + ":LOC");
-        netexServiceJourneyPattern.setVersion("any");
+
+        NetexProducerUtils.populateIdAndVersionIDFM(journeyPattern, netexServiceJourneyPattern);
 
         MultilingualString serviceJourneyPatternName = new MultilingualString();
         serviceJourneyPatternName.setValue(journeyPattern.getName());
         netexServiceJourneyPattern.setName(serviceJourneyPatternName);
 
         RouteRefStructure routeRefStructure = new RouteRefStructure();
-        routeRefStructure.setRef(journeyPattern.getRoute().getObjectId() + ":LOC");
-        routeRefStructure.setVersion("any");
+        NetexProducerUtils.populateReferenceIDFM(journeyPattern.getRoute(), routeRefStructure);
         netexServiceJourneyPattern.setRouteRef(routeRefStructure);
 
         for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
@@ -48,15 +47,12 @@ public class ServiceJourneyPatternProducer extends NetexProducer {
 
         for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
             StopPointInJourneyPattern stopPointInJourneyPattern = new StopPointInJourneyPattern();
-            NetexProducerUtils.populateId(stopPoint, stopPointInJourneyPattern);
-            stopPointInJourneyPattern.setVersion("any");
+            NetexProducerUtils.populateIdAndVersionIDFM(stopPoint, stopPointInJourneyPattern);
 
             stopPointInJourneyPattern.setOrder(BigInteger.valueOf(stopPoint.getPosition() + 1));
 
             ScheduledStopPointRefStructure scheduledStopPointRefStructure = netexFactory.createScheduledStopPointRefStructure();
-            scheduledStopPointRefStructure.setVersion("any");
-            NetexProducerUtils.populateReference(stopPoint.getScheduledStopPoint(), scheduledStopPointRefStructure, false);
-            scheduledStopPointRefStructure.setRef(scheduledStopPointRefStructure.getRef() + ":LOC");
+            NetexProducerUtils.populateReferenceIDFM(stopPoint.getScheduledStopPoint(), scheduledStopPointRefStructure);
             stopPointInJourneyPattern.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(scheduledStopPointRefStructure));
 
             pointInLinkSequence_versionedChildStructures.add(stopPointInJourneyPattern);

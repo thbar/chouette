@@ -62,7 +62,7 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
     static void writeServiceJourneyPatternsElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller){
         try {
-            for (org.rutebanken.netex.model.ServiceJourneyPattern serviceJourneyPattern : exportableNetexData.getServiceJourneyPattern()) {
+            for (org.rutebanken.netex.model.ServiceJourneyPattern serviceJourneyPattern : exportableNetexData.getServiceJourneyPatterns()) {
                 marshaller.marshal(netexFactory.createServiceJourneyPattern(serviceJourneyPattern), writer);
             }
         } catch (Exception e) {

@@ -142,7 +142,7 @@ public class ExportableNetexData {
 
     @Getter
     @Setter
-    private List<ServiceJourneyPattern> serviceJourneyPattern = new ArrayList<>();
+    private List<ServiceJourneyPattern> serviceJourneyPatterns = new ArrayList<>();
 
 
     public void clear() {
@@ -150,11 +150,12 @@ public class ExportableNetexData {
         line = null;
         routes.clear();
         journeyPatterns.clear();
-        serviceJourneys. clear();
+        serviceJourneys.clear();
         noticeAssignmentsServiceFrame.clear();
         noticeAssignmentsTimetableFrame.clear();
         serviceJourneyInterchanges.clear();
         directions.clear();
+        serviceJourneyPatterns.clear();
     }
 
     public void dispose() {

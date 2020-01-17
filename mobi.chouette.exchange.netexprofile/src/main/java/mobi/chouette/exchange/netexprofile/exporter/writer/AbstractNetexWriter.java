@@ -1,6 +1,6 @@
 package mobi.chouette.exchange.netexprofile.exporter.writer;
 
-import mobi.chouette.exchange.netexprofile.importer.validation.norway.AbstractNorwayNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.AbstractIDFMNetexProfileValidator;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -11,16 +11,16 @@ import java.time.temporal.ChronoField;
 public class AbstractNetexWriter {
 
     //TODO changer les infos ci dessous pour changement de profil
-    static final String NETEX_PROFILE_VERSION = AbstractNorwayNetexProfileValidator.EXPORT_PROFILE_ID;
+    static final String NETEX_PROFILE_VERSION = AbstractIDFMNetexProfileValidator.EXPORT_PROFILE_ID;
     static final String DEFAULT_ZONE_ID = "Europe/Paris";
     static final String DEFAULT_LANGUAGE_CODE = "fr";
-    static final String NSR_XMLNS = "MOSAIC";
-	static final String PARTICIPANT_REF_CONTENT = "FR1";
 
-
+    static final String NSR_XMLNS = AbstractIDFMNetexProfileValidator.NSR_XMLNS;
+    static final String PARTICIPANT_REF_CONTENT = AbstractIDFMNetexProfileValidator.PARTICIPANT_REF_CONTENT;
 
     static final String VERSION = "version";
     static final String ID = "id";
+    static final String NAME = "Name";
     static final String CREATED = "created";
     static final String XMLNS = "Xmlns";
     static final String XMLNSURL = "XmlnsUrl";
