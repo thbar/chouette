@@ -19,9 +19,11 @@
         <version.ejb.plugin>2.4</version.ejb.plugin>
         <version.ear.plugin>2.9.1</version.ear.plugin>
         <shrinkwrap.bom-version>2.1.1</shrinkwrap.bom-version>
-        <postgresql.version>42.2.5</postgresql.version>
+        <!-- <postgresql.version>9.3-1103-jdbc41</postgresql.version>
+        <postgis.version>2.1.7.2</postgis.version> -->
+        <postgresql.version>9.4-1206-jdbc41</postgresql.version>
         <postgis.version>2.2.1</postgis.version>
-        <hibernate-spatial.version>4.3</hibernate-spatial.version>
+        <hibernate-spatial.version>5.3.6-Final</hibernate-spatial.version>
         <jts.version>1.13</jts.version>
         <arquillian-version>1.1.11.Final</arquillian-version>
         <project.rootDir>${project.basedir}</project.rootDir>
@@ -165,9 +167,7 @@
                                     <artifactId>postgresql</artifactId>
                                     <version>${postgresql.version}</version>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>
-                                        ${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main
-                                    </outputDirectory>
+                                    <outputDirectory>${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>net.postgis</groupId>
@@ -229,8 +229,7 @@
                 <version>2.17</version>
                 <configuration>
                     <argLine>-Djboss.socket.binding.port-offset=300
-                        -XX:MaxPermSize=256m
-                    </argLine>
+                        -XX:MaxPermSize=256m</argLine>
                     <!-- Fork every test because it will launch a separate AS instance -->
                     <forkCount>1</forkCount>
                     <systemPropertyVariables>

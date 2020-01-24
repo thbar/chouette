@@ -33,7 +33,7 @@
 					<dependency>
 						<groupId>org.hibernate</groupId>
 						<artifactId>hibernate-jpamodelgen</artifactId>
-						<version>4.3.7.Final</version>
+						<version>5.3.6.Final</version>
 					</dependency>
 				</dependencies>
 			</plugin>

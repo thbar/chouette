@@ -13,7 +13,6 @@
       <skipInitDb>true</skipInitDb>
       <earName>chouette</earName>
    </properties>
-
 	<build>
       <resources>
          <resource>
