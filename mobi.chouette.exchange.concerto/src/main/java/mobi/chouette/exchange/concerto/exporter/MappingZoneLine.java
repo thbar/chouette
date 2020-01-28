@@ -7,10 +7,10 @@ import lombok.Setter;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class MappingLineZder {
+public class MappingZoneLine {
     @Getter
     @Setter
-    String zder;
+    String zone;
 
     @Getter
     @Setter

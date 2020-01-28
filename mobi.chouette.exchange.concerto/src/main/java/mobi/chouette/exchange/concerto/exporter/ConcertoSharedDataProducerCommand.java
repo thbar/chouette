@@ -22,6 +22,7 @@ import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
 import mobi.chouette.exchange.concerto.model.ConcertoOperatorObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdepObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZderObjectIdGenerator;
+import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdlrObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.StopAreaTypeEnum;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoExporter;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -114,7 +115,8 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		List<StopArea> zderStops = new ArrayList<>();
 		List<StopArea> zdlrStops = new ArrayList<>();
-		MapperLinesAndZders mapperLinesAndZders = new MapperLinesAndZders();
+		MapperLinesAndZone mapperLinesAndZders = new MapperLinesAndZone();
+		MapperLinesAndZone mapperLinesAndZdlrs = new MapperLinesAndZone();
 
 
 		// operator / company
@@ -131,7 +133,8 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			StopArea stopZder = createStopZder(stop, zderStops);
 			lineIdArray = getLineUuids(mappingLineUUIDList, scheduledStopPoints, stop, lineIdArray);
 			zderStops = addZderStopIfNotExists(zderStops, stopZder);
-			mapperLinesAndZders.addMappingLineZders(stop.getMappingHastusZdep().getZder(), lineIdArray);
+			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
+			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
 			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
 			stopProducer.save(stop, stopZder, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDEP);
 		}
@@ -139,7 +142,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		//zder
 		for (StopArea stop : zderStops) {
 			if(stop.getMappingHastusZdep() == null) continue;
-			UUID[] lineIdArray = mapperLinesAndZders.getLinesForZder(stop.getMappingHastusZdep().getZder());
+			UUID[] lineIdArray = mapperLinesAndZders.getLinesForZone(stop.getMappingHastusZdep().getZder());
 			StopArea stopZdlr = createStopZdlr(stop, zdlrStops);
 			zdlrStops = addZdlrStopIfNotExists(zderStops, stopZdlr);
 			ConcertoObjectId objectId = ConcertoStopAreaZderObjectIdGenerator.getConcertoObjectId(stop);
@@ -147,13 +150,12 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		}
 
 		//zdlr
-		/*
 		for (StopArea stop : zdlrStops) {
-			UUID[] lineIdArray = new UUID[0];
+			if(stop.getMappingHastusZdep() == null) continue;
+			UUID[] lineIdArray = mapperLinesAndZdlrs.getLinesForZone(stop.getMappingHastusZdep().getZdlr());
 			ConcertoObjectId objectId = ConcertoStopAreaZdlrObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, null, startDate, endDate, objectId, lineIdArray);
+			stopProducer.save(stop, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDLR);
 		}
-		 */
 
 		for (Company company : companies) {
 			ConcertoObjectId objectId = ConcertoOperatorObjectIdGenerator.getConcertoObjectId(ContextHolder.getContext());

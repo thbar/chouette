@@ -18,6 +18,9 @@ import org.joda.time.LocalDate;
 
 import java.util.UUID;
 
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDEP;
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDLR;
+
 /**
  * Data pour stop_area
  */
@@ -49,9 +52,24 @@ public class ConcertoStopProducer extends AbstractProducer
 	}
 
 	private void save(StopArea neptuneObject, StopArea referent, LocalDate date, UUID uuid, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType){
+		switch(stopAreaType) {
+			case ZDEP:
+				break;
+			case ZDER:
+				if(neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZder() == null)
+					return;
+				break;
+			case ZDLR:
+				if(neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZdlr() == null)
+					return;
+				break;
+			default:
+				return;
+		}
+
 		stop.setType(TYPE);
 		stop.setUuid(uuid);
-		if(stopAreaType == StopAreaTypeEnum.ZDEP && referent != null){
+		if(stopAreaType == ZDEP && referent != null){
 			stop.setReferent_uuid(referent.getUuid());
 		} else {
 			stop.setReferent_uuid(null);
@@ -59,7 +77,7 @@ public class ConcertoStopProducer extends AbstractProducer
 
 		// If name is empty, try to use parent name
 		String name = neptuneObject.getName();
-		if (name == null && neptuneObject.getParent() != null) {
+		if (stopAreaType == ZDLR && neptuneObject.getParent() != null) {
 			name = neptuneObject.getParent().getName();
 		}
 		if(name == null) {
@@ -79,7 +97,11 @@ public class ConcertoStopProducer extends AbstractProducer
 		stop.setAttributes("{}");
 		stop.setReferences("{}");
 		stop.setCollectedAlways(true);
-		stop.setCollectChildren(false);
+		if(stopAreaType == ZDLR) {
+			stop.setCollectChildren(true);
+		} else {
+			stop.setCollectChildren(false);
+		}
 		stop.setCollectGeneralMessages(true);
 		try
 		{

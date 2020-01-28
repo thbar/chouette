@@ -6,7 +6,9 @@ public class ConcertoStopAreaZdlrObjectIdGenerator {
     public static ConcertoObjectId getConcertoObjectId(StopArea stop){
         ConcertoObjectId concertoObjectId = new ConcertoObjectId();
         try {
-            concertoObjectId.setStif("STIF:StopPoint:Q:" + stop.getMappingHastusZdep().getZder() + ":");
+            concertoObjectId.setStif("STIF:StopArea:SP:" + stop.getMappingHastusZdep().getZdlr() + ":");
+            // ie {"stif":"STIF:StopArea:SP:57769:"}
+            // 1a584c21-3935-44ed-98c4-fe4005db53c9
         } catch(Exception e){
             concertoObjectId.setHastus(stop.getMappingHastusZdep().getHastusChouette());
             // le point nest pas idfm on zappe

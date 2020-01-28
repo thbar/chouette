@@ -1,11 +1,3 @@
-/**
- * Projet CHOUETTE
- *
- * ce projet est sous license libre
- * voir LICENSE.txt pour plus de details
- *
- */
-
 package mobi.chouette.exchange.concerto.exporter;
 
 import com.jamonapi.Monitor;
@@ -34,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- *
- */
+//@todo SCH revoir les trucs de reporters etc après avoir vu le chargement des données
 @Log4j
 public class ConcertoLineProducerCommand implements Command, Constant {
 	public static final String COMMAND = "ConcertoLineProducerCommand";
