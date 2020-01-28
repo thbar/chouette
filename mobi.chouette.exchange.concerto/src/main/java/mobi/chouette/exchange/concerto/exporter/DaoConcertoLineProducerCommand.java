@@ -43,7 +43,7 @@ public class DaoConcertoLineProducerCommand implements Command, Constant
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean execute(Context context) throws Exception {
+	public boolean execute(Context context) {
 		boolean result = ERROR;
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
@@ -52,13 +52,10 @@ public class DaoConcertoLineProducerCommand implements Command, Constant
 			Long lineId = (Long) context.get(LINE_ID);
 			Line line = lineDAO.find(lineId);
 			InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
-			// @todo sch est ce que ça sert
-			// initialContext.addToEnvironment(SCHEDULED_STOP_POINTS, context.get(SCHEDULED_STOP_POINTS));
 			Command export = CommandFactory.create(initialContext, ConcertoLineProducerCommand.class.getName());
 			
 			context.put(LINE, line);
 			result = export.execute(context);
-			//daoContext.setRollbackOnly();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} finally {

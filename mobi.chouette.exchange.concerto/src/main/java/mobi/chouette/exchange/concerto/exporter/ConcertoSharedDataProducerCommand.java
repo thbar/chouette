@@ -31,10 +31,9 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 import mobi.chouette.persistence.hibernate.ContextHolder;
-import org.hibernate.Hibernate;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
@@ -89,12 +88,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		ConcertoOperatorProducer operatorProducer = null;
 		ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>)context.get(MAPPING_LINE_UUID);
-		List<ScheduledStopPoint> scheduledStopPoints = (List<ScheduledStopPoint>) context.get(SCHEDULED_STOP_POINTS);
-		scheduledStopPoints.forEach(scheduledStopPoint -> {
-			Hibernate.initialize(scheduledStopPoint.getStopPoints());
-			scheduledStopPoint.getStopPoints().forEach(
-					stopPoint -> Hibernate.initialize(stopPoint.getRoute().getLine()));
-		});
+		List<StopPoint> stopPointList = collection.getAllParsedStopPoints();
 
 		LocalDate startDate;
 		if (parameters.getStartDate() != null) {
@@ -131,7 +125,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			if(stop.getMappingHastusZdep() == null) continue;
 			UUID[] lineIdArray = new UUID[0];
 			StopArea stopZder = createStopZder(stop, zderStops);
-			lineIdArray = getLineUuids(mappingLineUUIDList, scheduledStopPoints, stop, lineIdArray);
+			lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray);
 			zderStops = addZderStopIfNotExists(zderStops, stopZder);
 			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
 			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
@@ -188,8 +182,8 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		return stops;
 	}
 
-	private UUID[] getLineUuids(List<MappingLineUUID> mappingLineUUIDList, List<ScheduledStopPoint> scheduledStopPoints, StopArea stop, UUID[] lineIdArray) {
-		List<Line> lines = getUsedLines(scheduledStopPoints, stop);
+	private UUID[] getLineUuids(List<MappingLineUUID> mappingLineUUIDList, List<StopPoint> stopPointList, StopArea stop, UUID[] lineIdArray) {
+		List<Line> lines = getUsedLines(stopPointList, stop);
 		if(lines.size() > 0) {
 			List<UUID> uuids = lines.stream()
 					.map(line -> mappingLineUUIDList.stream()
@@ -205,12 +199,11 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		return lineIdArray;
 	}
 
-	private List<Line> getUsedLines(List<ScheduledStopPoint> scheduledStopPoints, StopArea stop) {
-		List<Line> lines = scheduledStopPoints.stream()
-				.filter(ssp -> ssp.getContainedInStopAreaRef().getObjectId().equals(stop.getObjectId()))
-				.map(ScheduledStopPoint::getStopPoints)
-				.flatMap(List::stream)
+	private List<Line> getUsedLines(List<StopPoint> stopPointList, StopArea stop) {
+		List<Line> lines = stopPointList.stream()
+				.filter(sp ->  sp.getScheduledStopPoint().getContainedInStopAreaRef().getObjectId().equals(stop.getObjectId()))
 				.map(stopPoint -> stopPoint.getRoute().getLine())
+				.distinct()
 				.collect(Collectors.toList());
 		return lines;
 	}

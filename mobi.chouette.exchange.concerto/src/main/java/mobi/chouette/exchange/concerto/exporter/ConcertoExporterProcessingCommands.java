@@ -50,7 +50,6 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
-			initialContext.addToEnvironment(SCHEDULED_STOP_POINTS, context.get(SCHEDULED_STOP_POINTS));
 			if (withDao)
 				commands.add(CommandFactory.create(initialContext, DaoConcertoLineProducerCommand.class.getName()));
 			else

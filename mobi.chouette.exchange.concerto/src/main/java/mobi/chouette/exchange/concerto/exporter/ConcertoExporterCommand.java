@@ -12,7 +12,6 @@ import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
-import mobi.chouette.model.ScheduledStopPoint;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -21,7 +20,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
-import java.util.List;
 
 @Log4j
 @Stateless(name = ConcertoExporterCommand.COMMAND)
@@ -38,9 +36,6 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 		boolean result = ERROR;
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		ActionReporter reporter = ActionReporter.Factory.getInstance();
-
-        List<ScheduledStopPoint> scheduledStopPointList = scheduledStopPointDAO.findAll();
-        context.put(SCHEDULED_STOP_POINTS, scheduledStopPointList);
 
 		// initialize reporting and progression
 		ProgressionCommand progression = (ProgressionCommand) CommandFactory.create(initialContext,

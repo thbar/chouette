@@ -59,6 +59,13 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 				return SUCCESS;
 			}
 
+			if (!line.getCategoriesForLine().getName().equals("IDFM")) {
+				log.info("Ignoring line not idm: " + line.getObjectId());
+				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
+						ActionReporter.ERROR_CODE.INVALID_FORMAT, "not an idfm line");
+				return SUCCESS;
+			}
+
 			LocalDate startDate;
 			if (parameters.getStartDate() != null) {
 				startDate = LocalDate.fromDateFields(parameters.getStartDate());

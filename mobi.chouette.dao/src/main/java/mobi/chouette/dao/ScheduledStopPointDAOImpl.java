@@ -1,9 +1,6 @@
 package mobi.chouette.dao;
 
-import mobi.chouette.model.Route;
 import mobi.chouette.model.ScheduledStopPoint;
-import mobi.chouette.model.StopPoint;
-import org.hibernate.Hibernate;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -22,24 +19,6 @@ public class ScheduledStopPointDAOImpl extends GenericDAOImpl<ScheduledStopPoint
 	@PersistenceContext(unitName = "referential")
 	public void setEntityManager(EntityManager em) {
 		this.em = em;
-	}
-
-	@Override
-	//@todo SCH voir comment les datas s'initialisent sans faire d'hibernate initialize sur un findall sale
-	public List<ScheduledStopPoint> findAll()
-	{
-		List<ScheduledStopPoint> all = super.findAll();
-		for (ScheduledStopPoint scheduledStopPoint : all) {
-			Hibernate.initialize(scheduledStopPoint.getStopPoints());
-			Hibernate.initialize(scheduledStopPoint.getContainedInStopAreaRef());
-			for (StopPoint stopPoint : scheduledStopPoint.getStopPoints()) {
-				Hibernate.initialize(stopPoint.getRoute());
-				Route route = stopPoint.getRoute();
-				Hibernate.initialize(route.getLine());
-				route.getObjectId();
-			}
-		}
-		return all;
 	}
 
 	@Override

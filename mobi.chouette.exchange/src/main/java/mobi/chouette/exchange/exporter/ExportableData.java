@@ -1,12 +1,5 @@
 package mobi.chouette.exchange.exporter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import lombok.Getter;
 import lombok.Setter;
 import mobi.chouette.model.AccessLink;
@@ -25,6 +18,13 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ExportableData {
 	// private Network network;
@@ -92,6 +92,9 @@ public class ExportableData {
 	@Getter
 	@Setter
 	private List<StopPoint> stopPoints = new ArrayList<>();
+	@Getter
+	@Setter
+	private List<StopPoint> allParsedStopPoints = new ArrayList<>();
 	@Getter
 	@Setter
 	private Set<Footnote> footnotes = new HashSet<>();
