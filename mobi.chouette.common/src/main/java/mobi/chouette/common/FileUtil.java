@@ -1,5 +1,12 @@
 package mobi.chouette.common;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,16 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 public class FileUtil {
 
@@ -186,6 +187,35 @@ public class FileUtil {
 
 		zos.closeEntry();
 		fis.close();
+	}
+
+	public static void mergeFilesInPath(String path, String filename) throws IOException {
+
+		File directoryToZip = new File(path);
+		List<File> fileList = new ArrayList<File>();
+		getAllFiles(directoryToZip, fileList);
+		fileList.sort(Comparator.comparing(File::getName));
+
+		try {
+			FileOutputStream fileOutputStream = new FileOutputStream(filename);
+			for (File file : fileList) {
+				if (!file.isDirectory()) { // we only merge files, not directories
+					FileInputStream fileInputStream = new FileInputStream(file);
+					byte[] buffer = new byte[1024];
+					int length;
+					while ((length = fileInputStream.read(buffer)) > 0) {
+						fileOutputStream.write(buffer, 0, length);
+					}
+					fileInputStream.close();
+				}
+			}
+			fileOutputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

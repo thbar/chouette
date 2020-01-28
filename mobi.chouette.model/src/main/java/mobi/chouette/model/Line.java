@@ -7,8 +7,17 @@
  */
 package mobi.chouette.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import mobi.chouette.model.type.TransportModeNameEnum;
+import mobi.chouette.model.type.TransportSubModeNameEnum;
+import mobi.chouette.model.type.UserNeedEnum;
+import mobi.chouette.model.util.ObjectIdTypes;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -27,19 +36,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import mobi.chouette.model.type.TransportModeNameEnum;
-import mobi.chouette.model.type.TransportSubModeNameEnum;
-import mobi.chouette.model.type.UserNeedEnum;
-import mobi.chouette.model.util.ObjectIdTypes;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chouette Line : a group of Routes which is generally known to the public by a
@@ -73,6 +71,26 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 	@Getter
 	@Column(name = "name")
 	private String name;
+
+
+	/**
+	 * codifligne
+	 *
+	 * @return The actual value
+	 */
+	@Getter
+	@Column(name = "codifligne")
+	private String codifligne;
+
+	/**
+	 * Catégorie reference
+	 *
+	 * @return The actual value
+	 */
+	@Getter
+	@ManyToOne(cascade = { CascadeType.PERSIST })
+	@JoinColumn(name = "categories_for_line_id")
+	private CategoriesForLines categoriesForLine;
 
 	/**
 	 * set name <br/>
