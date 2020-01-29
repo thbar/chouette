@@ -1,6 +1,7 @@
 package mobi.chouette.exchange;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ProviderReferentialID {
     public static HashMap<String, String> providers = new HashMap<>();
@@ -20,5 +21,14 @@ public class ProviderReferentialID {
         providers.put("MOBICITE469", "MOBICITE469");
         providers.put("RDLA", "RDLA");
         providers.put("CTVH", "CTVH");
+        generateSuperSpaceProviders();
+    }
+
+    private static void generateSuperSpaceProviders() {
+        HashMap<String, String> providers = new HashMap<>();
+        for (Map.Entry me : ProviderReferentialID.providers.entrySet()) {
+            providers.put("MOSAIC_" + me.getKey().toString(), me.getValue().toString());
+        }
+        ProviderReferentialID.providers.putAll(providers);
     }
 }
