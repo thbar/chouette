@@ -1,17 +1,16 @@
 package mobi.chouette.model.blueprint;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.type.ConnectionLinkTypeEnum;
-
 import com.tobedevoured.modelcitizen.annotation.Blueprint;
 import com.tobedevoured.modelcitizen.annotation.Default;
 import com.tobedevoured.modelcitizen.annotation.Mapped;
 import com.tobedevoured.modelcitizen.field.FieldCallback;
-import org.joda.time.Duration;
+import mobi.chouette.model.ConnectionLink;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.type.ConnectionLinkTypeEnum;
+
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 @Blueprint(ConnectionLink.class)
@@ -45,13 +44,13 @@ public class ConnectionLinkBlueprint
    BigDecimal linkDistance = new BigDecimal(2);
 
    @Default
-   Duration defaultDuration = new Duration(173335738);
+   Duration defaultDuration = Duration.ofNanos(173335738);
 
    @Default
-   Duration frequentTravellerDuration = new Duration(173335738);
+   Duration frequentTravellerDuration = Duration.ofNanos(173335738);
 
    @Default
-   Duration occasionalTravellerDuration = new Duration(173335738);
+   Duration occasionalTravellerDuration = Duration.ofNanos(173335738);
 
    @Default
    int objectVersion = 1;
@@ -60,7 +59,7 @@ public class ConnectionLinkBlueprint
    ConnectionLinkTypeEnum linkType = ConnectionLinkTypeEnum.Mixed;
 
    @Default
-   Duration mobilityRestrictedTravellerDuration = new Duration(1908888);
+   Duration mobilityRestrictedTravellerDuration = Duration.ofNanos(1908888);
 
    @Mapped
    boolean mobilityRestrictedSuitable = true;

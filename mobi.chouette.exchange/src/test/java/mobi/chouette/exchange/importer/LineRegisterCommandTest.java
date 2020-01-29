@@ -1,18 +1,17 @@
 package mobi.chouette.exchange.importer;
 
-import java.io.StringWriter;
-import javax.naming.InitialContext;
-
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
-
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import javax.naming.InitialContext;
+import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class LineRegisterCommandTest implements Constant {
 	
@@ -35,13 +34,13 @@ public class LineRegisterCommandTest implements Constant {
 	    VehicleJourneyAtStop vjas = new VehicleJourneyAtStop();
 	    vjas.setObjectId("ObjectID");
 	    vjas.setObjectVersion(1);
-	    vjas.setCreationTime(new LocalDateTime(2000,2,1,0,0));
+	    vjas.setCreationTime(LocalDateTime.of(2000,2,1,0,0));
 	    vjas.setCreatorId("creatorId");
         vjas.setStopPoint(sp);
 	    
-        vjas.setArrivalTime(new LocalTime(23,59,0));
+        vjas.setArrivalTime(LocalTime.of(23,59,0));
         
-        vjas.setDepartureTime(new LocalTime(0,5,0));
+        vjas.setDepartureTime(LocalTime.of(0,5,0));
         vjas.setArrivalDayOffset(0);
         
         vjas.setDepartureDayOffset(1);

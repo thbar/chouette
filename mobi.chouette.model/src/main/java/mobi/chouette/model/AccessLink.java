@@ -1,8 +1,15 @@
 package mobi.chouette.model;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import mobi.chouette.model.converter.ConnectionLinkTypeToStringConverter;
+import mobi.chouette.model.type.ConnectionLinkTypeEnum;
+import mobi.chouette.model.type.LinkOrientationEnum;
+import mobi.chouette.model.type.UserNeedEnum;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -17,21 +24,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import mobi.chouette.model.converter.ConnectionLinkTypeToStringConverter;
-import mobi.chouette.model.type.ConnectionLinkTypeEnum;
-import mobi.chouette.model.type.LinkOrientationEnum;
-import mobi.chouette.model.type.UserNeedEnum;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.joda.time.Duration;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chouette AccessLink : relation between an AccessPoint and a StopArea
@@ -166,7 +162,6 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "default_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration defaultDuration;
 
 	/**
@@ -179,7 +174,6 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "frequent_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration frequentTravellerDuration;
 
 	/**
@@ -193,7 +187,6 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "occasional_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration occasionalTravellerDuration;
 
 	/**
@@ -206,7 +199,6 @@ public class AccessLink extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "mobility_restricted_traveller_duration")
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration mobilityRestrictedTravellerDuration;
 
 	/**

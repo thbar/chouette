@@ -9,10 +9,14 @@ import mobi.chouette.common.file.LocalFileStore;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Link;
 import org.apache.commons.io.IOUtils;
-import org.joda.time.LocalDateTime;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.inject.Named;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,16 +25,21 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static mobi.chouette.common.Constant.*;
+import static mobi.chouette.common.Constant.ACTION_PARAMETERS_FILE;
+import static mobi.chouette.common.Constant.PARAMETERS_FILE;
+import static mobi.chouette.common.Constant.REPORT_FILE;
+import static mobi.chouette.common.Constant.VALIDATION_FILE;
+import static mobi.chouette.common.Constant.VALIDATION_PARAMETERS_FILE;
 import static mobi.chouette.common.PropertyNames.FILE_STORE_IMPLEMENTATION;
 import static mobi.chouette.service.CachingGoogleCloudFileStore.BEAN_NAME;
 
@@ -84,7 +93,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
             }
 
             if (cacheHistoryDays == null) {
-                syncedUntil = LocalDateTime.fromDateFields(new Date(0));
+                syncedUntil = LocalDateTime.from(Instant.EPOCH);
             } else {
                 syncedUntil = LocalDateTime.now().minusDays(cacheHistoryDays);
             }

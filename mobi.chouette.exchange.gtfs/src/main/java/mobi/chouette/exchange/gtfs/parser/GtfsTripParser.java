@@ -8,34 +8,73 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
-import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.gtfs.model.*;
+import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
+import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+import mobi.chouette.exchange.gtfs.model.GtfsShape;
+import mobi.chouette.exchange.gtfs.model.GtfsStop;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
+import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.DropOffType;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.PickupType;
+import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer.TransferType;
+import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip.DirectionType;
-import mobi.chouette.exchange.gtfs.model.importer.*;
+import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
+import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
+import mobi.chouette.exchange.gtfs.model.importer.Index;
+import mobi.chouette.exchange.gtfs.model.importer.RouteById;
+import mobi.chouette.exchange.gtfs.model.importer.ShapeById;
+import mobi.chouette.exchange.gtfs.model.importer.StopById;
+import mobi.chouette.exchange.gtfs.model.importer.StopTimeByTrip;
 import mobi.chouette.exchange.gtfs.validation.Constant;
 import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
-import mobi.chouette.model.*;
-import mobi.chouette.model.type.*;
+import mobi.chouette.model.DestinationDisplay;
+import mobi.chouette.model.Interchange;
+import mobi.chouette.model.JourneyFrequency;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.RoutePoint;
+import mobi.chouette.model.RouteSection;
+import mobi.chouette.model.ScheduledStopPoint;
+import mobi.chouette.model.SimpleObjectReference;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.Timeband;
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingPossibilityEnum;
+import mobi.chouette.model.type.JourneyCategoryEnum;
+import mobi.chouette.model.type.PTDirectionEnum;
+import mobi.chouette.model.type.SectionStatusEnum;
+import mobi.chouette.model.type.TransportModeNameEnum;
+import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.ObjectIdTypes;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.Duration;
-import org.joda.time.LocalTime;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Log4j
@@ -593,7 +632,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 Interchange interchange = createInterchange(referential, configuration, gtfsTransfer);
 
                 if (gtfsTransfer.getMinTransferTime() != null && gtfsTransfer.getTransferType() == TransferType.Minimal) {
-                    interchange.setMinimumTransferTime(Duration.standardSeconds(gtfsTransfer.getMinTransferTime()));
+                    interchange.setMinimumTransferTime(Duration.ofSeconds(gtfsTransfer.getMinTransferTime()));
                     interchange.setGuaranteed(Boolean.FALSE);
                 } else if (gtfsTransfer.getTransferType().equals(TransferType.Timed)) {
                     interchange.setGuaranteed(Boolean.TRUE);
@@ -624,7 +663,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 Interchange interchange = createInterchange(referential, configuration, gtfsTransfer);
 
                 if (gtfsTransfer.getMinTransferTime() != null && gtfsTransfer.getTransferType() == TransferType.Minimal) {
-                    interchange.setMinimumTransferTime(Duration.standardSeconds(gtfsTransfer.getMinTransferTime()));
+                    interchange.setMinimumTransferTime(Duration.ofSeconds(gtfsTransfer.getMinTransferTime()));
                     interchange.setGuaranteed(Boolean.FALSE);
                 } else if (gtfsTransfer.getTransferType().equals(TransferType.Timed)) {
                     interchange.setGuaranteed(Boolean.TRUE);
@@ -723,7 +762,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             journeyFrequency.setExactTime(frequency.getExactTimes());
             journeyFrequency.setFirstDepartureTime(frequency.getStartTime().getTime());
             journeyFrequency.setLastDepartureTime(frequency.getEndTime().getTime());
-            journeyFrequency.setScheduledHeadwayInterval(Duration.standardSeconds(frequency.getHeadwaySecs()));
+            journeyFrequency.setScheduledHeadwayInterval(Duration.ofSeconds(frequency.getHeadwaySecs()));
             journeyFrequency.setTimeband(timeband);
             journeyFrequency.setVehicleJourney(vehicleJourney);
 
@@ -732,10 +771,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             LocalTime firstArrivalTime = firstVjas.getArrivalTime();
             LocalTime firstDepartureTime = firstVjas.getDepartureTime();
             for (VehicleJourneyAtStop vjas : vjass) {
-                LocalTime arrivalTime = new LocalTime(TimeUtil.subtract(vjas.getArrivalTime(), firstArrivalTime).getMillis());
-                LocalTime departureTime = new LocalTime(TimeUtil.subtract(vjas.getDepartureTime(), firstDepartureTime).getMillis());
-                vjas.setArrivalTime(arrivalTime);
-                vjas.setDepartureTime(departureTime);
+                // TODO MHI : fix it - joda migration
+//                LocalTime arrivalTime = new LocalTime(TimeUtil.subtract(vjas.getArrivalTime(), firstArrivalTime).toMillis());
+//                LocalTime departureTime = new LocalTime(TimeUtil.subtract(vjas.getDepartureTime(), firstDepartureTime).getMillis());
+//                vjas.setArrivalTime(arrivalTime);
+//                vjas.setDepartureTime(departureTime);
             }
         }
     }
@@ -744,8 +784,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         LocalTime start = frequency.getStartTime().getTime();
         LocalTime end = frequency.getEndTime().getTime();
 
-        return (start.getHourOfDay() + ":" + start.getMinuteOfHour() + " - "
-                + end.getHourOfDay() + ":" + end.getMinuteOfHour());
+        return (start.getHour() + ":" + start.getMinute() + " - "
+                + end.getHour() + ":" + end.getMinute());
     }
 
     private JourneyPattern createJourneyPattern(Context context, Referential referential,

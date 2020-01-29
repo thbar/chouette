@@ -56,7 +56,7 @@ public class NavigationPathMapper {
                 .withAllowedUse(PathDirectionEnumeration.TWO_WAY);
 
 
-        pl.setTransferDuration(new TransferDurationStructure().withDefaultDuration(Duration.ofMillis(link.getDefaultDuration().getMillis())));
+        pl.setTransferDuration(new TransferDurationStructure().withDefaultDuration(Duration.ofMillis(link.getDefaultDuration().toMillis())));
         if (link.getComment() != null) {
             pl.setDescription(new MultilingualString().withLang("no").withValue(link.getComment()));
         }
@@ -110,7 +110,7 @@ public class NavigationPathMapper {
 
         connectionLink.setStartOfLink(from);
         connectionLink.setEndOfLink(to);
-        connectionLink.setDefaultDuration(org.joda.time.Duration.standardSeconds(1000));
+        connectionLink.setDefaultDuration(java.time.Duration.ofSeconds(1000));
 
         return connectionLink;
     }

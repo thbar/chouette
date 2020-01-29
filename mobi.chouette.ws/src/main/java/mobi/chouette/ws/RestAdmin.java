@@ -1,9 +1,18 @@
 package mobi.chouette.ws;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
+import mobi.chouette.common.Constant;
+import mobi.chouette.common.ContenerChecker;
+import mobi.chouette.common.PropertyNames;
+import mobi.chouette.exchange.TestDescription;
+import mobi.chouette.model.iev.Job;
+import mobi.chouette.model.iev.Stat;
+import mobi.chouette.service.JobService;
+import mobi.chouette.service.JobServiceManager;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,21 +30,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
-import mobi.chouette.common.Constant;
-import mobi.chouette.common.ContenerChecker;
-import mobi.chouette.common.PropertyNames;
-import mobi.chouette.exchange.TestDescription;
-import mobi.chouette.model.iev.Job;
-import mobi.chouette.model.iev.Stat;
-import mobi.chouette.service.JobService;
-import mobi.chouette.service.JobServiceManager;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Path("/admin")
 @Log4j
@@ -209,7 +207,7 @@ public class RestAdmin implements Constant {
 			for (Stat stat : lstStat) {
 				JSONObject result = new JSONObject();
 				result.put("id", stat.getId());
-				result.put("date", stat.getDate().toDate());
+				result.put("date", stat.getDate());
 				result.put("referential", stat.getReferential());
 				result.put("action", stat.getAction());
 				if (stat.getFormat() != null)

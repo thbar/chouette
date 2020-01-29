@@ -3,17 +3,15 @@
  */
 package mobi.chouette.exchange.metadata;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author michel

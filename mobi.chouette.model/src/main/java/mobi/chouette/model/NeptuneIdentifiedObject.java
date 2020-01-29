@@ -8,22 +8,18 @@
 package mobi.chouette.model;
 
 
-import java.util.regex.Pattern;
-
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.model.util.ObjectIdTypes;
-
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 /**
  * Abstract object used for all Identified Chouette Object
@@ -81,7 +77,6 @@ public abstract class NeptuneIdentifiedObject extends NeptuneObject implements
 	@Getter
 	@Setter
 	@Column(name = "creation_time")
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	protected LocalDateTime creationTime = LocalDateTime.now();
 
 	/**

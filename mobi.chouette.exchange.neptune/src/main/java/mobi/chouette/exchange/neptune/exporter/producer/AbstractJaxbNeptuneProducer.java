@@ -1,25 +1,27 @@
 package mobi.chouette.exchange.neptune.exporter.producer;
 
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.GregorianCalendar;
+import mobi.chouette.common.TimeUtil;
+import mobi.chouette.model.NeptuneIdentifiedObject;
+import mobi.chouette.model.Route;
+import org.apache.log4j.Logger;
+import org.trident.schema.trident.ObjectFactory;
+import org.trident.schema.trident.RegistrationType;
+import org.trident.schema.trident.TridentObjectType;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import mobi.chouette.model.NeptuneIdentifiedObject;
-import mobi.chouette.model.Route;
-
-import org.apache.log4j.Logger;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.trident.schema.trident.ObjectFactory;
-import org.trident.schema.trident.RegistrationType;
-import org.trident.schema.trident.TridentObjectType;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
+import java.util.Collection;
+import java.util.GregorianCalendar;
 
 public abstract class AbstractJaxbNeptuneProducer<T extends TridentObjectType, U extends NeptuneIdentifiedObject>
 // implements IJaxbNeptuneProducer<T, U>
@@ -92,17 +94,17 @@ public abstract class AbstractJaxbNeptuneProducer<T extends TridentObjectType, U
 		return (value == null || value.isEmpty());
 	}
 
-	protected Duration toDuration(org.joda.time.Duration duration) {
+	protected Duration toDuration(java.time.Duration duration) {
 		if (duration == null)
 			return null;
-		Duration xmlDuration = typeFactory.newDuration(duration.getMillis());
+		Duration xmlDuration = typeFactory.newDuration(duration.toMillis());
 		return xmlDuration;
 	}
 
 	protected XMLGregorianCalendar toCalendar(LocalDateTime date) {
 		if (date == null)
 			return null;
-		GregorianCalendar cal = date.toDateTime().toGregorianCalendar();
+		GregorianCalendar cal = TimeUtil.localDateTimeToGregorianCalendar(date);
 		XMLGregorianCalendar c = typeFactory.newXMLGregorianCalendar(cal);
 		c.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		c.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
@@ -112,7 +114,7 @@ public abstract class AbstractJaxbNeptuneProducer<T extends TridentObjectType, U
 	protected XMLGregorianCalendar toCalendar(LocalDate date) {
 		if (date == null)
 			return null;
-		GregorianCalendar cal = date.toDateTimeAtStartOfDay().toGregorianCalendar();
+		GregorianCalendar cal = GregorianCalendar.from(ZonedDateTime.of(date.atTime(LocalTime.MIN), ZoneId.systemDefault()));
 		XMLGregorianCalendar c = typeFactory.newXMLGregorianCalendar(cal);
 		c.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		c.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);
@@ -123,7 +125,7 @@ public abstract class AbstractJaxbNeptuneProducer<T extends TridentObjectType, U
 		if (time == null)
 			return null;
 		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(time.getMillisOfDay());
+		cal.setTimeInMillis(time.get(ChronoField.MILLI_OF_SECOND));
 		XMLGregorianCalendar c = typeFactory.newXMLGregorianCalendar(cal);
 		c.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 		c.setMillisecond(DatatypeConstants.FIELD_UNDEFINED);

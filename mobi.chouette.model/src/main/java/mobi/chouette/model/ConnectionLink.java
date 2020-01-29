@@ -9,10 +9,20 @@ import mobi.chouette.model.type.ConnectionLinkTypeEnum;
 import mobi.chouette.model.type.UserNeedEnum;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
-import org.joda.time.Duration;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +161,6 @@ public class ConnectionLink extends NeptuneIdentifiedObject {
     @Getter
     @Setter
     @Column(name = "default_duration")
-    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
     private Duration defaultDuration;
 
     /**
@@ -165,7 +174,6 @@ public class ConnectionLink extends NeptuneIdentifiedObject {
     @Getter
     @Setter
     @Column(name = "frequent_traveller_duration")
-    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
     private Duration frequentTravellerDuration;
 
     /**
@@ -179,7 +187,6 @@ public class ConnectionLink extends NeptuneIdentifiedObject {
     @Getter
     @Setter
     @Column(name = "occasional_traveller_duration")
-    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
     private Duration occasionalTravellerDuration;
 
     /**
@@ -193,7 +200,6 @@ public class ConnectionLink extends NeptuneIdentifiedObject {
     @Getter
     @Setter
     @Column(name = "mobility_restricted_traveller_duration")
-    @Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
     private Duration mobilityRestrictedTravellerDuration;
 
     /**

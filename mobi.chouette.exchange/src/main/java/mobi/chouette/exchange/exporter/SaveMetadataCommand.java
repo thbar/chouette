@@ -1,11 +1,7 @@
 package mobi.chouette.exchange.exporter;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Constant;
@@ -18,9 +14,11 @@ import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.exchange.metadata.TextFileWriter;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-import org.joda.time.LocalDate;
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.ZoneId;
 
 @Log4j
 public class SaveMetadataCommand implements Command, Constant {
@@ -47,7 +45,7 @@ public class SaveMetadataCommand implements Command, Constant {
 			if (metadata == null)
 				return SUCCESS;
 			// force time window if asked
-			metadata.getTemporalCoverage().force(new LocalDate(parameters.getStartDate()), new LocalDate(parameters.getEndDate()));
+			metadata.getTemporalCoverage().force(parameters.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), parameters.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 			metadata.setCreator(creator);
 			metadata.setPublisher(publisher);
 			String path = jobData.getPathName();

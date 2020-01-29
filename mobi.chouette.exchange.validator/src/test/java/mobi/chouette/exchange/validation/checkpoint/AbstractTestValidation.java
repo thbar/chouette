@@ -1,15 +1,8 @@
 package mobi.chouette.exchange.validation.checkpoint;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
@@ -49,19 +42,23 @@ import mobi.chouette.model.NeptuneLocalizedObject;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.ScheduledStopPoint;
-import mobi.chouette.model.SimpleObjectReference;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.persistence.hibernate.ContextHolder;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.testng.Arquillian;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
 import org.testng.Assert;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Log4j
 public abstract class AbstractTestValidation  extends Arquillian implements Constant, ReportConstant {
@@ -275,7 +272,7 @@ public abstract class AbstractTestValidation  extends Arquillian implements Cons
 	{
 		if (first == null || last == null)
 			return Long.MIN_VALUE; // TODO
-		long diff = Seconds.secondsBetween(first, last).getSeconds();
+		long diff = Duration.between(first, last).getSeconds();
 		if (diff < 0)
 			diff += 86400L; // step upon midnight : add one day in seconds
 		return diff;

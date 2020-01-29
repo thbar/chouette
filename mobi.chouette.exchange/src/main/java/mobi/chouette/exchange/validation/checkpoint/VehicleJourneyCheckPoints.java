@@ -7,14 +7,24 @@ import mobi.chouette.exchange.validation.Validator;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.exchange.validation.report.DataLocation;
 import mobi.chouette.exchange.validation.report.ValidationReporter;
-import mobi.chouette.model.*;
+import mobi.chouette.model.JourneyFrequency;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.Timeband;
+import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
 
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * check a group of coherent vehicle journeys (i.e. on the same journey pattern)
@@ -173,7 +183,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
         if (first == null || last == null)
             return Long.MIN_VALUE; // TODO
 
-        return Seconds.secondsBetween(first, last).getSeconds() + (lastTimeOffset - firstTimeOffset) * DateTimeConstants.SECONDS_PER_DAY;
+        return Duration.between(first, last).getSeconds() + (lastTimeOffset - firstTimeOffset) * DateTimeConstants.SECONDS_PER_DAY;
     }
 
     private void check3VehicleJourney1(Context context, VehicleJourney vj, ValidationParameters parameters) {
@@ -259,7 +269,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
 
                 ValidationReporter reporter = ValidationReporter.Factory.getInstance();
                 reporter.addCheckPointReportError(context, VEHICLE_JOURNEY_2_4, null, source,
-                        vjas0.getDepartureTime().toString("HH:mm"), null, target1, target2);
+                        vjas0.getDepartureTime().format(DateTimeFormatter.ofPattern("HH:mm")), null, target1, target2);
 
             } else {
 
@@ -283,7 +293,7 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
                     } else {
 
                         // Times are often with minute resolution. Assume max error (120 sec) when comparing with min and max allowed speed.
-                        boolean minuteResolution = vjas0.getDepartureTime().getSecondOfMinute() == 0 && vjas1.getArrivalTime().getSecondOfMinute() == 00;
+                        boolean minuteResolution = vjas0.getDepartureTime().getSecond() == 0 && vjas1.getArrivalTime().getSecond() == 00;
                         double minPossibleDiffTime = minuteResolution ? Math.max(diffTime - 120, 1) : diffTime;
                         double maxPossibleDiffTime = minuteResolution ? diffTime + 120 : diffTime;
                         double optimisticSpeed = distance / minPossibleDiffTime * 36 / 10; // (km/h)

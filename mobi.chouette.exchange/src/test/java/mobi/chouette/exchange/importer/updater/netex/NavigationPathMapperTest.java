@@ -25,7 +25,7 @@ public class NavigationPathMapperTest {
         link.setStartOfLink(from);
         link.setEndOfLink(to);
 
-        link.setDefaultDuration(org.joda.time.Duration.standardMinutes(5));
+        link.setDefaultDuration(java.time.Duration.ofMinutes(5));
         link.setObjectId(from.getObjectId() + "-" + to.getObjectId());
 
         NavigationPathMapper mapper = new NavigationPathMapper();

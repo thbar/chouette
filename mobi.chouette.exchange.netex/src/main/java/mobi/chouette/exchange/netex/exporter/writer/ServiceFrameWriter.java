@@ -2,14 +2,20 @@ package mobi.chouette.exchange.netex.exporter.writer;
 
 import mobi.chouette.exchange.netex.exporter.ExportableData;
 import mobi.chouette.exchange.netex.exporter.ModelTranslator;
-import mobi.chouette.model.*;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import mobi.chouette.model.ConnectionLink;
+import mobi.chouette.model.GroupOfLine;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Network;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.io.Writer;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +26,7 @@ public class ServiceFrameWriter extends AbstractWriter{
 	
 	public static void write(Writer writer, ExportableData data ) throws IOException, DatatypeConfigurationException 
 	{
-		DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		DatatypeFactory durationFactory = DatatypeFactory.newInstance();
 		Line line = data.getLine();
 		Network network = line.getNetwork();
@@ -29,7 +35,7 @@ public class ServiceFrameWriter extends AbstractWriter{
 		writer.write("<!-- ServiceFrame to map the PTNetwork  NEPTUNE Object -->\n");
 		writer.write("<ServiceFrame version=\"any\"  id=\""+line.objectIdPrefix()+":ServiceFrame:"+line.objectIdSuffix()+"\">\n");
 		writer.write("  <!-- NEPTUNE PTNetwork Mappling =========================================== -->\n");
-		writer.write("  <Network version=\""+network.getObjectVersion()+"\" changed=\""+format.print(line.getNetwork().getVersionDate())+"\" \n");
+		writer.write("  <Network version=\""+network.getObjectVersion()+"\" changed=\""+format.format(line.getNetwork().getVersionDate())+"\" \n");
 		writer.write("           id=\""+modelTranslator.netexId(network)+"\" >\n");
 		//      #if ( $network.comment )
 		if (isSet(network.getComment()))
@@ -308,19 +314,19 @@ public class ServiceFrameWriter extends AbstractWriter{
 		writer.write("      <TransferDuration>\n");
 		//        #if ( $connectionLink.defaultDuration)
 		if (isSet(connectionLink.getDefaultDuration())) 
-		writer.write("       <DefaultDuration>"+durationFactory.newDuration(connectionLink.getDefaultDuration().getMillis())+"</DefaultDuration>\n");
+		writer.write("       <DefaultDuration>"+durationFactory.newDuration(connectionLink.getDefaultDuration().toMillis())+"</DefaultDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.frequentTravellerDuration)
 		if (isSet(connectionLink.getFrequentTravellerDuration())) 
-		writer.write("        <FrequentTravellerDuration>"+durationFactory.newDuration(connectionLink.getFrequentTravellerDuration().getMillis())+"</FrequentTravellerDuration>\n");
+		writer.write("        <FrequentTravellerDuration>"+durationFactory.newDuration(connectionLink.getFrequentTravellerDuration().toMillis())+"</FrequentTravellerDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.occasionalTravellerDuration)
 		if (isSet(connectionLink.getOccasionalTravellerDuration())) 
-		writer.write("        <OccasionalTravellerDuration>"+durationFactory.newDuration(connectionLink.getOccasionalTravellerDuration().getMillis())+"</OccasionalTravellerDuration>\n");
+		writer.write("        <OccasionalTravellerDuration>"+durationFactory.newDuration(connectionLink.getOccasionalTravellerDuration().toMillis())+"</OccasionalTravellerDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.mobilityRestrictedTravellerDuration)
 		if (isSet(connectionLink.getMobilityRestrictedTravellerDuration())) 
-		writer.write("        <MobilityRestrictedTravellerDuration>"+durationFactory.newDuration(connectionLink.getMobilityRestrictedTravellerDuration().getMillis())+"</MobilityRestrictedTravellerDuration>\n");
+		writer.write("        <MobilityRestrictedTravellerDuration>"+durationFactory.newDuration(connectionLink.getMobilityRestrictedTravellerDuration().toMillis())+"</MobilityRestrictedTravellerDuration>\n");
 		//        #end
 		writer.write("      </TransferDuration>\n");
 		}

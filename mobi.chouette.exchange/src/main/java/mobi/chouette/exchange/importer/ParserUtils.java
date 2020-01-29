@@ -1,23 +1,18 @@
 package mobi.chouette.exchange.importer;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.extern.log4j.Log4j;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import lombok.extern.log4j.Log4j;
-
-import org.joda.time.Duration;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j
 public class ParserUtils {
@@ -77,13 +72,13 @@ public class ParserUtils {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static org.joda.time.Duration getDuration(String value) {
-		org.joda.time.Duration result = null;
+	public static java.time.Duration getDuration(String value) {
+		java.time.Duration result = null;
 		assert value != null : "[DSU] invalid value : " + value;
 
 		if (value != null) {
 			try {
-				result = new org.joda.time.Duration(factory.newDuration(value).getTimeInMillis(new java.util.Date(0)));
+				result = Duration.ofSeconds(factory.newDuration(value).getSeconds());
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
@@ -98,7 +93,7 @@ public class ParserUtils {
 
 		if (value != null) {
 			LocalTime time = getLocalTime(value);
-			result = Duration.standardSeconds(Seconds.secondsBetween(new LocalTime(0), time).getSeconds());
+			result = Duration.ofSeconds(Duration.between(LocalTime.ofSecondOfDay(0), time).getSeconds());
 		}
 		return result;
 	}
@@ -109,7 +104,7 @@ public class ParserUtils {
 		assert value != null : "[DSU] invalid value : " + value;
 
 		if (value != null) {
-            result = LocalTime.parse(value, DateTimeFormat.forPattern("HH:mm:ss"));
+            result = LocalTime.parse(value, DateTimeFormatter.ofPattern("HH:mm:ss"));
 
 		}
 		return result;
@@ -120,25 +115,24 @@ public class ParserUtils {
 		assert value != null : "[DSU] invalid value : " + value;
 
 		if (value != null) {
-			result = LocalDate.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd"));
+			result = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
 		return result;
 
 	}
 
-	public static LocalDate getDate(DateTimeFormatter format, String value)
-			throws ParseException {
+	public static LocalDate getDate(DateTimeFormatter format, String value) {
 		LocalDate result = null;
 		assert value != null : "[DSU] invalid value : " + value;
 
 		if (value != null) {
-			result = format.parseLocalDate(value);
+			result = LocalDate.parse(value, format);
 		}
 		return result;
 	}
 
 	public static LocalDate getDate(String value) throws ParseException {
-		DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern(
+		DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(
 				"yyyy-MM-dd'T'HH:mm:ss'Z'");
 		return getDate(DATE_FORMAT, value);
 	}
@@ -148,9 +142,7 @@ public class ParserUtils {
 		assert value != null : "[DSU] invalid value : " + value;
 
 		if (value != null) {
-			XMLGregorianCalendar calendar = factory
-					.newXMLGregorianCalendar(value);
-			result = new LocalDateTime(calendar.toGregorianCalendar().getTime());
+			result = LocalDateTime.parse(value);
 		}
 		return result;
 	}

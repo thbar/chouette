@@ -1,13 +1,12 @@
 package mobi.chouette.exchange.netexprofile.importer.util;
 
+import mobi.chouette.common.TimeUtil;
+import mobi.chouette.model.VehicleJourneyAtStop;
+import org.rutebanken.netex.model.TimetabledPassingTime;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalTime;
-
-import mobi.chouette.common.TimeUtil;
-import mobi.chouette.model.VehicleJourneyAtStop;
-
-import org.rutebanken.netex.model.TimetabledPassingTime;
 
 public class NetexTimeConversionUtil {
 
@@ -45,13 +44,13 @@ public class NetexTimeConversionUtil {
 
 	    
 		if(arrival) {
-			vj.setArrivalTime(TimeUtil.toJodaLocalTime(localTime));
+			vj.setArrivalTime(localTime);
 
 			if(!BigDecimal.ZERO.equals(dayOffset)) {
 				vj.setArrivalDayOffset(dayOffset.intValue());
 			}
 		} else {
-			vj.setDepartureTime(TimeUtil.toJodaLocalTime(localTime));
+			vj.setDepartureTime(localTime);
 
 			if(!BigDecimal.ZERO.equals(dayOffset)) {
 				vj.setDepartureDayOffset(dayOffset.intValue());

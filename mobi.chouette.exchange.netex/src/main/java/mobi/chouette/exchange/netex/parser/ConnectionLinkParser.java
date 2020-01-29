@@ -15,7 +15,7 @@ import mobi.chouette.model.type.ConnectionLinkTypeEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 
-import org.joda.time.Duration;
+import java.time.Duration;
 import org.xmlpull.v1.XmlPullParser;
 
 @Log4j

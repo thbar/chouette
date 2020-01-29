@@ -33,7 +33,7 @@ import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
 import mobi.chouette.model.type.SectionStatusEnum;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalTime;
+import java.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -352,7 +352,7 @@ public class GtfsTripProducer extends AbstractProducer {
 					frequency.setEndTime(new GtfsTime(journeyFrequency.getLastDepartureTime(), 0));
 				else
 					frequency.setEndTime(new GtfsTime(journeyFrequency.getLastDepartureTime(), 1));
-				frequency.setHeadwaySecs((int) journeyFrequency.getScheduledHeadwayInterval().getStandardSeconds());
+				frequency.setHeadwaySecs((int) journeyFrequency.getScheduledHeadwayInterval().getSeconds());
 				try {
 					getExporter().getFrequencyExporter().export(frequency);
 				} catch (Exception e) {

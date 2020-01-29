@@ -1,10 +1,5 @@
 package mobi.chouette.exchange.netexprofile.parser;
 
-import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
@@ -16,14 +11,12 @@ import mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes;
 import mobi.chouette.exchange.netexprofile.util.NetexReferential;
 import mobi.chouette.model.BookingArrangement;
 import mobi.chouette.model.Company;
-import mobi.chouette.model.ContactStructure;
 import mobi.chouette.model.FlexibleLineProperties;
 import mobi.chouette.model.GroupOfLine;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
-
 import org.rutebanken.netex.model.AllVehicleModesOfTransportEnumeration;
 import org.rutebanken.netex.model.DataManagedObjectStructure;
 import org.rutebanken.netex.model.FlexibleLine;
@@ -31,6 +24,10 @@ import org.rutebanken.netex.model.GroupOfLinesRefStructure;
 import org.rutebanken.netex.model.LinesInFrame_RelStructure;
 import org.rutebanken.netex.model.PresentationStructure;
 import org.rutebanken.netex.model.PrivateCodeStructure;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+import java.util.stream.Collectors;
 
 @Log4j
 public class LineParser implements Parser, Constant {
@@ -123,7 +120,7 @@ public class LineParser implements Parser, Constant {
 				bookingArrangement.setBookWhen(NetexParserUtils.toPurchaseWhen(flexibleLine.getBookWhen()));
 				bookingArrangement.setBuyWhen(flexibleLine.getBuyWhen().stream().map(NetexParserUtils::toPurchaseMoment).collect(Collectors.toList()));
 				bookingArrangement.setBookingMethods(flexibleLine.getBookingMethods().stream().map(NetexParserUtils::toBookingMethod).collect(Collectors.toList()));
-				bookingArrangement.setLatestBookingTime(TimeUtil.toJodaLocalTime(flexibleLine.getLatestBookingTime()));
+				bookingArrangement.setLatestBookingTime(flexibleLine.getLatestBookingTime());
 				bookingArrangement.setMinimumBookingPeriod(TimeUtil.toJodaDuration(flexibleLine.getMinimumBookingPeriod()));
 
 				bookingArrangement.setBookingContact(contactStructureParser.parse(flexibleLine.getBookingContact()));

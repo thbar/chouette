@@ -1,12 +1,17 @@
 package mobi.chouette.exchange.transfer.exporter;
 
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.*;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NeptuneUtil;
-import org.joda.time.LocalDate;
 
 import java.util.Date;
 import java.util.Iterator;
+
+import static mobi.chouette.common.TimeUtil.dateToLocalDate;
 
 @Log4j
 public class LineFilter {
@@ -83,11 +88,11 @@ public class LineFilter {
 		}
 
 		if (startDate == null)
-			return timetable.isActiveBefore(new LocalDate(endDate));
+			return timetable.isActiveBefore(dateToLocalDate(endDate));
 		else if (endDate == null)
-			return timetable.isActiveAfter(new LocalDate(startDate));
+			return timetable.isActiveAfter(dateToLocalDate(startDate));
 		else
-			return timetable.isActiveOnPeriod(new LocalDate(startDate), new LocalDate(endDate));
+			return timetable.isActiveOnPeriod(dateToLocalDate(startDate), dateToLocalDate(endDate));
 
 	}
 

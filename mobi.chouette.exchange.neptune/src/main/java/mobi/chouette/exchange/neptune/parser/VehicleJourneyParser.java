@@ -1,10 +1,5 @@
 package mobi.chouette.exchange.neptune.parser;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.XPPUtil;
@@ -31,12 +26,15 @@ import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.ObjectIdTypes;
 import mobi.chouette.model.util.Referential;
-
-import org.joda.time.Duration;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
 import org.xmlpull.v1.XmlPullParser;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 //import mobi.chouette.common.Constant;
 
 @Log4j
@@ -197,7 +195,7 @@ public class VehicleJourneyParser implements Parser, Constant, JsonExtension {
 				Duration value = ParserUtils.getDuration(xpp.nextText());
 				validator.addElapseDuration(vehicleJourneyAtStopContext, value);
 				// Use the elapseDuration to compute departureTime and arrivalTime
-				LocalTime time = new LocalTime(value.getMillis());
+				LocalTime time = LocalTime.ofSecondOfDay(value.getSeconds());
 				vehicleJourneyAtStop.setDepartureTime(time);
 				vehicleJourneyAtStop.setArrivalTime(time);
 			} else if (xpp.getName().equals("arrivalTime")) {

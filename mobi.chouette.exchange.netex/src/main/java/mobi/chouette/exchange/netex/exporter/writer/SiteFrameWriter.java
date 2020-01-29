@@ -1,13 +1,5 @@
 package mobi.chouette.exchange.netex.exporter.writer;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import mobi.chouette.exchange.netex.exporter.ExportableData;
 import mobi.chouette.exchange.netex.exporter.ModelTranslator;
 import mobi.chouette.model.AccessLink;
@@ -16,6 +8,13 @@ import mobi.chouette.model.Line;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.LinkOrientationEnum;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SiteFrameWriter extends AbstractWriter{
 	
@@ -282,19 +281,19 @@ public class SiteFrameWriter extends AbstractWriter{
 		writer.write("      <TransferDuration>\n");
 		//        #if ( $accessLink.defaultDuration)
 		if (isSet(accessLink.getDefaultDuration())) 
-		writer.write("       <DefaultDuration>"+durationFactory.newDuration(accessLink.getDefaultDuration().getMillis())+"</DefaultDuration>\n");
+		writer.write("       <DefaultDuration>"+durationFactory.newDuration(accessLink.getDefaultDuration().toMillis())+"</DefaultDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.frequentTravellerDuration)
 		if (isSet(accessLink.getFrequentTravellerDuration())) 
-		writer.write("        <FrequentTravellerDuration>"+durationFactory.newDuration(accessLink.getFrequentTravellerDuration().getMillis())+"</FrequentTravellerDuration>\n");
+		writer.write("        <FrequentTravellerDuration>"+durationFactory.newDuration(accessLink.getFrequentTravellerDuration().toMillis())+"</FrequentTravellerDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.occasionalTravellerDuration)
 		if (isSet(accessLink.getOccasionalTravellerDuration())) 
-		writer.write("        <OccasionalTravellerDuration>"+durationFactory.newDuration(accessLink.getOccasionalTravellerDuration().getMillis())+"</OccasionalTravellerDuration>\n");
+		writer.write("        <OccasionalTravellerDuration>"+durationFactory.newDuration(accessLink.getOccasionalTravellerDuration().toMillis())+"</OccasionalTravellerDuration>\n");
 		//        #end
 		//        #if ( $connectionLink.mobilityRestrictedTravellerDuration)
 		if (isSet(accessLink.getMobilityRestrictedTravellerDuration())) 
-		writer.write("        <MobilityRestrictedTravellerDuration>"+durationFactory.newDuration(accessLink.getMobilityRestrictedTravellerDuration().getMillis())+"</MobilityRestrictedTravellerDuration>\n");
+		writer.write("        <MobilityRestrictedTravellerDuration>"+durationFactory.newDuration(accessLink.getMobilityRestrictedTravellerDuration().toMillis())+"</MobilityRestrictedTravellerDuration>\n");
 		 //       #end
 		writer.write("      </TransferDuration>\n");
 		}

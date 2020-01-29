@@ -315,7 +315,7 @@ public class ConversionUtil {
 
 	}
 
-	public static OffsetTime toOffsetTimeUtc(org.joda.time.LocalTime time) {
+	public static OffsetTime toOffsetTimeUtc(java.time.LocalTime time) {
 		return time == null ? null
 				: toLocalTimeFromJoda(time).atOffset(ConversionUtil.getZoneOffset(ConversionUtil.LOCAL_ZONE_ID)).withOffsetSameInstant(ZoneOffset.UTC);
 	}

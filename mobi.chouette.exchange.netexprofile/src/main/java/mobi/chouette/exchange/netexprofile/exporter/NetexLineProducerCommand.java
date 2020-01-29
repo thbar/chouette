@@ -13,12 +13,14 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.NamingUtil;
-import org.joda.time.LocalDate;
 import org.xml.sax.SAXParseException;
 
 import javax.naming.InitialContext;
 import javax.xml.bind.MarshalException;
 import java.io.IOException;
+import java.time.LocalDate;
+
+import static mobi.chouette.common.TimeUtil.dateToLocalDate;
 
 @Log4j
 public class NetexLineProducerCommand implements Command, Constant {
@@ -63,12 +65,12 @@ public class NetexLineProducerCommand implements Command, Constant {
 
             LocalDate startDate = null;
             if (configuration.getStartDate() != null) {
-                startDate = new LocalDate(configuration.getStartDate());
+                startDate = dateToLocalDate(configuration.getStartDate());
             }
 
             LocalDate endDate = null;
             if (configuration.getEndDate() != null) {
-                endDate = new LocalDate(configuration.getEndDate());
+                endDate = dateToLocalDate(configuration.getEndDate());
             }
 
             NetexDataCollector collector = new NetexDataCollector();

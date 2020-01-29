@@ -1,6 +1,12 @@
 package mobi.chouette.model;
 
-import java.math.BigDecimal;
+import com.vividsolutions.jts.geom.LineString;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,16 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import com.vividsolutions.jts.geom.LineString;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+import java.math.BigDecimal;
 
 /**
  * Chouette Route Section : geographic route between to stop areas
@@ -81,13 +78,11 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "input_geometry")
-	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString inputGeometry;
 
 	@Getter
 	@Setter
 	@Column(name = "processed_geometry")
-	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString processedGeometry;
 
 	/**

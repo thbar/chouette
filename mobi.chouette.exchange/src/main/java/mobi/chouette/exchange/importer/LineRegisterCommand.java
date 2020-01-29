@@ -34,9 +34,7 @@ import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -47,6 +45,8 @@ import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,15 +282,15 @@ public class LineRegisterCommand implements Command {
 		// VehicleJourneyAtStop newValue)
 		
 
-		DateTimeFormatter timeFormat = DateTimeFormat.forPattern("HH:mm:ss");
-		DateTimeFormatter dateTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+		DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+		DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 		
 		buffer.write(vehicleJourneyAtStop.getObjectId().replace('|', '_'));
 		buffer.append(SEP);
 		buffer.write(vehicleJourneyAtStop.getObjectVersion().toString());
 		buffer.append(SEP);
 		if(vehicleJourneyAtStop.getCreationTime() != null) {
-			buffer.write(dateTimeFormat.print(vehicleJourneyAtStop.getCreationTime()));
+			buffer.write(dateTimeFormat.format(vehicleJourneyAtStop.getCreationTime()));
 		} else {
 			buffer.write(NULL);
 		}
@@ -306,12 +306,12 @@ public class LineRegisterCommand implements Command {
 		buffer.write(stopPoint.getId().toString());
 		buffer.append(SEP);
 		if (vehicleJourneyAtStop.getArrivalTime() != null)
-			buffer.write(timeFormat.print(vehicleJourneyAtStop.getArrivalTime()));
+			buffer.write(timeFormat.format(vehicleJourneyAtStop.getArrivalTime()));
 		else
 			buffer.write(NULL);
 		buffer.append(SEP);
 		if (vehicleJourneyAtStop.getDepartureTime() != null)
-			buffer.write(timeFormat.print(vehicleJourneyAtStop.getDepartureTime()));
+			buffer.write(timeFormat.format(vehicleJourneyAtStop.getDepartureTime()));
 		else
 			buffer.write(NULL);
 		buffer.append(SEP);

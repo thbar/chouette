@@ -1,17 +1,13 @@
 package mobi.chouette.model;
 
-import java.io.Serializable;
-
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * peculiar date for Timetables

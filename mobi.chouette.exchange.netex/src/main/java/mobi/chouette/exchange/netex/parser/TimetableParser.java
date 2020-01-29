@@ -16,7 +16,7 @@ import mobi.chouette.model.Period;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.util.Referential;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 import org.xmlpull.v1.XmlPullParser;
 
 @Log4j

@@ -5,6 +5,12 @@ package mobi.chouette.exchange.metadata;
  */
 
 
+import org.apache.commons.io.FileUtils;
+import org.testng.Assert;
+import org.testng.Reporter;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,13 +18,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Calendar;
 
-import org.apache.commons.io.FileUtils;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.testng.Assert;
-import org.testng.Reporter;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static mobi.chouette.common.TimeUtil.calendarToLocalDate;
+import static mobi.chouette.common.TimeUtil.calendarToLocalDateTime;
 
 
 /**
@@ -57,11 +58,11 @@ public class TextMetadataTest
       end.set(2015,Calendar.MARCH,31,13,00);
       Metadata data = new Metadata();
       data.setCreator("the creator");
-      data.setDate(LocalDateTime.fromCalendarFields(date));
+      data.setDate(calendarToLocalDateTime(date));
       data.setPublisher("the publisher");
       data.setFormat("the format");
       data.getSpatialCoverage().update(3.45678, 45.78965);
-      data.getTemporalCoverage().update(LocalDate.fromCalendarFields(start), LocalDate.fromCalendarFields(end));
+      data.getTemporalCoverage().update(calendarToLocalDate(start), calendarToLocalDate(end));
       data.setTitle("the title");
       data.setRelation(new URL("http://the.relation.com"));
       return data;

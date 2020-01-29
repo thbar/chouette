@@ -19,7 +19,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;

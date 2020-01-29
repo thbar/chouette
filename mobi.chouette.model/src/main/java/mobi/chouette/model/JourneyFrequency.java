@@ -1,18 +1,25 @@
 package mobi.chouette.model;
 
 
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.joda.time.Duration;
-import org.joda.time.LocalTime;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.time.Duration;
+import java.time.LocalTime;
 
 /**
  * Models the frequencies for journeys in timesheet category.
@@ -99,7 +106,6 @@ public class JourneyFrequency extends NeptuneObject {
 	@Getter
 	@Setter
 	@Column(name = "scheduled_headway_interval", nullable = false)
-	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration scheduledHeadwayInterval;
 
 	/**

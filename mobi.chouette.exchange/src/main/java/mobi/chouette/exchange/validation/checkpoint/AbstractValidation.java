@@ -8,14 +8,12 @@
 
 package mobi.chouette.exchange.validation.checkpoint;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.TestDescription;
@@ -31,18 +29,18 @@ import mobi.chouette.model.NeptuneLocalizedObject;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.type.LongLatTypeEnum;
 import mobi.chouette.model.util.NamingUtil;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.joda.time.Duration;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
+
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @author michel
@@ -388,7 +386,7 @@ public abstract class AbstractValidation<T extends NeptuneIdentifiedObject> impl
 	protected void checkLinkSpeed(Context context, NeptuneIdentifiedObject object, Duration duration, double distance,
 								  int maxDefaultSpeed, String testCode, String resultCode) {
 		if (duration != null) {
-			long time = duration.getStandardSeconds(); // in seconds
+			long time = duration.getSeconds(); // in seconds
 
 			if (time > 0) {
 				int speed = (int) (distance / (double) time * 36 / 10 + 0.5); // (km/h)
@@ -440,7 +438,7 @@ public abstract class AbstractValidation<T extends NeptuneIdentifiedObject> impl
 					if (objVal instanceof LocalTime) {
 						// use value in seconds
 						LocalTime t = (LocalTime) objVal;
-						value = Long.toString(Seconds.secondsBetween(new LocalTime(0, 0, 0), t).getSeconds());
+						value = Long.toString(Duration.between(LocalTime.of(0, 0, 0), t).getSeconds());
 					} else {
 						value = objVal.toString();
 					}

@@ -1,9 +1,15 @@
 package mobi.chouette.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import mobi.chouette.model.type.DayTypeEnum;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
@@ -17,19 +23,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import mobi.chouette.model.type.DayTypeEnum;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Chouette Timetable
@@ -401,7 +399,7 @@ public class Timetable extends NeptuneIdentifiedObject {
 		}
 		if (getIntDayTypes() != null && getIntDayTypes().intValue() != 0 && getPeriods() != null) {
 
-			int aDayOfWeek = aDay.getDayOfWeek() - 1; // zero on monday
+			int aDayOfWeek = aDay.getDayOfWeek().getValue() - 1; // zero on monday
 			int aDayOfWeekFlag = buildDayTypeMask(dayTypeByInt[aDayOfWeek]);
 			if ((getIntDayTypes() & aDayOfWeekFlag) == aDayOfWeekFlag) {
 				// check if day is in a period
@@ -525,7 +523,7 @@ public class Timetable extends NeptuneIdentifiedObject {
 
 			while (!date.isAfter(period.getEndDate())) {
 
-				int aDayOfWeek = date.getDayOfWeek() - 1; // zero on
+				int aDayOfWeek = date.getDayOfWeek().getValue() - 1; // zero on
 				// monday
 				int aDayOfWeekFlag = buildDayTypeMask(dayTypeByInt[aDayOfWeek]);
 				if ((getIntDayTypes() & aDayOfWeekFlag) == aDayOfWeekFlag) {

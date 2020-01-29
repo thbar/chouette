@@ -8,15 +8,8 @@
 
 package mobi.chouette.exchange.gtfs.exporter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -41,9 +34,16 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NamingUtil;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-import org.joda.time.LocalDate;
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static mobi.chouette.common.TimeUtil.dateToLocalDate;
 
 /**
  *
@@ -81,12 +81,12 @@ public class GtfsLineProducerCommand implements Command, Constant {
 
 			LocalDate startDate = null;
 			if (configuration.getStartDate() != null) {
-				startDate = new LocalDate(configuration.getStartDate());
+				startDate = dateToLocalDate(configuration.getStartDate());
 			}
 
 			LocalDate endDate = null;
 			if (configuration.getEndDate() != null) {
-				endDate = new LocalDate(configuration.getEndDate());
+				endDate = dateToLocalDate(configuration.getEndDate());
 			}
 
 			GtfsDataCollector collector = new GtfsDataCollector();

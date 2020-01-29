@@ -5,11 +5,12 @@ package mobi.chouette.exchange.metadata;
  */
 
 
-import java.util.Calendar;
-
-import org.joda.time.LocalDate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 
 
 /**
@@ -32,8 +33,8 @@ public class MetadataTest
       Calendar endCal = Calendar.getInstance();
       endCal.set(2015,Calendar.MARCH,31,13,00);
 
-      LocalDate start=LocalDate.fromCalendarFields(startCal);
-      LocalDate end=LocalDate.fromCalendarFields(endCal);
+      LocalDate start= LocalDateTime.ofInstant(startCal.toInstant(), startCal.getTimeZone().toZoneId()).toLocalDate();
+      LocalDate end=LocalDateTime.ofInstant(endCal.toInstant(), endCal.getTimeZone().toZoneId()).toLocalDate();
 
       data.getTemporalCoverage().update(start,end);
       Assert.assertEquals(data.getTemporalCoverage().getStart(), start, "temporal start date must be good");
@@ -41,16 +42,16 @@ public class MetadataTest
 
        startCal.set(2014, Calendar.DECEMBER, 15, 13, 00);
        endCal.set(2015, Calendar.MARCH, 15, 13, 00);
-       start = LocalDate.fromCalendarFields(startCal);
-       end = LocalDate.fromCalendarFields(endCal);
+       start= LocalDateTime.ofInstant(startCal.toInstant(), startCal.getTimeZone().toZoneId()).toLocalDate();
+       end=LocalDateTime.ofInstant(endCal.toInstant(), endCal.getTimeZone().toZoneId()).toLocalDate();
        data.getTemporalCoverage().update(start, end);
        Assert.assertNotSame(data.getTemporalCoverage().getStart(), start, "temporal start date must be good");
        Assert.assertNotSame(data.getTemporalCoverage().getEnd(), end, "temporal end date must be good");
 
        startCal.set(2014, Calendar.NOVEMBER, 15, 13, 00);
        endCal.set(2015, Calendar.APRIL, 15, 13, 00);
-       start = LocalDate.fromCalendarFields(startCal);
-       end = LocalDate.fromCalendarFields(endCal);
+       start= LocalDateTime.ofInstant(startCal.toInstant(), startCal.getTimeZone().toZoneId()).toLocalDate();
+       end=LocalDateTime.ofInstant(endCal.toInstant(), endCal.getTimeZone().toZoneId()).toLocalDate();
        data.getTemporalCoverage().update(start, end);
        Assert.assertEquals(data.getTemporalCoverage().getStart(), start, "temporal start date must be good");
        Assert.assertEquals(data.getTemporalCoverage().getEnd(),end,"temporal end date must be good");

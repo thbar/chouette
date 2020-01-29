@@ -1,12 +1,14 @@
 package mobi.chouette.ws;
 
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import mobi.chouette.exchange.parameters.AbstractParameter;
+import mobi.chouette.model.iev.Job;
+import mobi.chouette.model.iev.Link;
+import mobi.chouette.service.JobService;
+import mobi.chouette.service.ServiceConstants;
+import mobi.chouette.service.ServiceException;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,15 +18,14 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import mobi.chouette.exchange.parameters.AbstractParameter;
-import mobi.chouette.model.iev.Job;
-import mobi.chouette.model.iev.Link;
-import mobi.chouette.service.JobService;
-import mobi.chouette.service.ServiceConstants;
-import mobi.chouette.service.ServiceException;
+import static mobi.chouette.common.TimeUtil.localDateTimeToDate;
 
 @Data
 @NoArgsConstructor
@@ -88,9 +89,9 @@ public class JobInfo implements ServiceConstants {
 		referential = job.getReferential();
 		action = job.getAction();
 		type = job.getType();
-		created = job.getCreated() == null ? null : job.getCreated().toDate();
-		started = job.getStarted() == null ? null : job.getStarted().toDate();
-		updated = job.getUpdated() == null ? null : job.getUpdated().toDate();
+		created = job.getCreated() == null ? null : localDateTimeToDate(job.getCreated());
+		started = job.getStarted() == null ? null : localDateTimeToDate(job.getStarted());
+		updated = job.getUpdated() == null ? null : localDateTimeToDate(job.getUpdated());
 		status = STATUS.valueOf(job.getStatus().name());
 
 		if (addActionParameters) {

@@ -8,13 +8,6 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.gtfs.model.GtfsCalendar;
 import mobi.chouette.exchange.gtfs.model.GtfsCalendarDate;
@@ -24,12 +17,16 @@ import mobi.chouette.model.Period;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.type.DayTypeEnum;
 import mobi.chouette.model.util.CopyUtil;
-
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -223,30 +220,30 @@ AbstractProducer
    {
       boolean valid = false;
       // to avoid timezone // TODO NRP-1935 necessary?
-      LocalDateTime c = checkedDate.toLocalDateTime(new LocalTime(12,0,0));
+      LocalDateTime c = checkedDate.atTime(12,0);
 
       List<DayTypeEnum> dayTypes = timetable.getDayTypes();
       switch (c.getDayOfWeek())
       {
-      case DateTimeConstants.MONDAY :
+      case MONDAY :
          if (dayTypes.contains(DayTypeEnum.Monday)) valid = true;
          break;
-      case DateTimeConstants.TUESDAY :
+      case TUESDAY :
          if (dayTypes.contains(DayTypeEnum.Tuesday)) valid = true;
          break;
-      case DateTimeConstants.WEDNESDAY :
+      case WEDNESDAY :
          if (dayTypes.contains(DayTypeEnum.Wednesday)) valid = true;
          break;
-      case DateTimeConstants.THURSDAY :
+      case THURSDAY :
          if (dayTypes.contains(DayTypeEnum.Thursday)) valid = true;
          break;
-      case DateTimeConstants.FRIDAY :
+      case FRIDAY :
          if (dayTypes.contains(DayTypeEnum.Friday)) valid = true;
          break;
-      case DateTimeConstants.SATURDAY :
+      case SATURDAY :
          if (dayTypes.contains(DayTypeEnum.Saturday)) valid = true;
          break;
-      case DateTimeConstants.SUNDAY :
+      case SUNDAY :
          if (dayTypes.contains(DayTypeEnum.Sunday)) valid = true;
          break;
       }
