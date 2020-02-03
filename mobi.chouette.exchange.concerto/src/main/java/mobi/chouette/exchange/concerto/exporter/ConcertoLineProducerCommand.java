@@ -59,7 +59,7 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 				return SUCCESS;
 			}
 
-			if (!line.getCategoriesForLine().getName().equals("IDFM")) {
+			if (line.getCategoriesForLine() == null || !line.getCategoriesForLine().getName().equals("IDFM")) {
 				log.info("Ignoring line not idm: " + line.getObjectId());
 				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
 						ActionReporter.ERROR_CODE.INVALID_FORMAT, "not an idfm line");

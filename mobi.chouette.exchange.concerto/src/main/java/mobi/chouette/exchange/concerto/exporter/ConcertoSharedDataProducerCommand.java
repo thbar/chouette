@@ -33,7 +33,6 @@ import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
-import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
@@ -152,7 +151,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		}
 
 		for (Company company : companies) {
-			ConcertoObjectId objectId = ConcertoOperatorObjectIdGenerator.getConcertoObjectId(ContextHolder.getContext());
+			ConcertoObjectId objectId = ConcertoOperatorObjectIdGenerator.getConcertoObjectId(company.getName());
 			operatorProducer.save(company, startDate, endDate, objectId);
 		}
 	}
