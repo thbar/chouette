@@ -74,8 +74,8 @@ public class NetexInitImportCommand implements Command, Constant {
 			// Register profiles for IDFM
 
 			NetexProfileValidator idfmLineValidator = NetexProfileValidatorFactory.create(IDFMLineNetexProfileValidator.class.getName(), context);
-			NetexProfileValidator idfmCalendarValidator = NetexProfileValidatorFactory.create(IDFMCalendarNetexProfileValidator.class.getName(), context);
-			NetexProfileValidator idfmCommonFileValidator = NetexProfileValidatorFactory.create(IDFMCommonNetexProfileValidator.class.getName(), context);
+//			NetexProfileValidator idfmCalendarValidator = NetexProfileValidatorFactory.create(IDFMCalendarNetexProfileValidator.class.getName(), context);
+//			NetexProfileValidator idfmCommonFileValidator = NetexProfileValidatorFactory.create(IDFMCommonNetexProfileValidator.class.getName(), context);
 
 			// Register profiles for Norway
 
@@ -83,8 +83,8 @@ public class NetexInitImportCommand implements Command, Constant {
 //			NetexProfileValidator norwayCommonFileValidator = NetexProfileValidatorFactory.create(NorwayCommonNetexProfileValidator.class.getName(), context);
 
 			registerProfileValidator(availableProfileValidators, idfmLineValidator);
-			registerProfileValidator(availableProfileValidators, idfmCalendarValidator);
-			registerProfileValidator(availableProfileValidators, idfmCommonFileValidator);
+//			registerProfileValidator(availableProfileValidators, idfmCalendarValidator);
+//			registerProfileValidator(availableProfileValidators, idfmCommonFileValidator);
 
 			context.put(NETEX_PROFILE_VALIDATORS, availableProfileValidators);
 

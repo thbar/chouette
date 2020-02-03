@@ -35,9 +35,9 @@ public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileVal
         Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(NETEX_COMMON_FILE_IDENTIFICATORS);
 
         //TODO voir si on ajoute une verif sur la structure des id GeneralFrame et QuayRef
-        List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
+        List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("GeneralFrame")));
         Set<IdVersion> localIds = new HashSet<>(localIdList);
-        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("QuayRef", "DayTypeRef", "TypeOfFrameRef", "LineRef")));
+        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("TypeOfFrameRef")));
 
         for (IdVersion id : localIds) {
             data.getDataLocations().put(id.getId(), DataLocationHelper.findDataLocation(id));
@@ -48,7 +48,7 @@ public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileVal
         verifyNoDuplicatesWithCommonElements(context, localIds, commonIds);
 
         verifyNoDuplicatesAcrossLineFiles(context, localIdList,
-                new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
+                new HashSet<>(Arrays.asList("GeneralFrame")));
 
         verifyUseOfVersionOnLocalElements(context, localIds);
         verifyUseOfVersionOnRefsToLocalElements(context, localIds, localRefs);
