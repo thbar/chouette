@@ -1,8 +1,5 @@
 package mobi.chouette.exchange.exporter;
 
-import java.util.Collection;
-import java.util.List;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.model.AccessLink;
 import mobi.chouette.model.AccessPoint;
@@ -18,8 +15,10 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NeptuneUtil;
-
 import org.joda.time.LocalDate;
+
+import java.util.Collection;
+import java.util.List;
 
 @Log4j
 public class DataCollector {
@@ -125,6 +124,7 @@ public class DataCollector {
 					if (stopPoint == null)
 						continue; // protection from missing stopPoint ranks
 					collection.getStopPoints().add(stopPoint);
+					collection.getAllParsedStopPoints().add(stopPoint);
 					if (stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject()!=null)
 						collectStopAreas(collection, stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject(), skipNoCoordinate, followLinks);
 					collection.getFootnotes().addAll(stopPoint.getFootnotes());

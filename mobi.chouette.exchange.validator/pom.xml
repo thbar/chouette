@@ -139,6 +139,12 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>mobi.chouette.exchange.concerto</artifactId>
+         <type>ejb</type>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
          <groupId>org.hibernate</groupId>
          <artifactId>hibernate-core</artifactId>
          <scope>provided</scope>

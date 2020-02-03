@@ -1,15 +1,14 @@
 package mobi.chouette.dao;
 
-import java.util.List;
-import java.util.Set;
+import mobi.chouette.model.ScheduledStopPoint;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import mobi.chouette.model.ScheduledStopPoint;
+import java.util.List;
+import java.util.Set;
 @Stateless
 public class ScheduledStopPointDAOImpl extends GenericDAOImpl<ScheduledStopPoint> implements ScheduledStopPointDAO {
 

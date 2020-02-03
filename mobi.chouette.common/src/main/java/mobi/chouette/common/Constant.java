@@ -11,6 +11,7 @@ public interface Constant {
 	public static final String JOB_DATA = "job_data";
 	public static final String ROOT_PATH = "referentials";
 	public static final String CONFIGURATION = "configuration";
+	public static final String MAPPING_LINE_UUID = "mapping_line_uuid";
 	public static final String VALIDATION = "validation";
 	public static final String SOURCE = "source";
 	public static final String SOURCE_FILE = "source_file";

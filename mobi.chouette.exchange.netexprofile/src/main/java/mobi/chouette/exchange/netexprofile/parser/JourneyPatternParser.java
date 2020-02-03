@@ -2,7 +2,6 @@ package mobi.chouette.exchange.netexprofile.parser;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
-import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.netexprofile.Constant;
@@ -21,7 +20,6 @@ import org.rutebanken.netex.model.*;
 import javax.xml.bind.JAXBElement;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log4j
 public class JourneyPatternParser extends NetexParser implements Parser, Constant {

@@ -12,6 +12,7 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
 import mobi.chouette.exchange.netexprofile.importer.validation.AbstractNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.validation.report.DataLocation;
 import mobi.chouette.exchange.validation.report.ValidationReporter;
 
@@ -24,7 +25,7 @@ public class DuplicateIdCheckerCommand implements Command{
 		ValidationReporter validationReporter = ValidationReporter.Factory.getInstance();
 
 		@SuppressWarnings("unchecked")
-		Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(mobi.chouette.exchange.netexprofile.Constant.NETEX_COMMON_FILE_IDENTIFICATORS);
+		Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(Constant.NETEX_COMMON_FILE_IDENTIFICATORS);
 
 		validationReporter.addItemToValidationReport(context, AbstractNetexProfileValidator._1_NETEX_DUPLICATE_IDS_ACROSS_COMMON_FILES, "E");
 		boolean noDuplicates = true;

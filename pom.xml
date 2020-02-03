@@ -528,6 +528,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>mobi.chouette.exchange.concerto</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>mobi.chouette.exchange.netex</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -899,6 +904,7 @@
 <!--        <module>mobi.chouette.exchange.kml</module>-->
 <!--        <module>mobi.chouette.exchange.hub</module>-->
         <module>mobi.chouette.exchange.gtfs</module>
+        <module>mobi.chouette.exchange.concerto</module>
 <!--        <module>mobi.chouette.exchange.geojson</module>-->
 <!--        <module>mobi.chouette.exchange.sig</module>-->
 <!--        <module>mobi.chouette.exchange.regtopp</module>-->

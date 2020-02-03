@@ -27,8 +27,6 @@ import org.joda.time.LocalTime;
 import org.rutebanken.netex.model.DayTypeAssignment_VersionStructure;
 import org.rutebanken.netex.model.DayTypeRefStructure;
 import org.rutebanken.netex.model.NoticeAssignment;
-import org.rutebanken.netex.model.NoticeAssignmentRefStructure;
-import org.rutebanken.netex.model.NoticeAssignments_RelStructure;
 import org.rutebanken.netex.model.OperatingPeriodRefStructure;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -49,7 +47,6 @@ import static mobi.chouette.common.Constant.JOB_DATA;
 import static mobi.chouette.common.Constant.REPORT;
 import static mobi.chouette.exchange.netexprofile.Constant.EXPORTABLE_NETEX_DATA;
 import static mobi.chouette.exchange.netexprofile.Constant.MARSHALLER;
-import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.netexFactory;
 
 public class NetexLineDataIDFMProducerTest {
 
