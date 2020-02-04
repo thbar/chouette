@@ -171,7 +171,7 @@ public class CleanRepositoryCommand implements Command {
 			connectionLinkDAO.truncate();
 			stopAreaDAO.truncate();
 			mappingHastusZdepDAO.truncate();
-			if(context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) != null && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
+			if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
 				categoriesForLinesDAO.truncate();
 			}
 
