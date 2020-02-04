@@ -63,7 +63,6 @@ public class IDFMLineNetexProfileValidatorTest {
 
     private NetexProfileValidator createNetexProfileValidator() {
         NetexProfileValidator validator = new IDFMLineNetexProfileValidator();
-        validator.addExternalReferenceValidator(new ServiceJourneyInterchangeIgnorer());
         return validator;
     }
 
