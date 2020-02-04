@@ -35,7 +35,6 @@ import mobi.chouette.dao.TimebandDAO;
 import mobi.chouette.dao.TimetableDAO;
 import mobi.chouette.dao.VehicleJourneyAtStopDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
-import mobi.chouette.model.CategoriesForLines;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -172,7 +171,9 @@ public class CleanRepositoryCommand implements Command {
 			connectionLinkDAO.truncate();
 			stopAreaDAO.truncate();
 			mappingHastusZdepDAO.truncate();
-			categoriesForLinesDAO.truncate();
+			if(context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) != null && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
+				categoriesForLinesDAO.truncate();
+			}
 
 			result = SUCCESS;
 		} catch (Exception e) {
