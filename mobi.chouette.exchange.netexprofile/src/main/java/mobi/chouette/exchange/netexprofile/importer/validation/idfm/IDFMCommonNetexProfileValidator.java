@@ -4,6 +4,12 @@ import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.importer.util.DataLocationHelper;
 import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
 import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidatorFactory;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.BlockJourneyReferencesIgnorerer;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.DummyStopReferentialIdValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayCommonNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.ServiceJourneyInterchangeIgnorer;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.StopPlaceRegistryIdValidator;
 import mobi.chouette.exchange.netexprofile.util.NetexIdExtractorHelper;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.model.Codespace;
@@ -63,6 +69,34 @@ public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileVal
                 validateGeneralFrame(context, xpath, (XdmNode) generalFrame,  null);
             }
         }
+    }
+
+
+    public static class DefaultValidatorFactory extends NetexProfileValidatorFactory {
+        @Override
+        protected NetexProfileValidator create(Context context) throws ClassNotFoundException {
+            NetexProfileValidator instance = (NetexProfileValidator) context.get(NAME);
+            if (instance == null) {
+                instance = new IDFMCommonNetexProfileValidator();
+
+                // Shitty, should use inversion of control pattern and dependency injection
+                if("true".equals(context.get("testng"))) {
+                    instance.addExternalReferenceValidator(new DummyStopReferentialIdValidator());
+                } else {
+                    StopPlaceRegistryIdValidator stopRegistryValidator = (StopPlaceRegistryIdValidator) StopPlaceRegistryIdValidator.DefaultExternalReferenceValidatorFactory
+                            .create(StopPlaceRegistryIdValidator.class.getName(), context);
+                    instance.addExternalReferenceValidator(stopRegistryValidator);
+                }
+
+                context.put(NAME, instance);
+            }
+            return instance;
+        }
+    }
+
+    static {
+        NetexProfileValidatorFactory.factories.put(IDFMCommonNetexProfileValidator.class.getName(),
+                new IDFMCommonNetexProfileValidator.DefaultValidatorFactory());
     }
 
     @Override
