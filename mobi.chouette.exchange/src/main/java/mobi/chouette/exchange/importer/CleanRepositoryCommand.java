@@ -11,6 +11,7 @@ import mobi.chouette.dao.AccessLinkDAO;
 import mobi.chouette.dao.AccessPointDAO;
 import mobi.chouette.dao.BookingArrangementDAO;
 import mobi.chouette.dao.BrandingDAO;
+import mobi.chouette.dao.CategoriesForLinesDAO;
 import mobi.chouette.dao.CompanyDAO;
 import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.ContactStructureDAO;
@@ -34,6 +35,7 @@ import mobi.chouette.dao.TimebandDAO;
 import mobi.chouette.dao.TimetableDAO;
 import mobi.chouette.dao.VehicleJourneyAtStopDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
+import mobi.chouette.model.CategoriesForLines;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -130,6 +132,9 @@ public class CleanRepositoryCommand implements Command {
 	@EJB
 	MappingHastusZdepDAO mappingHastusZdepDAO;
 
+	@EJB
+	CategoriesForLinesDAO categoriesForLinesDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
@@ -167,6 +172,7 @@ public class CleanRepositoryCommand implements Command {
 			connectionLinkDAO.truncate();
 			stopAreaDAO.truncate();
 			mappingHastusZdepDAO.truncate();
+			categoriesForLinesDAO.truncate();
 
 			result = SUCCESS;
 		} catch (Exception e) {
