@@ -82,9 +82,9 @@ public class NetexExporterProcessingCommands implements ProcessingCommands, Cons
             commands.add(CommandFactory.create(initialContext, NetexCommonDataProducerCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, NetexCalendarDataProducerCommand.class.getName()));
 
-//            if (parameters.isValidateAfterExport()) {
-//                commands.add(CommandFactory.create(initialContext, NetexValidateExportCommand.class.getName()));
-//            }
+            if (parameters.isValidateAfterExport()) {
+                commands.add(CommandFactory.create(initialContext, NetexValidateExportCommand.class.getName()));
+            }
             if (parameters.isAddMetadata()) {
                 commands.add(CommandFactory.create(initialContext, SaveMetadataCommand.class.getName()));
             }
