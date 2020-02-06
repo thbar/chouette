@@ -27,6 +27,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Log4j
@@ -44,9 +46,10 @@ public class ProductionPeriodCommand implements Command, Constant {
         boolean result = ERROR;
 
         Referential referential = (Referential) context.get(REFERENTIAL);
-        LocalDate minStartDate = null;
-        LocalDate maxEndDate = null;
-        LocalDate maxEndDateDatabase = null;
+        GtfsValidationReporter gtfsValidationReporter = (GtfsValidationReporter) context.get(GTFS_REPORTER);
+        Optional<LocalDate> minStartDate;
+        Optional<LocalDate> maxEndDate;
+        Optional<LocalDate> maxEndDateDatabase;
 
         try {
 
@@ -54,59 +57,48 @@ public class ProductionPeriodCommand implements Command, Constant {
                 referential.clear(true);
             }
 
-            // On parse l'ensemble des calendriers pour récupérer le start date le plus tôt
+            // On parse l'ensemble des calendriers entrants et sortants pour récupérer le start date le plus tôt et la end date la plus tard
             GtfsCalendarParser gtfsCalendarParser = (GtfsCalendarParser) ParserFactory
                     .create(GtfsCalendarParser.class.getName());
             gtfsCalendarParser.parse(context);
 
             if (referential != null) {
-                for (Timetable timetable : referential.getTimetables().values()) {
-                    for (Period period : timetable.getPeriods()) {
-                        if (minStartDate == null) {
-                            minStartDate = period.getStartDate();
-                        } else if (period.getStartDate().isBefore(minStartDate)){
-                            minStartDate = period.getStartDate();
-                        }
-                    }
-                }
-            }
+                minStartDate = referential.getTimetables().values().stream()
+                        .flatMap(timetable -> timetable.getPeriods().stream())
+                        .map(Period::getStartDate)
+                        .min(LocalDate::compareTo);
 
-            // On parse l'ensemble des calendriers pour récupérer la end date la plus tard
-            // Cela va permettre de gérer les périodes de production au sein d'une autre période de production
-
-            if (referential != null) {
-                for (Timetable timetable : referential.getTimetables().values()) {
-                    for (Period period : timetable.getPeriods()) {
-                        if (maxEndDate == null) {
-                            maxEndDate = period.getEndDate();
-                        } else if (period.getEndDate().isAfter(maxEndDate)) {
-                            maxEndDate = period.getEndDate();
-                        }
-                    }
-                }
+                maxEndDate = referential.getTimetables().values().stream()
+                        .flatMap(timetable -> timetable.getPeriods().stream())
+                        .map(Period::getEndDate)
+                        .min(LocalDate::compareTo);
             }
 
             // On retaille les calendriers déjà présents en base avec le start date récupéré plus haut
             List<Timetable> timetableList = timetableDAO.findAll();
 
             // On récupère la end date la plus tardive déjà en base
+            maxEndDateDatabase = timetableList.stream()
+                    .flatMap(timetable -> timetable.getPeriods().stream())
+                    .map(Period::getEndDate)
+                    .max(LocalDate::compareTo);
+
+
             for (Timetable oldTimetable : timetableList) {
-                for (Period period : oldTimetable.getPeriods()) {
-                    if (maxEndDateDatabase == null) {
-                        maxEndDateDatabase = period.getEndDate();
-                    } else if (period.getEndDate().isAfter(maxEndDateDatabase)) {
-                        maxEndDateDatabase = period.getEndDate();
-                    }
+                if (minStartDate.isPresent()){
+                    LocalDate finalMinStartDate = minStartDate != null ? minStartDate.minusDays(1) : null;
                 }
-            }
-
-
-            for (Timetable oldTimetable : timetableList) {
-                LocalDate finalMinStartDate = minStartDate != null ? minStartDate.minusDays(1) : null;
-                oldTimetable.getPeriods().forEach(period -> {
-                    if (period.getEndDate().compareTo(finalMinStartDate) >= 0)
-                        period.setEndDate(finalMinStartDate);
-                });
+                if (finalMinStartDate != null) {
+                    oldTimetable.getPeriods().forEach(period -> {
+                        if (period.getEndDate().isAfter(finalMinStartDate.plusDays(1))) {
+                            period.setEndDate(finalMinStartDate);
+                        } else if (period.getEndDate().isBefore(finalMinStartDate)) {
+                            // Gestion de l'erreur du trou des périodes de production
+                            gtfsValidationReporter.reportError(context, new GtfsException(GTFS_CALENDAR_FILE, 1, null,
+                                    GtfsException.ERROR.MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS, null, null), GTFS_CALENDAR_FILE);
+                        }
+                    });
+                }
             }
             timetableDAO.flush();
 
