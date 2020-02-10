@@ -32,18 +32,15 @@ import mobi.chouette.model.Interchange;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.Timetable;
-import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -122,15 +119,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
 			StopArea stop = iterator.next();
-			String objectId = stop.getObjectId();
-			String longStopId = scheduledStopPoints
-					.stream()
-					.filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
-							&& StringUtils.equals(objectId , scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
-					.map(ScheduledStopPoint::getObjectId)
-					.findFirst()
-					.orElse(null);
-			String newStopId = GtfsStopUtils.getNewStopId(longStopId);
+			String newStopId = GtfsStopUtils.getNewStopId(stop);
 
 			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId)) {
 				iterator.remove();
@@ -143,27 +132,18 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
-			String objectId = stop.getObjectId();
-
-            List<String> collect = scheduledStopPoints
-                    .stream()
-                    .filter(scheduledStopPoint -> scheduledStopPoint.getContainedInStopAreaRef() != null
-                            && StringUtils.equals(objectId, scheduledStopPoint.getContainedInStopAreaRef().getObjectId()))
-                    .map(ScheduledStopPoint::getObjectId)
-                    .collect(Collectors.toList());
-
-            collect.forEach(s ->{
-                String newStopId = GtfsStopUtils.getNewStopId(s);
-                if(!stopGenerated.contains(newStopId)){
-                    stopGenerated.add(newStopId);
-                    stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
-                    if (metadata != null && stop.hasCoordinates()) {
-                        metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
-                                stop.getLatitude().doubleValue());
-                    }
-                }
-            });
+            String newStopId = GtfsStopUtils.getNewStopId(stop);
+			if(!stopGenerated.contains(newStopId)){
+				stopGenerated.add(newStopId);
+				stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
+				if (metadata != null && stop.hasCoordinates()) {
+					metadata.getSpatialCoverage().update(stop.getLongitude().doubleValue(),
+							stop.getLatitude().doubleValue());
+				}
+			}
 		}
+		stopGenerated.clear();
+
 		// remove incomplete connectionlinks
 		for (ConnectionLink link : connectionLinks) {
 			if (!physicalStops.contains(link.getStartOfLink()) && !commercialStops.contains(link.getStartOfLink())) {
