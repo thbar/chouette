@@ -142,7 +142,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 				}
 			}
 		}
-		stopGenerated.clear();
+		stopGenerated = null; // anti leak ?
 
 		// remove incomplete connectionlinks
 		for (ConnectionLink link : connectionLinks) {
