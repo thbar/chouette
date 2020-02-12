@@ -41,6 +41,9 @@ public class GtfsValidationReporter implements Constant{
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Common", 4, "E","W","E","W");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 5, "E","W","E","E","E");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Route", 4, "W","W","W","W");
+		reporter.addItemToValidationReport(context, "Mosaic-", "MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS", 1, "W");
+		reporter.addItemToValidationReport(context, "Mosaic-", "DB_START_DATE_AFTER_GTFS_START_DATE", 1, "E");
+		reporter.addItemToValidationReport(context, "Mosaic-", "DB_END_DATE_AFTER_GTFS_END_DATE", 1, "E");
 }
 
 	public void dispose() {
@@ -577,6 +580,21 @@ public class GtfsValidationReporter implements Constant{
 					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
 			break;
 
+		case MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS:
+			checkPointName = checkPointName(name, GtfsException.ERROR.MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS);
+			fieldName = ex.getField();
+			validationReporter.addCheckPointReportError(context,checkPointName,
+					buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
+			break;
+
+		case DB_START_DATE_AFTER_GTFS_START_DATE:
+		case DB_END_DATE_AFTER_GTFS_END_DATE:
+		checkPointName = checkPointName(name, ex.getError());
+		fieldName = ex.getField();
+		validationReporter.addCheckPointReportError(context,checkPointName,
+				buildDataLocation(context,new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()),routeId), ex.getValue());
+			throw ex;
+
 		case MISSING_FOREIGN_KEY: // THIS CAN NEVER OCCUR !
 		case SYSTEM: // THIS CAN NEVER OCCUR !
 		default:
@@ -673,6 +691,12 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Route_3;
 		case INVERSE_DUPLICATE_ROUTE_NAMES:
 			return GTFS_2_GTFS_Route_4;
+		case MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS:
+			return MOSAIC_MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS;
+		case DB_START_DATE_AFTER_GTFS_START_DATE:
+			return MOSAIC_DB_START_DATE_AFTER_GTFS_START_DATE;
+		case DB_END_DATE_AFTER_GTFS_END_DATE:
+			return MOSAIC_DB_END_DATE_AFTER_GTFS_END_DATE;
 
 		default:
 			return null;

@@ -49,5 +49,9 @@ public interface Constant extends mobi.chouette.exchange.gtfs.Constant {
 	public static final String GTFS_2_GTFS_Route_2    = "2-GTFS-Route-2";
 	public static final String GTFS_2_GTFS_Route_3    = "2-GTFS-Route-3";
 	public static final String GTFS_2_GTFS_Route_4    = "2-GTFS-Route-4";
-	
+
+	public static final String MOSAIC_MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS = "Mosaic-MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS-1";
+	public static final String MOSAIC_DB_START_DATE_AFTER_GTFS_START_DATE = "Mosaic-DB_START_DATE_AFTER_GTFS_START_DATE-1";
+	public static final String MOSAIC_DB_END_DATE_AFTER_GTFS_END_DATE = "Mosaic-DB_END_DATE_AFTER_GTFS_END_DATE-1";
+
 }

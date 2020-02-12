@@ -59,7 +59,9 @@ public class GtfsException extends RuntimeException {
 		EMPTY_SERVICE,
         COORDINATES_STOP_0_0,
 		MISSING_ROUTE_SHORT_NAME,
-		MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS
+		MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS,
+		DB_START_DATE_AFTER_GTFS_START_DATE,
+		DB_END_DATE_AFTER_GTFS_END_DATE
 	}
 
 	@Getter
@@ -99,6 +101,10 @@ public class GtfsException extends RuntimeException {
 
 	public GtfsException(String path, Integer id, String field, ERROR error, String code, String value) {
 		this(path, id, field, error, code, value, null, null);
+	}
+
+	public GtfsException(String path, Integer id, String field, ERROR error, String code, String value, String message) {
+		this(path, id, field, error, code, value, null, new Throwable(message));
 	}
 
 	public GtfsException(String path, Integer id, String field, ERROR error, String code, String value,
@@ -149,7 +155,8 @@ public class GtfsException extends RuntimeException {
 		case DUPLICATE_DOUBLE_KEY :
 		case BAD_REFERENCED_ID:
         case COORDINATES_STOP_0_0:
-		case MISSING_CALENDAR_BETWEEN_TWO_PRODUCTION_PERIODS:
+		case DB_START_DATE_AFTER_GTFS_START_DATE:
+		case DB_END_DATE_AFTER_GTFS_END_DATE:
 			return true;
 		default:
 			return false;
