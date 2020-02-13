@@ -72,6 +72,7 @@ public class NetexXMLProcessingHelperFactory {
 
 	public NetexVersion detectNetexSchemaVersion(File f) {
 		String profileVersion = PublicactionDeliveryVersionAttributeReader.findPublicationDeliveryVersion(f);
+		// TODO profil IDFM à mettre
 		String netexSchemaVersion = NetexProfileVersion.getSchemaVersion(profileVersion);
 
 		if (netexSchemaVersion != null) {

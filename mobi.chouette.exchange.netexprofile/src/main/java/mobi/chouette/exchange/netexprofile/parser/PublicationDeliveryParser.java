@@ -23,7 +23,6 @@ import mobi.chouette.model.util.Referential;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.rutebanken.netex.model.Branding;
-import org.rutebanken.netex.model.Branding_VersionStructure;
 import org.rutebanken.netex.model.Common_VersionFrameStructure;
 import org.rutebanken.netex.model.CompositeFrame;
 import org.rutebanken.netex.model.DataManagedObjectStructure;

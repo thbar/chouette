@@ -18,7 +18,6 @@ import mobi.chouette.model.util.NamingUtil;
 
 import org.rutebanken.netex.model.AvailabilityCondition;
 import org.rutebanken.netex.model.Codespace;
-import org.rutebanken.netex.model.Network;
 
 import static mobi.chouette.common.Constant.CONFIGURATION;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
@@ -28,7 +27,7 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.*;
 public class PublicationDeliveryWriter extends AbstractNetexWriter {
 
 	public static void write(Context context, XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData,
-			NetexFragmentMode fragmentMode, Marshaller marshaller) {
+							 NetexFragmentMode fragmentMode, Marshaller marshaller) {
 		LocalDateTime timestamp = LocalDateTime.now();
 		String timestampFormatted = formatter.format(timestamp);
 
@@ -56,7 +55,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 	}
 
 	private static void writeDataObjectsElement(Context context, XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData,
-			String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
+												String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
 		try {
 			writer.writeStartElement(DATA_OBJECTS);
 			writeCompositeFrameElement(context, writer, exportableData, exportableNetexData, timestamp, fragmentMode, marshaller);
@@ -67,7 +66,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 	}
 
 	private static void writeCompositeFrameElement(Context context, XMLStreamWriter writer, ExportableData exportableData,
-			ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
+												   ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
 		mobi.chouette.model.Line line = exportableData.getLine();
 
 		String compositeFrameId = NetexProducerUtils.createUniqueId(context, COMPOSITE_FRAME);
@@ -101,7 +100,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 	}
 
 	private static void writeValidityConditionsElement(XMLStreamWriter writer, ExportableNetexData exportableData, NetexFragmentMode fragmentMode,
-			Marshaller marshaller) {
+													   Marshaller marshaller) {
 		try {
 			writer.writeStartElement(VALIDITY_CONDITIONS);
 
@@ -120,7 +119,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 	}
 
 	private static void writeCodespacesElement(XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData,
-			NetexFragmentMode fragmentMode, Marshaller marshaller) {
+											   NetexFragmentMode fragmentMode, Marshaller marshaller) {
 		try {
 			writer.writeStartElement(CODESPACES);
 
@@ -160,7 +159,7 @@ public class PublicationDeliveryWriter extends AbstractNetexWriter {
 	}
 
 	private static void writeFramesElement(Context context, XMLStreamWriter writer, ExportableNetexData exportableNetexData, NetexFragmentMode fragmentMode,
-			Marshaller marshaller) {
+										   Marshaller marshaller) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
 
 		try {

@@ -28,7 +28,7 @@ public class NetexSharedDataProducer extends NetexProducer implements Constant {
 
         Marshaller marshaller = (Marshaller) context.get(MARSHALLER);
         NetexFileWriter writer = new NetexFileWriter();
-        writer.writeXmlFile(context, filePath, exportableData, exportableNetexData, NetexFragmentMode.SHARED,marshaller);
+        writer.writeXmlFile(context, filePath, exportableData, exportableNetexData, NetexFragmentMode.SHARED, marshaller);
 
     }
 

@@ -12,4 +12,16 @@ public class NetexProfileVersion {
 		}
 		return null;
 	}
+
+	// TODO getSchema pour profil IDFM
+	public static String getSchemaVersionIDFM(String fullProfileString) {
+		String[] split = fullProfileString.split(":");
+
+		if(split.length == 2) {
+			// Valid
+			return split[0];
+		}
+		return null;
+	}
+
 }

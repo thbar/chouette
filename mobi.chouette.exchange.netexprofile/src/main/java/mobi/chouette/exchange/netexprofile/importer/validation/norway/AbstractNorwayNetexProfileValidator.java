@@ -24,9 +24,11 @@ public abstract class AbstractNorwayNetexProfileValidator extends AbstractNetexP
 	public static final String PROFILE_NORWAY_NETWORKTIMETABLE_108_13 = "1.08:NO-NeTEx-networktimetable:1.3";
 
 	public static final String EXPORT_PROFILE_ID = PROFILE_NORWAY_NETWORKTIMETABLE_108_13; // Update when new profile version is implemented
-	
-	public static String NSR_XMLNSURL = "http://ratp.mosaic.pro/mosaic";
-	public static String NSR_XMLNS = "MOSAIC";
+
+	public static String NSR_XMLNSURL = "http://rmr.nouvelle-aquitaine.pro/naq";
+	public static String NSR_XMLNS = "NAQ";
+
+	static final String PARTICIPANT_REF_CONTENT = "RB";
 
 	public static final String _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT = "1-NETEXPROFILE-ReferenceToIllegalElement";
 

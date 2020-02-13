@@ -4,7 +4,6 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.AVAILA
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 import org.rutebanken.netex.model.AvailabilityCondition;
@@ -16,7 +15,8 @@ import mobi.chouette.exchange.netexprofile.exporter.NetexprofileExportParameters
 
 public class NetexProducer {
 
-	public static final String NETEX_DEFAULT_OBJECT_VERSION = "1";
+	//TODO à changer pour changement de profil IDFM/Norvégien
+	public static final String NETEX_DEFAULT_OBJECT_VERSION = "any";
 
 	public static ObjectFactory netexFactory = null;
 

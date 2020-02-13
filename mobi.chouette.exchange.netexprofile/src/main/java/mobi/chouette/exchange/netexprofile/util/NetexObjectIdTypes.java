@@ -37,6 +37,7 @@ public final class NetexObjectIdTypes {
     public static final String JOURNEY_INTERCHANGES = "journeyInterchanges";
     public static final String SERVICE_LINKS = "serviceLinks";
     public static final String GROUPS_OF_LINES = "groupsOfLines";
+    public static final String DIRECTION = "Direction";
 
     // frame id keys
     public static final String COMPOSITE_FRAME = "CompositeFrame";
@@ -45,6 +46,15 @@ public final class NetexObjectIdTypes {
     public static final String SERVICE_FRAME = "ServiceFrame";
     public static final String SERVICE_CALENDAR_FRAME = "ServiceCalendarFrame";
     public static final String TIMETABLE_FRAME = "TimetableFrame";
+    public static final String GENERAL_FRAME = "GeneralFrame";
+    public static final String MEMBERS = "members";
+
+
+    public static final String NETEX_STRUCTURE = "NETEX_STRUCTURE";
+    public static final String NETEX_HORAIRE = "NETEX_HORAIRE";
+    public static final String NETEX_OFFRE_LIGNE = "NETEX_OFFRE_LIGNE";
+    public static final String NETEX_CALENDRIER = "NETEX_CALENDRIER";
+    public static final String NETEX_COMMUN = "NETEX_COMMUN";
 
     // entity id keys
     public static final String AUTHORITY = "Authority";
@@ -76,5 +86,9 @@ public final class NetexObjectIdTypes {
 
     // entity id ref keys
     public static final String TARIFF_ZONE_REF = "TariffZoneRef";
+
+    public static final String OBJECT_ID_SPLIT_CHAR = ":";
+    public static final String OBJECT_ID_SPLIT_DASH = "-";
+    public static final String LOC = "LOC";
 
 }

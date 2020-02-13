@@ -2911,22 +2911,22 @@ CREATE INDEX index_journey_frequencies_on_timeband_id ON journey_frequencies USI
 CREATE INDEX index_journey_frequencies_on_vehicle_journey_id ON journey_frequencies USING btree (vehicle_journey_id);
 
 
--- sch variations
-CREATE TABLE variations (
-    id bigint NOT NULL DEFAULT nextval('variations_id_seq'::regclass),
-    type character varying(255) NOT NULL,
-    description character varying(255) NOT NULL,
-    job bigint
-);
-
-ALTER TABLE :SCH.variations OWNER TO chouette;
-
-CREATE SEQUENCE variations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE :SCH.variations_id_seq OWNER TO chouette;
+-- -- sch variations
+-- CREATE TABLE variations (
+--     id bigint NOT NULL DEFAULT nextval('variations_id_seq'::regclass),
+--     typev character varying(255) NOT NULL,
+--     descriptionv character varying(255) NOT NULL,
+--     jobv bigint
+-- );
+--
+-- ALTER TABLE :SCH.variations OWNER TO chouette;
+--
+-- CREATE SEQUENCE variations_id_seq
+--     START WITH 1
+--     INCREMENT BY 1
+--     NO MINVALUE
+--     NO MAXVALUE
+--     CACHE 1;
+--
+--
+-- ALTER TABLE :SCH.variations_id_seq OWNER TO chouette;

@@ -4,5 +4,20 @@
 * Fix problème encodage
 * Remontée des erreurs SQL
 
+# 4.0.1
+* 5913 : Ajout d'un nouveau bouton "Modifier les lignes" pour pouvoir catégoriser en masse des lignes en IDFM.
+* 5957 : Arrêt de l'import après la validation de niveau 1 (précédemment un bouton avait été rajouté pour permettre la validation de l'offre et la proposer dans un super espace de données.
+* 5959 : Un petit flag IDFM est rajouté devant chaque ligne marquée IDFM
+* 5977 : Amélioration de la sécurité du service de chargement des plages zdep
+* 5872 : correctifs du NeTex Arrêt
+* 5883 : A l'import la page de la liste des imports se rafraîchit automatiquement pour mettre à jour le statut du job d'import
+* 5884 : Affichage dans une page des fichiers importés comme dans Ninkasi + option de réimport
+* 5911 : Filtre de la liste des imports / exports selon une période
+* 5954 : Doublon de la 5884 : les 2 tâches étaient proches et se sont recoupées
+* 5354 : Génération NeTex Offre
+* 6002 : Refactorisation / amélioration du code 5354
+* 5208 : Une évolution a été prévue dans le sprint suivant afin d'alerter des "trous" dans une offre
+* 5958 : Export concerto au format csv
+* 6056 : Interface Okina avec export concerto
 
 

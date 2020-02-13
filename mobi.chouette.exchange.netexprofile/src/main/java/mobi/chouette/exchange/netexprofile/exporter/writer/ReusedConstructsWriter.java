@@ -12,7 +12,7 @@ import org.rutebanken.netex.model.NoticeAssignment;
 
 public class ReusedConstructsWriter {
 
-	public static void writeNoticeAssignmentsElement(XMLStreamWriter writer, Collection<NoticeAssignment> noticeAssignments, Marshaller marshaller) {
+	static void writeNoticeAssignmentsElement(XMLStreamWriter writer, Collection<NoticeAssignment> noticeAssignments, Marshaller marshaller) {
 		try {
 			if (!noticeAssignments.isEmpty()) {
 				writer.writeStartElement(NOTICE_ASSIGNMENTS);

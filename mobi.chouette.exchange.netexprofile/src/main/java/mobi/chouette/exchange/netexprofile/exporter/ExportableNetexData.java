@@ -18,6 +18,7 @@ import org.rutebanken.netex.model.Codespace;
 import org.rutebanken.netex.model.DayType;
 import org.rutebanken.netex.model.DayTypeAssignment;
 import org.rutebanken.netex.model.DestinationDisplay;
+import org.rutebanken.netex.model.Direction;
 import org.rutebanken.netex.model.GroupOfLines;
 import org.rutebanken.netex.model.JourneyPattern;
 import org.rutebanken.netex.model.Line;
@@ -33,6 +34,7 @@ import org.rutebanken.netex.model.RoutePoint;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.rutebanken.netex.model.ServiceJourney;
 import org.rutebanken.netex.model.ServiceJourneyInterchange;
+import org.rutebanken.netex.model.ServiceJourneyPattern;
 import org.rutebanken.netex.model.ServiceLink;
 import org.rutebanken.netex.model.StopPlace;
 
@@ -134,16 +136,26 @@ public class ExportableNetexData {
     @Setter
     private List<ServiceJourneyInterchange> serviceJourneyInterchanges = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private List<Direction> directions = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private List<ServiceJourneyPattern> serviceJourneyPatterns = new ArrayList<>();
+
 
     public void clear() {
         lineCondition = null;
         line = null;
         routes.clear();
         journeyPatterns.clear();
-        serviceJourneys. clear();
+        serviceJourneys.clear();
         noticeAssignmentsServiceFrame.clear();
         noticeAssignmentsTimetableFrame.clear();
         serviceJourneyInterchanges.clear();
+        directions.clear();
+        serviceJourneyPatterns.clear();
     }
 
     public void dispose() {

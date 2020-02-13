@@ -19,49 +19,50 @@ import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 
 public class TimetableFrameWriter extends AbstractNetexWriter {
 
-	public static void write(XMLStreamWriter writer, Context context, ExportableNetexData exportableNetexData, Marshaller marshaller) {
+    public static void write(XMLStreamWriter writer, Context context, ExportableNetexData exportableNetexData, Marshaller marshaller) {
 
-		String timetableFrameId = NetexProducerUtils.createUniqueId(context, TIMETABLE_FRAME);
+        String timetableFrameId = NetexProducerUtils.createUniqueId(context, TIMETABLE_FRAME);
 
-		try {
-			writer.writeStartElement(TIMETABLE_FRAME);
-			writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
-			writer.writeAttribute(ID, timetableFrameId);
-			writeVehicleJourneysElement(writer, exportableNetexData, marshaller);
-			ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsTimetableFrame(), marshaller);
+        try {
+            writer.writeStartElement(TIMETABLE_FRAME);
+            writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
+            writer.writeAttribute(ID, timetableFrameId);
+            writeVehicleJourneysElement(writer, exportableNetexData, marshaller);
+            ReusedConstructsWriter.writeNoticeAssignmentsElement(writer, exportableNetexData.getNoticeAssignmentsTimetableFrame(), marshaller);
 
-			if (CollectionUtils.isNotEmpty(exportableNetexData.getServiceJourneyInterchanges())) {
-				writeServiceJourneyInterchangesElement(writer, exportableNetexData, marshaller);
-			}
+            if (CollectionUtils.isNotEmpty(exportableNetexData.getServiceJourneyInterchanges())) {
+                writeServiceJourneyInterchangesElement(writer, exportableNetexData, marshaller);
+            }
 
-			writer.writeEndElement();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+            writer.writeEndElement();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private static void writeVehicleJourneysElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
-		try {
-			writer.writeStartElement(VEHICLE_JOURNEYS);
-			for (ServiceJourney serviceJourney : exportableData.getServiceJourneys()) {
-				marshaller.marshal(netexFactory.createServiceJourney(serviceJourney), writer);
-			}
-			writer.writeEndElement();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private static void writeVehicleJourneysElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+        try {
+            writer.writeStartElement(VEHICLE_JOURNEYS);
+            for (ServiceJourney serviceJourney : exportableData.getServiceJourneys()) {
+                marshaller.marshal(netexFactory.createServiceJourney(serviceJourney), writer);
+            }
+            writer.writeEndElement();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private static void writeServiceJourneyInterchangesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
-		try {
-			writer.writeStartElement(JOURNEY_INTERCHANGES);
-			for (ServiceJourneyInterchange serviceJourneyInterchange : exportableData.getServiceJourneyInterchanges()) {
-				marshaller.marshal(netexFactory.createServiceJourneyInterchange(serviceJourneyInterchange), writer);
-			}
-			writer.writeEndElement();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private static void writeServiceJourneyInterchangesElement(XMLStreamWriter writer, ExportableNetexData exportableData, Marshaller marshaller) {
+        try {
+            writer.writeStartElement(JOURNEY_INTERCHANGES);
+            for (ServiceJourneyInterchange serviceJourneyInterchange : exportableData.getServiceJourneyInterchanges()) {
+                marshaller.marshal(netexFactory.createServiceJourneyInterchange(serviceJourneyInterchange), writer);
+            }
+            writer.writeEndElement();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
+

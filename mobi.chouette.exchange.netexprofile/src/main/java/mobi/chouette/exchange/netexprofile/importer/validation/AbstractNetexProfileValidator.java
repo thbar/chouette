@@ -41,6 +41,7 @@ public abstract class AbstractNetexProfileValidator implements Constant, NetexPr
     public static final String _1_NETEX_DUPLICATE_IDS_ACROSS_LINE_AND_COMMON_FILES = "1-NETEXPROFILE-DuplicateIdentificatorsAcrossLineAndCommonFiles";
     public static final String _1_NETEX_DUPLICATE_IDS_ACROSS_COMMON_FILES = "1-NETEXPROFILE-DuplicateIdentificatorsAcrossCommonFiles";
     public static final String _1_NETEX_MISSING_VERSION_ON_LOCAL_ELEMENTS = "1-NETEXPROFILE-MissingVersionAttribute";
+    public static final String _1_NETEX_IDFM_VERSION_NOT_ANY_ON_LOCAL_ELEMENTS = "1-NETEXPROFILE-IDFM-VersionNotAnyAttribute";
     public static final String _1_NETEX_MISSING_REFERENCE_VERSION_TO_LOCAL_ELEMENTS = "1-NETEXPROFILE-MissingReferenceVersionAttribute";
     public static final String _1_NETEX_UNRESOLVED_REFERENCE_TO_COMMON_ELEMENTS = "1-NETEXPROFILE-UnresolvedReferenceToCommonElements";
     public static final String _1_NETEX_INVALID_ID_STRUCTURE = "1-NETEXPROFILE-InvalidIdStructure";
@@ -490,7 +491,7 @@ public abstract class AbstractNetexProfileValidator implements Constant, NetexPr
                         validationReporter.addCheckPointReportError(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE, null,
                                 DataLocationHelper.findDataLocation(id), id.getId());
                         if (log.isDebugEnabled()) {
-                            log.debug("Id " + id + " in file are using an unaccepted codepsace prefix " + prefix + ". Valid prefixes are "
+                            log.debug("Id " + id + " in file are using an unaccepted codespace prefix " + prefix + ". Valid prefixes are "
                                     + ToStringBuilder.reflectionToString(validPrefixes, ToStringStyle.SIMPLE_STYLE));
                         }
                         allCodespacesValid = false;

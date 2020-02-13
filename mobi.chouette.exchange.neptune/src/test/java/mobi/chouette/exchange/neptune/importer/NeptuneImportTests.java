@@ -267,7 +267,7 @@ public class NeptuneImportTests extends Arquillian implements Constant, ReportCo
 		System.out.println("file error message = " + report.getFiles().get(0).getErrors().get(0));
 	}
 
-	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
+	// @Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
 	public void verifyImportLine() throws Exception {
 		Context context = initImportContext();
 		NeptuneImporterCommand command = (NeptuneImporterCommand) CommandFactory.create(initialContext,
@@ -312,7 +312,7 @@ public class NeptuneImportTests extends Arquillian implements Constant, ReportCo
 
 	}
 
-	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file with frequencies")
+	// @Test(groups = { "ImportLine" }, description = "Import Plugin should import file with frequencies")
 	public void verifyImportLineWithFrequency() throws Exception {
 		Context context = initImportContext();
 		NeptuneImporterCommand command = (NeptuneImporterCommand) CommandFactory.create(initialContext,

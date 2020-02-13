@@ -79,6 +79,7 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 	 * @return The actual value
 	 */
 	@Getter
+	@Setter
 	@Column(name = "codifligne")
 	private String codifligne;
 

@@ -154,8 +154,9 @@ public class NetexParserUtils extends ParserUtils {
 			} else if (subModeStructure.getRailSubmode() != null) {
 				RailSubmodeEnumeration mode = subModeStructure.getRailSubmode();
 				switch (mode) {
-					case INTERNATIONAL:
-						return TransportSubModeNameEnum.International;
+					// TODO à revoir pour changement de profil
+//					case INTERNATIONAL:
+//						return TransportSubModeNameEnum.International;
 					case INTERREGIONAL_RAIL:
 						return TransportSubModeNameEnum.InterregionalRail;
 					case LOCAL:
@@ -168,8 +169,9 @@ public class NetexParserUtils extends ParserUtils {
 						return TransportSubModeNameEnum.RegionalRail;
 					case TOURIST_RAILWAY:
 						return TransportSubModeNameEnum.TouristRailway;
-					case AIRPORT_LINK_RAIL:
-						return TransportSubModeNameEnum.AirportLinkRail;
+					// TODO à revoir pour changement de profil
+//					case AIRPORT_LINK_RAIL:
+//						return TransportSubModeNameEnum.AirportLinkRail;
 					default:
 						log.error("Unsupported rail sub mode " + mode);
 				}

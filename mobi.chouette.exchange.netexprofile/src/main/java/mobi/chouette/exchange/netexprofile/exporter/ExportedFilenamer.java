@@ -1,6 +1,5 @@
 package mobi.chouette.exchange.netexprofile.exporter;
 
-import java.text.Normalizer;
 import java.text.StringCharacterIterator;
 
 import mobi.chouette.common.Context;
@@ -21,6 +20,22 @@ public class ExportedFilenamer {
 		b.append("_shared_data.xml");
 
 		return b.toString();
+	}
+
+	public static String createIDFMLineFilename(Context context, Line line) {
+		NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
+
+		StringBuilder b = new StringBuilder();
+		b.append("offre_");
+		if(line.getCodifligne() != null){
+			b.append(line.getCodifligne().replaceAll(UNDERSCORE, DASH));
+			b.append(UNDERSCORE);
+		}
+		if(line.getNumber() != null){
+			b.append(line.getNumber().replaceAll(UNDERSCORE, DASH));
+		}
+
+		return utftoasci(b.toString()).replaceAll("/", DASH).replace(SPACE, DASH).replaceAll("\\.", DASH) + ".xml";
 	}
 
 	public static String createLineFilename(Context context, Line line) {

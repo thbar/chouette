@@ -25,7 +25,6 @@ public class ConcertoExportParameters extends AbstractExportParameter {
 	private Integer periodDays;
 
 	public boolean isValid(Logger log) {
-		if (!getReferencesType().equals("concerto")) return false;
 		return true;
 	}
 

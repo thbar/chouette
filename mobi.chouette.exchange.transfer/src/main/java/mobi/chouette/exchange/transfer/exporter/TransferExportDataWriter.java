@@ -74,6 +74,7 @@ public class TransferExportDataWriter implements Command, Constant {
 		ProgressionCommand progression = (ProgressionCommand) context.get(PROGRESSION);
 
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+		context.put(CLEAR_TABLE_CATEGORIES_FOR_LINES, Boolean.TRUE);
 		Command cleanCommand = CommandFactory.create(initialContext, CleanRepositoryCommand.class.getName());
 		log.info("Cleaning target dataspace");
 		boolean cleanCommandResult = cleanCommand.execute(context);

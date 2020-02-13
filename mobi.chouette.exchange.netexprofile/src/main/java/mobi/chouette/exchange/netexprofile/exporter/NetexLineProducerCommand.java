@@ -13,6 +13,7 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.NamingUtil;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.xml.sax.SAXParseException;
 
@@ -84,9 +85,12 @@ public class NetexLineProducerCommand implements Command, Constant {
             reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.ACCESS_POINT, collection.getAccessPoints().size());
             reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.STOP_AREA, collection.getStopAreas().size());
 
-            if (cont) {
+            // TODO enlever la vérification sur la présence du codifligne de PROFIL IDFM Norvégien
+            if (cont && StringUtils.isNotEmpty(line.getCodifligne())) {
                 try {
-                    NetexLineDataProducer producer = new NetexLineDataProducer();
+                    // TODO changer d'un data producer à l'autre pour changer de PROFIL IDFM Norvégien
+//                    NetexLineDataProducer producer = new NetexLineDataProducer();
+                    NetexLineDataIDFMProducer producer = new NetexLineDataIDFMProducer();
                     producer.produce(context);
 
                     reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.LINE, 1);
