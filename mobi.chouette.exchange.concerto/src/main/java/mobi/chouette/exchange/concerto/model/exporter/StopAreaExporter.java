@@ -13,7 +13,8 @@ public class StopAreaExporter extends ExporterImpl<ConcertoStopArea> implements
 		type, uuid, parent_id, referent_id, date, name, object_id, line_ids, attributes, references, collected_always, collect_children, collect_general_messages
 	}
 
-	public static final String FILENAME = "3-stop_area.txt";
+	public static final String NUMBER = "3";
+	public static final String FILENAME = "stop_area";
 
 	public StopAreaExporter(String path) throws IOException {
 		super(path);

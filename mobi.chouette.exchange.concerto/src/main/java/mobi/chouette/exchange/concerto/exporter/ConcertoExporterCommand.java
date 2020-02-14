@@ -10,8 +10,10 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
+import mobi.chouette.exchange.exporter.MergeCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -20,6 +22,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @Stateless(name = ConcertoExporterCommand.COMMAND)
@@ -55,14 +59,32 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			ProcessingCommands commands = ProcessingCommandsFactory
 					.create(ConcertoExporterProcessingCommands.class.getName());
 
-
-			result = process(context, commands, progression, false,Mode.line);
-			
-
+			//@TODO SCH intégrer keycloak
+			List<String> schemas = new ArrayList<>();
+			boolean allSchemas;
+			if("admin".equals(ContextHolder.getContext())){
+				allSchemas = true;
+				schemas.add("sqybus");
+				schemas.add("ceobus");
+				schemas.add("timbus");
+			} else {
+				allSchemas = false;
+				schemas.add(ContextHolder.getContext());
+			}
+			boolean goodProcessing = false;
+			for(String schema : schemas){
+				ContextHolder.setContext(schema);
+				goodProcessing = process(context, commands, progression, false,Mode.line, allSchemas);
+				if(goodProcessing) result = true;
+			}
+			if(allSchemas){
+				// tototot
+				Command mergedCommand = CommandFactory.create(initialContext, MergeCommand.class.getName());
+				result = mergedCommand.execute(context);
+			}
 		} catch (CommandCancelledException e) {
 			reporter.setActionError(context, ActionReporter.ERROR_CODE.INTERNAL_ERROR, "Command cancelled");
 			log.error(e.getMessage());
-
 		} catch (Exception e) {
 			//reporter.setActionError(context, ERROR_CODE.INTERNAL_ERROR,"Fatal :" + e);
 			log.error(e.getMessage(), e);

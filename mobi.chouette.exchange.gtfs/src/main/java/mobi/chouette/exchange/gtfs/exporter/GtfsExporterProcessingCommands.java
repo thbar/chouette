@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.gtfs.exporter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.naming.InitialContext;
-
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -16,6 +10,11 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.exporter.CompressCommand;
 import mobi.chouette.exchange.exporter.SaveMetadataCommand;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @Data
@@ -67,7 +66,7 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 	}
 
 	@Override
-	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		GtfsExportParameters parameters = (GtfsExportParameters) context.get(CONFIGURATION);
 		List<Command> commands = new ArrayList<>();
@@ -102,6 +101,11 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		}
 
 		return commands;
+	}
+
+	@Override
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+		return new ArrayList<>();
 	}
 
 	@Override

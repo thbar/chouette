@@ -13,7 +13,8 @@ public class OperatorExporter extends ExporterImpl<ConcertoOperator> implements
 		type, uuid, date, name, object_id
 	}
 
-	public static final String FILENAME = "1-operator.txt";
+	public static final String NUMBER = "1";
+	public static final String FILENAME = "operator";
 
 	public OperatorExporter(String path) throws IOException {
 		super(path);

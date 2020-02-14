@@ -1,13 +1,7 @@
 package mobi.chouette.exchange.netex.exporter;
 
-import java.io.IOException;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -20,11 +14,15 @@ import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
 import mobi.chouette.exchange.netex.Constant;
 import mobi.chouette.exchange.report.ActionReporter;
-import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
+import mobi.chouette.exchange.report.ReportConstant;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
 
 @Log4j
 @Stateless(name = NetexExporterCommand.COMMAND)
@@ -70,7 +68,7 @@ public class NetexExporterCommand extends AbstractExporterCommand implements Com
 			ProcessingCommands commands = ProcessingCommandsFactory.create(NetexExporterProcessingCommands.class
 					.getName());
 
-			result = process(context, commands, progression, true,Mode.line);
+			result = process(context, commands, progression, true,Mode.line, false);
 
 		} catch (CommandCancelledException e) {
 			reporter.setActionError(context, ERROR_CODE.INTERNAL_ERROR, "Command cancelled");

@@ -63,13 +63,15 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 	}
 
 	@Override
-	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
 			commands.add(CommandFactory.create(initialContext, ConcertoSharedDataProducerCommand.class.getName()));
 			commands.add(CommandFactory.create(initialContext, ConcertoTerminateExportCommand.class.getName()));
-			commands.add(CommandFactory.create(initialContext, MergeCommand.class.getName()));
+			if(!allSchemas) {
+				commands.add(CommandFactory.create(initialContext, MergeCommand.class.getName()));
+			}
 		} catch (Exception e) {
 			log.error(e, e);
 			throw new RuntimeException("unable to call factories");
@@ -83,6 +85,12 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 	    //@todo sch Voir pourquoi pas utilisé
         List<Command> commands = new ArrayList<>();
         return commands;
+	}
+
+	@Override
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+		List<Command> commands = new ArrayList<>();
+		return commands;
 	}
 
 
