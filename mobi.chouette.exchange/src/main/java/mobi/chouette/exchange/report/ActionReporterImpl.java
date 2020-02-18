@@ -2,6 +2,7 @@ package mobi.chouette.exchange.report;
 
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
+import mobi.chouette.exchange.validation.report.CheckPointReport;
 import mobi.chouette.exchange.validation.report.CheckPointReport.SEVERITY;
 
 public class ActionReporterImpl implements ActionReporter, Constant {
@@ -180,13 +181,16 @@ public class ActionReporterImpl implements ActionReporter, Constant {
 	}
 
 	@Override
-	public boolean addValidationErrorToFileReport(Context context, String fileInfoName, int code, SEVERITY severity) {
+	public boolean addValidationErrorToFileReport(Context context, String fileInfoName, int code, CheckPointReport checkPoint) {
 		ActionReport actionReport = (ActionReport) context.get(REPORT);
 		boolean ret = false;
 		if (actionReport != null) {
 			FileReport fileReport = actionReport.findFileReport(fileInfoName);
 			if (fileReport != null) {
-				ret = fileReport.addCheckPointError(code, severity);
+				ret = fileReport.addCheckPointError(code, checkPoint.getSeverity());
+				if(checkPoint.getSeverity() == SEVERITY.ERROR) {
+					fileReport.addError(new FileError(FILE_ERROR_CODE.INTERNAL_ERROR, checkPoint.getName()));
+				}
 			}
 		}
 		return ret;

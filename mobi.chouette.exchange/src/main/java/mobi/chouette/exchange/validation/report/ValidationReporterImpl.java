@@ -108,7 +108,7 @@ public class ValidationReporterImpl implements ValidationReporter, Constant {
 		int index = validationReport.getCheckPointErrors().size();
 		boolean checkPointAdded = checkPoint.addCheckPointError(index);
 
-		boolean reportAdded = addReferencesToActionReport(context, location, index, checkPoint.getSeverity());
+		boolean reportAdded = addReferencesToActionReport(context, location, index, checkPoint);
 
 		if (checkPointAdded || reportAdded)
 			validationReport.addCheckPointErrorReport(newCheckPointError);
@@ -151,20 +151,20 @@ public class ValidationReporterImpl implements ValidationReporter, Constant {
 		addCheckPointError(context, location, validationReport, checkPoint, newCheckPointError);
 	}
 
-	private boolean addReferencesToActionReport(Context context, DataLocation location, int code, SEVERITY severity) {
+	private boolean addReferencesToActionReport(Context context, DataLocation location, int code, CheckPointReport checkPoint) {
 		if (location == null)
 			return false;
 		boolean ret = false;
 		ActionReporter reporter = ActionReporter.Factory.getInstance();
 		if (location.getFilename() != null) {
-			if (reporter.addValidationErrorToFileReport(context, location.getFilename(), code, severity))
+			if (reporter.addValidationErrorToFileReport(context, location.getFilename(), code, checkPoint))
 				ret = true;
 		}
 		if (!location.getPath().isEmpty()) {
 			DataLocation.Path object = location.getPath().get(location.getPath().size() - 1);
 			OBJECT_TYPE type = getType(object);
 			if (type != null) {
-				if (reporter.addValidationErrorToObjectReport(context, object.getObjectId(), type, code, severity))
+				if (reporter.addValidationErrorToObjectReport(context, object.getObjectId(), type, code, checkPoint.getSeverity()))
 					ret = true;
 			}
 		}

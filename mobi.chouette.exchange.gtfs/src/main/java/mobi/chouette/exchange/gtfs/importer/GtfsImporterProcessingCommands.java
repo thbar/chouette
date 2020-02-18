@@ -80,6 +80,12 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 commands.add(chain);
             }
 
+            {
+                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+                Command databaseTimetables = CommandFactory.create(initialContext, DatabaseTimetablesCommand.class.getName());
+                chain.add(databaseTimetables);
+                commands.add(chain);
+            }
 
             for (GtfsRoute gtfsRoute : index) {
 
@@ -106,15 +112,6 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 }
                 commands.add(chain);
             }
-
-            {
-                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
-                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
-                chain.add(productionPeriods);
-                commands.add(chain);
-            }
-
-            Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
         } catch (Exception e) {
             log.error(e, e);

@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.report;
 
 import mobi.chouette.common.Context;
+import mobi.chouette.exchange.validation.report.CheckPointReport;
 import mobi.chouette.exchange.validation.report.CheckPointReport.SEVERITY;
 
 public interface ActionReporter {
@@ -91,7 +92,7 @@ public interface ActionReporter {
 	 * @param code
 	 * @return
 	 */
-	boolean addValidationErrorToFileReport(Context context, String fileInfoName, int code, SEVERITY severity);
+	boolean addValidationErrorToFileReport(Context context, String fileInfoName, int code, CheckPointReport checkPoint);
 	/**
 	 * @param context
 	 * @param code
