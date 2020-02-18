@@ -65,8 +65,14 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			if("admin".equals(ContextHolder.getContext())){
 				allSchemas = true;
 				schemas.add("sqybus");
+				schemas.add("perrier");
+				schemas.add("mobicitel40");
+				schemas.add("mobicite469");
+				schemas.add("ctvmi");
 				schemas.add("ceobus");
+				schemas.add("tvm");
 				schemas.add("timbus");
+				schemas.add("stile");
 			} else {
 				allSchemas = false;
 				schemas.add(ContextHolder.getContext());
@@ -78,7 +84,6 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				if(goodProcessing) result = true;
 			}
 			if(allSchemas){
-				// tototot
 				Command mergedCommand = CommandFactory.create(initialContext, MergeCommand.class.getName());
 				result = mergedCommand.execute(context);
 			}
