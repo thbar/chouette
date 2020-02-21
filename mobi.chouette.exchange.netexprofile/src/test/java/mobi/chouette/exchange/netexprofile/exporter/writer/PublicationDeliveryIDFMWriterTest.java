@@ -1,6 +1,5 @@
 package mobi.chouette.exchange.netexprofile.exporter.writer;
 
-import com.sun.org.apache.bcel.internal.classfile.LineNumber;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableData;
@@ -8,54 +7,46 @@ import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.exporter.NetexFragmentMode;
 import mobi.chouette.exchange.netexprofile.exporter.NetexprofileExportParameters;
 import mobi.chouette.exchange.netexprofile.exporter.producer.LineProducer;
-import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 import mobi.chouette.exchange.netexprofile.exporter.producer.RouteProducer;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
-import mobi.chouette.model.StopPoint;
+import org.rutebanken.netex.model.DayTypeRefStructure;
+import org.rutebanken.netex.model.DayTypeRefs_RelStructure;
 import org.rutebanken.netex.model.DestinationDisplay;
 import org.rutebanken.netex.model.DestinationDisplayRefStructure;
 import org.rutebanken.netex.model.Direction;
 import org.rutebanken.netex.model.DirectionRefStructure;
-import org.rutebanken.netex.model.Line;
-import org.rutebanken.netex.model.LineRefStructure;
 import org.rutebanken.netex.model.Line_VersionStructure;
 import org.rutebanken.netex.model.MultilingualString;
 import org.rutebanken.netex.model.PassengerStopAssignment;
 import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
 import org.rutebanken.netex.model.PointsInJourneyPattern_RelStructure;
 import org.rutebanken.netex.model.QuayRefStructure;
-import org.rutebanken.netex.model.Route;
 import org.rutebanken.netex.model.RouteRefStructure;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
+import org.rutebanken.netex.model.ServiceJourney;
 import org.rutebanken.netex.model.ServiceJourneyPattern;
 import org.rutebanken.netex.model.StopPointInJourneyPattern;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static mobi.chouette.common.Constant.CONFIGURATION;
 import static mobi.chouette.exchange.netexprofile.Constant.MARSHALLER;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.netexFactory;
-import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
 import static org.jboss.util.property.jmx.SystemPropertyClassValue.log;
-import static org.jboss.util.property.jmx.SystemPropertyClassValue.setSystemPropertyClassValue;
 
 
 public class PublicationDeliveryIDFMWriterTest {
@@ -153,6 +144,13 @@ public class PublicationDeliveryIDFMWriterTest {
 
         passengerStopAssignment.setQuayRef(quayRefStruct);
 
+        ServiceJourney serviceJourney = netexFactory.createServiceJourney();
+        DayTypeRefs_RelStructure dayType = netexFactory.createDayTypeRefs_RelStructure();
+        DayTypeRefStructure dayTypeRef = netexFactory.createDayTypeRefStructure();
+        dayTypeRef.setRef("TEST:DayType:t1:LOC");
+        dayTypeRef.setVersion("any");
+        dayType.getDayTypeRef().add(netexFactory.createDayTypeRef(dayTypeRef));
+        serviceJourney.setDayTypes(dayType);
 
         exportableNetexData.setLine(netexLine);
         exportableNetexData.getRoutes().add(netexRoute);
@@ -161,6 +159,7 @@ public class PublicationDeliveryIDFMWriterTest {
         exportableNetexData.getSharedDestinationDisplays().put(destinationDisplay.getId(), destinationDisplay);
         exportableNetexData.getSharedScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
         exportableNetexData.getSharedStopAssignments().put(passengerStopAssignment.getId(), passengerStopAssignment);
+        exportableNetexData.setServiceJourneys(Collections.singletonList(serviceJourney));
 
 
         NetexprofileExportParameters configuration = new NetexprofileExportParameters();

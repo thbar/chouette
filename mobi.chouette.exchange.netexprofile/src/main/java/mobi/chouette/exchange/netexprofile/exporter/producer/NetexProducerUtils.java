@@ -1,21 +1,5 @@
 package mobi.chouette.exchange.netexprofile.exporter.producer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.xml.bind.JAXBElement;
-
-import org.rutebanken.netex.model.DayOfWeekEnumeration;
-import org.rutebanken.netex.model.EntityInVersionStructure;
-import org.rutebanken.netex.model.FlexibleLineRefStructure;
-import org.rutebanken.netex.model.LineRefStructure;
-import org.rutebanken.netex.model.ObjectFactory;
-import org.rutebanken.netex.model.OrganisationTypeEnumeration;
-import org.rutebanken.netex.model.VersionOfObjectRefStructure;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.Constant;
@@ -36,6 +20,20 @@ import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.DayTypeEnum;
 import mobi.chouette.model.type.OrganisationTypeEnum;
+import org.rutebanken.netex.model.DayOfWeekEnumeration;
+import org.rutebanken.netex.model.EntityInVersionStructure;
+import org.rutebanken.netex.model.FlexibleLineRefStructure;
+import org.rutebanken.netex.model.LineRefStructure;
+import org.rutebanken.netex.model.ObjectFactory;
+import org.rutebanken.netex.model.OrganisationTypeEnumeration;
+import org.rutebanken.netex.model.VersionOfObjectRefStructure;
+
+import javax.xml.bind.JAXBElement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.LOC;
@@ -135,6 +133,16 @@ public class NetexProducerUtils {
 			return original.replaceAll(splittedParts[1], newType);
 		} else {
 			log.warn("Could not transform identifier "+original+" to type "+newType+" as it does not conform to id standard (XXX:Type:YYY)");
+			return original;
+		}
+	}
+
+	public static String replaceObjectIdPart(String original, String newValue, int indexPart) {
+		String[] splittedParts = original.split(":");
+		if(splittedParts.length > indexPart) {
+			return original.replaceAll(splittedParts[indexPart], newValue);
+		} else {
+			log.warn("Could not transform identifier "+original+" to value "+newValue+" as it does not conform to id standard (XXX:Type:YYY) or (XXX:Type:YYY:LOC)");
 			return original;
 		}
 	}
@@ -247,9 +255,9 @@ public class NetexProducerUtils {
 		}
 		String newType = translateType(source);
 		if (newType != null) {
-			destination.setRef(translateObjectId(source.getObjectId(), newType));
+			destination.setRef(replaceObjectIdPart(translateObjectId(source.getObjectId(), newType), "FR1", 0));
 		} else {
-			destination.setRef(source.getObjectId());
+			destination.setRef(replaceObjectIdPart(source.getObjectId(), "FR1", 0));
 		}
 		if (withVersion) {
 			destination.setVersion(source.getObjectVersion() == null ? "1" : source.getObjectVersion().toString());
@@ -262,7 +270,7 @@ public class NetexProducerUtils {
 			log.error("Cannot set reference since either source or destination is null");
 			return;
 		}
-		destination.setRef(source.getId());
+		destination.setRef(replaceObjectIdPart(source.getId(), "FR1", 0));
 		if (withVersion) {
 			destination.setVersion(source.getVersion());
 		}
