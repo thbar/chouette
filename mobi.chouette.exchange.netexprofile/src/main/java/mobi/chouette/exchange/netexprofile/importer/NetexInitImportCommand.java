@@ -1,22 +1,7 @@
 package mobi.chouette.exchange.netexprofile.importer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -29,8 +14,6 @@ import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValid
 import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCalendarNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCommonNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMLineNetexProfileValidator;
-import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayCommonNetexProfileValidator;
-import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayLineNetexProfileValidator;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
 import mobi.chouette.exchange.netexprofile.util.NetexReferential;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -38,6 +21,19 @@ import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.model.Codespace;
 import mobi.chouette.model.util.Referential;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Log4j
 @Stateless(name = NetexInitImportCommand.COMMAND)

@@ -4,7 +4,6 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.AVAILA
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 import org.rutebanken.netex.model.AvailabilityCondition;

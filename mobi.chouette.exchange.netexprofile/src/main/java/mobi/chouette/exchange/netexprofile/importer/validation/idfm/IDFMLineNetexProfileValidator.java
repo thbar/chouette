@@ -207,7 +207,6 @@ public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValid
                     instance.addExternalReferenceValidator(stopRegistryValidator);
                 }
 
-                instance.addExternalReferenceValidator(new ServiceJourneyInterchangeIgnorer());
                 context.put(NAME, instance);
             }
             return instance;

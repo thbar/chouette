@@ -32,6 +32,8 @@ import org.testng.annotations.Test;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;

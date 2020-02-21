@@ -36,7 +36,7 @@ public class NorwayCommonNetexProfileValidator extends AbstractNorwayNetexProfil
 
 		XdmNode commonDom = (XdmNode) context.get(Constant.NETEX_DATA_DOM);
 
-        Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(mobi.chouette.exchange.netexprofile.Constant.NETEX_COMMON_FILE_IDENTIFICATORS);
+        Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(Constant.NETEX_COMMON_FILE_IDENTIFICATORS);
         String fileName = (String) context.get(FILE_NAME);
 
 

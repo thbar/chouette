@@ -1,6 +1,5 @@
 package mobi.chouette.exchange.netexprofile.exporter;
 
-import java.text.Normalizer;
 import java.text.StringCharacterIterator;
 
 import mobi.chouette.common.Context;

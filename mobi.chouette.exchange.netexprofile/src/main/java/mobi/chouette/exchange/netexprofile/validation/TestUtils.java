@@ -6,7 +6,7 @@ import mobi.chouette.exchange.netexprofile.Constant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestUtils implements Constant{
+public class TestUtils implements Constant {
 	protected List<TestDescription> netexProfileTestList = null;
 	
 	private static TestUtils singleton = null;

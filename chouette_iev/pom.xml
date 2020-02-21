@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.chouette</groupId>
         <artifactId>mobi.chouette</artifactId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>4.0.2_MOSAIC-SNAPSHOT</version>
     </parent>
     <artifactId>chouette_iev</artifactId>
     <packaging>ear</packaging>
@@ -103,6 +103,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mobi.chouette.exchange.gtfs</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mobi.chouette.exchange.concerto</artifactId>
             <type>ejb</type>
             <version>${project.version}</version>
         </dependency>

@@ -16,7 +16,6 @@ import mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes;
 import mobi.chouette.exchange.netexprofile.util.NetexReferential;
 import mobi.chouette.model.BookingArrangement;
 import mobi.chouette.model.Company;
-import mobi.chouette.model.ContactStructure;
 import mobi.chouette.model.FlexibleLineProperties;
 import mobi.chouette.model.GroupOfLine;
 import mobi.chouette.model.Network;

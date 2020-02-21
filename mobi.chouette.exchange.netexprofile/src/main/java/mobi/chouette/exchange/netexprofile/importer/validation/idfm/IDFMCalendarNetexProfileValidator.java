@@ -4,6 +4,12 @@ import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.importer.util.DataLocationHelper;
 import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
 import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.NetexProfileValidatorFactory;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.BlockJourneyReferencesIgnorerer;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.DummyStopReferentialIdValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.NorwayCommonNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.ServiceJourneyInterchangeIgnorer;
+import mobi.chouette.exchange.netexprofile.importer.validation.norway.StopPlaceRegistryIdValidator;
 import mobi.chouette.exchange.netexprofile.util.NetexIdExtractorHelper;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.model.Codespace;
@@ -35,9 +41,9 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
         Map<IdVersion, List<String>> commonIds = (Map<IdVersion, List<String>>) context.get(NETEX_COMMON_FILE_IDENTIFICATORS);
 
         //TODO voir si on ajoute une verif sur la structure des id GeneralFrame et QuayRef
-        List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
+        List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("GeneralFrame")));
         Set<IdVersion> localIds = new HashSet<>(localIdList);
-        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("QuayRef", "DayTypeRef", "TypeOfFrameRef", "LineRef")));
+        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("TypeOfFrameRef")));
 
         for (IdVersion id : localIds) {
             data.getDataLocations().put(id.getId(), DataLocationHelper.findDataLocation(id));
@@ -48,7 +54,7 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
         verifyNoDuplicatesWithCommonElements(context, localIds, commonIds);
 
         verifyNoDuplicatesAcrossLineFiles(context, localIdList,
-                new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
+                new HashSet<>(Arrays.asList("GeneralFrame")));
 
         verifyUseOfVersionOnLocalElements(context, localIds);
         verifyUseOfVersionOnRefsToLocalElements(context, localIds, localRefs);
@@ -63,6 +69,33 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
                 validateGeneralFrame(context, xpath, (XdmNode) generalFrame,  null);
             }
         }
+    }
+
+    public static class DefaultValidatorFactory extends NetexProfileValidatorFactory {
+        @Override
+        protected NetexProfileValidator create(Context context) throws ClassNotFoundException {
+            NetexProfileValidator instance = (NetexProfileValidator) context.get(NAME);
+            if (instance == null) {
+                instance = new IDFMCalendarNetexProfileValidator();
+
+                // Shitty, should use inversion of control pattern and dependency injection
+                if("true".equals(context.get("testng"))) {
+                    instance.addExternalReferenceValidator(new DummyStopReferentialIdValidator());
+                } else {
+                    StopPlaceRegistryIdValidator stopRegistryValidator = (StopPlaceRegistryIdValidator) StopPlaceRegistryIdValidator.DefaultExternalReferenceValidatorFactory
+                            .create(StopPlaceRegistryIdValidator.class.getName(), context);
+                    instance.addExternalReferenceValidator(stopRegistryValidator);
+                }
+
+                context.put(NAME, instance);
+            }
+            return instance;
+        }
+    }
+
+    static {
+        NetexProfileValidatorFactory.factories.put(IDFMCalendarNetexProfileValidator.class.getName(),
+                new IDFMCalendarNetexProfileValidator.DefaultValidatorFactory());
     }
 
     @Override
