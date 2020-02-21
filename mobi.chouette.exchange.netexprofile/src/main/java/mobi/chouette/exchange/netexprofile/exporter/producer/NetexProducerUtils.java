@@ -255,9 +255,9 @@ public class NetexProducerUtils {
 		}
 		String newType = translateType(source);
 		if (newType != null) {
-			destination.setRef(replaceObjectIdPart(translateObjectId(source.getObjectId(), newType), "FR1", 0));
+			destination.setRef(translateObjectId(source.getObjectId(), newType));
 		} else {
-			destination.setRef(replaceObjectIdPart(source.getObjectId(), "FR1", 0));
+			destination.setRef(source.getObjectId());
 		}
 		if (withVersion) {
 			destination.setVersion(source.getObjectVersion() == null ? "1" : source.getObjectVersion().toString());
@@ -270,7 +270,7 @@ public class NetexProducerUtils {
 			log.error("Cannot set reference since either source or destination is null");
 			return;
 		}
-		destination.setRef(replaceObjectIdPart(source.getId(), "FR1", 0));
+		destination.setRef(source.getId());
 		if (withVersion) {
 			destination.setVersion(source.getVersion());
 		}
@@ -320,12 +320,12 @@ public class NetexProducerUtils {
 		}
 		String newType = translateTypeIDFM(source);
 		if (newType != null) {
-			destination.setRef(translateObjectId(source.getObjectId(), newType));
+			destination.setRef(replaceObjectIdPart(translateObjectId(source.getObjectId(), newType), "FR1", 0));
 		} else {
-			destination.setRef(source.getObjectId());
+			destination.setRef(replaceObjectIdPart(source.getObjectId(), "FR1", 0));
 		}
 		if (!destination.getRef().endsWith(OBJECT_ID_SPLIT_CHAR + LOC)){
-			destination.setRef(destination.getRef() + OBJECT_ID_SPLIT_CHAR + LOC);
+			destination.setRef(replaceObjectIdPart(destination.getRef() + OBJECT_ID_SPLIT_CHAR + LOC, "FR1", 0));
 		}
 		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
 
