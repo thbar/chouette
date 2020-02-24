@@ -1,16 +1,5 @@
 package mobi.chouette.exchange.netexprofile.importer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.naming.InitialContext;
-
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -21,7 +10,6 @@ import mobi.chouette.common.chain.Chain;
 import mobi.chouette.common.chain.ChainCommand;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.common.parallel.ParallelExecutionCommand;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
@@ -33,11 +21,18 @@ import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
-import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
-import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.Constant.NETEX_FILE_PATHS;
 
@@ -125,12 +120,12 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 
 			// schema validation
 
-			if (parameters.isValidateAgainstSchema()) {
+			/*if (parameters.isValidateAgainstSchema()) {
 				NetexSchemaValidationCommand schemaValidation = (NetexSchemaValidationCommand) CommandFactory.create(initialContext,
 						NetexSchemaValidationCommand.class.getName());
 
 				mainChain.add(schemaValidation);
-			}
+			}*/
 			// common file parsing
 
 			List<Path> commonFilePaths = allFilePaths.stream().filter(
@@ -157,10 +152,10 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 				commonFileChain.add(initializer);
 
 				// profile validation
-				if(parameters.isValidateAgainstProfile()) {
+				/*if(parameters.isValidateAgainstProfile()) {
 					Command validator = CommandFactory.create(initialContext, NetexValidationCommand.class.getName());
 					commonFileChain.add(validator);
-				}
+				}*/
 				NetexCommonFilesParserCommand commonFilesParser = (NetexCommonFilesParserCommand) CommandFactory.create(initialContext,
 						NetexCommonFilesParserCommand.class.getName());
 				commonFileChain.add(commonFilesParser);
@@ -180,7 +175,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 			// profile validation
 			if (parameters.isValidateAgainstProfile()) {
 
-				ParallelExecutionCommand lineValidationCommands = (ParallelExecutionCommand) CommandFactory.create(initialContext, ParallelExecutionCommand.class.getName());
+				/*ParallelExecutionCommand lineValidationCommands = (ParallelExecutionCommand) CommandFactory.create(initialContext, ParallelExecutionCommand.class.getName());
 				if (lineValidationTimeoutSeconds != null) {
 					lineValidationCommands.setTimeoutSeconds(lineValidationTimeoutSeconds);
 				}
@@ -204,7 +199,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 					Command validator = CommandFactory.create(initialContext, NetexValidationCommand.class.getName());
 					lineChain.add(validator);
 
-				}
+				}*/
 			}
 
 			if (withDao && !parameters.isNoSave()) {
@@ -242,8 +237,8 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 					}
 					if (level3validation) {
 						// add validation
-						Command validate = CommandFactory.create(initialContext, ImportedLineValidatorCommand.class.getName());
-						lineChain.add(validate);
+						/*Command validate = CommandFactory.create(initialContext, ImportedLineValidatorCommand.class.getName());
+						lineChain.add(validate);*/
 					}
 				}
 			}
@@ -269,7 +264,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 
 			if (level3validation) {
 				// add shared data validation
-				commands.add(CommandFactory.create(initialContext, SharedDataValidatorCommand.class.getName()));
+				//commands.add(CommandFactory.create(initialContext, SharedDataValidatorCommand.class.getName()));
 			}
 			if (!CollectionUtils.isEmpty(parameters.getGenerateMissingRouteSectionsForModes())) {
 				commands.add(CommandFactory.create(initialContext, GenerateRouteSectionsCommand.class.getName()));
