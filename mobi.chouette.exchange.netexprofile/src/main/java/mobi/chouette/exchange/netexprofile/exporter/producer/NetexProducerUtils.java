@@ -137,14 +137,17 @@ public class NetexProducerUtils {
 		}
 	}
 
-	public static String replaceObjectIdPart(String original, String newValue, int indexPart) {
-		String[] splittedParts = original.split(":");
-		if(splittedParts.length > indexPart) {
-			return original.replaceAll(splittedParts[indexPart], newValue);
-		} else {
-			log.warn("Could not transform identifier "+original+" to value "+newValue+" as it does not conform to id standard (XXX:Type:YYY) or (XXX:Type:YYY:LOC)");
-			return original;
+	public static String replaceObjectIdPart(String original, String newValue, int indexPart, Object clazz) {
+		if(clazz instanceof Line) {
+			String[] splittedParts = original.split(":");
+			if (splittedParts.length > indexPart) {
+				return original.replaceAll(splittedParts[indexPart], newValue);
+			} else {
+				log.warn("Could not transform identifier " + original + " to value " + newValue + " as it does not conform to id standard (XXX:Type:YYY) or (XXX:Type:YYY:LOC)");
+				return original;
+			}
 		}
+		return original;
 	}
 
 	public static String createUniqueId(Context context, String type) {
@@ -320,12 +323,12 @@ public class NetexProducerUtils {
 		}
 		String newType = translateTypeIDFM(source);
 		if (newType != null) {
-			destination.setRef(replaceObjectIdPart(translateObjectId(source.getObjectId(), newType), "FR1", 0));
+			destination.setRef(replaceObjectIdPart(translateObjectId(source.getObjectId(), newType), "FR1", 0, source));
 		} else {
-			destination.setRef(replaceObjectIdPart(source.getObjectId(), "FR1", 0));
+			destination.setRef(replaceObjectIdPart(source.getObjectId(), "FR1", 0, source));
 		}
 		if (!destination.getRef().endsWith(OBJECT_ID_SPLIT_CHAR + LOC)){
-			destination.setRef(replaceObjectIdPart(destination.getRef() + OBJECT_ID_SPLIT_CHAR + LOC, "FR1", 0));
+			destination.setRef(replaceObjectIdPart(destination.getRef() + OBJECT_ID_SPLIT_CHAR + LOC, "FR1", 0, source));
 		}
 		destination.setVersion(NETEX_DEFAULT_OBJECT_VERSION);
 
