@@ -8,15 +8,8 @@
 
 package mobi.chouette.exchange.gtfs.exporter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
@@ -40,10 +33,16 @@ import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NamingUtil;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -61,6 +60,13 @@ public class GtfsLineProducerCommand implements Command, Constant {
 		try {
 
 			Line line = (Line) context.get(LINE);
+
+			if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
+				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
+						ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
+				return ERROR;
+			}
+
 			GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
 
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
