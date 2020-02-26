@@ -18,6 +18,7 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.NamingUtil;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
@@ -46,6 +47,13 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 		try {
 
 			Line line = (Line) context.get(LINE);
+
+			if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
+				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
+						ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
+				return ERROR;
+			}
+
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 
 			if(collection == null) collection = new ExportableData();
