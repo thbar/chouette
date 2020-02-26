@@ -36,6 +36,13 @@ public class NetexLineProducerCommand implements Command, Constant {
 
             Line line = (Line) context.get(LINE);
             log.info("processing line " + NamingUtil.getName(line));
+
+            if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
+                reporter.addErrorToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE,
+                        ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
+                return ERROR;
+            }
+
             NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
             
             
