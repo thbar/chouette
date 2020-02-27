@@ -33,7 +33,6 @@ import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.NamingUtil;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
@@ -60,13 +59,6 @@ public class GtfsLineProducerCommand implements Command, Constant {
 		try {
 
 			Line line = (Line) context.get(LINE);
-
-			if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
-				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
-						ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
-				return ERROR;
-			}
-
 			GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
 
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
