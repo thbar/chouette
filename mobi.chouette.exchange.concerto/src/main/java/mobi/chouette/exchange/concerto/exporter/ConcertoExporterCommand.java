@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.exchange.CommandCancelledException;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
@@ -15,7 +14,6 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -30,9 +28,6 @@ import java.util.List;
 public class ConcertoExporterCommand extends AbstractExporterCommand implements Command, ReportConstant {
 
 	public static final String COMMAND = "ConcertoExporterCommand";
-
-	@EJB
-	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)

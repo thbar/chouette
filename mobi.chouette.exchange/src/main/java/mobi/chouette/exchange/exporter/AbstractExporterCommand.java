@@ -23,7 +23,7 @@ import java.util.Set;
 public class AbstractExporterCommand implements Constant {
 
 	@EJB DaoReader reader;
-	
+
 	protected enum Mode {
 		line, stopareas
 	}
@@ -122,6 +122,11 @@ public class AbstractExporterCommand implements Constant {
                 }
             }
 			// post processing
+            // Process operators
+            // @TODO SCH créer une commande
+            if(context.containsKey("concerto_exporter")) {
+                context.put(EXPORTABLE_OPERATORS, reader.loadOperators());
+            }
 
 			List<? extends Command> postProcessingCommands = commands.getPostProcessingCommands(context, true, allSchemas);
 			progression.terminate(context, postProcessingCommands.size());

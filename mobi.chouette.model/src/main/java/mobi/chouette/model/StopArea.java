@@ -552,6 +552,11 @@ public class StopArea extends NeptuneLocalizedObject {
 
 	@Getter
 	@Setter
+	@Column(name = "is_external")
+	private Boolean isExternal;
+
+    @Getter
+	@Setter
 	@Transient
 	private UUID uuid;
 

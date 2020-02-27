@@ -35,22 +35,31 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
-		String id = ProviderReferentialID.providers.get(context.get("ref").toString().toUpperCase());
-		String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
-		log.info("provider: " + context.get("ref") + "provider id: " + id);
-		log.info("http request : " + requestHttpTarget+ "id: " + id);
-		InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
-		HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
+		Boolean swallow = (Boolean) context.get("swallow");
+		try {
+			String id = ProviderReferentialID.providers.get(context.get("ref").toString().toUpperCase());
+			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
+			log.info("provider: " + context.get("ref") + "provider id: " + id);
+			log.info("http request : " + requestHttpTarget + "id: " + id);
+			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
+			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
 
-		stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
-			Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
-			if (byZdep.isPresent()) {
-				MappingHastusZdep mappingHastusZdep = byZdep.get();
-				mappingHastusZdep.setZder(zderZdlrPair.getLeft());
-				mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
-			}
-		});
-		log.info("zdeps of " + context.get("ref") + " are now updated and liked to their respectiv zder and zdlr on database!");
+			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
+				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
+				if (byZdep.isPresent()) {
+					MappingHastusZdep mappingHastusZdep = byZdep.get();
+					mappingHastusZdep.setZder(zderZdlrPair.getLeft());
+					mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
+				}
+			});
+			log.info("Les plages ZDEP de " + context.get("ref") + " ont été mappées à leurs ZDER et ZDLR");
+		} catch (Exception e) {
+            if (swallow == null || !swallow.booleanValue()) {
+                throw e;
+            }
+        } finally {
+            context.put("swallow", Boolean.FALSE);
+        }
 		return SUCCESS;
 	}
 

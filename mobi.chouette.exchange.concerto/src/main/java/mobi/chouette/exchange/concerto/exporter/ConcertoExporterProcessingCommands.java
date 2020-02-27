@@ -9,6 +9,8 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.exporter.MergeCommand;
+import mobi.chouette.exchange.importer.UpdateMappingZdepZderZdlrCommand;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -37,6 +39,9 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
+			context.put("ref", ContextHolder.getContext());
+			context.put("swallow", Boolean.TRUE);
+			commands.add(CommandFactory.create(initialContext, UpdateMappingZdepZderZdlrCommand.class.getName()));
 			commands.add(CommandFactory.create(initialContext, ConcertoInitExportCommand.class.getName()));
 		} catch (Exception e) {
 			log.error(e, e);

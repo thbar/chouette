@@ -39,7 +39,10 @@ public interface ConcertoConverter {
 		@Override
 		protected String convertTo(ConcertoObjectId input) throws Exception {
 			String json = JSONUtil.toJSON(input);
-			return (new JSONObject(json)).getString("root");
+			String val = (new JSONObject(json)).getString("root");
+			val = val.replace("\\\"", "\"");
+			val = val.replaceAll("\"\"", "\"");
+			return val;
 		}
 
 	};

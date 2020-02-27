@@ -6,6 +6,7 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -189,16 +190,26 @@ public class FileUtil {
 		fis.close();
 	}
 
-	public static void mergeFilesInPath(String path, String filename) throws IOException {
+	public static void mergeFilesInPath(String path, String filename) {
+		FileUtil.mergeFilesInPath(path, filename, null);
+	}
 
-		File directoryToZip = new File(path);
+
+	public static void mergeFilesInPath(String path, String filename, String oneOccurence) {
+		boolean oneOccurenceIsFound = false;
+		File directoryToMerge = new File(path);
 		List<File> fileList = new ArrayList<File>();
-		getAllFiles(directoryToZip, fileList);
+		getAllFiles(directoryToMerge, fileList);
 		fileList.sort(Comparator.comparing(File::getName));
 
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(filename);
 			for (File file : fileList) {
+				if(!StringUtils.isEmpty(oneOccurence) && file.getName().contains(oneOccurence)){
+					if(oneOccurenceIsFound) continue;
+					oneOccurenceIsFound = true;
+				}
+
 				if (!file.isDirectory()) { // we only merge files, not directories
 					FileInputStream fileInputStream = new FileInputStream(file);
 					byte[] buffer = new byte[1024];
