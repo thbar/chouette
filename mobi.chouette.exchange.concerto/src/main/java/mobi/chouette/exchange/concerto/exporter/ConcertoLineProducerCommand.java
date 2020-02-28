@@ -48,18 +48,19 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 
 			Line line = (Line) context.get(LINE);
 
-			if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
-				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,
-						ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
-				return ERROR;
-			}
-
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 
 			if(collection == null) collection = new ExportableData();
 
-			reporter.addObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, NamingUtil.getName(line),
-					OBJECT_STATE.OK, IO_TYPE.OUTPUT);
+			if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
+				reporter.addObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, "Codifligne manquant",
+						OBJECT_STATE.WARNING, IO_TYPE.OUTPUT);
+			}
+			else {
+				reporter.addObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, NamingUtil.getName(line),
+						OBJECT_STATE.OK, IO_TYPE.OUTPUT);
+			}
+
 			if (line.getCompany() == null && line.getNetwork() == null) {
 				log.info("Ignoring line without company or network: " + line.getObjectId());
 				reporter.addErrorToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE,

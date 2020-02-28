@@ -39,7 +39,7 @@ public class NetexLineProducerCommand implements Command, Constant {
 
             if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
                 reporter.addErrorToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE,
-                        ActionReporter.ERROR_CODE.INVALID_DATA, "no codifligne for this line");
+                        ActionReporter.ERROR_CODE.INVALID_DATA, "Codifligne manquant");
                 return ERROR;
             }
 
