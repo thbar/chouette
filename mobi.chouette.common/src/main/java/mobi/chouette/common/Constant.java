@@ -49,6 +49,7 @@ public interface Constant {
 	public static final String PARSER = "parser";
 	public static final String AREA_BLOC = "area_bloc";
 	public static final String CONNECTION_LINK_BLOC = "connection_link_bloc";
+	public static final String ALL_SCHEMAS = "all_schemas";
 
 	
 	public static final String VALIDATION_DATA = "validation_data";
@@ -59,6 +60,7 @@ public interface Constant {
 	public static final String METADATA = "metadata";
 	public static final String LINE = "line";
 	public static final String LINE_ID = "line_id";
+	public static final String EXPORTABLE_OPERATORS = "exportable_operators";
 
 	public static final char SEP = '|';
 	public static final String NULL = "\\N";

@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 public class GtfsStopUtils {
     public static String getNewStopId(StopArea stop) {
-        if(stop != null && !StringUtils.isEmpty(stop.getStopId())){
-            return stop.getStopId();
+        if(stop != null && !StringUtils.isEmpty(stop.getOriginalStopId())){
+            return stop.getOriginalStopId();
         }
         String inputStopId = stop.getObjectId();
         if(StringUtils.isEmpty(inputStopId)) return null;

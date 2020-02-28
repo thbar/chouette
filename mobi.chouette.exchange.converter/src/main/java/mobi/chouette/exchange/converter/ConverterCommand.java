@@ -1,12 +1,7 @@
 package mobi.chouette.exchange.converter;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Constant;
@@ -33,11 +28,13 @@ import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.util.Referential;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
+import java.util.List;
 
 @Log4j
 @Stateless(name = ConverterCommand.COMMAND)
@@ -187,9 +184,9 @@ public class ConverterCommand implements Command, Constant, ReportConstant {
 			// post-processing
 
 			List<? extends Command> postImportProcessingCommands = importProcessingCommands.getPostProcessingCommands(
-					importContext, false);
+					importContext, false, false);
 			List<? extends Command> postExportProcessingCommands = exportProcessingCommands.getPostProcessingCommands(
-					exportContext, false);
+					exportContext, false, false);
 			// check if data where exported
 
 			if (lineCount == 0) {

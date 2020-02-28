@@ -5,9 +5,11 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.transfer.Constant;
 import mobi.chouette.model.Line;
+import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
@@ -36,6 +38,9 @@ public class TransferExportDataLoader implements Command, Constant {
 	@EJB
 	private StopAreaDAO stopAreaDAO;
 
+	@EJB
+	private OperatorDAO operatorDAO;
+
 	@PersistenceContext(unitName = "referential")
 	private EntityManager em;
 
@@ -47,6 +52,8 @@ public class TransferExportDataLoader implements Command, Constant {
 		context.put(LINES, lineToTransfer);
 	    List<StopArea> stopAreaToTransfer = prepareStopAreas(context);
 		context.put(STOP_AREAS, stopAreaToTransfer);
+		List<Operator> operatorToTransfer = prepareOperators(context);
+		context.put(OPERATORS, operatorToTransfer);
 		return true;
 	}
 
@@ -106,6 +113,24 @@ public class TransferExportDataLoader implements Command, Constant {
 		return allStopAreas;
 	}
 
+	protected List<Operator> prepareOperators(Context context) throws IllegalArgumentException, SecurityException {
+		if (!em.isJoinedToTransaction()) {
+			throw new RuntimeException("No transaction");
+		}
+
+		TransferExportParameters configuration = (TransferExportParameters) context.get(CONFIGURATION);
+
+		log.info("Loading all operators...");
+		List<Operator> operators = operatorDAO.findAll();
+
+		log.info("Removing Hibernate proxies");
+		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
+		operators = deProxy.deepDeproxy(operators);
+		log.info("Removing Hibernate proxies completed");
+
+		em.clear();
+		return operators;
+	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
 

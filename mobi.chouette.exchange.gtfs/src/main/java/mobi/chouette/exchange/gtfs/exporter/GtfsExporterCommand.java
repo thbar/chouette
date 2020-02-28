@@ -79,7 +79,7 @@ public class GtfsExporterCommand extends AbstractExporterCommand implements Comm
 
 				ProcessingCommands commands = ProcessingCommandsFactory
 						.create(GtfsExporterProcessingCommands.class.getName());
-				result = process(context, commands, progression, false,(all?Mode.line:Mode.stopareas));
+				result = process(context, commands, progression, false,(all?Mode.line:Mode.stopareas), false);
 			
 
 		} catch (CommandCancelledException e) {

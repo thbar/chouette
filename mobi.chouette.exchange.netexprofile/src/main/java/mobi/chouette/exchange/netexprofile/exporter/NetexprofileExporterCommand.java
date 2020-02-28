@@ -63,7 +63,7 @@ public class NetexprofileExporterCommand extends AbstractExporterCommand impleme
 
             ProcessingCommands commands = ProcessingCommandsFactory.create(NetexExporterProcessingCommands.class.getName());
 
-            result = process(context, commands, progression, true, Mode.line);
+            result = process(context, commands, progression, true, Mode.line, false);
         } catch (CommandCancelledException e) {
             reporter.setActionError(context, ActionReporter.ERROR_CODE.INTERNAL_ERROR, "Command cancelled");
             log.error(e.getMessage());

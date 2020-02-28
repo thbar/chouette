@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.validator;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.naming.InitialContext;
-
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -15,6 +9,11 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @Data
@@ -59,7 +58,7 @@ public class ValidatorProcessingCommands implements ProcessingCommands, Constant
 	}
 
 	@Override
-	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
@@ -75,6 +74,12 @@ public class ValidatorProcessingCommands implements ProcessingCommands, Constant
 	public List<? extends Command> getStopAreaProcessingCommands(Context context, boolean withDao) {
 		return new ArrayList<>();
 	}
+
+	@Override
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+		return new ArrayList<>();
+	}
+
 	@Override
 	public List<? extends Command> getDisposeCommands(Context context, boolean withDao) {
 		List<Command> commands = new ArrayList<>();

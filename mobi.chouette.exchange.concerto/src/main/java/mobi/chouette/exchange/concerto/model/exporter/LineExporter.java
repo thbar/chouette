@@ -13,8 +13,9 @@ public class LineExporter extends ExporterImpl<ConcertoLine> implements
 		type, uuid, date, name, object_id, attributes, references, collectedAlways
 	}
 
+	public static final String NUMBER = "2";
+	public static final String FILENAME = "line";
 
-	public static final String FILENAME = "2-line.txt";
 
 	public LineExporter(String path) throws IOException {
 		super(path);

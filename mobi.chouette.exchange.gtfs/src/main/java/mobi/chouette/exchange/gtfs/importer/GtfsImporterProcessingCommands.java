@@ -152,6 +152,11 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 
     @Override
     public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
         InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
         boolean level3validation = context.get(VALIDATION) != null;
         GtfsImportParameters parameters = (GtfsImportParameters) context.get(CONFIGURATION);

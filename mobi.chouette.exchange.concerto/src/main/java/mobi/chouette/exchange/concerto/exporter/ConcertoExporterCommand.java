@@ -4,31 +4,30 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.exchange.CommandCancelledException;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
+import mobi.chouette.exchange.exporter.MergeCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j
 @Stateless(name = ConcertoExporterCommand.COMMAND)
 public class ConcertoExporterCommand extends AbstractExporterCommand implements Command, ReportConstant {
 
 	public static final String COMMAND = "ConcertoExporterCommand";
-
-	@EJB
-	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -55,14 +54,37 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			ProcessingCommands commands = ProcessingCommandsFactory
 					.create(ConcertoExporterProcessingCommands.class.getName());
 
-
-			result = process(context, commands, progression, false,Mode.line);
-			
-
+			//@TODO SCH intégrer keycloak
+			List<String> schemas = new ArrayList<>();
+			boolean allSchemas;
+			if("admin".equals(ContextHolder.getContext())){
+				allSchemas = true;
+				schemas.add("sqybus");
+				schemas.add("perrier");
+				schemas.add("mobicitel40");
+				schemas.add("mobicite469");
+				schemas.add("ctvmi");
+				schemas.add("ceobus");
+				schemas.add("tvm");
+				schemas.add("timbus");
+				schemas.add("stile");
+			} else {
+				allSchemas = false;
+				schemas.add(ContextHolder.getContext());
+			}
+			boolean goodProcessing = false;
+			for(String schema : schemas){
+				ContextHolder.setContext(schema);
+				goodProcessing = process(context, commands, progression, false,Mode.line, allSchemas);
+				if(goodProcessing) result = true;
+			}
+			if(allSchemas){
+				Command mergedCommand = CommandFactory.create(initialContext, MergeCommand.class.getName());
+				result = mergedCommand.execute(context);
+			}
 		} catch (CommandCancelledException e) {
 			reporter.setActionError(context, ActionReporter.ERROR_CODE.INTERNAL_ERROR, "Command cancelled");
 			log.error(e.getMessage());
-
 		} catch (Exception e) {
 			//reporter.setActionError(context, ERROR_CODE.INTERNAL_ERROR,"Fatal :" + e);
 			log.error(e.getMessage(), e);

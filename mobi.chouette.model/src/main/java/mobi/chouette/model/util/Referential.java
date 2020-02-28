@@ -170,6 +170,10 @@ public class Referential implements java.io.Serializable {
 
     @Getter
     @Setter
+    private Map<String, Operator> operators = new HashMap<String, Operator>();
+
+    @Getter
+    @Setter
     private Map<String, Branding> brandings = new HashMap<>();
 
 
@@ -252,6 +256,7 @@ public class Referential implements java.io.Serializable {
         footnotes.clear();
         vehicleJourneyAtStops.clear();
         brandings.clear();
+        operators.clear();
     }
 
     public void dispose() {

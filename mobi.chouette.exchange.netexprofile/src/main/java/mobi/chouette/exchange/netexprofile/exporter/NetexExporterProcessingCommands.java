@@ -74,6 +74,11 @@ public class NetexExporterProcessingCommands implements ProcessingCommands, Cons
 
     @Override
     public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
         InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
         NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(CONFIGURATION);
         List<Command> commands = new ArrayList<>();
