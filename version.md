@@ -20,4 +20,6 @@
 * 5958 : Export concerto au format csv
 * 6056 : Interface Okina avec export concerto
 
-
+# 4.0.2
+* 6177 : Correction des erreurs de syntaxe sur l'export Netex
+* 6132 : Remonter une erreur si pas de Codifligne sur l'export Netex
