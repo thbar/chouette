@@ -19,6 +19,7 @@ import org.joda.time.LocalDate;
 import java.util.UUID;
 
 import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDEP;
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDER;
 import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDLR;
 
 /**
@@ -35,7 +36,7 @@ public class ConcertoStopProducer extends AbstractProducer
 		super(exporter);
 	}
 
-	public UUID save(StopArea neptuneObject, StopArea parent, LocalDate startDate, LocalDate endDate, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType)
+	public UUID save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate startDate, LocalDate endDate, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType)
 	{
 		UUID uuid;
 		if(neptuneObject.getUuid() != null) {
@@ -43,15 +44,14 @@ public class ConcertoStopProducer extends AbstractProducer
 		} else {
 			uuid = UUID.randomUUID();
 		}
+		for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
+			save(neptuneObject, parent, referent, date, uuid, objectId, lines, stopAreaType);
+		}
 
-		for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1))
-		{
-			save(neptuneObject, parent, date, uuid, objectId, lines, stopAreaType);
-    	}
 		return uuid;
 	}
 
-	private void save(StopArea neptuneObject, StopArea referent, LocalDate date, UUID uuid, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType){
+	private void save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate date, UUID uuid, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType){
 		switch(stopAreaType) {
 			case ZDEP:
 				break;
@@ -73,6 +73,12 @@ public class ConcertoStopProducer extends AbstractProducer
 			stop.setReferent_uuid(referent.getUuid());
 		} else {
 			stop.setReferent_uuid(null);
+		}
+
+		if(stopAreaType == ZDER && parent != null){
+			stop.setParent_uuid(parent.getUuid());
+		} else {
+			stop.setParent_uuid(null);
 		}
 
 		// If name is empty, try to use parent name

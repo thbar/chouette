@@ -157,10 +157,11 @@ public class RestService implements Constant {
 			command.execute(new mobi.chouette.common.Context(context));
 			return Response.ok().build();
 		} catch (Exception e) {
-			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+			Logger.getLogger(RestService.class.getName()).log(Level.SEVERE, e.getMessage(), e);
 		} finally {
 			ContextHolder.setContext(null);
 		}
+		return Response.notModified("Plages ZDer et ZDlr non récupérées pour le référentiel " + referential).build();
 	}
 
 	/**

@@ -1,13 +1,5 @@
 package mobi.chouette.exchange.exporter;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.ejb.EJB;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
@@ -18,18 +10,26 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
 import mobi.chouette.exchange.report.ActionReporter;
+import mobi.chouette.persistence.hibernate.ContextHolder;
+
+import javax.ejb.EJB;
+import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Log4j
 public class AbstractExporterCommand implements Constant {
 
 	@EJB DaoReader reader;
-	
+
 	protected enum Mode {
 		line, stopareas
 	}
 
 	public boolean process(Context context, ProcessingCommands commands, ProgressionCommand progression,
-			boolean continueLineProcesingOnError, Mode mode) throws Exception {
+			boolean continueLineProcesingOnError, Mode mode, boolean allSchemas) throws Exception {
 		boolean result = ERROR;
 		boolean disposeResult = SUCCESS;
 		AbstractExportParameter parameters = (AbstractExportParameter) context.get(CONFIGURATION);
@@ -122,14 +122,20 @@ public class AbstractExporterCommand implements Constant {
                 }
             }
 			// post processing
+            // Process operators
+            // @TODO SCH créer une commande
+            if(context.containsKey("concerto_exporter")) {
+                context.put(EXPORTABLE_OPERATORS, reader.loadOperators());
+            }
 
-			List<? extends Command> postProcessingCommands = commands.getPostProcessingCommands(context, true);
+			List<? extends Command> postProcessingCommands = commands.getPostProcessingCommands(context, true, allSchemas);
 			progression.terminate(context, postProcessingCommands.size());
 			for (Command exportCommand : postProcessingCommands) {
+			    context.put(ALL_SCHEMAS, Boolean.valueOf(allSchemas));
                 result = exportCommand.execute(context);
                 if (!result) {
                     if (!reporter.hasActionError(context))
-                        reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_PROCEEDED, "no data exported");
+                        reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_PROCEEDED, "Aucune donnée exportée depuis " + ContextHolder.getContext());
                     return ERROR;
                 }
                 progression.execute(context);

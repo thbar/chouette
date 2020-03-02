@@ -21,6 +21,9 @@ import mobi.chouette.exchange.netexprofile.importer.util.IdVersion;
 import mobi.chouette.exchange.parameters.AbstractImportParameter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
+import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
+import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -253,7 +256,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 
 
 	@Override
-	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		boolean level3validation = context.get(VALIDATION) != null;
 		AbstractImportParameter parameters = (AbstractImportParameter) context.get(CONFIGURATION);
@@ -278,6 +281,11 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 
 	@Override
 	public List<? extends Command> getStopAreaProcessingCommands(Context context, boolean withDao) {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
 		return new ArrayList<>();
 	}
 

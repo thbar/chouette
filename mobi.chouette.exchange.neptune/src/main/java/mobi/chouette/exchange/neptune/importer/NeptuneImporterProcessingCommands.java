@@ -1,13 +1,5 @@
 package mobi.chouette.exchange.neptune.importer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.naming.InitialContext;
-
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -29,6 +21,13 @@ import mobi.chouette.exchange.report.ActionReporter.FILE_STATE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
 import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
+
+import javax.naming.InitialContext;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Log4j
@@ -138,7 +137,7 @@ public class NeptuneImporterProcessingCommands implements ProcessingCommands, Co
 	}
 
 	@Override
-	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		boolean level3validation = context.get(VALIDATION) != null;
 
@@ -160,6 +159,12 @@ public class NeptuneImporterProcessingCommands implements ProcessingCommands, Co
 	public List<? extends Command> getStopAreaProcessingCommands(Context context, boolean withDao) {
 		return new ArrayList<>();
 	}
+
+	@Override
+	public List<? extends Command> getPostProcessingCommands(Context context, boolean withDao) {
+		return new ArrayList<>();
+	}
+
 	@Override
 	public List<? extends Command> getDisposeCommands(Context context, boolean withDao) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);

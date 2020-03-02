@@ -6,6 +6,7 @@ import mobi.chouette.exchange.concerto.model.ConcertoObject;
 import mobi.chouette.exchange.concerto.model.ConcertoOperator;
 import mobi.chouette.exchange.concerto.model.ConcertoStopArea;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoException.ERROR;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -20,17 +21,17 @@ public class ConcertoExporter implements ConcertoExporterInterface {
 
 	@Override
 	public Exporter<ConcertoOperator> getOperatorExporter() throws Exception {
-		return getExporter(EXPORTER.OPERATOR.name(), OperatorExporter.FILENAME, OperatorExporter.class);
+		return getExporter(EXPORTER.OPERATOR.name(), OperatorExporter.NUMBER, OperatorExporter.FILENAME, OperatorExporter.class);
 	}
 
 	@Override
 	public Exporter<ConcertoStopArea> getStopAreaExporter() throws Exception {
-		return getExporter(EXPORTER.STOP.name(), StopAreaExporter.FILENAME, StopAreaExporter.class);
+		return getExporter(EXPORTER.STOP.name(), StopAreaExporter.NUMBER, StopAreaExporter.FILENAME, StopAreaExporter.class);
 	}
 
 	@Override
 	public Exporter<ConcertoLine> getLineExporter() throws Exception {
-		return getExporter(EXPORTER.LINE.name(), LineExporter.FILENAME, LineExporter.class);
+		return getExporter(EXPORTER.LINE.name(), LineExporter.NUMBER, LineExporter.FILENAME, LineExporter.class);
 	}
 
 
@@ -54,12 +55,13 @@ public class ConcertoExporter implements ConcertoExporterInterface {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Exporter getExporter(String name, String path, Class clazz) throws Exception{
+	public Exporter getExporter(String name, String number, String path, Class clazz) throws Exception{
 		Exporter result = _map.get(name);
-
+		String currentShema = ContextHolder.getContext();
+		String fileName = number + "-" + path + "-" + currentShema + ".csv";
 		if (result == null) {
 			try {
-				result = ExporterFactory.build(Paths.get(_path, path)
+				result = ExporterFactory.build(Paths.get(_path, fileName)
 						.toString(), clazz.getName());
 				_map.put(name, result);
 			} catch (ClassNotFoundException | IOException e) {

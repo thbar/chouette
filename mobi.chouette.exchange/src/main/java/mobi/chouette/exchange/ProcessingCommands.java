@@ -1,9 +1,9 @@
 package mobi.chouette.exchange;
 
-import java.util.List;
-
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
+
+import java.util.List;
 
 /**
  * 
@@ -20,6 +20,7 @@ public interface ProcessingCommands {
 	List<? extends Command> getPreProcessingCommands(Context context,boolean withDao);
 	List<? extends Command> getLineProcessingCommands(Context context,boolean withDao);
 	List<? extends Command> getStopAreaProcessingCommands(Context context,boolean withDao);
-	List<? extends Command> getPostProcessingCommands(Context context,boolean withDao);
+	List<? extends Command> getPostProcessingCommands(Context context, boolean withDao);
+	List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas);
 	List<? extends Command> getDisposeCommands(Context context,boolean withDao);
 }
