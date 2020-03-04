@@ -153,6 +153,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 
 
 	private List<StopArea> addZderStopIfNotExists(List<StopArea> stops, StopArea stop) {
+		if(stop == null) return stops;
 		if(stops.stream()
 				.noneMatch(stopArea ->
 						stopArea.getMappingHastusZdep() != null &&
@@ -206,10 +207,12 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 	}
 
 	private StopArea createStopZder(StopArea stop, List<StopArea> stops) {
+		if(stop == null) return null;
+		if(stop.getMappingHastusZdep() == null) return null;
+		if(stop.getMappingHastusZdep().getZder() == null) return null;
 		return stops.stream()
 				.filter(stopArea -> stopArea.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZder() != null &&
-						stop.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder()))
 				.findFirst()
 				.orElse(getNewStopAreaZdXX(stop));
@@ -225,11 +228,13 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 	}
 
 	private StopArea createStopZdlr(StopArea stop, List<StopArea> stops) {
+		if(stop == null) return null;
+		if(stop.getMappingHastusZdep() == null ) return null;
+		if(stop.getMappingHastusZdep().getZdlr() == null) return null;
 		if(!stop.getIsExternal().booleanValue()) return null;
 		return stops.stream()
 				.filter(stopArea -> stopArea.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZder() != null &&
-						stop.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr()))
 				.findFirst()
 				.orElse(getNewStopAreaZdXX(stop));
