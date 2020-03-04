@@ -231,6 +231,7 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		if(stop == null) return null;
 		if(stop.getMappingHastusZdep() == null ) return null;
 		if(stop.getMappingHastusZdep().getZdlr() == null) return null;
+		if(stop.getIsExternal() == null) return null;
 		if(!stop.getIsExternal().booleanValue()) return null;
 		return stops.stream()
 				.filter(stopArea -> stopArea.getMappingHastusZdep() != null &&
