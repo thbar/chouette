@@ -12,13 +12,17 @@
           <members>
             <Route version="any" id="SQYBUS:Route:448-438_0_4480043_0:LOC">
               <Name>Place du Mesnil -> Collège St-François d'Assise</Name>
-              <LineRef ref="SQYBUS:Line:C00535:LOC" version="any"/>
+              <LineRef ref="FR1:Line:C00535:LOC">
+                version="any"
+              </LineRef>
               <DirectionType>outbound</DirectionType>
               <DirectionRef ref="SQYBUS:Direction:448-438_0_4480043_0:LOC" version="any"/>
             </Route>
             <Route version="any" id="SQYBUS:Route:448-438_1_4480044_1:LOC">
               <Name>Collège St-François d'Assise -> Place du Mesnil</Name>
-              <LineRef ref="SQYBUS:Line:C00535:LOC" version="any"/>
+              <LineRef ref="FR1:Line:C00535:LOC">
+                version="any"
+              </LineRef>
               <DirectionType>inbound</DirectionType>
               <DirectionRef ref="SQYBUS:Direction:448-438_1_4480044_1:LOC" version="any"/>
             </Route>
