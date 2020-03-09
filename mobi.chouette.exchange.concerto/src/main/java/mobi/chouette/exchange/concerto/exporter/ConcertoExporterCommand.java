@@ -75,6 +75,9 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			boolean goodProcessing = false;
 			for(String schema : schemas){
 				if(!schema.startsWith("mosaic_")) schema = "mosaic_" + schema;
+				if(context.containsKey(EXPORTABLE_DATA)){
+                    context.put(EXPORTABLE_DATA, new ExportableData());
+                }
 				ContextHolder.setContext(schema);
 				goodProcessing = process(context, commands, progression, false,Mode.line, allSchemas);
 				if(goodProcessing) result = true;
