@@ -106,26 +106,28 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		List<StopArea> zderStops = new ArrayList<>();
+
 		List<StopArea> zdlrStops = new ArrayList<>();
+		List<StopArea> parsedZdlr = new ArrayList<>();
+		if(context.containsKey(PARSED_ZDLR) || context.get(PARSED_ZDLR) != null) {
+			parsedZdlr = (List<StopArea>) context.get(PARSED_ZDLR);
+		}
+
 		MapperLinesAndZone mapperLinesAndZders = new MapperLinesAndZone();
 		MapperLinesAndZone mapperLinesAndZdlrs = new MapperLinesAndZone();
 
 		// no lambda : esprit chouette
 		// zdep
 		for (StopArea stop : physicalStops) {
-			try {
-				if (stop.getMappingHastusZdep() == null) continue;
-				UUID[] lineIdArray = new UUID[0];
-				StopArea stopZder = createStopZder(stop, zderStops);
-				lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray);
-				zderStops = addZderStopIfNotExists(zderStops, stopZder);
-				mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
-				mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
-				ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
-				stopProducer.save(stop, null, stopZder, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDEP);
-			} catch (Exception e){
-				throw e;
-			}
+			if (stop.getMappingHastusZdep() == null) continue;
+			UUID[] lineIdArray = new UUID[0];
+			StopArea stopZder = createStopZder(stop, zderStops);
+			lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray);
+			zderStops = addZderStopIfNotExists(zderStops, stopZder);
+			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
+			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
+			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
+			stopProducer.save(stop, null, stopZder, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDEP);
 		}
 
 		//zder
@@ -140,12 +142,17 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 
 		//zdlr
 		for (StopArea stop : zdlrStops) {
+			boolean wasParsed = parsedZdlr.stream()
+									.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr() == stop.getMappingHastusZdep().getZdlr());
+			if(wasParsed) continue;
 			if(stop.getMappingHastusZdep() == null) continue;
 			if(!stop.getIsExternal().booleanValue()) continue;
 			UUID[] lineIdArray = mapperLinesAndZdlrs.getLinesForZone(stop.getMappingHastusZdep().getZdlr());
 			ConcertoObjectId objectId = ConcertoStopAreaZdlrObjectIdGenerator.getConcertoObjectId(stop);
 			stopProducer.save(stop, null, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDLR);
+			parsedZdlr.add(stop);
 		}
+		context.put(PARSED_ZDLR, parsedZdlr);
 
 		List<Operator> operators = (List<Operator>) context.get(EXPORTABLE_OPERATORS);
 		operatorProducer.save(startDate, endDate, operators);
@@ -154,11 +161,12 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 
 	private List<StopArea> addZderStopIfNotExists(List<StopArea> stops, StopArea stop) {
 		if(stop == null) return stops;
+		if(stop.getMappingHastusZdep() == null) return stops;
+		if(stop.getMappingHastusZdep().getZder() == null) return stops;
 		if(stops.stream()
 				.noneMatch(stopArea ->
 						stopArea.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZder() != null &&
-						stop.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder())))
 		{
 			stops.add(stop);
@@ -168,11 +176,13 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 
 	private List<StopArea> addZdlrStopIfNotExists(List<StopArea> stops, StopArea stop) {
 		if(stop == null) return stops;
+		if(stop.getIsExternal() == null || !stop.getIsExternal().booleanValue()) return stops;
+		if(stop.getMappingHastusZdep() == null) return stops;
+		if(stop.getMappingHastusZdep().getZdlr() == null) return stops;
 		if(stops.stream()
 				.noneMatch(stopArea ->
 						stopArea.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZdlr() != null &&
-						stop.getMappingHastusZdep() != null &&
 						stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr())))
 		{
 			if(stop.getIsExternal().booleanValue()) stops.add(stop);

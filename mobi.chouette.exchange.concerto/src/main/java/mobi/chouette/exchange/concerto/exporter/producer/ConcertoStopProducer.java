@@ -99,13 +99,14 @@ public class ConcertoStopProducer extends AbstractProducer
 		stop.setZdep(mappingHastusZdep.getZdep());
 		stop.setZder(mappingHastusZdep.getZder());
 		stop.setZdlr(mappingHastusZdep.getZdlr());
-		stop.setLines(lines);
 		stop.setAttributes("{}");
 		stop.setReferences("{}");
 		stop.setCollectedAlways(true);
 		if(stopAreaType == ZDLR) {
+			stop.setLines(new UUID[0]);
 			stop.setCollectChildren(true);
 		} else {
+			stop.setLines(lines);
 			stop.setCollectChildren(false);
 		}
 		stop.setCollectGeneralMessages(true);
