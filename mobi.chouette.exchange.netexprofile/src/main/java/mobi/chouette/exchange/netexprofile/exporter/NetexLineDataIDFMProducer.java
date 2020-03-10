@@ -89,39 +89,36 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
 
     private void deleteSpacesInIdsAndChangeSpecialCharacters(ExportableData exportableData) {
         for (Route route : exportableData.getRoutes()) {
-            route.setObjectId(route.getObjectId().replaceAll("\\s+", ""));
-            route.setObjectId(route.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
-            route.getLine().setObjectId(route.getLine().getObjectId().replaceAll("\\s+", ""));
-            route.getLine().setObjectId(route.getLine().getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+            route.setObjectId(replaceAllSpacesAndSpecialCharacter(route.getObjectId()));
+            route.getLine().setObjectId(replaceAllSpacesAndSpecialCharacter(route.getLine().getObjectId()));
             for (mobi.chouette.model.RoutePoint routePoint : route.getRoutePoints()) {
-                routePoint.setObjectId(routePoint.getObjectId().replaceAll("\\s+", ""));
-                routePoint.setObjectId(routePoint.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
-                routePoint.getScheduledStopPoint().setObjectId(routePoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
-                routePoint.getScheduledStopPoint().setObjectId(routePoint.getScheduledStopPoint().getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+                routePoint.setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getObjectId()));
+                routePoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getScheduledStopPoint().getObjectId()));
             }
         }
         for (JourneyPattern journeyPattern : exportableData.getJourneyPatterns()) {
-            journeyPattern.setObjectId(journeyPattern.getObjectId().replaceAll("\\s+", ""));
-            journeyPattern.setObjectId(journeyPattern.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+            journeyPattern.setObjectId(replaceAllSpacesAndSpecialCharacter(journeyPattern.getObjectId()));
             for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
-                stopPoint.setObjectId(stopPoint.getObjectId().replaceAll("\\s+", ""));
-                stopPoint.setObjectId(stopPoint.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
-                stopPoint.getScheduledStopPoint().setObjectId(stopPoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
-                stopPoint.getScheduledStopPoint().setObjectId(stopPoint.getScheduledStopPoint().getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+                stopPoint.setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getObjectId()));
+                stopPoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getScheduledStopPoint().getObjectId()));
                 if (stopPoint.getDestinationDisplay() != null) {
-                    stopPoint.getDestinationDisplay().setObjectId(stopPoint.getDestinationDisplay().getObjectId().replaceAll("\\s+", ""));
-                    stopPoint.getDestinationDisplay().setObjectId(stopPoint.getDestinationDisplay().getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+                    stopPoint.getDestinationDisplay().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getDestinationDisplay().getObjectId()));
                 }
             }
         }
         for (Timetable timetable : exportableData.getTimetables()) {
-            timetable.setObjectId(timetable.getObjectId().replaceAll("\\s+", ""));
-            timetable.setObjectId(timetable.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+            timetable.setObjectId(replaceAllSpacesAndSpecialCharacter(timetable.getObjectId()));
         }
         for (VehicleJourney vehicleJourney : exportableData.getVehicleJourneys()) {
-            vehicleJourney.setObjectId(vehicleJourney.getObjectId().replaceAll("\\s+", ""));
-            vehicleJourney.setObjectId(vehicleJourney.getObjectId().replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_"));
+            vehicleJourney.setObjectId(replaceAllSpacesAndSpecialCharacter(vehicleJourney.getObjectId()));
         }
+    }
+
+    private String replaceAllSpacesAndSpecialCharacter(String objectId){
+        objectId = objectId.replaceAll("\\s+", "");
+        objectId = objectId.replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_");
+
+        return objectId;
     }
 
     private void produceAndCollectLineData(Context context, ExportableData exportableData, ExportableNetexData exportableNetexData) {
