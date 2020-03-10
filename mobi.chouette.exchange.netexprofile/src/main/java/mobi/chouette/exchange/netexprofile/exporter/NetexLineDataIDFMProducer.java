@@ -46,7 +46,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
     private static DirectionProducer directionProducer = new DirectionProducer();
     private static ServiceJourneyPatternIDFMProducer serviceJourneyPatternIDFMProducer = new ServiceJourneyPatternIDFMProducer();
 
-    protected static final String ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER = "([^0-9A-Za-z])";
+    protected static final String ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER = "([^0-9A-Za-z-_])";
 
 
     public void produce(Context context) throws Exception {

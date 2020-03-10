@@ -394,13 +394,13 @@ public class NetexLineDataIDFMProducerTest {
 
     @Test
     public void testRegexSpecialCharacter(){
-        String ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER = "([^0-9A-Za-z])";
+        String idStructureRegexpSpecialCharatec = "([^0-9A-Za-z-_])";
 
-        String test = "F--_oire&é'au(jAçé=)àmbon&é64100.=";
+        String test = "-F_oire&é'au(jAçé=)àmbon&é64100.=-";
 
-        test = test.replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_");
+        test = test.replaceAll(idStructureRegexpSpecialCharatec, "_");
 
-        Assert.assertEquals(test, "F___oire___au_jA_____mbon__64100__");
+        Assert.assertEquals(test, "-F_oire___au_jA_____mbon__64100__-");
 
     }
 
