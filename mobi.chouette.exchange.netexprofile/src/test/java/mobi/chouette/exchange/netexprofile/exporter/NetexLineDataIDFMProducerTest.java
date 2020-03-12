@@ -62,7 +62,8 @@ public class NetexLineDataIDFMProducerTest {
 
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getId(), "TEST:Route:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:TestCodifligne:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "FR1:Line:TestCodifligne");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getRef(), "TEST:Direction:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getVersion(), "any");
 
@@ -79,6 +80,7 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getRef(), "TEST:DestinationDisplay:dd1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getRef(), exportableNetexDataResult.getSharedDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId());
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getServiceJourneyPatternType().value(), "passenger");
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(0).getId(), "TEST:StopPointInJourneyPattern:sp1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(0).getOrder(), BigInteger.valueOf(1));
@@ -138,17 +140,17 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getJourneyPatternRef().getValue().getRef(), "TEST:ServiceJourneyPattern:jp1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getJourneyPatternRef().getValue().getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getRef(), "TEST:DayType:t1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getValue(), "version=\"any\"");
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 0, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getVersion(), "any");
-        Assert.assertNull(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getArrivalTime());
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 0, 0)));
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 15, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 15, 0)));
 
-        Assert.assertNull(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getDepartureTime());
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 30, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 30, 0)));
 
@@ -389,4 +391,17 @@ public class NetexLineDataIDFMProducerTest {
 
         return context;
     }
+
+    @Test
+    public void testRegexSpecialCharacter(){
+        String ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER = "([^0-9A-Za-z])";
+
+        String test = "F--_oire&é'au(jAçé=)àmbon&é64100.=";
+
+        test = test.replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_");
+
+        Assert.assertEquals(test, "F___oire___au_jA_____mbon__64100__");
+
+    }
+
 }

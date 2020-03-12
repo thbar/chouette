@@ -8,6 +8,7 @@ import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
 import org.rutebanken.netex.model.PointsInJourneyPattern_RelStructure;
 import org.rutebanken.netex.model.RouteRefStructure;
 import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
+import org.rutebanken.netex.model.ServiceJourneyPatternTypeEnumeration;
 import org.rutebanken.netex.model.StopPointInJourneyPattern;
 
 import java.math.BigInteger;
@@ -61,6 +62,8 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
 
         pointsInJourneyPattern_relStructure.withPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern(pointInLinkSequence_versionedChildStructures);
         netexServiceJourneyPattern.setPointsInSequence(pointsInJourneyPattern_relStructure);
+
+        netexServiceJourneyPattern.setServiceJourneyPatternType(ServiceJourneyPatternTypeEnumeration.PASSENGER);
 
         return netexServiceJourneyPattern;
     }
