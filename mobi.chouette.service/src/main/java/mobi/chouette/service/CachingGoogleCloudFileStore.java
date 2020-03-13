@@ -135,12 +135,14 @@ public class CachingGoogleCloudFileStore implements FileStore {
             } else {
                 bis = new ByteArrayInputStream(IOUtils.toByteArray(content));
             }
-            log.info("Preparing to write with cloudFileStore");
+
             if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "gcs") || StringUtils.equals(ievExportDestination, "both")){
+                log.info("Preparing to write with cloudFileStore");
                 cloudFileStore.writeFile(filePath, bis);
                 bis.reset();
             }
             if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "local") || StringUtils.equals(ievExportDestination, "both")){
+                log.info("Preparing to write with localFileStore");
                 localFileStore.writeFile(filePath, bis);
             }
         } catch (IOException ioE) {
