@@ -23,3 +23,7 @@
 # 4.0.2
 * 6177 : Correction des erreurs de syntaxe sur l'export Netex
 * 6132 : Remonter une erreur si pas de Codifligne sur l'export Netex
+
+#4.0.3
+* 6154 : Stockage des fichiers exportés sur le filesystem et/ou Google Cloud Storage
+* 6258 : Réactivation de la validation offre Netex export IDFM
