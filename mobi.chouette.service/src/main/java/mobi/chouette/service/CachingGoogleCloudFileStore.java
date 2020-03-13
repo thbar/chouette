@@ -9,6 +9,7 @@ import mobi.chouette.common.file.LocalFileStore;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Link;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDateTime;
 
 import javax.annotation.PostConstruct;
@@ -125,6 +126,8 @@ public class CachingGoogleCloudFileStore implements FileStore {
 
         log.info("Writing with CachingGoogleCloudFileStore");
 
+        String ievExportDestination = System.getProperty("iev.export.destination");
+
         try {
             ByteArrayInputStream bis;
             if (content instanceof ByteArrayInputStream) {
@@ -132,10 +135,16 @@ public class CachingGoogleCloudFileStore implements FileStore {
             } else {
                 bis = new ByteArrayInputStream(IOUtils.toByteArray(content));
             }
-            log.info("Preparing to write with cloudFileStore");
-            cloudFileStore.writeFile(filePath, bis);
-            bis.reset();
-            localFileStore.writeFile(filePath, bis);
+
+            if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "gcs") || StringUtils.equals(ievExportDestination, "both")){
+                log.info("Preparing to write with cloudFileStore");
+                cloudFileStore.writeFile(filePath, bis);
+                bis.reset();
+            }
+            if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "local") || StringUtils.equals(ievExportDestination, "both")){
+                log.info("Preparing to write with localFileStore");
+                localFileStore.writeFile(filePath, bis);
+            }
         } catch (IOException ioE) {
             throw new FileServiceException("Failed to write file to permanent storage: " + ioE.getMessage(), ioE);
         }
