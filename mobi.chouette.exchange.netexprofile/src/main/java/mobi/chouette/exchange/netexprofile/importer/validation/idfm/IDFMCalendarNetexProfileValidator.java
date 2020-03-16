@@ -53,9 +53,6 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
         verifyIdStructure(context, localIds, ID_STRUCTURE_REGEXP, validCodespaces);
         verifyNoDuplicatesWithCommonElements(context, localIds, commonIds);
 
-        verifyNoDuplicatesAcrossLineFiles(context, localIdList,
-                new HashSet<>(Arrays.asList("GeneralFrame")));
-
         verifyUseOfVersionOnLocalElements(context, localIds);
         verifyUseOfVersionOnRefsToLocalElements(context, localIds, localRefs);
         verifyReferencesToCommonElements(context, localRefs, localIds, commonIds);
