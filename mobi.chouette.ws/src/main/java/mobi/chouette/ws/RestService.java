@@ -239,6 +239,30 @@ public class RestService implements Constant {
 		}
 	}
 
+	@GET
+	@Path("/{ref}/update-stoparea-from-okina/{stopId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateStopareaFromOkina(@PathParam("ref") String ref,
+											   @PathParam("stopId") Long stopId) {
+		try {
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			Referential referential = new Referential();
+			context.put("ref", ref);
+			context.put("stopId", stopId);
+			context.put(REFERENTIAL, referential);
+
+				ContextHolder.setContext(ref);
+				Command command = CommandFactory.create(new InitialContext(), UpdateStopareaFromOkinaCommand.class.getName());
+				command.execute(context);
+				return Response.ok().build();
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		}
+		finally {
+			ContextHolder.setContext(null);
+		}
+	}
+
 	private WebApplicationException toWebApplicationException(ServiceException exception) {
 		return new WebApplicationException(exception.getMessage(), toWebApplicationCode(exception.getExceptionCode()));
 	}
