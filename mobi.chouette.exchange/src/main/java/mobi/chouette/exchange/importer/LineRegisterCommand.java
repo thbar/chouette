@@ -9,6 +9,7 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.CategoriesForLinesDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
@@ -70,6 +71,9 @@ public class LineRegisterCommand implements Command {
 
 	@EJB
 	private VehicleJourneyDAO vehicleJourneyDAO;
+
+	@EJB
+	private CategoriesForLinesDAO categoriesForLinesDAO;
 
 	@EJB(beanName = LineUpdater.BEAN_NAME)
 	private Updater<Line> lineUpdater;
@@ -159,6 +163,9 @@ public class LineRegisterCommand implements Command {
 	
 				Line oldValue = cache.getLines().get(newValue.getObjectId());
 				lineUpdater.update(context, oldValue, newValue);
+				if(oldValue.getCategoriesForLine() == null){
+					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(0));
+				}
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
 	
