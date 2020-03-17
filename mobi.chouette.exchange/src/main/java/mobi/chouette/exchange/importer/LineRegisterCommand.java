@@ -164,7 +164,7 @@ public class LineRegisterCommand implements Command {
 				Line oldValue = cache.getLines().get(newValue.getObjectId());
 				lineUpdater.update(context, oldValue, newValue);
 				if(oldValue.getCategoriesForLine() == null){
-					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(0));
+					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(Long.valueOf(0)));
 				}
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
