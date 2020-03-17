@@ -6,7 +6,10 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -22,6 +25,9 @@ public class CategoriesForLines extends NeptuneObject {
 
 	@Getter
 	@Setter
+	@SequenceGenerator(name = "categories_for_lines_id_seq", sequenceName = "categories_for_lines_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_for_lines_id_seq")
+
 	@Id
 	@Column(name = "id", nullable = false)
 	protected Long id;
