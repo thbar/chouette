@@ -27,3 +27,4 @@
 #4.0.3
 * 6154 : Stockage des fichiers exportés sur le filesystem et/ou Google Cloud Storage
 * 6258 : Réactivation de la validation offre Netex export IDFM
+* 6314 : Correction retour Offre Netex IDFM
