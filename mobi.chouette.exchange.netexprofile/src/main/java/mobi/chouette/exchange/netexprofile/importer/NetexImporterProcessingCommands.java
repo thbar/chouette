@@ -118,7 +118,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 			List<Path> allFilePaths = FileUtil.listFiles(path, "*.xml", ".*.xml");
 			Collections.sort(allFilePaths);
 			for (Path p : allFilePaths) {
-				reporter.setFileState(context, p.getFileName().toString(), IO_TYPE.INPUT, ActionReporter.FILE_STATE.IGNORED);
+				reporter.setFileState(context, p.getFileName().toString(), IO_TYPE.INPUT, ActionReporter.FILE_STATE.OK);
 			}
 			context.put(NETEX_FILE_PATHS, allFilePaths);
 
