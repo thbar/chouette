@@ -1,6 +1,16 @@
 package mobi.chouette.scheduler;
 
-import java.io.IOException;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Constant;
+import mobi.chouette.common.Context;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.exchange.report.ActionReport;
+import mobi.chouette.exchange.report.ReportConstant;
+import mobi.chouette.exchange.validation.parameters.ValidationParameters;
+import mobi.chouette.exchange.validation.report.ValidationReport;
+import mobi.chouette.service.JobService;
+import mobi.chouette.service.JobServiceManager;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -8,19 +18,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Constant;
-import mobi.chouette.common.Context;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.exchange.report.ActionReport;
-import mobi.chouette.exchange.report.ActionReporter;
-import mobi.chouette.exchange.report.ReportConstant;
-import mobi.chouette.exchange.validation.parameters.ValidationParameters;
-import mobi.chouette.exchange.validation.report.ValidationReport;
-import mobi.chouette.service.JobService;
-import mobi.chouette.service.JobServiceManager;
+import java.io.IOException;
 
 @Log4j
 @Stateless(name = MainCommand.COMMAND)
@@ -56,8 +54,7 @@ public class MainCommand implements Command, Constant {
 			command.execute(context);
 
 			ActionReport report = (ActionReport) context.get(REPORT);
-			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
-					&& report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INTERNAL_ERROR))
+			if (report.getResult().equals(ReportConstant.STATUS_ERROR))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);
@@ -66,8 +63,7 @@ public class MainCommand implements Command, Constant {
 			log.warn("exception bypassed " + ex);
 			// just ignore this exception
 			ActionReport report = (ActionReport) context.get(REPORT);
-			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
-					&& report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INTERNAL_ERROR))
+			if (report.getResult().equals(ReportConstant.STATUS_ERROR))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);
