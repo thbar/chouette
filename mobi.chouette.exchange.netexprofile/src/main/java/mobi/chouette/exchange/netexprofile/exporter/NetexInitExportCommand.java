@@ -1,14 +1,22 @@
 package mobi.chouette.exchange.netexprofile.exporter;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Color;
+import mobi.chouette.common.Context;
+import mobi.chouette.common.JobData;
+import mobi.chouette.common.chain.Command;
+import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.CodespaceDAO;
+import mobi.chouette.exchange.ProviderReferentialID;
+import mobi.chouette.exchange.metadata.Metadata;
+import mobi.chouette.exchange.netexprofile.Constant;
+import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
+import mobi.chouette.exchange.netexprofile.util.NetexReferential;
+import mobi.chouette.model.Codespace;
+import mobi.chouette.model.util.Referential;
+import org.joda.time.LocalDateTime;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -18,25 +26,17 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.joda.time.LocalDateTime;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
-import mobi.chouette.common.Context;
-import mobi.chouette.common.JobData;
-import mobi.chouette.common.chain.Command;
-import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.CodespaceDAO;
-import mobi.chouette.exchange.metadata.Metadata;
-import mobi.chouette.exchange.netexprofile.Constant;
-import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
-import mobi.chouette.exchange.netexprofile.util.NetexReferential;
-import mobi.chouette.model.Codespace;
-import mobi.chouette.model.util.Referential;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Log4j
 @Stateless(name = NetexInitExportCommand.COMMAND)
@@ -59,7 +59,12 @@ public class NetexInitExportCommand implements Command, Constant {
 
 		try {
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("export_" + jobData.getType() + "_" + jobData.getId() + ".zip");
+
+			String idSite = ProviderReferentialID.providers.get(jobData.getReferential().toUpperCase());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Date currentDate = new Date();
+
+			jobData.setOutputFilename("OFFRE_" + idSite + "_" + sdf.format(currentDate) + "Z.zip");
 			context.put(REFERENTIAL, new Referential());
 			context.put(NETEX_REFERENTIAL, new NetexReferential());
 
