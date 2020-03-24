@@ -6,6 +6,7 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.report.ActionReport;
+import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.exchange.validation.report.ValidationReport;
@@ -54,7 +55,8 @@ public class MainCommand implements Command, Constant {
 			command.execute(context);
 
 			ActionReport report = (ActionReport) context.get(REPORT);
-			if (report.getResult().equals(ReportConstant.STATUS_ERROR))
+			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
+					&& !report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INVALID_DATA))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);
@@ -63,7 +65,8 @@ public class MainCommand implements Command, Constant {
 			log.warn("exception bypassed " + ex);
 			// just ignore this exception
 			ActionReport report = (ActionReport) context.get(REPORT);
-			if (report.getResult().equals(ReportConstant.STATUS_ERROR))
+			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
+					&& !report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INVALID_DATA))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);
