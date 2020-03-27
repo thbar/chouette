@@ -30,3 +30,6 @@
 * 6314 : Correction retour Offre Netex IDFM
 * Renommage des fichiers d'exports Netex offre
 * Filtre INVALID_DATA sur le résultat des exports
+
+# 4.0.4
+* 6432 : Gestion du non-écrasement des données à l'import GTFS IDFM
