@@ -177,19 +177,14 @@ public class RestService implements Constant {
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			context.put("inputStreamByName", inputStreamByName);
 
-			try {
-				ContextHolder.setContext(referential);
-				Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
-				command.execute(context);
-				return Response.ok().build();
-			} catch (Exception e) {
-				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
-			} finally {
-				ContextHolder.setContext(null);
-			}
+			ContextHolder.setContext(referential);
+			Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
+			command.execute(context);
+			return Response.ok().build();
 		} catch (Exception e) {
 			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
 		} finally {
+			ContextHolder.setContext(null);
 			if (inputStreamByName != null) {
 				for (InputStream is : inputStreamByName.values()) {
 					try {
