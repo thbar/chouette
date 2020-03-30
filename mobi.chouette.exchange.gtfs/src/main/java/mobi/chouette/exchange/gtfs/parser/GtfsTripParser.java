@@ -560,8 +560,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
                     && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
                 for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
-                    float shapeValue = ((VehicleJourneyAtStopWrapper) vehicleJourneyAtStop).shapeDistTraveled;
-                    if (Float.valueOf(shapeValue) != null) {
+                    VehicleJourneyAtStopWrapper vehicleJourneyAtStopWrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
+                    if (vehicleJourneyAtStopWrapper.shapeDistTraveled != null) {
                         // add point with shape position
                         lstShapeVjas.add(vehicleJourneyAtStop);
                     } else {
