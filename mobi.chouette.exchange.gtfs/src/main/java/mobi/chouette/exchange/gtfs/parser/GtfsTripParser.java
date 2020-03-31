@@ -551,29 +551,29 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 gtfsShapes = importer.getShapeById().values(gtfsTrip.getShapeId());
             }
 
-            if (lstShapeVjas == null)
-                lstShapeVjas = new ArrayList<VehicleJourneyAtStop>();
-            else
-                lstShapeVjas.clear();
-
-            // if route with shape
-            if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
-                    && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
-                for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
-                    VehicleJourneyAtStopWrapper vehicleJourneyAtStopWrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
-                    if (vehicleJourneyAtStopWrapper.shapeDistTraveled != null) {
-                        // add point with shape position
-                        lstShapeVjas.add(vehicleJourneyAtStop);
-                    } else {
-                        // problem on point without shape position
-                        vehicleJourneyAtStop.setVehicleJourney(null);
-                    }
-                }
-                journeyKey += ":" + buildShapeKey(vehicleJourney);
-
-            } else {
-                journeyKey += "," + buildStopsKey(vehicleJourney);
-            }
+//            if (lstShapeVjas == null)
+//                lstShapeVjas = new ArrayList<VehicleJourneyAtStop>();
+//            else
+//                lstShapeVjas.clear();
+//
+//            // if route with shape
+//            if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
+//                    && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
+//                for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
+//                    VehicleJourneyAtStopWrapper vehicleJourneyAtStopWrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
+//                    if (vehicleJourneyAtStopWrapper.shapeDistTraveled != null) {
+//                        // add point with shape position
+//                        lstShapeVjas.add(vehicleJourneyAtStop);
+//                    } else {
+//                        // problem on point without shape position
+//                        vehicleJourneyAtStop.setVehicleJourney(null);
+//                    }
+//                }
+//                journeyKey += ":" + buildShapeKey(vehicleJourney);
+//
+//            } else {
+//                journeyKey += "," + buildStopsKey(vehicleJourney);
+//            }
 
             JourneyPattern journeyPattern = journeyPatternByStopSequence.get(journeyKey);
             if (journeyPattern == null) {
