@@ -179,8 +179,14 @@ public class RestService implements Constant {
 
 			ContextHolder.setContext(referential);
 			Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
-			command.execute(context);
+			if (!command.execute(context)) {
+				String message = "Fichier invalide - requis : CSV avec entête de fichier invalide : idfcod [, idfarr, ...]";
+				throw new WebApplicationException(message, Status.INTERNAL_SERVER_ERROR);
+			}
+
 			return Response.ok().build();
+		} catch (WebApplicationException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
 		} finally {

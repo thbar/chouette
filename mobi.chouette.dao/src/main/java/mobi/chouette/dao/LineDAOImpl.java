@@ -31,8 +31,10 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 				String[] splitError = e.getCause().getCause().getMessage().split("MOSAIC_SQL_ERROR:");
 				throw new Exception("MOSAIC_SQL_ERROR:" + splitError[1]);
 			} else {
-				return null;// swallow : on ne fait pas d l'idfm
+				throw e;
 			}
+		} catch (Exception e) {
+			throw e;
 		}
 
 		return retour;
