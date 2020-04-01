@@ -88,7 +88,12 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             }
 
 
+            ArrayList<String> savedLines = new ArrayList<String>();
             for (GtfsRoute gtfsRoute : index) {
+                String newRouteId = gtfsRoute.getRouteId().split("-")[0];
+                if(savedLines.contains(newRouteId)) continue;
+                savedLines.add(newRouteId);
+                gtfsRoute.setRouteId(newRouteId);
 
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
