@@ -110,6 +110,9 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 		if (newValue.isSaved()) {
 			return;
 		}
+
+		log.info("update vehicleJourney  "+newValue.getObjectId());
+
 		newValue.setSaved(true);
 
 //		Monitor monitor = MonitorFactory.start(BEAN_NAME);

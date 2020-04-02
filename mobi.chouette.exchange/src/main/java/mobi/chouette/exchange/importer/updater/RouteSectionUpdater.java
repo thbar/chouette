@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.model.RouteSection;
@@ -13,6 +14,7 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 
 @Stateless(name = RouteSectionUpdater.BEAN_NAME)
+@Log4j
 public class RouteSectionUpdater implements Updater<RouteSection> {
 
 	public static final String BEAN_NAME = "RouteSectionUpdater";
@@ -25,8 +27,11 @@ public class RouteSectionUpdater implements Updater<RouteSection> {
 		if (newValue.isSaved()) {
 			return;
 		}
+
+		log.info("update routeSection  "+newValue.getObjectId());
+
 		newValue.setSaved(true);
-        Monitor monitor = MonitorFactory.start(BEAN_NAME);
+//        Monitor monitor = MonitorFactory.start(BEAN_NAME);
 		Referential cache = (Referential) context.get(CACHE);
 
 		if (newValue.getObjectId() != null
@@ -99,6 +104,6 @@ public class RouteSectionUpdater implements Updater<RouteSection> {
 //			routeSectionDAO.create(oldValue);
 //		else
 //			routeSectionDAO.update(oldValue);
-		monitor.stop();
+//		monitor.stop();
 	}
 }
