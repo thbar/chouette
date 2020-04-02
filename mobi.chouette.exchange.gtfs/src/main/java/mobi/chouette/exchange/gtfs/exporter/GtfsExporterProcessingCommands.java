@@ -78,8 +78,8 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 			if (!(parameters.getReferencesType().equalsIgnoreCase("stop_area"))) {
 				if (parameters.isValidateAfterExport())
 					commands.add(CommandFactory.create(initialContext, GtfsValidateExportCommand.class.getName()));
-				if (parameters.isAddMetadata())
-					commands.add(CommandFactory.create(initialContext, SaveMetadataCommand.class.getName()));
+//				if (parameters.isAddMetadata())
+//					commands.add(CommandFactory.create(initialContext, SaveMetadataCommand.class.getName()));
 			}
 			commands.add(CommandFactory.create(initialContext, CompressCommand.class.getName()));
 		} catch (Exception e) {
