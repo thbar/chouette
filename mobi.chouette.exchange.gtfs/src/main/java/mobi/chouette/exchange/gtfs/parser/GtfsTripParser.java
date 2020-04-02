@@ -551,28 +551,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 gtfsShapes = importer.getShapeById().values(gtfsTrip.getShapeId());
             }
 
-            if (lstShapeVjas == null)
-                lstShapeVjas = new ArrayList<VehicleJourneyAtStop>();
-            else
-                lstShapeVjas.clear();
-
-            // if route with shape
-            if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
-                    && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
-                for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
-                    VehicleJourneyAtStopWrapper vehicleJourneyAtStopWrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
-                    if (vehicleJourneyAtStopWrapper.shapeDistTraveled != null) {
-                        // add point with shape position
-                        lstShapeVjas.add(vehicleJourneyAtStop);
-                    } else {
-                        // problem on point without shape position
-                        vehicleJourneyAtStop.setVehicleJourney(null);
-                    }
-                }
-                journeyKey += ":" + buildShapeKey(vehicleJourney);
-
-            } else {
-                journeyKey += "," + buildStopsKey(vehicleJourney);
+            for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
+                String stopId = ((VehicleJourneyAtStopWrapper) vehicleJourneyAtStop).stopId;
+                journeyKey += "," + stopId;
             }
 
             JourneyPattern journeyPattern = journeyPatternByStopSequence.get(journeyKey);
@@ -586,18 +567,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
             int length = journeyPattern.getStopPoints().size();
 
-            // if route with shape
-            if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty()
-                    && importer.getShapeById().containsKey(gtfsTrip.getShapeId())) {
-                for (int i = 0; i < length; i++) {
-                    VehicleJourneyAtStop vehicleJourneyAtStop = lstShapeVjas.get(i);
-                    vehicleJourneyAtStop.setStopPoint(journeyPattern.getStopPoints().get(i));
-                }
-            } else {
-                for (int i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++) {
                     VehicleJourneyAtStop vehicleJourneyAtStop = vehicleJourney.getVehicleJourneyAtStops().get(i);
                     vehicleJourneyAtStop.setStopPoint(journeyPattern.getStopPoints().get(i));
-                }
             }
 
             // apply frequencies if any
@@ -669,7 +641,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             route.setLine(null);
             referential.getRoutes().remove(route);
         }
-        lstShapeVjas.clear();
 
     }
 
