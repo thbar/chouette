@@ -24,7 +24,7 @@ import java.util.List;
 public class CalendarIDFMProducer extends NetexProducer {
 
     public void produce(ExportableData exportableData, ExportableNetexData exportableNetexData) {
-
+        int uniqueID = 0;
         for (Timetable timetable : exportableData.getTimetables()) {
 
             String netexDaytypeId = NetexProducerUtils.generateNetexId(timetable);
@@ -33,7 +33,7 @@ public class CalendarIDFMProducer extends NetexProducer {
                 DayType dayType = netexFactory.createDayType();
                 NetexProducerUtils.populateIdAndVersionIDFM(timetable, dayType);
 
-                List<DayOfWeekEnumeration> dayOfWeekEnumerations = NetexProducerUtils.toDayOfWeekEnumeration(timetable.getDayTypes());
+                List<DayOfWeekEnumeration> dayOfWeekEnumerations = NetexProducerUtils.toDayOfWeekEnumerationIDFM(timetable.getDayTypes());
                 if (!dayOfWeekEnumerations.isEmpty()) {
                     dayType.setProperties(createPropertiesOfDay_RelStructure(dayOfWeekEnumerations));
                 }
@@ -61,6 +61,8 @@ public class CalendarIDFMProducer extends NetexProducer {
 
                     // Assign operatingperiod to daytype
                     String dayTypeAssignmentId = netexDaytypeId.replace("DayType", "DayTypeAssignment");
+                    dayTypeAssignmentId = dayTypeAssignmentId.substring(0, dayTypeAssignmentId.indexOf(":LOC")) + uniqueID + ":LOC";
+                    uniqueID++;
                     DayTypeAssignment dayTypeAssignment = netexFactory.createDayTypeAssignment()
                             .withId(dayTypeAssignmentId).withVersion(NETEX_DEFAULT_OBJECT_VERSION)
                             .withOrder(BigInteger.valueOf(0)).withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef)).withOperatingPeriodRef(operatingPeriodRef);
@@ -69,8 +71,11 @@ public class CalendarIDFMProducer extends NetexProducer {
                 }
 
                 for (CalendarDay day : timetable.getCalendarDays()) {
+                    String dayTypeAssignmentId = netexDaytypeId.replace("DayType", "DayTypeAssignment");
+                    dayTypeAssignmentId = dayTypeAssignmentId.substring(0, dayTypeAssignmentId.indexOf(":LOC")) + uniqueID + ":LOC";
+                    uniqueID++;
                     DayTypeAssignment dayTypeAssignment = netexFactory.createDayTypeAssignment()
-                            .withId(NetexProducerUtils.translateObjectId(netexDaytypeId, "DayTypeAssignment")).withVersion(NETEX_DEFAULT_OBJECT_VERSION)
+                            .withId(dayTypeAssignmentId).withVersion(NETEX_DEFAULT_OBJECT_VERSION)
                             .withOrder(BigInteger.valueOf(0)).withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef))
                             .withDate(TimeUtil.toLocalDateFromJoda(day.getDate()).atStartOfDay());
 
@@ -86,13 +91,12 @@ public class CalendarIDFMProducer extends NetexProducer {
     }
 
     private PropertiesOfDay_RelStructure createPropertiesOfDay_RelStructure(List<DayOfWeekEnumeration> dayOfWeekEnumerations) {
-        PropertyOfDay propertyOfDay = netexFactory.createPropertyOfDay();
-        for (DayOfWeekEnumeration dayOfWeekEnumeration : dayOfWeekEnumerations) {
-            propertyOfDay.getDaysOfWeek().add(dayOfWeekEnumeration);
-        }
-
         PropertiesOfDay_RelStructure propertiesOfDay = netexFactory.createPropertiesOfDay_RelStructure();
-        propertiesOfDay.getPropertyOfDay().add(propertyOfDay);
+        for (DayOfWeekEnumeration dayOfWeekEnumeration : dayOfWeekEnumerations) {
+            PropertyOfDay propertyOfDay = netexFactory.createPropertyOfDay();
+            propertyOfDay.getDaysOfWeek().add(dayOfWeekEnumeration);
+            propertiesOfDay.getPropertyOfDay().add(propertyOfDay);
+        }
         return propertiesOfDay;
     }
 }

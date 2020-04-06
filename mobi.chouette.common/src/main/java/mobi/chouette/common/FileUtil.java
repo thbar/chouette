@@ -155,7 +155,7 @@ public class FileUtil {
 
 			for (File file : fileList) {
 				if (!file.isDirectory()) { // we only zip files, not directories
-					addToZip(path, file, zos);
+					addToZip(path, file, zos, zipName);
 				}
 			}
 
@@ -168,16 +168,19 @@ public class FileUtil {
 		}
 	}
 
-	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos) throws FileNotFoundException,
+	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String zipName) throws FileNotFoundException,
 			IOException {
 
 		FileInputStream fis = new FileInputStream(file);
+
+		zipName = zipName.substring(zipName.lastIndexOf("/"));
+		String folderNameInZip = zipName.replace(".zip", "");
 
 		// we want the zipEntry's path to be a relative path that is relative
 		// to the directory being zipped, so chop off the rest of the path
 		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
 				file.getCanonicalPath().length());
-		ZipEntry zipEntry = new ZipEntry(zipFilePath);
+		ZipEntry zipEntry = new ZipEntry(folderNameInZip + "/" + zipFilePath);
 		zos.putNextEntry(zipEntry);
 
 		byte[] bytes = new byte[1024];
