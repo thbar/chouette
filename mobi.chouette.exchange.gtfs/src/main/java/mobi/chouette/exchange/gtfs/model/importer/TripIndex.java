@@ -1,12 +1,12 @@
 package mobi.chouette.exchange.gtfs.model.importer;
 
-import java.io.IOException;
-import java.util.Map;
-
 import mobi.chouette.common.HTMLTagValidator;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 
-public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConverter {
+import java.io.IOException;
+import java.util.Map;
+
+public abstract class TripIndex extends MergedIndexImpl<GtfsTrip> implements GtfsConverter {
 
 	public static enum FIELDS {
 		route_id, service_id, trip_id, trip_headsign, trip_short_name, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed;
@@ -97,6 +97,7 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 							GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
 		} else {
 			bean.setRouteId(STRING_CONVERTER.from(context, FIELDS.route_id, value, true));
+			bean.setRouteId(bean.getRouteId().split("-")[0]);
 		}
 
 		value = array[i++];
