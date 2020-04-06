@@ -54,7 +54,6 @@ import static org.jboss.util.property.jmx.SystemPropertyClassValue.log;
 public class PublicationDeliveryIDFMWriterTest {
 
 
-    private static LineProducer lineProducer = new LineProducer();
     private static RouteProducer routeProducer = new RouteProducer();
 
     @Test
