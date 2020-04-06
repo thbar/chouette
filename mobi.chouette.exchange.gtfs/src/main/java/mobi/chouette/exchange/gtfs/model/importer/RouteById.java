@@ -1,16 +1,15 @@
 package mobi.chouette.exchange.gtfs.model.importer;
 
-import java.awt.Color;
+import mobi.chouette.common.HTMLTagValidator;
+import mobi.chouette.exchange.gtfs.model.GtfsAgency;
+import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+
+import java.awt.*;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Map;
 
-import mobi.chouette.common.HTMLTagValidator;
-import mobi.chouette.exchange.gtfs.model.GtfsAgency;
-import mobi.chouette.exchange.gtfs.model.GtfsRoute;
-import mobi.chouette.exchange.gtfs.model.importer.AgencyById.FIELDS;
-
-public class RouteById extends IndexImpl<GtfsRoute> implements GtfsConverter {
+public class RouteById extends MergedIndexImpl<GtfsRoute> implements GtfsConverter {
 
 	public static enum FIELDS {
 		route_id, agency_id, route_short_name, route_long_name, route_desc, route_type, route_url, route_color, route_text_color;
@@ -107,6 +106,7 @@ public class RouteById extends IndexImpl<GtfsRoute> implements GtfsConverter {
 		testExtraSpace(FIELDS.route_id.name(), value, bean);
 		if (value != null && !value.trim().isEmpty()) {
 			bean.setRouteId(STRING_CONVERTER.from(context, FIELDS.route_id, value, "", true));
+			bean.setRouteId(bean.getRouteId().split("-")[0]);
 		}
 
 		value = array[i++];

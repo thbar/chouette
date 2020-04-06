@@ -33,3 +33,4 @@
 
 # 4.0.4
 * 6432 : Gestion du non-écrasement des données à l'import GTFS IDFM
+* 6382 : Fix Netex Offre IDFM

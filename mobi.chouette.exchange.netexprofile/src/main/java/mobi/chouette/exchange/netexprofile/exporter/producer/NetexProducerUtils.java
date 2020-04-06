@@ -121,6 +121,40 @@ public class NetexProducerUtils {
 		return dayOfWeekEnumerations;
 	}
 
+	public static List<DayOfWeekEnumeration> toDayOfWeekEnumerationIDFM(List<DayTypeEnum> dayTypeEnums) {
+		List<DayOfWeekEnumeration> dayOfWeekEnumerations = new ArrayList<>();
+
+		for (DayTypeEnum dayTypeEnum : dayTypeEnums) {
+			switch (dayTypeEnum) {
+				case Monday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.MONDAY);
+					break;
+				case Tuesday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.TUESDAY);
+					break;
+				case Wednesday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.WEDNESDAY);
+					break;
+				case Thursday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.THURSDAY);
+					break;
+				case Friday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.FRIDAY);
+					break;
+				case Saturday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.SATURDAY);
+					break;
+				case Sunday:
+					dayOfWeekEnumerations.add(DayOfWeekEnumeration.SUNDAY);
+					break;
+				default:
+					// None
+			}
+		}
+
+		return dayOfWeekEnumerations;
+	}
+
 	private static AtomicInteger idCounter = new AtomicInteger(0);
 
 	public static String netexId(String objectIdPrefix, String elementName, String objectIdSuffix) {
