@@ -158,11 +158,7 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 			}
 		}
 
-		if(gtfsStop.getPlatformCode() != null) {
-			stopArea.setRegistrationNumber(gtfsStop.getPlatformCode());
-		} else {
-			stopArea.setRegistrationNumber(gtfsStop.getStopCode());
-		}
+		stopArea.setRegistrationNumber(gtfsStop.getStopCode());
 		stopArea.setMobilityRestrictedSuitable(gtfsStop.getWheelchairBoarding() == null ? null : WheelchairBoardingType.Allowed.equals(gtfsStop.getWheelchairBoarding()));
 		stopArea.setStreetName(gtfsStop.getAddressLine());
 		stopArea.setCityName(gtfsStop.getLocality());

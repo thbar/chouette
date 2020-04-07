@@ -66,6 +66,7 @@ public class StopPlaceMapper {
         mapCentroid(stopArea, quay);
         mapQuayName(stopArea, quay);
         mapPublicCode(stopArea, quay);
+        mapUrl(stopArea, quay);
         mapCompassBearing(stopArea, quay);
         if (StringUtils.isNotBlank(stopArea.getComment())) {
             quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
@@ -80,6 +81,7 @@ public class StopPlaceMapper {
         mapCentroid(stopArea, quay);
         mapQuayName(stopArea, quay);
         mapPublicCode(stopArea, quay);
+        mapUrl(stopArea, quay);
         mapCompassBearing(stopArea, quay);
         if (StringUtils.isNotBlank(stopArea.getComment())) {
             quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
@@ -88,6 +90,13 @@ public class StopPlaceMapper {
                 .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
                 .withValue(zdep)));
         return quay;
+    }
+
+    public void mapUrl(StopArea stopArea, Quay quay) {
+        String url = stopArea.getUrl();
+        if (url != null) {
+            quay.setUrl(url);
+        }
     }
 
     public void mapPublicCode(StopArea stopArea, Quay quay) {
