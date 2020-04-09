@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.4.9_OKI</version>
+	<version>3.4.11_OKI-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -167,7 +167,9 @@
                                     <artifactId>postgresql</artifactId>
                                     <version>${postgresql.version}</version>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main</outputDirectory>
+                                    <outputDirectory>
+                                        ${project.rootDir}/target/wildfly-${wildfly.version}/modules/org/postgres/main
+                                    </outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>net.postgis</groupId>
@@ -229,7 +231,8 @@
                 <version>2.17</version>
                 <configuration>
                     <argLine>-Djboss.socket.binding.port-offset=300
-                        -XX:MaxPermSize=256m</argLine>
+                        -XX:MaxPermSize=256m
+                    </argLine>
                     <!-- Fork every test because it will launch a separate AS instance -->
                     <forkCount>1</forkCount>
                     <systemPropertyVariables>
