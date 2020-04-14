@@ -34,5 +34,5 @@
 # 4.0.4
 * 6432 : Gestion du non-écrasement des données à l'import GTFS IDFM
 * 6382 : Fix Netex Offre IDFM
-* 6419 fusion des lignes versionnées dans routes.txt
-* 6452 import des PA avec coordonées différentes
+* 6419 : Fusion des lignes versionnées dans routes.txt
+* 6452 : Import des PA avec coordonnées différentes
