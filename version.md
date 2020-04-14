@@ -1,3 +1,7 @@
+#4.0.4
+* 6419 fusion des lignes versionnées dans routes.txt
+* 6452 import des PA avec coordonées différentes
+
 # 4.0.0
 * https://redmine.okina.fr/issues/5097 : Ajout récupération Reflex mapping ZDEP/ZDLR
 * Continuer le traitement sur une erreur de récupération ZDEP
