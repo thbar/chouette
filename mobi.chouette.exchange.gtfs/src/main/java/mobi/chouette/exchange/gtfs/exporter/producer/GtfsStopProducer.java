@@ -149,7 +149,7 @@ public class GtfsStopProducer extends AbstractProducer
 			stop.setWheelchairBoarding(null);
 		}
 		
-		stop.setPlatformCode(neptuneObject.getRegistrationNumber());
+		stop.setPlatformCode(neptuneObject.getPlatformCode());
 
 		
 	      if (neptuneObject.getTransportModeName() != null)

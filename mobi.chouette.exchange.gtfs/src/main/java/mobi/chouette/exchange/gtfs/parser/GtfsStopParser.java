@@ -163,6 +163,7 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 		stopArea.setStreetName(gtfsStop.getAddressLine());
 		stopArea.setCityName(gtfsStop.getLocality());
 		stopArea.setZipCode(gtfsStop.getPostalCode());
+		stopArea.setPlatformCode(gtfsStop.getPlatformCode());
 		
 		if(gtfsStop.getVehicleType() != null) {
 			stopArea.setTransportModeName(gtfsStop.getVehicleType().getTransportMode());
