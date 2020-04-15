@@ -43,7 +43,7 @@ public class CompressCommand implements Command, Constant {
 			File tmpFile= tmpFilename.toFile();
 			if (tmpFile.exists()) tmpFile.delete();
 
-			FileUtil.compress(target.toString(), tmpFile.toString());
+			FileUtil.compress(target.toString(), tmpFile.toString(), jobData.getType());
 
 			// Store file in permanent storage
 			Path filename = Paths.get(path, file);
