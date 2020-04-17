@@ -100,17 +100,17 @@ public class GtfsStopProducer extends AbstractProducer
 			return false;
 		}
 		stop.setStopLon(neptuneObject.getLongitude());
-		//stop.setStopCode(neptuneObject.getRegistrationNumber());
+		stop.setStopCode(neptuneObject.getRegistrationNumber());
 		
 		// name and description must be different
-		if (neptuneObject.getName().equals(neptuneObject.getComment()))
-		{
-			stop.setStopDesc(null);
-		}
-		else
-		{
-		    stop.setStopDesc(neptuneObject.getComment());
-		}
+//		if (neptuneObject.getName().equals(neptuneObject.getComment()))
+//		{
+//			stop.setStopDesc(null);
+//		}
+//		else
+//		{
+		stop.setStopDesc(neptuneObject.getComment());
+//		}
 		stop.setStopUrl(getUrl(neptuneObject.getUrl()));
 		// manage stop_timezone
 		stop.setStopTimezone(null);

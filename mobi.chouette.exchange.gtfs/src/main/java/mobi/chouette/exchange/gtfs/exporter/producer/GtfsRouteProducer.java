@@ -60,7 +60,7 @@ public class GtfsRouteProducer extends AbstractProducer
        route.setAgencyId(toGtfsId(agencyId, prefix, keepOriginalId));
        route.setRouteShortName(null);
        route.setRouteLongName(null);
-      
+
       route.setRouteShortName(neptuneObject.getNumber());
       
       if(!isEmpty(neptuneObject.getPublishedName())) {
@@ -68,36 +68,17 @@ public class GtfsRouteProducer extends AbstractProducer
       } else {
     	  route.setRouteLongName(neptuneObject.getName());
       }
-      
-//      if(isEmpty(neptuneObject.get))
-//      if (isEmpty(neptuneObject.getNumber()))
-//      {
-//         route.setRouteShortName(neptuneObject.getName());
-//      }
-//      else
-//      {
-//         route.setRouteShortName(neptuneObject.getNumber());
-//      }
-//
-//      if (isEmpty(neptuneObject.getPublishedName()))
-//      {
-//         route.setRouteLongName(neptuneObject.getName());
-//      }
-//      else
-//      {
-//         route.setRouteLongName(neptuneObject.getPublishedName());
-//      }
-//      
+
       if (isEmpty(route.getRouteShortName()) && isEmpty(route.getRouteLongName()))
       {
           log.warn("no naming data for line "+neptuneObject.getObjectId());
           return false;
       }
-      if (!isEmpty(route.getRouteShortName()) && route.getRouteShortName().equals(route.getRouteLongName()))
-      {
-    	  // long and short name must be different
-         route.setRouteLongName(null);
-      }
+//      if (!isEmpty(route.getRouteShortName()) && route.getRouteShortName().equals(route.getRouteLongName()))
+//      {
+//    	  // long and short name must be different
+//         route.setRouteLongName(null);
+//      }
 //      if (!isEmpty(route.getRouteShortName()) && !isEmpty(route.getRouteLongName()))
 //      {
 //    	  // long name should not contains short name
@@ -110,8 +91,7 @@ public class GtfsRouteProducer extends AbstractProducer
       route.setRouteDesc(null);
       if (!isEmpty(neptuneObject.getComment()))
       {
-         if (!neptuneObject.getComment().equals(route.getRouteShortName()) && !neptuneObject.getComment().equals(route.getRouteLongName()))
-            route.setRouteDesc(neptuneObject.getComment());
+          route.setRouteDesc(neptuneObject.getComment());
       }
 
       route.setRouteColor(getColor(neptuneObject.getColor()));

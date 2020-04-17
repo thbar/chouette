@@ -72,11 +72,11 @@ public abstract class AbstractProducer
          try
          {
             URL result = new URL(s);
-            String protocol = result.getProtocol();
-            if (!(protocol.equals("http") || protocol.equals("https")))
-            {
-               throw new MalformedURLException();
-            }
+//            String protocol = result.getProtocol();
+//            if (!(protocol.equals("http") || protocol.equals("https")))
+//            {
+//               throw new MalformedURLException();
+//            }
             return result;
          }
          catch (MalformedURLException e)
