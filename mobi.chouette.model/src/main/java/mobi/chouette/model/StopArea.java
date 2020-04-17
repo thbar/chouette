@@ -565,6 +565,11 @@ public class StopArea extends NeptuneLocalizedObject {
 	@Transient
 	private UUID uuid;
 
+    @Getter
+	@Setter
+	@Column(name = "platform_code")
+	private String platformCode;
+
 	// /**
 	// * add a child StopArea if not already present
 	// *

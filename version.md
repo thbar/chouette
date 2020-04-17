@@ -36,3 +36,6 @@
 * 6382 : Fix Netex Offre IDFM
 * 6419 : Fusion des lignes versionnées dans routes.txt
 * 6452 : Import des PA avec coordonnées différentes
+
+# 4.0.5
+* 6454 : Ajout de la notion platform code (GTFS)
