@@ -8,6 +8,9 @@ import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang3.StringUtils;
 import org.rutebanken.netex.model.*;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 /**
  * Map from NeTEx to chouette model
  */
@@ -90,13 +93,10 @@ public class StopAreaMapper {
 
         StopArea boardingPosition = ObjectFactory.getStopArea(referential, quay.getId());
         // Set default values TODO set what we get from NSR
-//        boardingPosition.setMobilityRestrictedSuitable(null);
+        mapQuayMobilityRestrictedSuitable(quay, boardingPosition);
         boardingPosition.setLiftAvailable(null);
         boardingPosition.setStairsAvailable(null);
-        if (quay.getDescription() != null) {
-            boardingPosition.setComment(quay.getDescription().getValue());
-        }
-
+        mapQuayDescription(quay, boardingPosition);
         boardingPosition.setAreaType(ChouetteAreaEnum.BoardingPosition);
         mapCentroidToChouette(quay, boardingPosition);
         mapQuayName(stopPlace, quay, boardingPosition);
@@ -104,6 +104,34 @@ public class StopAreaMapper {
         mapQuayRegistrationNumber(quay, boardingPosition);
         createCompassBearing(quay, boardingPosition);
         return boardingPosition;
+    }
+
+    private void mapQuayDescription(Quay quay, StopArea boardingPosition) {
+        if(quay.getDescription() != null){
+            if (StringUtils.isNotBlank(quay.getDescription().getValue())) {
+                boardingPosition.setComment(quay.getDescription().getValue());
+            }
+        }
+    }
+
+    private void mapQuayMobilityRestrictedSuitable(Quay quay, StopArea boardingPosition) {
+        if(quay.getAccessibilityAssessment() != null){
+            if(quay.getAccessibilityAssessment().getLimitations() != null){
+                if(quay.getAccessibilityAssessment().getLimitations().getAccessibilityLimitation() != null){
+                    if(quay.getAccessibilityAssessment().getLimitations().getAccessibilityLimitation().getWheelchairAccess() != null){
+                        if(quay.getAccessibilityAssessment().getLimitations().getAccessibilityLimitation().getWheelchairAccess().equals(LimitationStatusEnumeration.TRUE)){
+                            boardingPosition.setMobilityRestrictedSuitable(true);
+                        }
+                        if(quay.getAccessibilityAssessment().getLimitations().getAccessibilityLimitation().getWheelchairAccess().equals(LimitationStatusEnumeration.FALSE)){
+                            boardingPosition.setMobilityRestrictedSuitable(false);
+                        }
+                        if(quay.getAccessibilityAssessment().getLimitations().getAccessibilityLimitation().getWheelchairAccess().equals(LimitationStatusEnumeration.UNKNOWN)){
+                            boardingPosition.setMobilityRestrictedSuitable(null);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private StopArea mapStopArea(Referential referential, StopPlace stopPlace) {

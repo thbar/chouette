@@ -10,7 +10,10 @@ import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.runtime.directive.Stop;
+import org.checkerframework.checker.units.qual.A;
 import org.rutebanken.netex.model.AccessibilityAssessment;
+import org.rutebanken.netex.model.AccessibilityLimitation;
+import org.rutebanken.netex.model.AccessibilityLimitations_RelStructure;
 import org.rutebanken.netex.model.EntityInVersionStructure;
 import org.rutebanken.netex.model.KeyListStructure;
 import org.rutebanken.netex.model.KeyValueStructure;
@@ -72,7 +75,7 @@ public class StopPlaceMapper {
         mapUrl(stopArea, quay);
         mapCompassBearing(stopArea, quay);
         mapComment(stopArea, quay);
-//        mapMobilityRestrictedSuitable(stopArea, quay);
+        mapMobilityRestrictedSuitable(stopArea, quay);
 
         return quay;
     }
@@ -87,7 +90,7 @@ public class StopPlaceMapper {
         mapUrl(stopArea, quay);
         mapCompassBearing(stopArea, quay);
         mapComment(stopArea, quay);
-//        mapMobilityRestrictedSuitable(stopArea, quay);
+        mapMobilityRestrictedSuitable(stopArea, quay);
 
         quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
                 .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
@@ -97,15 +100,21 @@ public class StopPlaceMapper {
 
     public void mapMobilityRestrictedSuitable(StopArea stopArea, Quay quay){
         AccessibilityAssessment accessibilityAssessment = new AccessibilityAssessment();
+        AccessibilityLimitations_RelStructure accessibilityLimitations_relStructure = new AccessibilityLimitations_RelStructure();
+        AccessibilityLimitation accessibilityLimitation = new AccessibilityLimitation();
         if(stopArea.getMobilityRestrictedSuitable() == null){
-            accessibilityAssessment.setMobilityImpairedAccess(LimitationStatusEnumeration.UNKNOWN);
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.UNKNOWN);
         }
         else if (!stopArea.getMobilityRestrictedSuitable()){
-            accessibilityAssessment.setMobilityImpairedAccess(LimitationStatusEnumeration.FALSE);
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.FALSE);
         }
         else {
-            accessibilityAssessment.setMobilityImpairedAccess(LimitationStatusEnumeration.TRUE);
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.TRUE);
         }
+        accessibilityLimitation.setVersion(VERSION);
+        accessibilityLimitations_relStructure.setAccessibilityLimitation(accessibilityLimitation);
+        accessibilityAssessment.setLimitations(accessibilityLimitations_relStructure);
+        accessibilityAssessment.setVersion(VERSION);
         quay.setAccessibilityAssessment(accessibilityAssessment);
     }
 

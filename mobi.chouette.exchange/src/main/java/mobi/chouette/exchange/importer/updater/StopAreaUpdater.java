@@ -181,7 +181,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 					oldValue.setLiftAvailable(newValue.getLiftAvailable());
 				}
 				if (newValue.getMobilityRestrictedSuitable() != null
-						&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable())) {
+						&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable()) && !dataStopIdfm) {
 					oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
 				}
 				if (newValue.getStairsAvailable() != null
