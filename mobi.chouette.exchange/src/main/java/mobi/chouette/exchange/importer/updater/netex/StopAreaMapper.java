@@ -5,6 +5,7 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.LongLatTypeEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang3.StringUtils;
 import org.rutebanken.netex.model.*;
 
 /**
@@ -89,7 +90,7 @@ public class StopAreaMapper {
 
         StopArea boardingPosition = ObjectFactory.getStopArea(referential, quay.getId());
         // Set default values TODO set what we get from NSR
-        boardingPosition.setMobilityRestrictedSuitable(null);
+//        boardingPosition.setMobilityRestrictedSuitable(null);
         boardingPosition.setLiftAvailable(null);
         boardingPosition.setStairsAvailable(null);
         if (quay.getDescription() != null) {
@@ -99,6 +100,8 @@ public class StopAreaMapper {
         boardingPosition.setAreaType(ChouetteAreaEnum.BoardingPosition);
         mapCentroidToChouette(quay, boardingPosition);
         mapQuayName(stopPlace, quay, boardingPosition);
+        mapQuayUrl(quay, boardingPosition);
+        mapQuayRegistrationNumber(quay, boardingPosition);
         createCompassBearing(quay, boardingPosition);
         return boardingPosition;
     }
@@ -122,6 +125,18 @@ public class StopAreaMapper {
     private void createCompassBearing(Quay quay, StopArea boardingPosition) {
         if (quay.getCompassBearing() != null) {
             boardingPosition.setCompassBearing(quay.getCompassBearing().intValue());
+        }
+    }
+
+    private void mapQuayUrl(Quay quay, StopArea boardingPosition){
+        if(StringUtils.isNotBlank(quay.getUrl())){
+            boardingPosition.setUrl(quay.getUrl());
+        }
+    }
+
+    private void mapQuayRegistrationNumber(Quay quay, StopArea boardingPosition){
+        if(StringUtils.isNotBlank(quay.getPublicCode())){
+            boardingPosition.setRegistrationNumber(quay.getPublicCode());
         }
     }
 }
