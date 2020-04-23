@@ -87,6 +87,12 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 commands.add(chain);
             }
 
+            {
+                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+                Command databaseTimetables = CommandFactory.create(initialContext, DatabaseCompaniesCommand.class.getName());
+                chain.add(databaseTimetables);
+                commands.add(chain);
+            }
 
             ArrayList<String> savedLines = new ArrayList<String>();
             for (GtfsRoute gtfsRoute : index) {

@@ -22,6 +22,9 @@ import mobi.chouette.model.Timeband;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.type.OrganisationTypeEnum;
+
+import java.util.List;
 
 public class ObjectFactory {
 
@@ -113,6 +116,25 @@ public class ObjectFactory {
 		}
 		if (!referential.getCompanies().containsKey(objectId)) {
 			referential.getCompanies().put(objectId, result);
+		}
+
+		return result;
+	}
+
+	public static Company getFirstCompanyFromType(List<Company> companies, OrganisationTypeEnum type) {
+		Company result = null;
+		for(Company company : companies) {
+			if(company != null && type.equals(company.getOrganisationType())) {
+				if(result == null || result.getId() > company.getId()) {
+					result = new Company();
+					result.setId(company.getId());
+					result.setName(company.getName());
+					result.setObjectId(company.getObjectId());
+					result.setRegistrationNumber(company.getRegistrationNumber());
+					result.setOrganisationType(company.getOrganisationType());
+					result.setDetached(true);
+				}
+			}
 		}
 
 		return result;

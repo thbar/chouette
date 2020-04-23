@@ -147,8 +147,6 @@ public class CleanRepositoryCommand implements Command {
 
 		try {
 
-			companyDAO.truncate();
-
 			groupOfLineDAO.truncate();
 			journeyFrequencyDAO.truncate();
 			journeyPatternDAO.truncate();
@@ -179,6 +177,7 @@ public class CleanRepositoryCommand implements Command {
 			if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
 				categoriesForLinesDAO.truncate();
 				operatorDAO.truncate();
+				companyDAO.truncate();
 			}
 
 			result = SUCCESS;

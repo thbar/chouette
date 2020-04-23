@@ -21,6 +21,7 @@ import mobi.chouette.exchange.importer.Validator;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
+import mobi.chouette.model.type.OrganisationTypeEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
@@ -28,6 +29,7 @@ import mobi.chouette.model.util.Referential;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -199,9 +201,9 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
             agencyId = configuration.getReferentialName();
         }
 
-        String operatorId = AbstractConverter.composeObjectId(configuration,
-                Company.OPERATOR_KEY, agencyId + "o", log);
-        Company operator = ObjectFactory.getCompany(referential, operatorId);
+        List<Company> dbCompanies = (List<Company>) context.get(DB_COMPANIES);
+
+        Company operator = ObjectFactory.getFirstCompanyFromType(dbCompanies, OrganisationTypeEnum.Operator);
         line.setCompany(operator);
 
         // PTNetwork
@@ -209,9 +211,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
                 + agencyId;
         Network ptNetwork = ObjectFactory.getPTNetwork(referential, ptNetworkId);
         if (ptNetwork.getCompany() == null) {
-            String authorityId = AbstractConverter.composeObjectId(configuration,
-                    Company.AUTHORITY_KEY, agencyId, log);
-            Company authority = ObjectFactory.getCompany(referential, authorityId);
+            Company authority = ObjectFactory.getFirstCompanyFromType(dbCompanies, OrganisationTypeEnum.Authority);
             ptNetwork.setCompany(authority);
             ptNetwork.setName(authority.getName()); // Set
         }
