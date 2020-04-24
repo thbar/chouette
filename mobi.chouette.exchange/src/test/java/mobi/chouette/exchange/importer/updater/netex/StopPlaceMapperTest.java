@@ -1,5 +1,6 @@
 package mobi.chouette.exchange.importer.updater.netex;
 
+import mobi.chouette.model.MappingHastusZdep;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
@@ -70,7 +71,10 @@ public class StopPlaceMapperTest {
         StopArea stopArea = new StopArea();
         stopArea.setAreaType(ChouetteAreaEnum.BoardingPosition);
         stopArea.setComment("Comment text");
-        Quay quay = stopPlaceMapper.mapQuay(stopArea,"50012345");
+        MappingHastusZdep mappingHastusZdep = new MappingHastusZdep();
+        mappingHastusZdep.setZdep("50012345");
+        stopArea.setMappingHastusZdep(mappingHastusZdep);
+        Quay quay = stopPlaceMapper.mapQuay(stopArea);
         assertNotNull(quay.getDescription(), "description should not be null for quay");
         assertEquals(quay.getDescription().getValue(), stopArea.getComment());
     }
