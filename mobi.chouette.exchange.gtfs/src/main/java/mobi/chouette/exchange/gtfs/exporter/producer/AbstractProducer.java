@@ -21,15 +21,33 @@ public abstract class AbstractProducer
 
    static protected String toGtfsId(String neptuneId, String prefix, boolean keepOriginal)
    {
-      if(keepOriginal) {
+      // @todo OKINA revoir ce foutu truc de keepOriginal
+      /*if(false && keepOriginal) {
     	  return neptuneId;
-      } else {
-    	  String[] tokens = neptuneId.split(":");
-	      if (tokens[0].equals(prefix))
-	         return tokens[2];
-	      else
-	         return tokens[0] + "." + tokens[2];
-	      }
+      } else */{
+      String[] tokens = neptuneId.split(":");
+      if(tokens.length == 1)
+         return tokens[0];
+      else if (tokens[0].equalsIgnoreCase(prefix))
+         return tokens[2];
+      else if (tokens.length >= 4)
+         return concatTokens(tokens);
+      else
+         // pour idfm car nos prefix sont MOSAIC et absolument pas SQYBUS ou autre
+         // sinon return tokens[0] + "." + tokens[2];
+         return tokens[2];
+      }
+   }
+
+   private static String concatTokens(String[] tokens) {
+      StringBuilder id = new StringBuilder();
+      for(int i = 2; i <= tokens.length - 1; i++) {
+         id.append(tokens[i]);
+         if(i != (tokens.length - 1)){
+            id.append(":");
+         }
+      }
+      return id.toString();
    }
 
    static protected boolean isEmpty(String s)
