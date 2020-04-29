@@ -86,29 +86,28 @@ public class GtfsRouteProducer extends AbstractProducer
       {
          switch (neptuneObject.getTransportModeName())
          {
-         case Tramway:
-            route.setRouteType(RouteTypeEnum.Tram);
-            break;
-         case Trolleybus:
-         case Coach:
-         case Bus:
-            route.setRouteType(RouteTypeEnum.Bus);
-            break;
-         case Val:
-         case Metro:
-            route.setRouteType(RouteTypeEnum.Subway);
-            break;
-         case RapidTransit:
-         case LocalTrain:
-         case LongDistanceTrain:
-         case Train:
-            route.setRouteType(RouteTypeEnum.Rail);
-            break;
-         case Ferry:
-            route.setRouteType(RouteTypeEnum.Ferry);
-            break;
-         default:
-            route.setRouteType(RouteTypeEnum.Bus);
+            case Tram:
+               route.setRouteType(RouteTypeEnum.Tram);
+               break;
+            case Metro:
+               route.setRouteType(RouteTypeEnum.Subway);
+               break;
+            case Rail:
+               route.setRouteType(RouteTypeEnum.Rail);
+               break;
+            case Water:
+            case Ferry:
+               route.setRouteType(RouteTypeEnum.Ferry);
+               break;
+            case Funicular:
+               route.setRouteType(RouteTypeEnum.Funicular);
+            case Cableway:
+               route.setRouteType(RouteTypeEnum.Gondola);
+            case TrolleyBus:
+            case Coach:
+            case Bus:
+            default:
+               route.setRouteType(RouteTypeEnum.Bus);
          }
       }
       else

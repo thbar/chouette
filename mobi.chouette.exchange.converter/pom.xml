@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.4.7_OKI</version>
+    <version>3.4.8_MOSAIC</version>
   </parent>
   <artifactId>mobi.chouette.exchange.converter</artifactId>
   <packaging>ejb</packaging>

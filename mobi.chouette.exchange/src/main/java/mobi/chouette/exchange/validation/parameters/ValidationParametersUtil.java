@@ -24,7 +24,7 @@ public class ValidationParametersUtil {
 		return fieldsMap.get(object.getClass().getSimpleName());
 	}
 	
-	public static TransportModeParameters getTransportModeParameters(ValidationParameters parameter, TransportModeNameEnum mode)
+/*	public static TransportModeParameters getTransportModeParameters(ValidationParameters parameter, TransportModeNameEnum mode)
 	{
 		switch (mode)
 		{
@@ -34,7 +34,7 @@ public class ValidationParametersUtil {
 		case Coach : return parameter.getModeCoach();
 		case Ferry : return parameter.getModeFerry();
 		case LocalTrain : return parameter.getModeLocalTrain();
-		case LongDistanceTrain : 
+		case LongDistanceTrain :
 		case LongDistanceTrain_2 : return parameter.getModeLongDistanceTrain();
 		case Metro : return parameter.getModeMetro();
 		case Other : return parameter.getModeOther();
@@ -50,7 +50,7 @@ public class ValidationParametersUtil {
 		case Waterborne : return parameter.getModeWaterborne();
 		}
 		return parameter.getModeOther();
-	}
+	}*/
 
 	public static boolean checkFieldParameters(ValidationParameters parameter, NeptuneIdentifiedObject object)
 	{

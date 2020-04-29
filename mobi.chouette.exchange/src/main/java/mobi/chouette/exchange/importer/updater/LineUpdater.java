@@ -95,6 +95,7 @@ public class LineUpdater implements Updater<Line> {
 			oldValue.setPublishedName(newValue.getPublishedName());
 			oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
 			oldValue.setTransportModeName(newValue.getTransportModeName());
+			oldValue.setTransportSubModeName(newValue.getTransportSubModeName());
 			oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
 			oldValue.setFlexibleService(newValue.getFlexibleService());
 			oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
@@ -137,6 +138,10 @@ public class LineUpdater implements Updater<Line> {
 			if (newValue.getTransportModeName() != null
 					&& !newValue.getTransportModeName().equals(oldValue.getTransportModeName())) {
 				oldValue.setTransportModeName(newValue.getTransportModeName());
+			}
+			if (newValue.getTransportSubModeName() != null
+					&& !newValue.getTransportSubModeName().equals(oldValue.getTransportSubModeName())) {
+				oldValue.setTransportSubModeName(newValue.getTransportSubModeName());
 			}
 			if (newValue.getMobilityRestrictedSuitable() != null
 					&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable())) {

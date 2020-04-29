@@ -83,81 +83,80 @@ public class NetexUtils extends ParserUtils {
 			return null;
 	}
 
-	public static String fromTransportModeNameEnum(TransportModeNameEnum type) {
-		switch (type) {
-		case Air:
-			return "air";
-		case Train:
-			return "rail";
-		case LongDistanceTrain:
-			return "intercityRail";
-		case LongDistanceTrain_2:
-			return "intercityRail";
-		case LocalTrain:
-			return "urbanRail";
-		case RapidTransit:
-			return "urbanRail";
-		case Metro:
-			return "metro";
-		case Tramway:
-			return "tram";
-		case Coach:
-			return "coach";
-		case Bus:
-			return "bus";
-		case Ferry:
-			return "water";
-		case Waterborne:
-			return "water";
-		case PrivateVehicle:
-			return "selfDrive";
-		case Walk:
-			return "selfDrive";
-		case Trolleybus:
-			return "trolleyBus";
-		case Bicycle:
-			return "selfDrive";
-		case Shuttle:
-			return "rail";
-		case Taxi:
-			return "taxi";
-		case Val:
-			return "rail";
-		case Other:
-			return "unknown";
-		default:
-			return "";
-		}
-	}
+/*	public static String fromTransportModeNameEnum(TransportModeNameEnum type) {
+            switch (type) {
+            case Air:
+                return "air";
+            case Train:
+                return "rail";
+            case LongDistanceTrain:
+                return "intercityRail";
+            case LongDistanceTrain_2:
+                return "intercityRail";
+            case LocalTrain:
+                return "urbanRail";
+            case RapidTransit:
+                return "urbanRail";
+            case Metro:
+                return "metro";
+            case Tramway:
+                return "tram";
+            case Coach:
+                return "coach";
+            case Bus:
+                return "bus";
+            case Ferry:
+                return "water";
+            case Waterborne:
+                return "water";
+            case PrivateVehicle:
+                return "selfDrive";
+            case Walk:
+                return "selfDrive";
+            case Trolleybus:
+                return "trolleyBus";
+            case Bicycle:
+                return "selfDrive";
+            case Shuttle:
+                return "rail";
+            case Taxi:
+                return "taxi";
+            case Val:
+                return "rail";
+            case Other:
+                return "unknown";
+            default:
+                return "";
+            }
+        }*/
 
-	public static TransportModeNameEnum toTransportModeNameEnum(String value) {
-		if (value == null)
+	public static TransportModeNameEnum toTransportModeNameEnum(String netexMode) {
+		log.error("Not implemented correctly after updating TransportMode and TransportSubMode");
+		if (netexMode == null)
 			return null;
-		else if (value.equals("air"))
+		else if (netexMode.equals("air"))
 			return TransportModeNameEnum.Air;
-		else if (value.equals("rail"))
-			return TransportModeNameEnum.Train;
-		else if (value.equals("intercityRail"))
-			return TransportModeNameEnum.LongDistanceTrain;
-		else if (value.equals("urbanRail"))
-			return TransportModeNameEnum.LocalTrain;
-		else if (value.equals("metro"))
+		else if (netexMode.equals("rail"))
+			return TransportModeNameEnum.Rail;
+		else if (netexMode.equals("intercityRail"))
+			return TransportModeNameEnum.Rail;
+		else if (netexMode.equals("urbanRail"))
+			return TransportModeNameEnum.Rail;
+		else if (netexMode.equals("metro"))
 			return TransportModeNameEnum.Metro;
-		else if (value.equals("tram"))
-			return TransportModeNameEnum.Tramway;
-		else if (value.equals("coach"))
+		else if (netexMode.equals("tram"))
+			return TransportModeNameEnum.Tram;
+		else if (netexMode.equals("coach"))
 			return TransportModeNameEnum.Coach;
-		else if (value.equals("bus"))
+		else if (netexMode.equals("bus"))
 			return TransportModeNameEnum.Bus;
-		else if (value.equals("water"))
+		else if (netexMode.equals("water"))
 			return TransportModeNameEnum.Ferry;
-		else if (value.equals("selfDrive"))
-			return TransportModeNameEnum.Walk;
-		else if (value.equals("trolleyBus"))
-			return TransportModeNameEnum.Trolleybus;
-		else if (value.equals("taxi"))
+		else if (netexMode.equals("trolleyBus"))
+			return TransportModeNameEnum.TrolleyBus;
+		else if (netexMode.equals("taxi"))
 			return TransportModeNameEnum.Taxi;
-		else if (value.equals("unknown"))
+		else if (netexMode.equals("unknown"))
 			return TransportModeNameEnum.Other;
 		else
 			return TransportModeNameEnum.Other;

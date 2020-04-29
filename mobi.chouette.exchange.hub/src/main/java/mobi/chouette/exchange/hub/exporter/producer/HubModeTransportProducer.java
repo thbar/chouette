@@ -38,51 +38,38 @@ public class HubModeTransportProducer extends AbstractProducer {
 
 	public boolean addLine(Line line) {
 		HubModeTransport.MODE_TRANSPORT mode = null;
-		if (isTrue(line.getFlexibleService())) {
-			mode = HubModeTransport.MODE_TRANSPORT.TAD;
-		} else {
-			switch (line.getTransportModeName()) {
-			case Air:
-				mode = HubModeTransport.MODE_TRANSPORT.AVION;
-				break;
-			case Bicycle:
-				mode = HubModeTransport.MODE_TRANSPORT.VELO;
-				break;
-			case Bus:
-				mode = HubModeTransport.MODE_TRANSPORT.BUS;
-				if (isTrue(line.getMobilityRestrictedSuitable())) {
-					mode = HubModeTransport.MODE_TRANSPORT.BUS_PMR;
-				}
-				break;
-			case Coach:
-				mode = HubModeTransport.MODE_TRANSPORT.CAR;
-				if (isTrue(line.getMobilityRestrictedSuitable())) {
-					mode = HubModeTransport.MODE_TRANSPORT.CAR_PMR;
-				}
-				break;
-			case Waterborne:
-			case Ferry:
-				mode = HubModeTransport.MODE_TRANSPORT.BATEAU;
-				break;
-			case LocalTrain:
-			case Train:
-			case LongDistanceTrain:
-			case LongDistanceTrain_2:
-				mode = HubModeTransport.MODE_TRANSPORT.TRAIN;
-				break;
-			case Metro:
-				mode = HubModeTransport.MODE_TRANSPORT.METRO;
-				break;
-			case Tramway:
-				mode = HubModeTransport.MODE_TRANSPORT.TRAM;
-				break;
-			case Trolleybus:
-				mode = HubModeTransport.MODE_TRANSPORT.TROLLEY;
-				break;
+		switch (line.getTransportModeName()) {
+		case Air:
+			mode = HubModeTransport.MODE_TRANSPORT.AVION;
+			break;
+		case Bicycle:
+			mode = HubModeTransport.MODE_TRANSPORT.VELO;
+			break;
+		case Bus:
+			mode = HubModeTransport.MODE_TRANSPORT.BUS;
+			break;
+		case Coach:
+			mode = HubModeTransport.MODE_TRANSPORT.CAR;
+			break;
+		case Water:
+		case Ferry:
+			mode = HubModeTransport.MODE_TRANSPORT.BATEAU;
+			break;
+		case Rail:
+			mode = HubModeTransport.MODE_TRANSPORT.TRAIN;
+			break;
+		case Metro:
+			mode = HubModeTransport.MODE_TRANSPORT.METRO;
+			break;
+		case Tram:
+			mode = HubModeTransport.MODE_TRANSPORT.TRAM;
+			break;
+		case TrolleyBus:
+			mode = HubModeTransport.MODE_TRANSPORT.TROLLEY;
+			break;
 
-			default:
-				return false; // not implemented
-			}
+		default:
+			return false; // not implemented
 		}
 		HubModeTransport hubObject = modesTransport.get(mode);
 		if (hubObject == null) {
@@ -99,18 +86,20 @@ public class HubModeTransportProducer extends AbstractProducer {
 
 		try {
 			List<HubModeTransport> listModes = new ArrayList<>(modesTransport.values());
-			Collections.sort(listModes, new Sorter());
+			Collections.sort(listModes,new Sorter());
 
 			for (HubModeTransport hubObject : listModes) {
 				getExporter().getModeTransportExporter().export(hubObject);
 			}
-		} catch (IOException e) {
-			log.error("fail to save modes transport", e);
+		}
+		 catch (IOException e) {
+			log.error("fail to save modes transport",e);
 			return false;
 		}
 
 		return true;
 	}
+
 
 	public class Sorter implements Comparator<HubModeTransport> {
 		@Override
