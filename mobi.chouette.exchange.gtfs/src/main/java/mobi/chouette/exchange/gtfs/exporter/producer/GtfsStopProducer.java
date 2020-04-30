@@ -37,7 +37,7 @@ public class GtfsStopProducer extends AbstractProducer
 
     public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes){
 		String stopId = toGtfsId(neptuneObject.getObjectId(), prefix, keepOriginalId);
-		if(!StringUtils.isEmpty(neptuneObject.getOriginalStopId())){
+		if(StringUtils.isEmpty(neptuneObject.getOriginalStopId()) || stopId.contains(".")){
 			stopId = neptuneObject.getOriginalStopId();
 		}
         return save(neptuneObject, prefix, validParents, keepOriginalId, useTPEGRouteTypes, stopId);
