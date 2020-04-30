@@ -21,6 +21,8 @@ public class ProviderReferentialID {
         providers.put("MOBICITE469", "MOBICITE469");
         providers.put("RDLA", "RDLA");
         providers.put("CTVH", "CTVH");
+        providers.put("SAINT_MALO", "SAINT_MALO");
+        providers.put("VALENCIENNES", "VALENCIENNES");
         generateSuperSpaceProviders();
     }
 
