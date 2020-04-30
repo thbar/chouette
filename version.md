@@ -39,3 +39,6 @@
 
 # 4.0.5
 * 6454 : Ajout de la notion platform code (GTFS)
+
+# 4.0.6
+* 6692 : Gestion de la mise à jour des points d'arrêt de Okina à Tiamat et lors d'un import GTFS
