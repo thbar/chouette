@@ -50,14 +50,7 @@ public class StopPlaceMapper {
         if (stopArea.getContainedStopAreas().size() > 0) {
             stopPlace.setQuays(new Quays_RelStructure());
             for (StopArea children : stopArea.getContainedStopAreas()) {
-                MappingHastusZdep mappingHastusZdep = children.getMappingHastusZdep();
-                Quay quay;
-                if (mappingHastusZdep != null) {
-                    String zdep = mappingHastusZdep.getZdep();
-                    quay = mapQuay(children, zdep);
-                } else {
-                    quay = mapQuay(children);
-                }
+                Quay quay = mapQuay(children);
                 stopPlace.getQuays().getQuayRefOrQuay().add(quay);
             }
         }
@@ -76,26 +69,17 @@ public class StopPlaceMapper {
         mapCompassBearing(stopArea, quay);
         mapComment(stopArea, quay);
         mapMobilityRestrictedSuitable(stopArea, quay);
+        mapZdep(stopArea, quay);
 
         return quay;
     }
 
-    protected Quay mapQuay(StopArea stopArea, String zdep) {
-        Quay quay = new Quay();
-        mapId(stopArea, quay);
-        setVersion(stopArea, quay);
-        mapCentroid(stopArea, quay);
-        mapQuayName(stopArea, quay);
-        mapPublicCode(stopArea, quay);
-        mapUrl(stopArea, quay);
-        mapCompassBearing(stopArea, quay);
-        mapComment(stopArea, quay);
-        mapMobilityRestrictedSuitable(stopArea, quay);
-
-        quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
-                .withValue(zdep)));
-        return quay;
+    public void mapZdep(StopArea stopArea, Quay quay) {
+        if (stopArea.getMappingHastusZdep() != null) {
+            quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+                    .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
+                    .withValue(stopArea.getMappingHastusZdep().getZdep())));
+        }
     }
 
     public void mapMobilityRestrictedSuitable(StopArea stopArea, Quay quay){
