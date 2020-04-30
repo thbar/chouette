@@ -42,3 +42,4 @@
 
 # 4.0.6
 * 6692 : Gestion de la mise à jour des points d'arrêt de Okina à Tiamat et lors d'un import GTFS
+* 6698 : Fix stop id modifiés à l'exports 

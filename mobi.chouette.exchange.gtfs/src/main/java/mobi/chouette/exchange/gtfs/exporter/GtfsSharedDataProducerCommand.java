@@ -32,6 +32,7 @@ import mobi.chouette.model.Interchange;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.Timetable;
+import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -120,6 +121,9 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
 			StopArea stop = iterator.next();
 			String newStopId = GtfsStopUtils.getNewStopId(stop);
+			if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
+				newStopId = stop.getOriginalStopId();
+			}
 
 			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId)) {
 				iterator.remove();
@@ -133,6 +137,9 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
             String newStopId = GtfsStopUtils.getNewStopId(stop);
+            if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
+            	newStopId = stop.getOriginalStopId();
+			}
 			if(!stopGenerated.contains(newStopId)){
 				stopGenerated.add(newStopId);
 				stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
