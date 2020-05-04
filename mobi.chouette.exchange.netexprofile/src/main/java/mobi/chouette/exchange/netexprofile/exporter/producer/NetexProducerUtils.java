@@ -327,8 +327,7 @@ public class NetexProducerUtils {
 
 	public static JAXBElement<? extends LineRefStructure> createLineIDFMRef(Line neptuneLine, ObjectFactory netexFactory) {
 		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
-		lineRefStruct.setRef(replaceObjectIdPart(neptuneLine.getObjectId(), "FR1", 0, neptuneLine));
-		lineRefStruct.setRef(lineRefStruct.getRef().replace(neptuneLine.getRegistrationNumber(), neptuneLine.getCodifligne()) + OBJECT_ID_SPLIT_CHAR);
+		lineRefStruct.setRef("FR1:Line:" + neptuneLine.getCodifligne() + OBJECT_ID_SPLIT_CHAR);
 		lineRefStruct.setVersion(null);
 		lineRefStruct.setValue("version=\"any\"");
 		return netexFactory.createLineRef(lineRefStruct);
