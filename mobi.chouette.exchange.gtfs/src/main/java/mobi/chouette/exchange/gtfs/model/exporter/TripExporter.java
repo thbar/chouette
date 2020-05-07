@@ -78,12 +78,12 @@ public class TripExporter extends ExporterImpl<GtfsTrip> implements
 					input.getTripShortName(), false));
 			values.add(DIRECTIONTYPE_CONVERTER.to(context, FIELDS.direction_id,
 					input.getDirectionId(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.block_id, input.getBlockId(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.shape_id,
+			input.getShapeId(), false));
 			values.add(WHEELCHAIRACCESSIBLETYPE_CONVERTER.to(context,
 					FIELDS.wheelchair_accessible,
 					input.getWheelchairAccessible(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.shape_id,
-			input.getShapeId(), false));
-			values.add(STRING_CONVERTER.to(context, FIELDS.block_id, input.getBlockId(), false));
 			values.add(BIKESALLOWEDTYPE_CONVERTER.to(context, FIELDS.bikes_allowed, input.getBikesAllowed(), false));
 
 			result = Tokenizer.untokenize(values);

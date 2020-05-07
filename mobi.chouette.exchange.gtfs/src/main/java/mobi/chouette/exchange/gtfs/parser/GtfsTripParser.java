@@ -1156,6 +1156,21 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                     break;
             }
         }
+
+        if (gtfsTrip.getBikesAllowed() != null) {
+            switch (gtfsTrip.getBikesAllowed()) {
+                case NoInformation:
+                    vehicleJourney.setBikesAllowed(null);
+                    break;
+                case NoAllowed:
+                    vehicleJourney.setBikesAllowed(Boolean.FALSE);
+                    break;
+                case Allowed:
+                    vehicleJourney.setBikesAllowed(Boolean.TRUE);
+                    break;
+            }
+        }
+
         vehicleJourney.setFilled(true);
 
     }

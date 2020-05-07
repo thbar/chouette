@@ -24,6 +24,8 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 
 	public static final String BEAN_NAME = "VehicleJourneyUpdater";
 
+	private boolean dataTripIdfm;
+
 	private static final Comparator<VehicleJourneyAtStop> VEHICLE_JOURNEY_AT_STOP_COMPARATOR = new Comparator<VehicleJourneyAtStop>() {
 		@Override
 		public int compare(VehicleJourneyAtStop o1, VehicleJourneyAtStop o2) {
@@ -104,6 +106,9 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 	@Override
 	public void update(Context context, VehicleJourney oldValue, VehicleJourney newValue) throws Exception {
 
+		String dataTripIdfmProperty = "iev.data.trip.idfm";
+		dataTripIdfm = Boolean.parseBoolean(System.getProperty(dataTripIdfmProperty));
+
 		if (newValue.isSaved()) {
 			return;
 		}
@@ -137,6 +142,7 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 			oldValue.setVehicleTypeIdentifier(newValue.getVehicleTypeIdentifier());
 			oldValue.setNumber(newValue.getNumber());
 			oldValue.setMobilityRestrictedSuitability(newValue.getMobilityRestrictedSuitability());
+			oldValue.setBikesAllowed(newValue.getBikesAllowed());
 			oldValue.setFlexibleService(newValue.getFlexibleService());
 			oldValue.setJourneyCategory(newValue.getJourneyCategory());
 			oldValue.setKeyValues(newValue.getKeyValues());
@@ -170,7 +176,7 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 				oldValue.setPrivateCode(newValue.getPrivateCode());
 			}
 			if (newValue.getPublishedJourneyName() != null
-					&& !newValue.getPublishedJourneyName().equals(oldValue.getPublishedJourneyName())) {
+					&& !newValue.getPublishedJourneyName().equals(oldValue.getPublishedJourneyName()) && !dataTripIdfm) {
 				oldValue.setPublishedJourneyName(newValue.getPublishedJourneyName());
 			}
 			if (newValue.getPublishedJourneyIdentifier() != null
@@ -187,10 +193,13 @@ public class VehicleJourneyUpdater implements Updater<VehicleJourney> {
 			if (newValue.getNumber() != null && !newValue.getNumber().equals(oldValue.getNumber())) {
 				oldValue.setNumber(newValue.getNumber());
 			}
-
 			if (newValue.getMobilityRestrictedSuitability() != null
-					&& !newValue.getMobilityRestrictedSuitability().equals(oldValue.getMobilityRestrictedSuitability())) {
+					&& !newValue.getMobilityRestrictedSuitability().equals(oldValue.getMobilityRestrictedSuitability()) && !dataTripIdfm) {
 				oldValue.setMobilityRestrictedSuitability(newValue.getMobilityRestrictedSuitability());
+			}
+			if (newValue.getBikesAllowed() != null
+					&& !newValue.getBikesAllowed().equals(oldValue.getBikesAllowed()) && !dataTripIdfm) {
+				oldValue.setBikesAllowed(newValue.getBikesAllowed());
 			}
 			if (newValue.getFlexibleService() != null
 					&& !newValue.getFlexibleService().equals(oldValue.getFlexibleService())) {

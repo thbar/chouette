@@ -246,6 +246,24 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	private Boolean mobilityRestrictedSuitability;
 
 	/**
+	 * Indicates whether bikes are allowed. Valid options are:
+	 *
+	 * empty - No bike information for the trip.
+	 * true - Vehicle being used on this particular trip can accommodate at least one bicycle.
+	 * false - No bicycles are allowed on this trip.
+	 *
+	 *
+	 *
+	 * @param mobilityRestrictedSuitability
+	 *            New state for mobility restriction indicator
+	 * @return The actual mobility restriction indicator
+	 */
+	@Getter
+	@Setter
+	@Column(name = "bikes_allowed")
+	private Boolean bikesAllowed;
+
+	/**
 	 * flexible service <br/>
 	 * 
 	 * <ul>

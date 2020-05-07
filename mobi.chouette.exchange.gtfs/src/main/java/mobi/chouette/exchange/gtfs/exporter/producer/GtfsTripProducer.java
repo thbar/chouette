@@ -334,8 +334,14 @@ public class GtfsTripProducer extends AbstractProducer {
 					: GtfsTrip.WheelchairAccessibleType.NoAllowed);
 		else
 			trip.setWheelchairAccessible(GtfsTrip.WheelchairAccessibleType.NoInformation);
+
+		if (vj.getBikesAllowed() != null)
+			trip.setBikesAllowed(vj.getBikesAllowed() ? GtfsTrip.BikesAllowedType.Allowed
+					: GtfsTrip.BikesAllowedType.NoAllowed);
+		else
+			trip.setBikesAllowed(GtfsTrip.BikesAllowedType.NoInformation);
+
 		// trip.setBlockId(...);
-		// trip.setBikeAllowed();
 
 		// add StopTimes
 		if (saveTimes(vj,  prefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas)) {

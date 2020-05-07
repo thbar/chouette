@@ -67,7 +67,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 	@Override
 	public void update(Context context, StopArea oldValue, StopArea newValue) throws Exception {
 
-		String dataStopIdfmProperty = "iev.data.route.idfm";
+		String dataStopIdfmProperty = "iev.data.stop.idfm";
 		dataStopIdfm = Boolean.parseBoolean(System.getProperty(dataStopIdfmProperty));
 
 		if (newValue.isSaved()) {
