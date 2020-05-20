@@ -16,6 +16,7 @@ import mobi.chouette.dao.CompanyDAO;
 import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.ContactStructureDAO;
 import mobi.chouette.dao.DestinationDisplayDAO;
+import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.FlexibleServicePropertiesDAO;
 import mobi.chouette.dao.FootnoteDAO;
 import mobi.chouette.dao.GroupOfLineDAO;
@@ -138,6 +139,9 @@ public class CleanRepositoryCommand implements Command {
 	@EJB
 	OperatorDAO operatorDAO;
 
+	@EJB
+	FeedInfoDAO feedInfoDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
@@ -179,6 +183,7 @@ public class CleanRepositoryCommand implements Command {
 			if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
 				categoriesForLinesDAO.truncate();
 				operatorDAO.truncate();
+				feedInfoDAO.truncate();
 			}
 
 			result = SUCCESS;
