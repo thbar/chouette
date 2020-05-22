@@ -1,10 +1,15 @@
 package mobi.chouette.exchange.netexprofile.exporter.producer;
 
-import mobi.chouette.exchange.netexprofile.ConversionUtil;
-import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.StopPoint;
-import org.rutebanken.netex.model.*;
+import org.rutebanken.netex.model.DestinationDisplayRefStructure;
+import org.rutebanken.netex.model.MultilingualString;
+import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
+import org.rutebanken.netex.model.PointsInJourneyPattern_RelStructure;
+import org.rutebanken.netex.model.RouteRefStructure;
+import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
+import org.rutebanken.netex.model.ServiceJourneyPatternTypeEnumeration;
+import org.rutebanken.netex.model.StopPointInJourneyPattern;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,7 +17,7 @@ import java.util.Collection;
 
 public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
 
-    public org.rutebanken.netex.model.ServiceJourneyPattern produce(JourneyPattern journeyPattern, ExportableNetexData exportableNetexData) {
+    public org.rutebanken.netex.model.ServiceJourneyPattern produce(JourneyPattern journeyPattern) {
         org.rutebanken.netex.model.ServiceJourneyPattern netexServiceJourneyPattern = netexFactory.createServiceJourneyPattern();
 
         NetexProducerUtils.populateIdAndVersionIDFM(journeyPattern, netexServiceJourneyPattern);
@@ -33,14 +38,7 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
                     destinationDisplayRefStructure.setRef(dd.getObjectId() + ":LOC");
                     destinationDisplayRefStructure.setVersion("any");
                     netexServiceJourneyPattern.setDestinationDisplayRef(destinationDisplayRefStructure);
-
-                    DestinationDisplay netexDestinationDisplay = netexFactory.createDestinationDisplay();
-                    netexDestinationDisplay.setId(destinationDisplayRefStructure.getRef());
-                    netexDestinationDisplay.setVersion("any");
-                    netexDestinationDisplay.setFrontText(ConversionUtil.getMultiLingualString(dd.getFrontText()));
-                    exportableNetexData.getSharedDestinationDisplays().put(netexDestinationDisplay.getId(), netexDestinationDisplay);
-
-                    }
+                }
             }
         }
 
@@ -57,11 +55,6 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
             ScheduledStopPointRefStructure scheduledStopPointRefStructure = netexFactory.createScheduledStopPointRefStructure();
             NetexProducerUtils.populateReferenceIDFM(stopPoint.getScheduledStopPoint(), scheduledStopPointRefStructure);
             stopPointInJourneyPattern.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(scheduledStopPointRefStructure));
-
-            ScheduledStopPoint scheduledStopPoint = netexFactory.createScheduledStopPoint();
-            scheduledStopPoint.setId(scheduledStopPointRefStructure.getRef());
-            scheduledStopPoint.setVersion("any");
-            exportableNetexData.getSharedScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
 
             pointInLinkSequence_versionedChildStructures.add(stopPointInJourneyPattern);
 

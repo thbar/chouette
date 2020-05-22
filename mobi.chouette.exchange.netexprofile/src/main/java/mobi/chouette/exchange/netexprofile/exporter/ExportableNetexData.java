@@ -144,6 +144,18 @@ public class ExportableNetexData {
     @Setter
     private List<ServiceJourneyPattern> serviceJourneyPatterns = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private List<ScheduledStopPoint> scheduledStopPoints = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private List<DestinationDisplay> destinationDisplays = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private List<PassengerStopAssignment> stopAssignments = new ArrayList<>();
+
 
     public void clear() {
         lineCondition = null;
@@ -156,6 +168,9 @@ public class ExportableNetexData {
         serviceJourneyInterchanges.clear();
         directions.clear();
         serviceJourneyPatterns.clear();
+        stopAssignments.clear();
+        scheduledStopPoints.clear();
+        destinationDisplays.clear();
     }
 
     public void dispose() {
