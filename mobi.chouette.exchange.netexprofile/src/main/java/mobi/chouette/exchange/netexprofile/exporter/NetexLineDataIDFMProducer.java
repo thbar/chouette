@@ -131,15 +131,15 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         producerAndCollectDirection(exportableData.getRoutes(), exportableNetexData);
 
         for (JourneyPattern neptuneJourneyPattern : exportableData.getJourneyPatterns()) {
-            exportableNetexData.getServiceJourneyPatterns().add(serviceJourneyPatternIDFMProducer.produce(neptuneJourneyPattern));
+            exportableNetexData.getServiceJourneyPatterns().add(serviceJourneyPatternIDFMProducer.produce(neptuneJourneyPattern, exportableNetexData));
         }
 
-        produceAndCollectScheduledStopPoints(exportableData.getRoutes(), exportableNetexData);
+//        produceAndCollectScheduledStopPoints(exportableData.getRoutes(), exportableNetexData);
 
         produceAndCollectPassengerStopAssignments(exportableData.getRoutes(), exportableNetexData, configuration);
 
-        List<Route> activeRoutes = exportableData.getVehicleJourneys().stream().map(vj -> vj.getRoute()).distinct().collect(Collectors.toList());
-        produceAndCollectDestinationDisplays(activeRoutes, exportableNetexData);
+//        List<Route> activeRoutes = exportableData.getVehicleJourneys().stream().map(vj -> vj.getRoute()).distinct().collect(Collectors.toList());
+//        produceAndCollectDestinationDisplays(activeRoutes, exportableNetexData);
 
         for (mobi.chouette.model.VehicleJourney vehicleJourney : exportableData.getVehicleJourneys()) {
             exportableNetexData.getServiceJourneys().add(serviceJourneyIDFMProducer.produce(context, vehicleJourney));
