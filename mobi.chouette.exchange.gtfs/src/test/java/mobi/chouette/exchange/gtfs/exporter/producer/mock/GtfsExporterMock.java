@@ -1,14 +1,11 @@
 package mobi.chouette.exchange.gtfs.exporter.producer.mock;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Getter;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsCalendar;
 import mobi.chouette.exchange.gtfs.model.GtfsCalendarDate;
+import mobi.chouette.exchange.gtfs.model.GtfsFeedInfo;
 import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.GtfsShape;
@@ -18,8 +15,11 @@ import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.exporter.Exporter;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
-
 import org.apache.commons.beanutils.BeanUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GtfsExporterMock implements GtfsExporterInterface
 {
@@ -30,6 +30,8 @@ public class GtfsExporterMock implements GtfsExporterInterface
    List<GtfsCalendarDate> exportedCalendarDates = new ArrayList<>();
    @Getter 
    List<GtfsCalendar> exportedCalendars = new ArrayList<>();
+   @Getter
+   List<GtfsFeedInfo> exportedFeedInfo = new ArrayList<>();
    @Getter 
    List<GtfsFrequency> exportedFrequencies = new ArrayList<>();
    @Getter 
@@ -48,6 +50,7 @@ public class GtfsExporterMock implements GtfsExporterInterface
    AgencyExporterMock agencyMock = new AgencyExporterMock();
    CalendarDateExporterMock calendarDateMock = new CalendarDateExporterMock();
    CalendarExporterMock calendarMock = new CalendarExporterMock();
+   FeedInfoExporterMock feedInfoMock = new FeedInfoExporterMock();
    FrequencyExporterMock frequencyMock = new FrequencyExporterMock();
    RouteExporterMock routeMock = new RouteExporterMock();
    ShapeExporterMock shapeMock = new ShapeExporterMock();
@@ -86,6 +89,11 @@ public class GtfsExporterMock implements GtfsExporterInterface
    public Exporter<GtfsCalendar> getCalendarExporter() throws Exception
    {
       return calendarMock;
+   }
+
+   @Override
+   public Exporter<GtfsFeedInfo> getFeedInfoExporter() throws Exception {
+      return feedInfoMock;
    }
 
    @Override
@@ -196,6 +204,22 @@ public class GtfsExporterMock implements GtfsExporterInterface
          try
          {
             exportedCalendars.add((GtfsCalendar) BeanUtils.cloneBean(bean));
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+         }
+      }
+   }
+
+   private class FeedInfoExporterMock extends ExporterMock<GtfsFeedInfo>
+   {
+      @Override
+      public void export(GtfsFeedInfo bean) throws IOException
+      {
+         try
+         {
+            exportedFeedInfo.add((GtfsFeedInfo) BeanUtils.cloneBean(bean));
          }
          catch (Exception e)
          {
