@@ -613,15 +613,15 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         String result = null;
 
-        if (drop == DropOffType.Scheduled && pickup == PickupType.Scheduled) {
+//        if (drop == DropOffType.Scheduled && pickup == PickupType.Scheduled) {
             result = vehicleJourneyAtStop.stopId;
-        } else {
-            result = vehicleJourneyAtStop.stopId + "." + drop.ordinal() + "" + pickup.ordinal();
-        }
-
-        if (vehicleJourneyAtStop.stopHeadsign != null) {
-            result += vehicleJourneyAtStop.stopHeadsign;
-        }
+//        } else {
+//            result = vehicleJourneyAtStop.stopId + "." + drop.ordinal() + "" + pickup.ordinal();
+//        }
+//
+//        if (vehicleJourneyAtStop.stopHeadsign != null) {
+//            result += vehicleJourneyAtStop.stopHeadsign;
+//        }
 
         return result;
     }
