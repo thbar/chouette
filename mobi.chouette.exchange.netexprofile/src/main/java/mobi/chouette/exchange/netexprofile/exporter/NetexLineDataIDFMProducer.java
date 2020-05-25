@@ -176,7 +176,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             if (isSet(chouetteScheduledStopPoint.getContainedInStopAreaRef().getObject())) {
                 ScheduledStopPoint scheduledStopPoint = netexFactory.createScheduledStopPoint();
                 NetexProducerUtils.populateIdAndVersionIDFM(chouetteScheduledStopPoint, scheduledStopPoint);
-                exportableNetexData.getScheduledStopPoints().add(scheduledStopPoint);
+                exportableNetexData.getScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
             } else {
                 throw new RuntimeException(
                         "ScheduledStopPoint with id : " + chouetteScheduledStopPoint.getObjectId() + " is not contained in a StopArea. Cannot produce ScheduledStopPoint.");
@@ -203,7 +203,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             DestinationDisplay netexDestinationDisplay = netexFactory.createDestinationDisplay();
             NetexProducerUtils.populateIdAndVersionIDFM(dd, netexDestinationDisplay);
             netexDestinationDisplay.setFrontText(ConversionUtil.getMultiLingualString(dd.getFrontText()));
-            exportableNetexData.getDestinationDisplays().add(netexDestinationDisplay);
+            exportableNetexData.getDestinationDisplays().put(netexDestinationDisplay.getId(), netexDestinationDisplay);
     }
 
     private void produceAndCollectPassengerStopAssignments(List<mobi.chouette.model.Route> routes, ExportableNetexData exportableNetexData,
@@ -229,7 +229,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             String passengerStopAssignmentIdSuffix = scheduledStopPoint.objectIdSuffix();
             String passengerStopAssignmentId = netexId(scheduledStopPoint.objectIdPrefix(), PASSENGER_STOP_ASSIGNMENT, passengerStopAssignmentIdSuffix);
             PassengerStopAssignment stopAssignment = createPassengerStopAssignment(scheduledStopPoint, passengerStopAssignmentId, parameters);
-            exportableNetexData.getStopAssignments().add(stopAssignment);
+            exportableNetexData.getStopAssignments().put(stopAssignment.getId(), stopAssignment);
         } else {
             throw new RuntimeException(
                     "ScheduledStopPoint with id : " + scheduledStopPoint.getObjectId() + " is not contained in a StopArea. Cannot produce StopAssignment.");

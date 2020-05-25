@@ -146,15 +146,15 @@ public class ExportableNetexData {
 
     @Getter
     @Setter
-    private List<ScheduledStopPoint> scheduledStopPoints = new ArrayList<>();
+    private Map<String, ScheduledStopPoint> scheduledStopPoints = new HashMap<>();
 
     @Getter
     @Setter
-    private List<DestinationDisplay> destinationDisplays = new ArrayList<>();
+    private Map<String, DestinationDisplay> destinationDisplays = new HashMap<>();
 
     @Getter
     @Setter
-    private List<PassengerStopAssignment> stopAssignments = new ArrayList<>();
+    private Map<String, PassengerStopAssignment> stopAssignments = new HashMap<>();
 
 
     public void clear() {
