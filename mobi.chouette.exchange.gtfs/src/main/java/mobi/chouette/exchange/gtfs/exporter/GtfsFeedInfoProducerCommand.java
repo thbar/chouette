@@ -39,7 +39,13 @@ public class GtfsFeedInfoProducerCommand implements Command, Constant {
             GtfsExporter exporter = (GtfsExporter) context.get(GTFS_EXPORTER);
             GtfsFeedInfoProducer feedInfoProducer = new GtfsFeedInfoProducer(exporter);
             FeedInfo feedInfo = (FeedInfo) context.get(FEED_INFO);
-            feedInfoProducer.save(new GtfsFeedInfo(feedInfo));
+
+            if (feedInfo != null) {
+                feedInfoProducer.save(new GtfsFeedInfo(feedInfo));
+            } else {
+                feedInfoProducer.save(null);
+            }
+
             return SUCCESS;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
