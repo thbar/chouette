@@ -1,18 +1,17 @@
 package mobi.chouette.exchange.gtfs.exporter;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
-
 import org.apache.log4j.Logger;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "gtfs-export")
 @NoArgsConstructor
@@ -44,11 +43,6 @@ public class GtfsExportParameters  extends AbstractExportParameter {
 
 		if (timeZone == null || timeZone.isEmpty()) {
 			log.error("missing time_zone");
-			return false;
-		}
-
-		if (objectIdPrefix == null || objectIdPrefix.isEmpty()) {
-			log.error("missing object_id_prefix");
 			return false;
 		}
 
