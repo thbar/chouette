@@ -48,25 +48,25 @@ public class DaoGtfsFeedInfoProducerCommand implements Command, Constant {
         Monitor monitor = MonitorFactory.start(COMMAND);
 
         try {
-            Optional<FeedInfo> feedInfo = feedInfoDAO.findAll()
+            Optional<FeedInfo> feedInfoOptional = feedInfoDAO.findAll()
                     .stream()
                     .findFirst();
 
-            if (feedInfo.isPresent()) {
-                Object configuration = context.get(CONFIGURATION);
-                if (!(configuration instanceof GtfsExportParameters)) {
-                    // fatal wrong parameters
-                    log.error("invalid parameters for gtfs export " + configuration.getClass().getName());
-                    return ERROR;
-                }
-
-                GtfsExportParameters parameters = (GtfsExportParameters) configuration;
-
-                feedInfo.get().setStartDate(parameters.getStartDate());
-                feedInfo.get().setEndDate(parameters.getEndDate());
-                context.put(FEED_INFO, feedInfo.get());
+            FeedInfo feedInfo = feedInfoOptional.orElseGet(FeedInfo::new);
+            
+            Object configuration = context.get(CONFIGURATION);
+            if (!(configuration instanceof GtfsExportParameters)) {
+                // fatal wrong parameters
+                log.error("invalid parameters for gtfs export " + configuration.getClass().getName());
+                return ERROR;
             }
 
+            GtfsExportParameters parameters = (GtfsExportParameters) configuration;
+
+            feedInfo.setStartDate(parameters.getStartDate());
+            feedInfo.setEndDate(parameters.getEndDate());
+            context.put(FEED_INFO, feedInfo);
+            
             result = SUCCESS;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
