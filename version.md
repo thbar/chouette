@@ -43,3 +43,7 @@
 # 4.0.6
 * 6692 : Gestion de la mise à jour des points d'arrêt de Okina à Tiamat et lors d'un import GTFS
 * 6698 : Fix stop id modifiés à l'exports 
+
+# 4.0.7
+* Gestion des wheelchair accessible et bikes allowed
+* Changement de génération des object id des routes et jp
