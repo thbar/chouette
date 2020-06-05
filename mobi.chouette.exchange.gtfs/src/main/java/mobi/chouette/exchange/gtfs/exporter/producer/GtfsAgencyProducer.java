@@ -8,19 +8,21 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.exchange.gtfs.model.GtfsAgency;
+import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import mobi.chouette.exchange.gtfs.model.importer.Context;
+import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
+import mobi.chouette.model.Agency;
+import mobi.chouette.model.Company;
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.exchange.gtfs.model.GtfsAgency;
-import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
-import mobi.chouette.model.Company;
-
-import org.apache.commons.lang3.StringUtils;
 
 import static mobi.chouette.common.PropertyNames.GTFS_AGENCY_PHONE_DEFAULTS;
 import static mobi.chouette.common.PropertyNames.GTFS_AGENCY_URL_DEFAULTS;
@@ -38,89 +40,61 @@ public class GtfsAgencyProducer extends AbstractProducer
       super(exporter);
    }
 
-   private GtfsAgency agency = new GtfsAgency();
+   private GtfsAgency gtfsAgency = new GtfsAgency();
 
 
-   public boolean save(Company neptuneObject, String prefix, TimeZone timeZone, boolean keepOriginalId)
-   {
-      agency.setAgencyId(toGtfsId(neptuneObject.getObjectId(),prefix,keepOriginalId));
+    public boolean save(Agency agency, String prefix, TimeZone timeZone, boolean keepOriginalId) {
+        gtfsAgency.setAgencyId(agency.getAgencyId());
 
-      String name = neptuneObject.getName();
-      if (name.trim().isEmpty())
-      {
-         log.error("no name for " + neptuneObject.getObjectId());
-//         GtfsReportItem item = new GtfsReportItem(
-//               GtfsReportItem.KEY.MISSING_DATA, STATE.ERROR, "Company",
-//               neptuneObject.getObjectId(), "Name");
-//         report.addItem(item);
-         return false;
-      }
+        String name = agency.getName();
+        if (name == null || name.trim().isEmpty()) {
+            log.error("The agency has no name");
+            Context context = new Context();
+            context.put(Context.ERROR, GtfsException.ERROR.MISSING_REQUIRED_FIELDS);
+            context.put(Context.FIELD, "Agency name");
+            throw new GtfsException(context);
+        }
 
-      if(StringUtils.isEmpty(agency.getAgencyId()) || agency.getAgencyId().endsWith("default")){
-          agency.setAgencyId(name);
-      }
-      agency.setAgencyName(name);
+        gtfsAgency.setAgencyName(name);
 
-      // manage agency_timezone
-      TimeZone tz = timeZone;
-      if (!isEmpty(neptuneObject.getTimeZone()))
-      {
-         tz = TimeZone.getTimeZone(neptuneObject.getTimeZone());
-      }
-      if (tz == null)
-      {
-         tz = TimeZone.getDefault();
-      }
-      agency.setAgencyTimezone(tz);
+        if(agency.getTimeZone() == null) {
+            log.error("The agency has no time zone");
+            Context context = new Context();
+            context.put(Context.ERROR, GtfsException.ERROR.MISSING_REQUIRED_FIELDS);
+            context.put(Context.FIELD, "Agency time zone");
+            throw new GtfsException(context);
+        }
 
-      // manage agency_url mandatory
-      // String urlData = "Url";
-      String url = sanitizeUrl(getValue(neptuneObject.getUrl()));
-      if (url == null)
-      {
-         url = createURLFromProviderDefaults(neptuneObject);
-      }
-      try
-      {
-         agency.setAgencyUrl(new URL(url));
-      } catch (MalformedURLException e)
-      {
-         log.error("malformed URL " + url + " creating url from organisation unit as replacement");
-		  String replacementUrl = createURLFromProviderDefaults(neptuneObject);
-		  try {
-            agency.setAgencyUrl(new URL(replacementUrl));
-         } catch (MalformedURLException e2) {
-            log.error("malformed replacementUrl " + replacementUrl + " ignoring agency");
+        gtfsAgency.setAgencyTimezone(TimeZone.getTimeZone(agency.getTimeZone()));
+
+        try {
+            gtfsAgency.setAgencyUrl(new URL(sanitizeUrl(getValue(agency.getUrl()))));
+        } catch (MalformedURLException e) {
+            log.error("The agency has a malformed URL: " + agency.getUrl());
+            Context context = new Context();
+            context.put(Context.ERROR, GtfsException.ERROR.MISSING_REQUIRED_FIELDS);
+            context.put(Context.FIELD, "Agency URL");
+            throw new GtfsException(context);
+        }
+
+        try {
+            gtfsAgency.setAgencyFareUrl(new URL(sanitizeUrl(getValue(agency.getFareUrl()))));
+        } catch (MalformedURLException e) {
+            log.error("The agency has a malformed fare URL: " + agency.getFareUrl());
+        }
+
+        gtfsAgency.setAgencyPhone(agency.getPhone());
+        gtfsAgency.setAgencyLang(agency.getLang());
+        gtfsAgency.setAgencyEmail(agency.getEmail());
+
+        try {
+            getExporter().getAgencyExporter().export(gtfsAgency);
+        } catch (Exception e) {
+            log.error("fail to produce agency " + e.getClass().getName() + " " + e.getMessage());
             return false;
-         }
-
-//         GtfsReportItem item = new GtfsReportItem(
-//               GtfsReportItem.KEY.INVALID_DATA, STATE.ERROR, "Company",
-//               neptuneObject.getName(), urlData, url);
-//         report.addItem(item);
-      }
-
-      if (neptuneObject.getPhone() != null) {
-		  agency.setAgencyPhone(neptuneObject.getPhone());
-	  } else {
-		  agency.setAgencyPhone(createPhoneFromProviderDefaults(neptuneObject));
-	  }
-
-      // unmanaged attributes
-      agency.setAgencyLang(null);
-      agency.setAgencyFareUrl(null);
-      
-      try
-      {
-         getExporter().getAgencyExporter().export(agency);
-      }
-      catch (Exception e)
-      {
-         log.error("fail to produce agency "+e.getClass().getName()+" "+e.getMessage());
-         return false;
-      }
-      return true;
-   }
+        }
+        return true;
+    }
 
 	private String sanitizeUrl(String url) {
 		String sanitized = url;

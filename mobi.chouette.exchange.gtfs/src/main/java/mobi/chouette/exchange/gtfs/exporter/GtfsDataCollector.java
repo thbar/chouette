@@ -1,28 +1,28 @@
 package mobi.chouette.exchange.gtfs.exporter;
 
-import java.util.Collection;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.exporter.DataCollector;
+import mobi.chouette.model.Agency;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.OrganisationTypeEnum;
-
 import org.joda.time.LocalDate;
+
+import java.util.Collection;
 
 @Log4j
 public class GtfsDataCollector extends DataCollector {
-	public boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate) {
+	public boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate, Agency agency) {
 		boolean res = collect(collection, line, startDate, endDate, false, false);
 		if (Boolean.TRUE.equals(line.getFlexibleService())) {
 			log.info("Omitting flexible line from gtfs export: " + line.getObjectId());
 			return false;
 		}
 		if (res) {
-			collectAgencyCompany(line, collection);
+			collection.setAgency(agency);
 		}
 		return res;
 	}
@@ -90,6 +90,5 @@ public class GtfsDataCollector extends DataCollector {
 			}
 		}
 	}
-
 
 }
