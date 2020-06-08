@@ -490,7 +490,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             String objectId = AbstractConverter.composeObjectId(configuration,
                     VehicleJourney.VEHICLEJOURNEY_KEY, gtfsTrip.getTripId(), log);
             VehicleJourney vehicleJourney = ObjectFactory.getVehicleJourney(referential, objectId);
-            convert(context, gtfsTrip, vehicleJourney);
+            convert(configuration, gtfsTrip, vehicleJourney);
 
             // VehicleJourneyAtStop
             boolean afterMidnight = true;
@@ -539,6 +539,10 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             if (journeyPattern == null) {
                 journeyPattern = createJourneyPattern(context, referential, configuration, gtfsTrip, gtfsShapes,
                         vehicleJourney, journeyKey, journeyPatternByStopSequence);
+            }
+
+            if(StringUtils.isBlank(vehicleJourney.getPublishedJourneyName())){
+                vehicleJourney.setPublishedJourneyName(journeyPattern.getRoute().getStopPoints().get(journeyPattern.getRoute().getStopPoints().size() - 1).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
             }
 
             vehicleJourney.setRoute(journeyPattern.getRoute());
@@ -1091,13 +1095,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         return null;
     }
 
-    protected void convert(Context context, GtfsTrip gtfsTrip, VehicleJourney vehicleJourney) {
+    protected void convert(GtfsImportParameters configuration, GtfsTrip gtfsTrip, VehicleJourney vehicleJourney) {
 
         if (gtfsTrip.getTripShortName() != null) {
             vehicleJourney.setPrivateCode(gtfsTrip.getTripShortName());
         }
 
-        if (StringUtils.trimToNull(gtfsTrip.getTripHeadSign()) != null) {
+        if (StringUtils.trimToNull(gtfsTrip.getTripHeadSign()) != null && !configuration.getReferentialName().equals("snc")) {
             vehicleJourney.setPublishedJourneyName(gtfsTrip.getTripHeadSign());
         }
 
@@ -1120,13 +1124,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     /**
      * create stopPoints for Route
-     *
+     * @param route
+     * @param journeyPattern
+     * @param list
      * @param referential
      * @param configuration
-     * @param routeId              route objectId
-     * @param stopTimesOfATrip     first trip's ordered GTFS StopTimes
-     * @param mapStopAreasByStopId stopAreas to attach created StopPoints (parent relationship)
-     * @return
      */
     private void createStopPoint(Route route, JourneyPattern journeyPattern, List<VehicleJourneyAtStop> list,
                                  Referential referential, GtfsImportParameters configuration) {
