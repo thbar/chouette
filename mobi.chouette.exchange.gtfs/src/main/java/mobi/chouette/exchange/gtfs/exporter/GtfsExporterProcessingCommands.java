@@ -116,4 +116,9 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		return commands;
 	}
 
+	@Override
+	public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+		return new ArrayList<>();
+	}
+
 }
