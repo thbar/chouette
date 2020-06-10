@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mobi.chouette.model.FeedInfo;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 import java.io.Serializable;
@@ -59,7 +60,7 @@ public class GtfsFeedInfo extends GtfsObject implements Serializable {
     }
 
     public GtfsFeedInfo(FeedInfo feedInfo) throws MalformedURLException {
-        this(feedInfo.getPublisherName(), feedInfo.getPublisherUrl() != null ? new URL(feedInfo.getPublisherUrl()) : null, feedInfo.getLang(), new LocalDate(feedInfo.getStartDate()), new LocalDate(feedInfo.getEndDate()), feedInfo.getVersion(), feedInfo.getContactEmail(), feedInfo.getContactUrl() != null ? new URL(feedInfo.getContactUrl()) : null);
+        this(feedInfo.getPublisherName(), !StringUtils.isEmpty(feedInfo.getPublisherUrl()) ? new URL(feedInfo.getPublisherUrl()) : null, feedInfo.getLang(), new LocalDate(feedInfo.getStartDate()), new LocalDate(feedInfo.getEndDate()), feedInfo.getVersion(), feedInfo.getContactEmail(), !StringUtils.isEmpty(feedInfo.getContactUrl()) ? new URL(feedInfo.getContactUrl()) : null);
         this.setId(feedInfo.getId() != null ? feedInfo.getId().intValue() : null);
     }
 
