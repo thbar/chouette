@@ -458,7 +458,7 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	public String getNewObjectId(){
 		String[] splitObjectId = this.getObjectId().split(":");
 		if(splitObjectId.length<3) return this.getObjectId();
-		return this.getObjectId().split(":")[0] + ":" + this.getObjectId().split(":")[1] + ":" + this.getShortTripId();
+		return splitObjectId[0] + ":" + splitObjectId[1] + ":" + this.getShortTripId();
 	}
 
 }
