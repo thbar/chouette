@@ -4,10 +4,14 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.core.ChouetteException;
+import mobi.chouette.core.ChouetteRuntimeException;
 import mobi.chouette.dao.MappingHastusZdepDAO;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.exchange.ProviderReferentialID;
 import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.model.MappingHastusZdep;
+import mobi.chouette.model.Provider;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.ejb.EJB;
@@ -20,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -32,12 +37,18 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 	@EJB
 	private MappingHastusZdepDAO mappingHastusZdepDAO;
 
+	@EJB
+	private ProviderDAO providerDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
 		Boolean swallow = (Boolean) context.get("swallow");
 		try {
-			String id = ProviderReferentialID.providers.get(context.get("ref").toString().toUpperCase());
+			String referential = context.get("ref").toString().toUpperCase();
+			log.info("provider: " + context.get("ref") + "provider referential: " + referential);
+			Optional<Provider> provider = providerDAO.findBySchema(referential);
+			String id = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
 			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
 			log.info("provider: " + context.get("ref") + "provider id: " + id);
 			log.info("http request : " + requestHttpTarget + "id: " + id);

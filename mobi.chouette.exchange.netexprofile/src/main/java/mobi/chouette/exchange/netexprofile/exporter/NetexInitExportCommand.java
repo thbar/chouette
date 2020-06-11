@@ -9,12 +9,14 @@ import mobi.chouette.common.JobData;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.CodespaceDAO;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.exchange.ProviderReferentialID;
 import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
 import mobi.chouette.exchange.netexprofile.util.NetexReferential;
 import mobi.chouette.model.Codespace;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.util.Referential;
 import org.joda.time.LocalDateTime;
 
@@ -33,10 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Log4j
 @Stateless(name = NetexInitExportCommand.COMMAND)
@@ -50,6 +49,9 @@ public class NetexInitExportCommand implements Command, Constant {
 	@EJB
 	private CodespaceDAO codespaceDAO;
 
+	@EJB
+	private ProviderDAO providerDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
@@ -60,7 +62,12 @@ public class NetexInitExportCommand implements Command, Constant {
 		try {
 			JobData jobData = (JobData) context.get(JOB_DATA);
 
-			String idSite = ProviderReferentialID.providers.get(jobData.getReferential().toUpperCase());
+//			String idSite = ProviderReferentialID.providers.get(jobData.getReferential().toUpperCase());
+			String referential = context.get("ref").toString().toUpperCase();
+			Optional<Provider> provider = providerDAO.findBySchema(referential);
+			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+
+
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			Date currentDate = new Date();
 
