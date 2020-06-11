@@ -18,9 +18,8 @@ import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
-import mobi.chouette.model.Company;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.Network;
+import mobi.chouette.model.*;
+import mobi.chouette.model.type.FlexibleLineTypeEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
@@ -188,7 +187,14 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         Index<GtfsRoute> routes = importer.getRouteById();
         GtfsRoute gtfsRoute = routes.getValue(gtfsRouteId);
 
-        String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
+        String lineType;
+        if(gtfsRoute.getRouteType().getValue() ==  715){
+            lineType = Line.FLEXIBLE_LINE_KEY;
+        }
+        else{
+            lineType = Line.LINE_KEY;
+        }
+        String lineId = AbstractConverter.composeObjectId(configuration, lineType,
                 gtfsRouteId, log);
         Line line = ObjectFactory.getLine(referential, lineId);
         convert(context, gtfsRoute, line);
@@ -231,6 +237,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         // Route VehicleJourney VehicleJourneyAtStop , JourneyPattern ,StopPoint
         GtfsTripParser gtfsTripParser = (GtfsTripParser) ParserFactory.create(GtfsTripParser.class.getName());
         gtfsTripParser.setGtfsRouteId(gtfsRouteId);
+        gtfsTripParser.setLineId(lineId);
         gtfsTripParser.parse(context);
 
     }
@@ -264,6 +271,18 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
             line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
         }
 		line.setTransportSubModeName(gtfsRoute.getRouteType().getSubMode());
+
+        if(gtfsRoute.getRouteType().getValue() == 715){
+            line.setFlexibleService(true);
+            FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
+            flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
+            line.setFlexibleLineProperties(flexibleLineProperties);
+
+            ContactStructure contactStructure = new ContactStructure();
+            BookingArrangement bookingArrangement = new BookingArrangement();
+            bookingArrangement.setBookingContact(contactStructure);
+            flexibleLineProperties.setBookingArrangement(bookingArrangement);
+        }
 
         String[] token = line.getObjectId().split(":");
         line.setRegistrationNumber(token[2]);

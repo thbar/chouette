@@ -47,6 +47,10 @@ public class GtfsTripParser implements Parser, Validator, Constant {
     @Setter
     private String gtfsRouteId;
 
+    @Getter
+    @Setter
+    private String lineId;
+
     @Override
     public void validate(Context context) throws Exception {
         GtfsValidationReporter gtfsValidationReporter = (GtfsValidationReporter) context.get(GTFS_REPORTER);
@@ -1002,8 +1006,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * @return
      */
     private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip) {
-        String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
-                gtfsTrip.getRouteId(), log);
+//        String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
+//                gtfsTrip.getRouteId(), log);
         Line line = ObjectFactory.getLine(referential, lineId);
 
         // For SNCF rail data (France), update line submode according to trip "trip_headsign" column.
