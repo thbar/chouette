@@ -65,7 +65,8 @@ public class NetexInitExportCommand implements Command, Constant {
 //			String idSite = ProviderReferentialID.providers.get(jobData.getReferential().toUpperCase());
 			String referential = context.get("ref").toString().toUpperCase();
 			Optional<Provider> provider = providerDAO.findBySchema(referential);
-			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCode();
+			log.info("NetexInitExportCommand.execute : " + referential + " " + idSite);
 
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
