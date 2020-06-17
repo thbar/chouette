@@ -48,7 +48,7 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 			String referential = context.get("ref").toString().toUpperCase();
 			log.info("provider: " + context.get("ref") + "provider referential: " + referential);
 			Optional<Provider> provider = providerDAO.findBySchema(referential);
-			String id = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCode();
+			String id = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
 			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
 			log.info("provider: " + context.get("ref") + "provider id: " + id);
 			log.info("http request : " + requestHttpTarget + "id: " + id);

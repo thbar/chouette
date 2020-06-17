@@ -66,7 +66,7 @@ public class NetexInitExportCommand implements Command, Constant {
 			String referential = jobData.getReferential();
             log.info("NetexInitExportCommand.execute : ref => " + referential);
 			Optional<Provider> provider = providerDAO.findBySchema(referential);
-			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCode();
+			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
 			log.info("NetexInitExportCommand.execute : " + referential + " " + idSite);
 
 
