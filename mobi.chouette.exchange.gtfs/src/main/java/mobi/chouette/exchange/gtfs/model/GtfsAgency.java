@@ -1,15 +1,15 @@
 package mobi.chouette.exchange.gtfs.model;
 
-import java.io.Serializable;
-import java.net.URL;
-import java.util.TimeZone;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.net.URL;
+import java.util.TimeZone;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
@@ -49,6 +49,10 @@ public class GtfsAgency extends GtfsObject implements Serializable
    @Getter
    @Setter
    private URL agencyFareUrl;
+
+   @Getter
+   @Setter
+   private String agencyEmail;
 
    // @Override
    // public String toString()

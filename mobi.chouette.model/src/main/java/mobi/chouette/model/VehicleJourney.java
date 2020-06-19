@@ -1,7 +1,16 @@
 package mobi.chouette.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import mobi.chouette.model.type.JourneyCategoryEnum;
+import mobi.chouette.model.type.ServiceAlterationEnum;
+import mobi.chouette.model.type.TransportModeNameEnum;
+import mobi.chouette.model.type.TransportSubModeNameEnum;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -19,21 +28,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PreRemove;
 import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import mobi.chouette.model.type.JourneyCategoryEnum;
-import mobi.chouette.model.type.ServiceAlterationEnum;
-import mobi.chouette.model.type.TransportModeNameEnum;
-import mobi.chouette.model.type.TransportSubModeNameEnum;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chouette VehicleJourney
@@ -448,5 +445,20 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "flexible_service_properties_id")
 	private FlexibleServiceProperties flexibleServiceProperties;
+
+	public String getShortTripId(){
+		String[] splitObjectId = this.getObjectId().split(":");
+		if(splitObjectId.length<3) return this.getObjectId();
+		if(splitObjectId[2].contains("-")){
+			return splitObjectId[2].split("-")[0];
+		}
+		return splitObjectId[2];
+	}
+
+	public String getNewObjectId(){
+		String[] splitObjectId = this.getObjectId().split(":");
+		if(splitObjectId.length<3) return this.getObjectId();
+		return splitObjectId[0] + ":" + splitObjectId[1] + ":" + this.getShortTripId();
+	}
 
 }

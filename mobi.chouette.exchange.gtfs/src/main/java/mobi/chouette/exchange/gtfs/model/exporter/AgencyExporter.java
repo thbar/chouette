@@ -1,21 +1,18 @@
 package mobi.chouette.exchange.gtfs.model.exporter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.importer.Context;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsConverter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AgencyExporter extends ExporterImpl<GtfsAgency> implements
 		GtfsConverter {
 
 	public static enum FIELDS {
-		agency_id, agency_name, agency_url, agency_timezone, agency_phone; // ,
-																			// agency_lang
-																			// ,
-																			// agency_fare_url;
+		agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone, agency_fare_url, agency_email;
 	};
 
 	public static final String FILENAME = "agency.txt";
@@ -50,13 +47,15 @@ public class AgencyExporter extends ExporterImpl<GtfsAgency> implements
 					values.get(i++), true));
 			bean.setAgencyTimezone(TIMEZONE_CONVERTER.from(context,
 					FIELDS.agency_timezone, values.get(i++), true));
+			bean.setAgencyLang(STRING_CONVERTER.from(context,
+					FIELDS.agency_lang,
+					values.get(i++), false));
 			bean.setAgencyPhone(STRING_CONVERTER.from(context,
 					FIELDS.agency_phone, values.get(i++), false));
-			// bean.setAgencyLang(STRING_CONVERTER.from(context,
-			// FIELDS.agency_lang,
-			// values.get(i++), false));
-			// bean.setAgencyFareUrl(URL_CONVERTER.from(context,
-			// FIELDS.agency_fare_url, values.get(i++), false));
+			bean.setAgencyFareUrl(URL_CONVERTER.from(context,
+					FIELDS.agency_fare_url, values.get(i++), false));
+			bean.setAgencyEmail(STRING_CONVERTER.from(context,
+					FIELDS.agency_email, values.get(i++), false));
 
 			return bean;
 		}
@@ -73,12 +72,14 @@ public class AgencyExporter extends ExporterImpl<GtfsAgency> implements
 					input.getAgencyUrl(), true));
 			values.add(TIMEZONE_CONVERTER.to(context, FIELDS.agency_timezone,
 					input.getAgencyTimezone(), true));
+			values.add(STRING_CONVERTER.to(context, FIELDS.agency_lang,
+					input.getAgencyLang(), false));
 			values.add(STRING_CONVERTER.to(context, FIELDS.agency_phone,
 					input.getAgencyPhone(), false));
-			// values.add(STRING_CONVERTER.to(context, FIELDS.agency_lang,
-			// input.getAgencyLang(), false));
-			// values.add(URL_CONVERTER.to(context, FIELDS.agency_fare_url,
-			// input.getAgencyFareUrl(), false));
+			values.add(URL_CONVERTER.to(context, FIELDS.agency_fare_url,
+					input.getAgencyFareUrl(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.agency_email,
+					input.getAgencyEmail(), false));
 
 			result = Tokenizer.untokenize(values);
 			return result;
