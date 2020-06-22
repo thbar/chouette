@@ -24,7 +24,7 @@ COPY docker/files/jaxb-core-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/
 COPY docker/files/jaxb-xjc-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/jaxb-xjc-2.2.11.jar
 COPY docker/files/wildfly/jaxb_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/module.xml
 
-COPY xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
+COPY docker/files/xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
 #COPY files/wildfly/xerces_module.xml /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/module.xml
 
 #Copy iev.properties
@@ -55,12 +55,12 @@ RUN rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history \
 
 # Agent-bond setup largely copied from:
 # https://hub.docker.com/r/fabric8/java-jboss-openjdk8-jdk/~/dockerfile/
-RUN mkdir -p /opt/jboss/wildfly/agent-bond \
- && curl http://central.maven.org/maven2/io/fabric8/agent-bond-agent/1.0.2/agent-bond-agent-1.0.2.jar \
-          -o /opt/jboss/wildfly/agent-bond/agent-bond.jar \
- && chmod 444 /opt/jboss/wildfly/agent-bond/agent-bond.jar
-ADD docker/files/jmx_exporter_config.yml /opt/jboss/wildfly/agent-bond/
-EXPOSE 8778 9779
+#RUN mkdir -p /opt/jboss/wildfly/agent-bond \
+# && curl http://central.maven.org/maven2/io/fabric8/agent-bond-agent/1.0.2/agent-bond-agent-1.0.2.jar \
+#          -o /opt/jboss/wildfly/agent-bond/agent-bond.jar \
+# && chmod 444 /opt/jboss/wildfly/agent-bond/agent-bond.jar
+#ADD docker/files/jmx_exporter_config.yml /opt/jboss/wildfly/agent-bond/
+#EXPOSE 8778 9779
 
 # Running as root, in order to get mounted volume writable:
 USER root
