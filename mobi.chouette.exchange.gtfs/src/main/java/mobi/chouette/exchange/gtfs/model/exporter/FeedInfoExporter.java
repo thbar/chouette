@@ -43,7 +43,7 @@ public class FeedInfoExporter extends ExporterImpl<GtfsFeedInfo> implements
 			bean.setFeedLang(STRING_CONVERTER.from(context, FIELDS.feed_lang, values.get(i++), true));
 			bean.setFeedStartDate(DATE_CONVERTER.from(context, FIELDS.feed_start_date, values.get(i++), false));
 			bean.setFeedEndDate(DATE_CONVERTER.from(context, FIELDS.feed_end_date, values.get(i++), false));
-			bean.setFeedVersion(INTEGER_CONVERTER.from(context, FIELDS.feed_version, values.get(i++), false));
+			bean.setFeedVersion(STRING_CONVERTER.from(context, FIELDS.feed_version, values.get(i++), false));
 			bean.setFeedContactEmail(STRING_CONVERTER.from(context, FIELDS.feed_contact_email, values.get(i++), false));
 			bean.setFeedContactUrl(URL_CONVERTER.from(context, FIELDS.feed_contact_url, values.get(i++), false));
 
@@ -59,7 +59,7 @@ public class FeedInfoExporter extends ExporterImpl<GtfsFeedInfo> implements
 			values.add(STRING_CONVERTER.to(context, FIELDS.feed_lang, input.getFeedLang(), true));
 			values.add(DATE_CONVERTER.to(context, FIELDS.feed_start_date, input.getFeedStartDate(), false));
 			values.add(DATE_CONVERTER.to(context, FIELDS.feed_end_date, input.getFeedEndDate(), false));
-			values.add(INTEGER_CONVERTER.to(context, FIELDS.feed_version, input.getFeedVersion(), false));
+			values.add(STRING_CONVERTER.to(context, FIELDS.feed_version, input.getFeedVersion(), false));
 			values.add(STRING_CONVERTER.to(context, FIELDS.feed_contact_email, input.getFeedContactEmail(), false));
 			values.add(URL_CONVERTER.to(context, FIELDS.feed_contact_url, input.getFeedContactUrl(), false));
 

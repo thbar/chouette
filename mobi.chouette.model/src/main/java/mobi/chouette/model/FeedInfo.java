@@ -40,9 +40,6 @@ public class FeedInfo extends NeptuneObject {
 	@Column(name = "end_date")
 	private Date endDate;
 
-	@Column(name = "version")
-	private Integer version;
-
 	@Column(name = "contact_email")
 	private String contactEmail;
 

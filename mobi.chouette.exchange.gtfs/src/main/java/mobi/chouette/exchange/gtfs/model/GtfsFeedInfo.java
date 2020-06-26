@@ -13,6 +13,8 @@ import org.joda.time.LocalDate;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
@@ -21,6 +23,8 @@ import java.net.URL;
 public class GtfsFeedInfo extends GtfsObject implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss");
 
     @Getter
     @Setter
@@ -44,7 +48,7 @@ public class GtfsFeedInfo extends GtfsObject implements Serializable {
 
     @Getter
     @Setter
-    private Integer feedVersion;
+    private String feedVersion;
 
     @Getter
     @Setter
@@ -60,7 +64,10 @@ public class GtfsFeedInfo extends GtfsObject implements Serializable {
     }
 
     public GtfsFeedInfo(FeedInfo feedInfo) throws MalformedURLException {
-        this(feedInfo.getPublisherName(), !StringUtils.isEmpty(feedInfo.getPublisherUrl()) ? new URL(feedInfo.getPublisherUrl()) : null, feedInfo.getLang(), new LocalDate(feedInfo.getStartDate()), new LocalDate(feedInfo.getEndDate()), feedInfo.getVersion(), feedInfo.getContactEmail(), !StringUtils.isEmpty(feedInfo.getContactUrl()) ? new URL(feedInfo.getContactUrl()) : null);
+        this(feedInfo.getPublisherName(), !StringUtils.isEmpty(feedInfo.getPublisherUrl()) ? new URL(feedInfo.getPublisherUrl()) : null,
+                feedInfo.getLang(), new LocalDate(feedInfo.getStartDate()),
+                new LocalDate(feedInfo.getEndDate()),
+                LocalDateTime.now().format(formatter), feedInfo.getContactEmail(), !StringUtils.isEmpty(feedInfo.getContactUrl()) ? new URL(feedInfo.getContactUrl()) : null);
         this.setId(feedInfo.getId() != null ? feedInfo.getId().intValue() : null);
     }
 
