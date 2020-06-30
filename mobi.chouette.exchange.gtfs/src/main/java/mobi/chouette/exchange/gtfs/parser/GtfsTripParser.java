@@ -575,8 +575,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                         vehicleJourney, journeyKey, journeyPatternByStopSequence);
             }
 
-            if (StringUtils.isBlank(vehicleJourney.getPublishedJourneyName())) {
-                vehicleJourney.setPublishedJourneyName(journeyPattern.getRoute().getStopPoints().get(journeyPattern.getRoute().getStopPoints().size() - 1).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
+            if(StringUtils.isBlank(vehicleJourney.getPublishedJourneyName())){
+                vehicleJourney.setPublishedJourneyName(journeyPattern.getArrivalStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
             }
 
             vehicleJourney.setRoute(journeyPattern.getRoute());
@@ -815,6 +815,10 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         List<StopPoint> stopPoints = journeyPattern.getStopPoints();
         journeyPattern.setDepartureStopPoint(stopPoints.get(0));
         journeyPattern.setArrivalStopPoint(stopPoints.get(stopPoints.size() - 1));
+
+        if(configuration.getReferentialName().equals("snc")){
+            journeyPattern.setName(journeyPattern.getArrivalStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
+        }
 
         journeyPattern.setFilled(true);
         route.setFilled(true);
