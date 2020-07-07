@@ -33,7 +33,7 @@ public class MergeTripIdCommand implements Command, Constant {
         List<VehicleJourney> vehicleJourneys = vehicleJourneyDAO.findAll();
         vehicleJourneys.sort(Comparator.comparing(VehicleJourney::getShortTripId));
         final VehicleJourney[] previousVJ = {null};
-        ArrayList<Pair<VehicleJourney, VehicleJourney>> vehicleJourneysToDel = new ArrayList<>();
+        ArrayList<Pair<VehicleJourney, VehicleJourney>> vehicleJourneysToDel  = new ArrayList<>();
         vehicleJourneys.stream().forEach(currentVJ -> {
             if (previousVJ[0] == null) {
                 previousVJ[0] = currentVJ;
@@ -47,12 +47,23 @@ public class MergeTripIdCommand implements Command, Constant {
             }
         });
 
-        updateTimeTablesVehicleJourneysAndRemoveVehicleJourneys(vehicleJourneysToDel);
+        vehicleJourneys = updateTimeTablesVehicleJourneysAndRemoveVehicleJourneys(vehicleJourneysToDel);
+        updateVehicleJourneysToShortTripId(vehicleJourneys);
 
         return SUCCESS;
     }
 
-    private void updateTimeTablesVehicleJourneysAndRemoveVehicleJourneys(ArrayList<Pair<VehicleJourney, VehicleJourney>> vehicleJourneysToDel) {
+    private void updateVehicleJourneysToShortTripId(List<VehicleJourney> vehicleJourneys) {
+        vehicleJourneys.stream()
+                .filter(vehicleJourney -> vehicleJourney.getObjectId().contains("-"))
+                .forEach(vj ->{
+                    vj.setObjectId(vj.getNewObjectId());
+                    vehicleJourneyDAO.update(vj);
+                });
+        vehicleJourneyDAO.flush(); // to prevent SQL error outside method
+    }
+
+    private List<VehicleJourney> updateTimeTablesVehicleJourneysAndRemoveVehicleJourneys(ArrayList<Pair<VehicleJourney, VehicleJourney>> vehicleJourneysToDel) {
         vehicleJourneysToDel.stream().forEach(vehicleJourneyVehicleJourneyPair -> {
             VehicleJourney toDel = vehicleJourneyVehicleJourneyPair.getLeft();
             VehicleJourney toKeep = vehicleJourneyVehicleJourneyPair.getRight();
@@ -61,6 +72,7 @@ public class MergeTripIdCommand implements Command, Constant {
             vehicleJourneyDAO.update(toKeep);
         });
         vehicleJourneyDAO.flush(); // to prevent SQL error outside method
+        return vehicleJourneyDAO.findAll();
     }
 
     private VehicleJourney updateTimetables(VehicleJourney toDel, VehicleJourney toKeep){
