@@ -1056,14 +1056,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             routeKey += "_" + gtfsTrip.getShapeId();
         for (VehicleJourneyAtStop vehicleJourneyAtStop : list) {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
-            if(wrapper.stopSequence == 1 || wrapper.stopSequence == list.size()){
-                String stopIdWithDropOffPickup = createJourneyKeyFragment(wrapper);
-                routeKey += "_" + stopIdWithDropOffPickup;
-            }
+            String stopIdWithDropOffPickup = createJourneyKeyFragment(wrapper);
+            routeKey += "_" + stopIdWithDropOffPickup;
         }
 
         routeKey += "_" + list.size();
-//        routeKey += "_" + line.getRoutes().size();
         String routeId = AbstractConverter.composeObjectId(configuration, Route.ROUTE_KEY,
                 routeKey, log);
 

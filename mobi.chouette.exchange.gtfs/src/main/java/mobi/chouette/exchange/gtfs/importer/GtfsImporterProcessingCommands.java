@@ -13,13 +13,7 @@ import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.gtfs.model.importer.Index;
-import mobi.chouette.exchange.importer.CleanRepositoryCommand;
-import mobi.chouette.exchange.importer.CopyCommand;
-import mobi.chouette.exchange.importer.GenerateRouteSectionsCommand;
-import mobi.chouette.exchange.importer.LineRegisterCommand;
-import mobi.chouette.exchange.importer.MergeTripIdCommand;
-import mobi.chouette.exchange.importer.StopAreaRegisterCommand;
-import mobi.chouette.exchange.importer.UncompressCommand;
+import mobi.chouette.exchange.importer.*;
 import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
 import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
 import org.apache.commons.collections.CollectionUtils;
@@ -86,12 +80,12 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 commands.add(chain);
             }
 
-            {
-                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
-                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
-                chain.add(productionPeriods);
-                commands.add(chain);
-            }
+//            {
+//                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+//                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
+//                chain.add(productionPeriods);
+//                commands.add(chain);
+//            }
 
 
             ArrayList<String> savedLines = new ArrayList<String>();
@@ -108,6 +102,10 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 parser.setGtfsRouteId(gtfsRoute.getRouteId());
                 chain.add(parser);
                 if (withDao && !parameters.isNoSave()) {
+
+                    // Ecrasement de course
+                    Command dataOverwrite = CommandFactory.create(initialContext, DataOverwriteCommand.class.getName());
+                    chain.add(dataOverwrite);
 
                     // register
                     Command register = CommandFactory.create(initialContext, LineRegisterCommand.class.getName());
