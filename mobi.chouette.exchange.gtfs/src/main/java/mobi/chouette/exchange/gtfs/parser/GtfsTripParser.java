@@ -504,6 +504,43 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                         gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
                 convert(context, gtfsStopTime, gtfsTrip, vehicleJourneyAtStop);
 
+                if(PickupType.AgencyCall.equals(vehicleJourneyAtStop.pickup) || PickupType.DriverCall.equals(vehicleJourneyAtStop.pickup) || DropOffType.AgencyCall.equals(vehicleJourneyAtStop.dropOff) || DropOffType.DriverCall.equals(vehicleJourneyAtStop.dropOff)){
+                    if(!lineId.contains(Line.FLEXIBLE_LINE_KEY)){
+                        Line line = ObjectFactory.getLine(referential, lineId);
+                        line.setObjectId(line.getObjectId().replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY));
+
+                        line.setFlexibleService(true);
+
+                        FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
+                        flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
+                        line.setFlexibleLineProperties(flexibleLineProperties);
+
+                        ContactStructure contactStructure = new ContactStructure();
+                        if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getUrl())){
+                            contactStructure.setUrl(line.getNetwork().getCompany().getUrl());
+                        }
+                        if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getPhone())){
+                            contactStructure.setPhone(line.getNetwork().getCompany().getPhone());
+                        }
+
+                        BookingArrangement bookingArrangement = new BookingArrangement();
+                        bookingArrangement.setBookingContact(contactStructure);
+                        if(vehicleJourneyAtStop.pickup.equals(PickupType.DriverCall)){
+                            bookingArrangement.setBookingMethods(Collections.singletonList(BookingMethodEnum.callDriver));
+                        }
+                        else if(vehicleJourneyAtStop.pickup.equals(PickupType.AgencyCall)){
+                            bookingArrangement.setBookingMethods(Collections.singletonList(BookingMethodEnum.callOffice));
+                        }
+
+                        flexibleLineProperties.setBookingArrangement(bookingArrangement);
+
+                        referential.getLines().put(line.getObjectId(), line);
+                        referential.getLines().remove(lineId);
+
+                        lineId = lineId.replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY);
+                    }
+                }
+
                 if (afterMidnight) {
                     if (!gtfsStopTime.getArrivalTime().moreOneDay())
                         afterMidnight = false;

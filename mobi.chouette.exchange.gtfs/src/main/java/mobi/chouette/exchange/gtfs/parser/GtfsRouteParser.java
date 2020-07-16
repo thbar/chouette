@@ -8,6 +8,7 @@ import mobi.chouette.exchange.gtfs.NetworksNames;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
 import mobi.chouette.exchange.gtfs.model.importer.AgencyById;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
@@ -19,16 +20,15 @@ import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
 import mobi.chouette.model.*;
+import mobi.chouette.model.type.BookingMethodEnum;
 import mobi.chouette.model.type.FlexibleLineTypeEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Log4j
 public class GtfsRouteParser implements Parser, Validator, Constant {
@@ -234,6 +234,27 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 
         line.setNetwork(ptNetwork);
 
+        if(gtfsRoute.getRouteType().getValue() == 715){
+            line.setFlexibleService(true);
+
+            FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
+            flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
+            line.setFlexibleLineProperties(flexibleLineProperties);
+
+            ContactStructure contactStructure = new ContactStructure();
+            if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getUrl())){
+                contactStructure.setUrl(line.getNetwork().getCompany().getUrl());
+            }
+            if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getPhone())){
+                contactStructure.setPhone(line.getNetwork().getCompany().getPhone());
+            }
+
+            BookingArrangement bookingArrangement = new BookingArrangement();
+            bookingArrangement.setBookingContact(contactStructure);
+
+            flexibleLineProperties.setBookingArrangement(bookingArrangement);
+        }
+
         // Route VehicleJourney VehicleJourneyAtStop , JourneyPattern ,StopPoint
         GtfsTripParser gtfsTripParser = (GtfsTripParser) ParserFactory.create(GtfsTripParser.class.getName());
         gtfsTripParser.setGtfsRouteId(gtfsRouteId);
@@ -271,18 +292,6 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
             line.setTransportModeName(gtfsRoute.getRouteType().getTransportMode());
         }
 		line.setTransportSubModeName(gtfsRoute.getRouteType().getSubMode());
-
-        if(gtfsRoute.getRouteType().getValue() == 715){
-            line.setFlexibleService(true);
-            FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
-            flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
-            line.setFlexibleLineProperties(flexibleLineProperties);
-
-            ContactStructure contactStructure = new ContactStructure();
-            BookingArrangement bookingArrangement = new BookingArrangement();
-            bookingArrangement.setBookingContact(contactStructure);
-            flexibleLineProperties.setBookingArrangement(bookingArrangement);
-        }
 
         String[] token = line.getObjectId().split(":");
         line.setRegistrationNumber(token[2]);
