@@ -492,8 +492,7 @@ public class StopArea extends NeptuneLocalizedObject {
 	 */
 	@Getter
 	@Setter
-	@OneToMany(cascade = { CascadeType.PERSIST })
-	@JoinColumn(name = "stop_area_id", updatable = false)
+	@OneToMany(mappedBy = "stopArea", cascade = { CascadeType.PERSIST })
 	private List<AccessLink> accessLinks = new ArrayList<AccessLink>(0);
 
 

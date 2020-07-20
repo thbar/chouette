@@ -25,7 +25,6 @@ import mobi.chouette.model.Line;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
@@ -129,7 +128,7 @@ public class GtfsTripProducer extends AbstractProducer {
 					time.setStopHeadsign(stopHeadSign);
 				}
 			}
-			addDropOffAndPickUpType(time, l, vj, vjas);
+			addDropOffAndPickUpType(time, vjas);
 
 			if (vj.getJourneyPattern().getSectionStatus() == SectionStatusEnum.Completed) {
 				Float shapeDistTraveled = new Float(distance);
@@ -174,36 +173,34 @@ public class GtfsTripProducer extends AbstractProducer {
 		}
 	}
 
-	private void addDropOffAndPickUpType(GtfsStopTime time, Line l, VehicleJourney vj, VehicleJourneyAtStop vjas) {
+	private void addDropOffAndPickUpType(GtfsStopTime time, VehicleJourneyAtStop vjas) {
+		if (vjas.getBoardingAlightingPossibility() != null) {
+			switch (vjas.getBoardingAlightingPossibility()) {
 
-		time.setPickupType(null);
-		time.setDropOffType(null);
-		boolean routeOnDemand = isTrue(l.getFlexibleService());
-		boolean tripOnDemand = false;
-		if (routeOnDemand) {
-			// line is on demand, check if trip is not explicitly regular
-			tripOnDemand = vj.getFlexibleService() == null || vj.getFlexibleService();
-		} else {
-			// line is regular or undefined , check if trip is explicitly on
-			// demand
-			tripOnDemand = isTrue(vj.getFlexibleService());
+				case BoardAndAlightOnRequest:
+					time.setPickupType(PickupType.AgencyCall);
+					time.setDropOffType(DropOffType.AgencyCall);
+					break;
+
+				case BoardOnRequest:
+					time.setPickupType(PickupType.AgencyCall);
+					time.setDropOffType(DropOffType.Scheduled);
+					break;
+
+				case AlightOnRequest:
+					time.setPickupType(PickupType.Scheduled);
+					time.setDropOffType(DropOffType.AgencyCall);
+					break;
+
+				default:
+					time.setPickupType(PickupType.Scheduled);
+					time.setDropOffType(DropOffType.Scheduled);
+			}
 		}
-		if (tripOnDemand) {
-			time.setPickupType(PickupType.AgencyCall);
-			time.setDropOffType(DropOffType.AgencyCall);
-		} else if (routeOnDemand) {
+		else {
 			time.setPickupType(PickupType.Scheduled);
 			time.setDropOffType(DropOffType.Scheduled);
 		}
-		// check stoppoint specifications
-		StopPoint point = vjas.getStopPoint();
-		if (point.getForBoarding() != null) {
-			time.setPickupType(toPickUpType(point.getForBoarding(), time.getPickupType()));
-		}
-		if (point.getForAlighting() != null) {
-			time.setDropOffType(toDropOffType(point.getForAlighting(), time.getDropOffType()));
-		}
-
 	}
 
 	private DropOffType toDropOffType(AlightingPossibilityEnum forAlighting, DropOffType defaultValue) {
