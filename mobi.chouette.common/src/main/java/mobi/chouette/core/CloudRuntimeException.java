@@ -32,7 +32,7 @@ public class CloudRuntimeException extends ChouetteRuntimeException {
 
 	@Override
 	public String getCode() {
-		return "CLOUD";
+		return PREFIX;
 	}
 
 }
