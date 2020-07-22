@@ -33,21 +33,8 @@
         <!-- NB: Concious choice of using snapshot version. This is to keep in
             sync, and fail fast if incompatibilities -->
         <netex-java-model.version>1.0.9-SNAPSHOT</netex-java-model.version>
-        <rutebanken.helpers.version>0.0.4-SNAPSHOT</rutebanken.helpers.version>
+        <okina-helpers.version>1.0.23-SNAPSHOT</okina-helpers.version>
     </properties>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>chouette-snapshot-repository</id>
-            <name>Chouette Snapshot Repository</name>
-            <url>scp://chouette.marseille.cityway.fr/var/lib/tomcat6/webapps/maven-snapshot</url>
-        </snapshotRepository>
-        <repository>
-            <id>chouette-repository</id>
-            <name>Chouette Repository</name>
-            <url>scp://chouette.marseille.cityway.fr/var/lib/tomcat6/webapps/maven</url>
-        </repository>
-        <downloadUrl>http://maven.chouette.mobi</downloadUrl>
-    </distributionManagement>
     <repositories>
         <repository>
             <id>jboss</id>
@@ -63,11 +50,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>chouette-repository</id>
-            <name>Chouette Repository</name>
-            <url>http://maven.chouette.mobi/</url>
         </repository>
     </repositories>
     <build>
@@ -610,15 +592,27 @@
             </dependency>
 
             <dependency>
-                <groupId>org.entur.helpers</groupId>
+                <groupId>com.okina.helpers</groupId>
                 <artifactId>calendar-helper</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${okina-helpers.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.entur.helpers</groupId>
+                <groupId>com.okina.helpers</groupId>
+                <artifactId>aws-storage</artifactId>
+                <version>${okina-helpers.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.okina.helpers</groupId>
+                <artifactId>gcp-storage</artifactId>
+                <version>${okina-helpers.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.okina.helpers</groupId>
                 <artifactId>hazelcast-helper</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${okina-helpers.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>

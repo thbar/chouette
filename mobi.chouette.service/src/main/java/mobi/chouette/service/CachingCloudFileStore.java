@@ -33,10 +33,10 @@ import java.util.stream.Collectors;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static mobi.chouette.common.Constant.*;
 import static mobi.chouette.common.PropertyNames.FILE_STORE_IMPLEMENTATION;
-import static mobi.chouette.service.CachingGoogleCloudFileStore.BEAN_NAME;
+import static mobi.chouette.service.CachingCloudFileStore.BEAN_NAME;
 
 /**
- * Store permanent files in Google Cloud Storage. Use local file system for caching.
+ * Store permanent files in Cloud Storage. Use local file system for caching.
  */
 @Singleton(name = BEAN_NAME)
 @Named
@@ -44,11 +44,11 @@ import static mobi.chouette.service.CachingGoogleCloudFileStore.BEAN_NAME;
 @Startup
 @DependsOn(JobServiceManager.BEAN_NAME)
 @Log4j
-public class CachingGoogleCloudFileStore implements FileStore {
+public class CachingCloudFileStore implements FileStore {
 
-    public static final String BEAN_NAME = "cachingGoogleCloudFileStore";
+    public static final String BEAN_NAME = "cachingCloudFileStore";
 
-    @EJB(beanName = GoogleCloudFileStore.BEAN_NAME)
+    @EJB(beanName = AwsFileStore.BEAN_NAME)
     FileStore cloudFileStore;
 
 
@@ -72,7 +72,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
         String implPropKey = contenerChecker.getContext() + FILE_STORE_IMPLEMENTATION;
         String implProp = System.getProperty(implPropKey);
         if (BEAN_NAME.equals(implProp)) {
-            log.info("Starting CachingGoogleCloudFileStore pre-fetch process");
+            log.info("Starting CachingCloudFileStore pre-fetch process");
 
             Integer cacheHistoryDays = null;
             String cacheHistoryDaysKey = "iev.file.store.cache.history.days";
@@ -105,7 +105,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
             scheduler.scheduleAtFixedRate(new PrefetchToLocalCacheTask(), 20, updateFrequencySeconds, SECONDS);
 
         } else {
-            log.info("Not initializing CachingGoogleCloudFileStore as other FileStore impl is configured. " + implPropKey + ":" + implProp);
+            log.info("Not initializing CachingCloudFileStore as other FileStore impl is configured. " + implPropKey + ":" + implProp);
         }
     }
 
@@ -124,7 +124,7 @@ public class CachingGoogleCloudFileStore implements FileStore {
     @Override
     public void writeFile(Path filePath, InputStream content) {
 
-        log.info("Writing with CachingGoogleCloudFileStore");
+        log.info("Writing with CachingCloudFileStore");
 
         String ievExportDestination = System.getProperty("iev.export.destination");
 

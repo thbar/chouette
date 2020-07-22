@@ -70,9 +70,27 @@
       </dependency>
 
        <dependency>
-           <groupId>org.entur.helpers</groupId>
+           <groupId>com.okina.helpers</groupId>
+           <artifactId>aws-storage</artifactId>
+           <exclusions>
+               <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>io.netty</groupId>
+                   <artifactId>netty-codec-http2</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>com.google.protobuf</groupId>
+                   <artifactId>protobuf-lite</artifactId>
+               </exclusion>
+           </exclusions>
+       </dependency>
+
+       <dependency>
+           <groupId>com.okina.helpers</groupId>
            <artifactId>gcp-storage</artifactId>
-           <version>${rutebanken.helpers.version}</version>
            <exclusions>
                <exclusion>
                    <groupId>javax.servlet</groupId>
@@ -127,11 +145,11 @@
 		<artifactId>joda-time</artifactId>
 		</dependency>
        <dependency>
-           <groupId>org.entur.helpers</groupId>
+           <groupId>com.okina.helpers</groupId>
            <artifactId>calendar-helper</artifactId>
        </dependency>
        <dependency>
-           <groupId>org.entur.helpers</groupId>
+           <groupId>com.okina.helpers</groupId>
            <artifactId>hazelcast-helper</artifactId>
        </dependency>
       <!-- Modules -->
