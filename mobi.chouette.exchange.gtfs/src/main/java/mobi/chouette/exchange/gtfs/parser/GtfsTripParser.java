@@ -52,6 +52,7 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
@@ -1096,8 +1097,22 @@ public class GtfsTripParser implements Parser, Validator, Constant {
          * GJT : Setting arrival and departure offset to vehicleJourneyAtStop
          * object
          */
+//        vehicleJourneyAtStop.setArrivalDayOffset(gtfsStopTime.getArrivalTime().getDay());
         vehicleJourneyAtStop.setArrivalDayOffset(gtfsStopTime.getArrivalTime().getDay());
         vehicleJourneyAtStop.setDepartureDayOffset(gtfsStopTime.getDepartureTime().getDay());
+
+        if (gtfsStopTime.getPickupType() != null && gtfsStopTime.getDropOffType() != null) {
+
+            if (gtfsStopTime.getPickupType().equals(PickupType.AgencyCall) &&
+                    gtfsStopTime.getDropOffType().equals(DropOffType.AgencyCall)) {
+                vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
+            } else if (gtfsStopTime.getPickupType().equals(PickupType.AgencyCall)) {
+                vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnRequest);
+            } else if (gtfsStopTime.getDropOffType().equals(DropOffType.AgencyCall)) {
+                vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnRequest);
+            }
+
+        }
 
         if (gtfsStopTime.getStopHeadsign() != null) {
             DestinationDisplay destinationDisplay = ObjectFactory.getDestinationDisplay(referential, gtfsStopTime.getTripId() + "-" + gtfsStopTime.getStopSequence() + "-" + gtfsStopTime.getStopId());

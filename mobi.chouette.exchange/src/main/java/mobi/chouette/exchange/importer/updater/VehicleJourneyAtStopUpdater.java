@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.importer.updater;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-
 import mobi.chouette.common.CollectionUtil;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.Pair;
@@ -13,10 +7,14 @@ import mobi.chouette.dao.FootnoteDAO;
 import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.model.Footnote;
 import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.Collection;
+import java.util.List;
 
 @Stateless(name = VehicleJourneyAtStopUpdater.BEAN_NAME)
 public class VehicleJourneyAtStopUpdater implements
@@ -77,6 +75,11 @@ public class VehicleJourneyAtStopUpdater implements
 		}
 		if (newValue.getDepartureDayOffset() != oldValue.getDepartureDayOffset()) {
 			oldValue.setDepartureDayOffset(newValue.getDepartureDayOffset());
+		}
+
+		if (newValue.getBoardingAlightingPossibility() != null
+				&& !newValue.getBoardingAlightingPossibility().equals(oldValue.getBoardingAlightingPossibility())) {
+			oldValue.setBoardingAlightingPossibility(newValue.getBoardingAlightingPossibility());
 		}
 		
 		// if (newValue.getElapseDuration() != null
