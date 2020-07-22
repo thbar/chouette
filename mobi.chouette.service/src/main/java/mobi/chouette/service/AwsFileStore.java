@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import static mobi.chouette.service.GoogleCloudFileStore.BEAN_NAME;
+import static mobi.chouette.service.AwsFileStore.BEAN_NAME;
 
 /**
  * Store permanent files in Aws
