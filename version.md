@@ -47,3 +47,7 @@
 # 4.0.7
 * Gestion des wheelchair accessible et bikes allowed
 * Changement de génération des object id des routes et jp
+
+# 4.0.9
+* Migration AWS
+
