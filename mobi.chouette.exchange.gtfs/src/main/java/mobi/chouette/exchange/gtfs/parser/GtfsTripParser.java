@@ -52,6 +52,7 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
@@ -540,6 +541,22 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             for (GtfsStopTime gtfsStopTime : importer.getStopTimeByTrip().values(gtfsTrip.getTripId())) {
                 VehicleJourneyAtStopWrapper vehicleJourneyAtStop = new VehicleJourneyAtStopWrapper(
                         gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
+
+                // TAD probalement à faire évoluer un jour
+                if(vehicleJourneyAtStop.getDropOff().equals(DropOffType.AgencyCall)){
+                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
+                    } else if(vehicleJourneyAtStop.getPickup() == null || vehicleJourneyAtStop.getPickup().equals(PickupType.Scheduled)){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnly);
+                    }
+                } else if(vehicleJourneyAtStop.getDropOff() == null || vehicleJourneyAtStop.getDropOff().equals(DropOffType.Scheduled)){
+                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnly);
+                    } else {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.NeitherBoardOrAlight);
+                    }
+                }
+
                 convert(context, gtfsStopTime, gtfsTrip, vehicleJourneyAtStop);
 
                 if (afterMidnight) {
@@ -1250,7 +1267,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         String stopId;
         int stopSequence;
         Float shapeDistTraveled;
+        @Getter
         DropOffType dropOff;
+        @Getter
         PickupType pickup;
         String stopHeadsign;
     }
