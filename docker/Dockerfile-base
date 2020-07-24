@@ -18,8 +18,27 @@ COPY docker/files/jaxb-core-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/
 COPY docker/files/jaxb-xjc-2.2.11.jar /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/jaxb-xjc-2.2.11.jar
 COPY docker/files/wildfly/jaxb_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/sun/xml/bind/main/module.xml
 
+# Update Xerces Impl
 COPY docker/files/xercesImpl-2.11.0.SP6-RB.jar /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/xercesImpl-2.11.0.SP6-RB.jar
 COPY docker/files/wildfly/xerces_module.xml /opt/jboss/wildfly/modules/system/layers/base/org/apache/xerces/main/module.xml
+
+# Update Jackson Impl
+
+RUN rm /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-databind/main/jackson-databind-2.4.1.jar
+COPY docker/files/jackson-databind-2.10.4.jar /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-databind/main/jackson-databind-2.10.4.jar
+COPY docker/files/wildfly/jackson-databind_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-databind/main/module.xml
+
+RUN rm /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-annotations/main/jackson-annotations-2.4.1.jar
+COPY docker/files/jackson-annotations-2.10.4.jar /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-annotations/main/jackson-annotations-2.10.4.jar
+COPY docker/files/wildfly/jackson-annotations_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-annotations/main/module.xml
+
+RUN rm /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-core/main/jackson-core-2.4.1.jar
+COPY docker/files/jackson-core-2.10.4.jar /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-core/main/jackson-core-2.10.4.jar
+COPY docker/files/wildfly/jackson-core_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/core/jackson-core/main/module.xml
+
+RUN rm /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/main/jackson-module-jaxb-annotations-2.4.1.jar
+COPY docker/files/jackson-module-jaxb-annotations-2.10.4.jar /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/main/jackson-module-jaxb-annotations-2.10.4.jar
+COPY docker/files/wildfly/jackson-jaxb_module.xml /opt/jboss/wildfly/modules/system/layers/base/com/fasterxml/jackson/jaxrs/jackson-jaxrs-json-provider/main/module.xml
 
 RUN touch /opt/jboss/wildfly/build.log
 RUN chmod a+w /opt/jboss/wildfly/build.log

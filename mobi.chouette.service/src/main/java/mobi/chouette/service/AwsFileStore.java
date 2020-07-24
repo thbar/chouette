@@ -16,7 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import static mobi.chouette.service.GoogleCloudFileStore.BEAN_NAME;
+import static mobi.chouette.service.AwsFileStore.BEAN_NAME;
+
 
 /**
  * Store permanent files in Aws
@@ -40,12 +41,13 @@ public class AwsFileStore implements FileStore {
 
 	@PostConstruct
 	public void init() {
+		System.out.println("=============================== HERE ===============================");
 		baseFolder = System.getProperty(checker.getContext() + ".directory");
 		containerName = System.getProperty(checker.getContext() + ".blobstore.aws.container.name");
 		String key = System.getProperty(checker.getContext() + ".blobstore.aws.access.key");
 		String secret = System.getProperty(checker.getContext() + ".blobstore.aws.access.secret");
 
-		log.info("Initializing AWS blob store service. ContainerName: " + containerName);
+		log.info("Initializing AWS blob store service. ContainerName: " + containerName + ", Key=" + key);
 
 		client = BlobStoreHelper.getClient(key, secret);
 	}
@@ -53,6 +55,7 @@ public class AwsFileStore implements FileStore {
 
 	@Override
 	public InputStream getFileContent(Path filePath) {
+		log.info("Key used : " +  System.getProperty(checker.getContext() + ".blobstore.aws.access.key"));
 		return BlobStoreHelper.getBlob(client, containerName, toGCSPath(filePath));
 	}
 
