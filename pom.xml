@@ -33,7 +33,7 @@
         <!-- NB: Concious choice of using snapshot version. This is to keep in
             sync, and fail fast if incompatibilities -->
         <netex-java-model.version>1.0.9-SNAPSHOT</netex-java-model.version>
-        <okina-helpers.version>1.0.23-SNAPSHOT</okina-helpers.version>
+        <okina-helpers.version>1.0.23</okina-helpers.version>
     </properties>
     <repositories>
         <repository>
