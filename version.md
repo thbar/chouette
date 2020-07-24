@@ -48,6 +48,11 @@
 * Gestion des wheelchair accessible et bikes allowed
 * Changement de génération des object id des routes et jp
 
+
+#4.0.8
+* Merge des trip_id versionnés par suffixe
+
 # 4.0.9
 * Migration AWS
+* Import des courses en TAD
 

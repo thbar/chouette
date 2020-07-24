@@ -55,7 +55,6 @@ public class AwsFileStore implements FileStore {
 
 	@Override
 	public InputStream getFileContent(Path filePath) {
-		log.info("Key used : " +  System.getProperty(checker.getContext() + ".blobstore.aws.access.key"));
 		return BlobStoreHelper.getBlob(client, containerName, toGCSPath(filePath));
 	}
 
