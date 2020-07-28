@@ -1,12 +1,7 @@
 package mobi.chouette.exchange.importer.updater;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.CollectionUtil;
 import mobi.chouette.common.Color;
@@ -28,16 +23,19 @@ import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
-import static mobi.chouette.model.type.ChouetteAreaEnum.*;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @Stateless(name = StopAreaUpdater.BEAN_NAME)
 @Log4j
 public class StopAreaUpdater implements Updater<StopArea> {
 
 	public static final String BEAN_NAME = "StopAreaUpdater";
+
+	private boolean dataStopIdfm;
 
 	@EJB
 	private StopAreaDAO stopAreaDAO;
@@ -69,6 +67,9 @@ public class StopAreaUpdater implements Updater<StopArea> {
 	@Override
 	public void update(Context context, StopArea oldValue, StopArea newValue) throws Exception {
 
+		String dataStopIdfmProperty = "iev.data.stop.idfm";
+		dataStopIdfm = Boolean.parseBoolean(System.getProperty(dataStopIdfmProperty));
+
 		if (newValue.isSaved()) {
 			return;
 		}
@@ -76,10 +77,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 		setImportMode(context, oldValue, newValue);
 
-		if (oldValue.getId() != null && !oldValue.getImportMode().shouldUpdateStopAreas()) {
-			log.debug("Skip update of existing stop area: " + oldValue.getObjectId());
-			return;
-		}
+		boolean shouldNotUpdate = (oldValue.getId() != null && !oldValue.getImportMode().shouldUpdateStopAreas());
 
 		Long jobid = (Long) context.get(JOB_ID);
 
@@ -106,127 +104,129 @@ public class StopAreaUpdater implements Updater<StopArea> {
 		}
 
 		if (oldValue.isDetached()) {
-			oldValue.setObjectId(newValue.getObjectId());
-			oldValue.setObjectVersion(newValue.getObjectVersion());
-			oldValue.setCreationTime(newValue.getCreationTime());
-			oldValue.setCreatorId(newValue.getCreatorId());
-			oldValue.setName(newValue.getName());
-			oldValue.setComment(newValue.getComment());
-			oldValue.setAreaType(newValue.getAreaType());
-			oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
-			oldValue.setNearestTopicName(newValue.getNearestTopicName());
-			oldValue.setUrl(newValue.getUrl());
-			oldValue.setTimeZone(newValue.getTimeZone());
-			oldValue.setFareCode(newValue.getFareCode());
-			oldValue.setLiftAvailable(newValue.getLiftAvailable());
-			oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
-			oldValue.setStairsAvailable(newValue.getStairsAvailable());
-			oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
-			oldValue.setLongitude(newValue.getLongitude());
-			oldValue.setLatitude(newValue.getLatitude());
-			oldValue.setLongLatType(newValue.getLongLatType());
-			oldValue.setCountryCode(newValue.getCountryCode());
-			oldValue.setZipCode(newValue.getZipCode());
-			oldValue.setCityName(newValue.getCityName());
-			oldValue.setStreetName(newValue.getStreetName());
-			oldValue.setCompassBearing(newValue.getCompassBearing());
-			oldValue.setTransportModeName(newValue.getTransportModeName());
-			oldValue.setTransportSubMode(newValue.getTransportSubMode());
-			oldValue.setStopAreaType(newValue.getStopAreaType());
-			oldValue.setDetached(false);
-		} else {
-			twoDatabaseStopAreaTwoTest(validationReporter, context, oldValue, newValue, data);
-			twoDatabaseStopAreaOneTest(validationReporter, context, oldValue, newValue, data);
-			if (newValue.getObjectId() != null && !newValue.getObjectId().equals(oldValue.getObjectId())) {
+			if(!shouldNotUpdate) {
 				oldValue.setObjectId(newValue.getObjectId());
-			}
-			if (newValue.getObjectVersion() != null && !newValue.getObjectVersion().equals(oldValue.getObjectVersion())) {
 				oldValue.setObjectVersion(newValue.getObjectVersion());
-			}
-			if (newValue.getCreationTime() != null && !newValue.getCreationTime().equals(oldValue.getCreationTime())) {
 				oldValue.setCreationTime(newValue.getCreationTime());
-			}
-			if (newValue.getCreatorId() != null && !newValue.getCreatorId().equals(oldValue.getCreatorId())) {
 				oldValue.setCreatorId(newValue.getCreatorId());
-			}
-			if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName())) {
-				oldValue.setName(newValue.getName());
-			}
-			if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment())) {
-				oldValue.setComment(newValue.getComment());
-			}
-			if (newValue.getAreaType() != null && !newValue.getAreaType().equals(oldValue.getAreaType())) {
 				oldValue.setAreaType(newValue.getAreaType());
-			}
-			if (!Objects.equals(newValue.getRegistrationNumber(), oldValue.getRegistrationNumber())) {
-				oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
-			}
-			if (newValue.getNearestTopicName() != null
-					&& !newValue.getNearestTopicName().equals(oldValue.getNearestTopicName())) {
 				oldValue.setNearestTopicName(newValue.getNearestTopicName());
-			}
-			if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl())) {
+				oldValue.setTimeZone(newValue.getTimeZone());
+				oldValue.setFareCode(newValue.getFareCode());
+				oldValue.setLiftAvailable(newValue.getLiftAvailable());
+				oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
+				oldValue.setStairsAvailable(newValue.getStairsAvailable());
+				oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
+				oldValue.setCountryCode(newValue.getCountryCode());
+				oldValue.setZipCode(newValue.getZipCode());
+				oldValue.setCityName(newValue.getCityName());
+				oldValue.setStreetName(newValue.getStreetName());
+				oldValue.setCompassBearing(newValue.getCompassBearing());
+				oldValue.setTransportModeName(newValue.getTransportModeName());
+				oldValue.setTransportSubMode(newValue.getTransportSubMode());
+				oldValue.setStopAreaType(newValue.getStopAreaType());
+				oldValue.setDetached(false);
+
+				oldValue.setName(newValue.getName());
+				oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
+				oldValue.setComment(newValue.getComment());
+				oldValue.setLongLatType(newValue.getLongLatType());
 				oldValue.setUrl(newValue.getUrl());
 			}
-			if (newValue.getTimeZone() != null && !newValue.getTimeZone().equals(oldValue.getTimeZone())) {
-				oldValue.setTimeZone(newValue.getTimeZone());
-			}
-			if (newValue.getFareCode() != null && !newValue.getFareCode().equals(oldValue.getFareCode())) {
-				oldValue.setFareCode(newValue.getFareCode());
-			}
-			if (newValue.getLiftAvailable() != null && !newValue.getLiftAvailable().equals(oldValue.getLiftAvailable())) {
-				oldValue.setLiftAvailable(newValue.getLiftAvailable());
-			}
-			if (newValue.getMobilityRestrictedSuitable() != null
-					&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable())) {
-				oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
-			}
-			if (newValue.getStairsAvailable() != null
-					&& !newValue.getStairsAvailable().equals(oldValue.getStairsAvailable())) {
-				oldValue.setStairsAvailable(newValue.getStairsAvailable());
-			}
-			if (newValue.getIntUserNeeds() != null && !newValue.getIntUserNeeds().equals(oldValue.getIntUserNeeds())) {
-				oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
-			}
+			oldValue.setLongitude(newValue.getLongitude());
+			oldValue.setLatitude(newValue.getLatitude());
 
+		} else {
+			if(!shouldNotUpdate) {
+				twoDatabaseStopAreaTwoTest(validationReporter, context, oldValue, newValue, data);
+				twoDatabaseStopAreaOneTest(validationReporter, context, oldValue, newValue, data);
+				if (newValue.getObjectId() != null && !newValue.getObjectId().equals(oldValue.getObjectId())) {
+					oldValue.setObjectId(newValue.getObjectId());
+				}
+				if (newValue.getObjectVersion() != null && !newValue.getObjectVersion().equals(oldValue.getObjectVersion())) {
+					oldValue.setObjectVersion(newValue.getObjectVersion());
+				}
+				if (newValue.getCreationTime() != null && !newValue.getCreationTime().equals(oldValue.getCreationTime())) {
+					oldValue.setCreationTime(newValue.getCreationTime());
+				}
+				if (newValue.getCreatorId() != null && !newValue.getCreatorId().equals(oldValue.getCreatorId())) {
+					oldValue.setCreatorId(newValue.getCreatorId());
+				}
+				if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName()) && !dataStopIdfm) {
+					oldValue.setName(newValue.getName());
+				}
+				if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment()) && !dataStopIdfm) {
+					oldValue.setComment(newValue.getComment());
+				}
+				if (newValue.getAreaType() != null && !newValue.getAreaType().equals(oldValue.getAreaType())) {
+					oldValue.setAreaType(newValue.getAreaType());
+				}
+				if (!Objects.equals(newValue.getRegistrationNumber(), oldValue.getRegistrationNumber()) && !dataStopIdfm) {
+					oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
+				}
+				if (newValue.getNearestTopicName() != null
+						&& !newValue.getNearestTopicName().equals(oldValue.getNearestTopicName())) {
+					oldValue.setNearestTopicName(newValue.getNearestTopicName());
+				}
+				if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl()) && !dataStopIdfm) {
+					oldValue.setUrl(newValue.getUrl());
+				}
+				if (newValue.getTimeZone() != null && !newValue.getTimeZone().equals(oldValue.getTimeZone())) {
+					oldValue.setTimeZone(newValue.getTimeZone());
+				}
+				if (newValue.getFareCode() != null && !newValue.getFareCode().equals(oldValue.getFareCode())) {
+					oldValue.setFareCode(newValue.getFareCode());
+				}
+				if (newValue.getLiftAvailable() != null && !newValue.getLiftAvailable().equals(oldValue.getLiftAvailable())) {
+					oldValue.setLiftAvailable(newValue.getLiftAvailable());
+				}
+				if (newValue.getMobilityRestrictedSuitable() != null
+						&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable()) && !dataStopIdfm) {
+					oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
+				}
+				if (newValue.getStairsAvailable() != null
+						&& !newValue.getStairsAvailable().equals(oldValue.getStairsAvailable())) {
+					oldValue.setStairsAvailable(newValue.getStairsAvailable());
+				}
+				if (newValue.getIntUserNeeds() != null && !newValue.getIntUserNeeds().equals(oldValue.getIntUserNeeds())) {
+					oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
+				}
+
+				if (newValue.getLongLatType() != null && !newValue.getLongLatType().equals(oldValue.getLongLatType())) {
+					oldValue.setLongLatType(newValue.getLongLatType());
+				}
+				if (newValue.getCountryCode() != null && !newValue.getCountryCode().equals(oldValue.getCountryCode())) {
+					oldValue.setCountryCode(newValue.getCountryCode());
+				}
+				if (newValue.getZipCode() != null && !newValue.getZipCode().equals(oldValue.getZipCode())) {
+					oldValue.setZipCode(newValue.getZipCode());
+				}
+				if (newValue.getCityName() != null && !newValue.getCityName().equals(oldValue.getCityName())) {
+					oldValue.setCityName(newValue.getCityName());
+				}
+				if (newValue.getStreetName() != null && !newValue.getStreetName().equals(oldValue.getStreetName())) {
+					oldValue.setStreetName(newValue.getStreetName());
+				}
+				if (newValue.getCompassBearing() != null && !newValue.getCompassBearing().equals(oldValue.getCompassBearing())) {
+					oldValue.setCompassBearing(newValue.getCompassBearing());
+				}
+
+				if (newValue.getTransportModeName() != null && !newValue.getTransportModeName().equals(oldValue.getTransportModeName())) {
+					oldValue.setTransportModeName(newValue.getTransportModeName());
+				}
+				if (!Objects.equals(newValue.getTransportSubMode(), oldValue.getTransportSubMode())) {
+					oldValue.setTransportSubMode(newValue.getTransportSubMode());
+				}
+				if (newValue.getStopAreaType() != null && !newValue.getStopAreaType().equals(oldValue.getStopAreaType())) {
+					oldValue.setStopAreaType(newValue.getStopAreaType());
+				}
+			}
 			if (newValue.getLongitude() != null && !newValue.getLongitude().equals(oldValue.getLongitude())) {
 				oldValue.setLongitude(newValue.getLongitude());
 			}
 			if (newValue.getLatitude() != null && !newValue.getLatitude().equals(oldValue.getLatitude())) {
 				oldValue.setLatitude(newValue.getLatitude());
 			}
-			if (newValue.getLongLatType() != null && !newValue.getLongLatType().equals(oldValue.getLongLatType())) {
-				oldValue.setLongLatType(newValue.getLongLatType());
-			}
-			if (newValue.getCountryCode() != null && !newValue.getCountryCode().equals(oldValue.getCountryCode())) {
-				oldValue.setCountryCode(newValue.getCountryCode());
-			}
-			if (newValue.getZipCode() != null && !newValue.getZipCode().equals(oldValue.getZipCode())) {
-				oldValue.setZipCode(newValue.getZipCode());
-			}
-			if (newValue.getCityName() != null && !newValue.getCityName().equals(oldValue.getCityName())) {
-				oldValue.setCityName(newValue.getCityName());
-			}
-			if (newValue.getStreetName() != null && !newValue.getStreetName().equals(oldValue.getStreetName())) {
-				oldValue.setStreetName(newValue.getStreetName());
-			}
-			if (newValue.getCompassBearing() != null && !newValue.getCompassBearing().equals(oldValue.getCompassBearing())) {
-				oldValue.setCompassBearing(newValue.getCompassBearing());
-			}
-
-			if (newValue.getTransportModeName() != null && !newValue.getTransportModeName().equals(oldValue.getTransportModeName())) {
-				oldValue.setTransportModeName(newValue.getTransportModeName());
-			}
-			if (!Objects.equals(newValue.getTransportSubMode(), oldValue.getTransportSubMode())) {
-				oldValue.setTransportSubMode(newValue.getTransportSubMode());
-			}
-			if (newValue.getStopAreaType() != null && !newValue.getStopAreaType().equals(oldValue.getStopAreaType())) {
-				oldValue.setStopAreaType(newValue.getStopAreaType());
-			}
-
-
-
-
 		}
 
 		// StopArea Parent
@@ -443,10 +443,10 @@ public class StopAreaUpdater implements Updater<StopArea> {
 						data.getDataLocations().get(newValue.getObjectId()));
 			} else {
 				validationReporter.addCheckPointReportError(context, DATABASE_STOP_AREA_1,null);
-				
+
 			}
-			
-			
+
+
 		}
 		else {
 			validationReporter.reportSuccess(context, DATABASE_STOP_AREA_1);
@@ -455,7 +455,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	/**
 	 * Test 2-DATABASE-StopArea-2
-	 * 
+	 *
 	 * @param validationReporter
 	 * @param context
 	 * @param oldSA
@@ -474,7 +474,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	/**
 	 * Test 2-DATABASE-Access-Point-1
-	 * 
+	 *
 	 * @param validationReporter
 	 * @param context
 	 * @param oldAP

@@ -33,6 +33,8 @@ public class LineUpdater implements Updater<Line> {
 
 	public static final String BEAN_NAME = "LineUpdater";
 
+	private boolean dataRouteIdfm;
+
 	@EJB
 	private NetworkDAO ptNetworkDAO;
 
@@ -71,6 +73,9 @@ public class LineUpdater implements Updater<Line> {
 
 	@Override
 	public void update(Context context, Line oldValue, Line newValue) throws Exception {
+
+		String dataRouteIdfmProperty = "iev.data.route.idfm";
+		dataRouteIdfm = Boolean.parseBoolean(System.getProperty(dataRouteIdfmProperty));
 
 		if (newValue.isSaved()) {
 			return;
@@ -123,16 +128,16 @@ public class LineUpdater implements Updater<Line> {
 			if (newValue.getCreatorId() != null && !newValue.getCreatorId().equals(oldValue.getCreatorId())) {
 				oldValue.setCreatorId(newValue.getCreatorId());
 			}
-			if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName())) {
+			if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName()) && !dataRouteIdfm) {
 				oldValue.setName(newValue.getName());
 			}
-			if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment())) {
+			if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment()) && !dataRouteIdfm) {
 				oldValue.setComment(newValue.getComment());
 			}
-			if (newValue.getNumber() != null && !newValue.getNumber().equals(oldValue.getNumber())) {
+			if (newValue.getNumber() != null && !newValue.getNumber().equals(oldValue.getNumber()) && !dataRouteIdfm) {
 				oldValue.setNumber(newValue.getNumber());
 			}
-			if (newValue.getPublishedName() != null && !newValue.getPublishedName().equals(oldValue.getPublishedName())) {
+			if (newValue.getPublishedName() != null && !newValue.getPublishedName().equals(oldValue.getPublishedName()) && !dataRouteIdfm) {
 				oldValue.setPublishedName(newValue.getPublishedName());
 			}
 			if (newValue.getRegistrationNumber() != null
@@ -154,13 +159,13 @@ public class LineUpdater implements Updater<Line> {
 			if (newValue.getIntUserNeeds() != null && !newValue.getIntUserNeeds().equals(oldValue.getIntUserNeeds())) {
 				oldValue.setIntUserNeeds(newValue.getIntUserNeeds());
 			}
-			if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl())) {
+			if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl()) && !dataRouteIdfm) {
 				oldValue.setUrl(newValue.getUrl());
 			}
-			if (newValue.getColor() != null && !newValue.getColor().equals(oldValue.getColor())) {
+			if (newValue.getColor() != null && !newValue.getColor().equals(oldValue.getColor()) && !dataRouteIdfm) {
 				oldValue.setColor(newValue.getColor());
 			}
-			if (newValue.getTextColor() != null && !newValue.getTextColor().equals(oldValue.getTextColor())) {
+			if (newValue.getTextColor() != null && !newValue.getTextColor().equals(oldValue.getTextColor()) && !dataRouteIdfm) {
 				oldValue.setTextColor(newValue.getTextColor());
 			}
 			if (newValue.getKeyValues() != null && !newValue.getKeyValues().equals(oldValue.getKeyValues())) {

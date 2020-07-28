@@ -26,12 +26,13 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
-import mobi.chouette.model.Company;
+import mobi.chouette.model.Agency;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.Interchange;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.Timetable;
+import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -107,21 +108,23 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		Set<ConnectionLink> connectionLinks = collection.getConnectionLinks();
 		Set<ScheduledStopPoint> scheduledStopPoints = collection.getScheduledStopPoints();
-		// Only export companies (agencies) actually referred to by routes.
-		Set<Company> companies = collection.getAgencyCompanies();
 		Set<Interchange> interchanges = collection.getInterchanges();
-		if (!companies.isEmpty()) {
+		Agency agency = collection.getAgency();
+		if (agency != null) {
 			agencyProducer = new GtfsAgencyProducer(exporter);
 		}
 		if (!timetables.isEmpty()) {
 			calendarProducer = new GtfsServiceProducer(exporter);
 		}
 
-		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
+		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext(); ) {
 			StopArea stop = iterator.next();
 			String newStopId = GtfsStopUtils.getNewStopId(stop);
+			if (StringUtils.isEmpty(newStopId) || newStopId.contains(".")) {
+				newStopId = stop.getOriginalStopId();
+			}
 
-			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId)) {
+			if (!stopProducer.save(stop, sharedPrefix, null, configuration.isKeepOriginalId(), configuration.isUseTpegHvt(), newStopId)) {
 				iterator.remove();
 			} else {
 				if (metadata != null && stop.hasCoordinates())
@@ -133,6 +136,9 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
             String newStopId = GtfsStopUtils.getNewStopId(stop);
+            if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
+            	newStopId = stop.getOriginalStopId();
+			}
 			if(!stopGenerated.contains(newStopId)){
 				stopGenerated.add(newStopId);
 				stopProducer.save(stop, sharedPrefix, commercialStops, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(), newStopId);
@@ -161,9 +167,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 			}
 		}
 
-		for (Company company : companies) {
-			agencyProducer.save(company, prefix, timezone, configuration.isKeepOriginalId());
-		}
+		agencyProducer.save(agency, prefix, timezone, configuration.isKeepOriginalId());
 
 		for (List<Timetable> tms : timetables.values()) {
 			calendarProducer.save(tms, sharedPrefix, configuration.isKeepOriginalId());

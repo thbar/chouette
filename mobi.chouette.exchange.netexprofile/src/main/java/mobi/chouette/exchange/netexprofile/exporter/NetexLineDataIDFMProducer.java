@@ -46,6 +46,9 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
     private static DirectionProducer directionProducer = new DirectionProducer();
     private static ServiceJourneyPatternIDFMProducer serviceJourneyPatternIDFMProducer = new ServiceJourneyPatternIDFMProducer();
 
+    protected static final String ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER = "([^0-9A-Za-z-_:])";
+
+
     public void produce(Context context) throws Exception {
 
         NetexprofileExportParameters parameters = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
@@ -57,7 +60,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(EXPORTABLE_NETEX_DATA);
         mobi.chouette.model.Line neptuneLine = exportableData.getLine();
 
-        deleteSpacesInIds(exportableData);
+        deleteSpacesInIdsAndChangeSpecialCharacters(exportableData);
 
         // Pour info il n'y a pas de produceAndCollectCommonData car les notices utilisés pour créer ce fichier sont récupérés dans les deux méthodes ci dessous
         produceAndCollectLineData(context, exportableData, exportableNetexData);
@@ -84,31 +87,38 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         calendarIDFMProducer.produce(exportableData, exportableNetexData);
     }
 
-    private void deleteSpacesInIds(ExportableData exportableData) {
+    private void deleteSpacesInIdsAndChangeSpecialCharacters(ExportableData exportableData) {
         for (Route route : exportableData.getRoutes()) {
-            route.setObjectId(route.getObjectId().replaceAll("\\s+", ""));
-            route.getLine().setObjectId(route.getLine().getObjectId().replaceAll("\\s+", ""));
+            route.setObjectId(replaceAllSpacesAndSpecialCharacter(route.getObjectId()));
+            route.getLine().setObjectId(replaceAllSpacesAndSpecialCharacter(route.getLine().getObjectId()));
             for (mobi.chouette.model.RoutePoint routePoint : route.getRoutePoints()) {
-                routePoint.setObjectId(routePoint.getObjectId().replaceAll("\\s+", ""));
-                routePoint.getScheduledStopPoint().setObjectId(routePoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
+                routePoint.setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getObjectId()));
+                routePoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getScheduledStopPoint().getObjectId()));
             }
         }
         for (JourneyPattern journeyPattern : exportableData.getJourneyPatterns()) {
-            journeyPattern.setObjectId(journeyPattern.getObjectId().replaceAll("\\s+", ""));
+            journeyPattern.setObjectId(replaceAllSpacesAndSpecialCharacter(journeyPattern.getObjectId()));
             for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
-                stopPoint.setObjectId(stopPoint.getObjectId().replaceAll("\\s+", ""));
-                stopPoint.getScheduledStopPoint().setObjectId(stopPoint.getScheduledStopPoint().getObjectId().replaceAll("\\s+", ""));
+                stopPoint.setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getObjectId()));
+                stopPoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getScheduledStopPoint().getObjectId()));
                 if (stopPoint.getDestinationDisplay() != null) {
-                    stopPoint.getDestinationDisplay().setObjectId(stopPoint.getDestinationDisplay().getObjectId().replaceAll("\\s+", ""));
+                    stopPoint.getDestinationDisplay().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getDestinationDisplay().getObjectId()));
                 }
             }
         }
         for (Timetable timetable : exportableData.getTimetables()) {
-            timetable.setObjectId(timetable.getObjectId().replaceAll("\\s+", ""));
+            timetable.setObjectId(replaceAllSpacesAndSpecialCharacter(timetable.getObjectId()));
         }
         for (VehicleJourney vehicleJourney : exportableData.getVehicleJourneys()) {
-            vehicleJourney.setObjectId(vehicleJourney.getObjectId().replaceAll("\\s+", ""));
+            vehicleJourney.setObjectId(replaceAllSpacesAndSpecialCharacter(vehicleJourney.getObjectId()));
         }
+    }
+
+    private String replaceAllSpacesAndSpecialCharacter(String objectId){
+        objectId = objectId.replaceAll("\\s+", "");
+        objectId = objectId.replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_");
+
+        return objectId;
     }
 
     private void produceAndCollectLineData(Context context, ExportableData exportableData, ExportableNetexData exportableNetexData) {
@@ -164,14 +174,9 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
     public void collectScheduledStopPoint(mobi.chouette.model.ScheduledStopPoint chouetteScheduledStopPoint, ExportableNetexData exportableNetexData) {
         if (chouetteScheduledStopPoint != null) {
             if (isSet(chouetteScheduledStopPoint.getContainedInStopAreaRef().getObject())) {
-
-                String scheduledStopPointId = chouetteScheduledStopPoint.getObjectId();
-
-                if (!exportableNetexData.getSharedScheduledStopPoints().containsKey(scheduledStopPointId)) {
-                    ScheduledStopPoint scheduledStopPoint = netexFactory.createScheduledStopPoint();
-                    NetexProducerUtils.populateIdAndVersionIDFM(chouetteScheduledStopPoint, scheduledStopPoint);
-                    exportableNetexData.getSharedScheduledStopPoints().put(scheduledStopPointId + ":LOC", scheduledStopPoint);
-                }
+                ScheduledStopPoint scheduledStopPoint = netexFactory.createScheduledStopPoint();
+                NetexProducerUtils.populateIdAndVersionIDFM(chouetteScheduledStopPoint, scheduledStopPoint);
+                exportableNetexData.getScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
             } else {
                 throw new RuntimeException(
                         "ScheduledStopPoint with id : " + chouetteScheduledStopPoint.getObjectId() + " is not contained in a StopArea. Cannot produce ScheduledStopPoint.");
@@ -195,18 +200,10 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
     }
 
     protected void addDestinationDisplay(mobi.chouette.model.DestinationDisplay dd, ExportableNetexData exportableNetexData) {
-
-        if (!exportableNetexData.getSharedDestinationDisplays().containsKey(dd.getObjectId())) {
-
             DestinationDisplay netexDestinationDisplay = netexFactory.createDestinationDisplay();
             NetexProducerUtils.populateIdAndVersionIDFM(dd, netexDestinationDisplay);
-
             netexDestinationDisplay.setFrontText(ConversionUtil.getMultiLingualString(dd.getFrontText()));
-
-            exportableNetexData.getSharedDestinationDisplays().put(netexDestinationDisplay.getId(), netexDestinationDisplay);
-
-        }
-
+            exportableNetexData.getDestinationDisplays().put(netexDestinationDisplay.getId(), netexDestinationDisplay);
     }
 
     private void produceAndCollectPassengerStopAssignments(List<mobi.chouette.model.Route> routes, ExportableNetexData exportableNetexData,
@@ -229,14 +226,10 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
 
     private void collectPassengerStopAssignment(ExportableNetexData exportableNetexData, NetexprofileExportParameters parameters, mobi.chouette.model.ScheduledStopPoint scheduledStopPoint) {
         if (isSet(scheduledStopPoint)) {
-
             String passengerStopAssignmentIdSuffix = scheduledStopPoint.objectIdSuffix();
             String passengerStopAssignmentId = netexId(scheduledStopPoint.objectIdPrefix(), PASSENGER_STOP_ASSIGNMENT, passengerStopAssignmentIdSuffix);
-
-            if (!exportableNetexData.getSharedStopAssignments().containsKey(passengerStopAssignmentId)) {
-                PassengerStopAssignment stopAssignment = createPassengerStopAssignment(scheduledStopPoint, passengerStopAssignmentId, parameters);
-                exportableNetexData.getSharedStopAssignments().put(passengerStopAssignmentId + ":LOC", stopAssignment);
-            }
+            PassengerStopAssignment stopAssignment = createPassengerStopAssignment(scheduledStopPoint, passengerStopAssignmentId, parameters);
+            exportableNetexData.getStopAssignments().put(stopAssignment.getId(), stopAssignment);
         } else {
             throw new RuntimeException(
                     "ScheduledStopPoint with id : " + scheduledStopPoint.getObjectId() + " is not contained in a StopArea. Cannot produce StopAssignment.");

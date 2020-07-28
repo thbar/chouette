@@ -23,3 +23,36 @@
 # 4.0.2
 * 6177 : Correction des erreurs de syntaxe sur l'export Netex
 * 6132 : Remonter une erreur si pas de Codifligne sur l'export Netex
+
+# 4.0.3
+* 6154 : Stockage des fichiers exportés sur le filesystem et/ou Google Cloud Storage
+* 6258 : Réactivation de la validation offre Netex export IDFM
+* 6314 : Correction retour Offre Netex IDFM
+* Renommage des fichiers d'exports Netex offre
+* Filtre INVALID_DATA sur le résultat des exports
+
+# 4.0.4
+* 6432 : Gestion du non-écrasement des données à l'import GTFS IDFM
+* 6382 : Fix Netex Offre IDFM
+* 6419 : Fusion des lignes versionnées dans routes.txt
+* 6452 : Import des PA avec coordonnées différentes
+
+# 4.0.5
+* 6454 : Ajout de la notion platform code (GTFS)
+
+# 4.0.6
+* 6692 : Gestion de la mise à jour des points d'arrêt de Okina à Tiamat et lors d'un import GTFS
+* 6698 : Fix stop id modifiés à l'exports 
+
+# 4.0.7
+* Gestion des wheelchair accessible et bikes allowed
+* Changement de génération des object id des routes et jp
+
+
+#4.0.8
+* Merge des trip_id versionnés par suffixe
+
+# 4.0.9
+* Migration AWS
+* Import des courses en TAD
+

@@ -27,6 +27,7 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
+import mobi.chouette.model.Agency;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.ScheduledStopPoint;
@@ -58,6 +59,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 
 		try {
 
+			Agency agency = (Agency) context.get(AGENCY);
 			Line line = (Line) context.get(LINE);
 			GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
 
@@ -88,7 +90,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			}
 
 			GtfsDataCollector collector = new GtfsDataCollector();
-			boolean cont = collector.collect(collection, line, startDate, endDate);
+			boolean cont = collector.collect(collection, line, startDate, endDate, agency);
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.LINE, 0);
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.JOURNEY_PATTERN,
 					collection.getJourneyPatterns().size());

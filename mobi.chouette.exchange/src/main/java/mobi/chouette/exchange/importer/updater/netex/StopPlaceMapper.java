@@ -9,9 +9,15 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.runtime.directive.Stop;
+import org.checkerframework.checker.units.qual.A;
+import org.rutebanken.netex.model.AccessibilityAssessment;
+import org.rutebanken.netex.model.AccessibilityLimitation;
+import org.rutebanken.netex.model.AccessibilityLimitations_RelStructure;
 import org.rutebanken.netex.model.EntityInVersionStructure;
 import org.rutebanken.netex.model.KeyListStructure;
 import org.rutebanken.netex.model.KeyValueStructure;
+import org.rutebanken.netex.model.LimitationStatusEnumeration;
 import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.MultilingualString;
 import org.rutebanken.netex.model.Quay;
@@ -44,14 +50,7 @@ public class StopPlaceMapper {
         if (stopArea.getContainedStopAreas().size() > 0) {
             stopPlace.setQuays(new Quays_RelStructure());
             for (StopArea children : stopArea.getContainedStopAreas()) {
-                MappingHastusZdep mappingHastusZdep = children.getMappingHastusZdep();
-                Quay quay;
-                if (mappingHastusZdep != null) {
-                    String zdep = mappingHastusZdep.getZdep();
-                     quay = mapQuay(children, zdep);
-                } else {
-                    quay = mapQuay(children);
-                }
+                Quay quay = mapQuay(children);
                 stopPlace.getQuays().getQuayRefOrQuay().add(quay);
             }
         }
@@ -66,34 +65,58 @@ public class StopPlaceMapper {
         mapCentroid(stopArea, quay);
         mapQuayName(stopArea, quay);
         mapPublicCode(stopArea, quay);
+        mapUrl(stopArea, quay);
         mapCompassBearing(stopArea, quay);
-        if (StringUtils.isNotBlank(stopArea.getComment())) {
-            quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
-        }
+        mapComment(stopArea, quay);
+        mapMobilityRestrictedSuitable(stopArea, quay);
+        mapZdep(stopArea, quay);
+
         return quay;
     }
 
-    protected Quay mapQuay(StopArea stopArea, String zdep) {
-        Quay quay = new Quay();
-        mapId(stopArea, quay);
-        setVersion(stopArea, quay);
-        mapCentroid(stopArea, quay);
-        mapQuayName(stopArea, quay);
-        mapPublicCode(stopArea, quay);
-        mapCompassBearing(stopArea, quay);
+    public void mapZdep(StopArea stopArea, Quay quay) {
+        if (stopArea.getMappingHastusZdep() != null) {
+            quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
+                    .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
+                    .withValue(stopArea.getMappingHastusZdep().getZdep())));
+        }
+    }
+
+    public void mapMobilityRestrictedSuitable(StopArea stopArea, Quay quay){
+        AccessibilityAssessment accessibilityAssessment = new AccessibilityAssessment();
+        AccessibilityLimitations_RelStructure accessibilityLimitations_relStructure = new AccessibilityLimitations_RelStructure();
+        AccessibilityLimitation accessibilityLimitation = new AccessibilityLimitation();
+        if(stopArea.getMobilityRestrictedSuitable() == null){
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.UNKNOWN);
+        }
+        else if (!stopArea.getMobilityRestrictedSuitable()){
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.FALSE);
+        }
+        else {
+            accessibilityLimitation.setWheelchairAccess(LimitationStatusEnumeration.TRUE);
+        }
+        accessibilityLimitation.setVersion(VERSION);
+        accessibilityLimitations_relStructure.setAccessibilityLimitation(accessibilityLimitation);
+        accessibilityAssessment.setLimitations(accessibilityLimitations_relStructure);
+        accessibilityAssessment.setVersion(VERSION);
+        quay.setAccessibilityAssessment(accessibilityAssessment);
+    }
+
+    public void mapComment(StopArea stopArea, Quay quay) {
         if (StringUtils.isNotBlank(stopArea.getComment())) {
             quay.setDescription(new MultilingualString().withValue(stopArea.getComment()));
         }
-        quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
-                .withValue(zdep)));
-        return quay;
+    }
+
+    public void mapUrl(StopArea stopArea, Quay quay) {
+        if (StringUtils.isNotBlank(stopArea.getUrl())) {
+            quay.setUrl(stopArea.getUrl());
+        }
     }
 
     public void mapPublicCode(StopArea stopArea, Quay quay) {
-        String registrationNumber = stopArea.getRegistrationNumber();
-        if (registrationNumber != null) {
-            quay.setPublicCode(registrationNumber);
+        if (StringUtils.isNotBlank(stopArea.getRegistrationNumber())) {
+            quay.setPublicCode(stopArea.getRegistrationNumber());
         }
     }
 
@@ -137,14 +160,12 @@ public class StopPlaceMapper {
     }
 
     private void mapName(StopArea stopArea, Zone_VersionStructure zone) {
-        zone.setName(new MultilingualString().withValue(stopArea.getName()).withLang("no").withTextIdType(""));
-
+        zone.setName(new MultilingualString().withValue(stopArea.getName()).withLang("fr").withTextIdType(""));
     }
 
     private void mapQuayName(StopArea stopArea, Zone_VersionStructure zone) {
-        String quayName = stopArea.getName();
-        if (quayName != null) {
-            zone.setName(new MultilingualString().withValue(quayName).withLang("no").withTextIdType(""));
+        if (StringUtils.isNotBlank(stopArea.getName())) {
+            zone.setName(new MultilingualString().withValue(stopArea.getName()).withLang("fr").withTextIdType(""));
         }
     }
 

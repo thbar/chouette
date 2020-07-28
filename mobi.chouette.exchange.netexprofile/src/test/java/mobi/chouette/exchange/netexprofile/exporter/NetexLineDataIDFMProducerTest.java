@@ -62,7 +62,8 @@ public class NetexLineDataIDFMProducerTest {
 
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getId(), "TEST:Route:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:TestCodifligne:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "FR1:Line:TestCodifligne:");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getRef(), "TEST:Direction:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getVersion(), "any");
 
@@ -77,8 +78,9 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getRouteRef().getRef(), exportableNetexDataResult.getRoutes().get(0).getId());
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getRouteRef().getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getRef(), "TEST:DestinationDisplay:dd1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getRef(), exportableNetexDataResult.getSharedDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId());
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getRef(), exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId());
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getDestinationDisplayRef().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getServiceJourneyPatternType().value(), "passenger");
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(0).getId(), "TEST:StopPointInJourneyPattern:sp1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(0).getOrder(), BigInteger.valueOf(1));
@@ -92,45 +94,45 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(2).getOrder(), BigInteger.valueOf(3));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneyPatterns().get(0).getPointsInSequence().getPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern().get(2).getVersion(), "any");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp1:LOC").getId(), "TEST:ScheduledStopPoint:ssp1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp2:LOC").getId(), "TEST:ScheduledStopPoint:ssp2:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp3:LOC").getId(), "TEST:ScheduledStopPoint:ssp3:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp1:LOC").getId(), "TEST:ScheduledStopPoint:ssp1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp2:LOC").getId(), "TEST:ScheduledStopPoint:ssp2:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp3:LOC").getId(), "TEST:ScheduledStopPoint:ssp3:LOC");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp1:LOC").getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp2:LOC").getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp3:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp1:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp2:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getScheduledStopPoints().get("TEST:ScheduledStopPoint:ssp3:LOC").getVersion(), "any");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getId(), "TEST:PassengerStopAssignment:ssp1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getId(), "TEST:PassengerStopAssignment:ssp2:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getId(), "TEST:PassengerStopAssignment:ssp3:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getId(), "TEST:PassengerStopAssignment:ssp1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getId(), "TEST:PassengerStopAssignment:ssp2:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getId(), "TEST:PassengerStopAssignment:ssp3:LOC");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getVersion(), "any");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getOrder(), BigInteger.valueOf(0));
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getOrder(), BigInteger.valueOf(0));
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getOrder(), BigInteger.valueOf(0));
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getOrder(), BigInteger.valueOf(0));
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getOrder(), BigInteger.valueOf(0));
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getOrder(), BigInteger.valueOf(0));
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getId(), "TEST:PassengerStopAssignment:ssp1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getId(), "TEST:PassengerStopAssignment:ssp2:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getId(), "TEST:PassengerStopAssignment:ssp3:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getId(), "TEST:PassengerStopAssignment:ssp1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getId(), "TEST:PassengerStopAssignment:ssp2:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getId(), "TEST:PassengerStopAssignment:ssp3:LOC");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp2:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp3:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp2:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getScheduledStopPointRef().getValue().getRef(), "TEST:ScheduledStopPoint:ssp3:LOC");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getQuayRef().getRef(), "FR::Quay:testzdep1:FR1");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getQuayRef().getRef(), "FR::Quay:testzdep2:FR1");
-        Assert.assertEquals(exportableNetexDataResult.getSharedStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getQuayRef().getRef(), "FR::Quay:testzdep3:FR1");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getQuayRef().getRef(), "FR::Quay:testzdep1:FR1");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getQuayRef().getRef(), "FR::Quay:testzdep2:FR1");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getQuayRef().getRef(), "FR::Quay:testzdep3:FR1");
 
-        Assert.assertEquals(exportableNetexDataResult.getSharedDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId(), "TEST:DestinationDisplay:dd1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getSharedDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getSharedDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getFrontText().getValue(), "Test Destination Display");
+        Assert.assertEquals(exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId(), "TEST:DestinationDisplay:dd1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getFrontText().getValue(), "Test Destination Display");
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getId(), "TEST:ServiceJourney:vj1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getVersion(), "any");
@@ -138,17 +140,17 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getJourneyPatternRef().getValue().getRef(), "TEST:ServiceJourneyPattern:jp1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getJourneyPatternRef().getValue().getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getRef(), "TEST:DayType:t1:LOC");
-        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getVersion(), "any");
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getDayTypes().getDayTypeRef().get(0).getValue().getValue(), "version=\"any\"");
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 0, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getVersion(), "any");
-        Assert.assertNull(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getArrivalTime());
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(0).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 0, 0)));
 
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 15, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(1).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 15, 0)));
 
-        Assert.assertNull(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getDepartureTime());
+        Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getDepartureTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 30, 0)));
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getServiceJourneys().get(0).getPassingTimes().getTimetabledPassingTime().get(2).getArrivalTime(), TimeUtil.toLocalTimeFromJoda(new LocalTime(7, 30, 0)));
 
@@ -389,4 +391,17 @@ public class NetexLineDataIDFMProducerTest {
 
         return context;
     }
+
+    @Test
+    public void testRegexSpecialCharacter(){
+        String idStructureRegexpSpecialCharatec = "([^0-9A-Za-z-_])";
+
+        String test = "-F_oire&é'au(jAçé=)àmbon&é64100.=-";
+
+        test = test.replaceAll(idStructureRegexpSpecialCharatec, "_");
+
+        Assert.assertEquals(test, "-F_oire___au_jA_____mbon__64100__-");
+
+    }
+
 }

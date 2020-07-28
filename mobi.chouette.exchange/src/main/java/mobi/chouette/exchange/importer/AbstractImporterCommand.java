@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.importer;
 
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import javax.naming.InitialContext;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
@@ -17,6 +11,11 @@ import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.model.util.Referential;
+
+import javax.naming.InitialContext;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Log4j
 public class AbstractImporterCommand implements Constant {
@@ -103,12 +102,25 @@ public class AbstractImporterCommand implements Constant {
 			}
 			// post processing
 			List<? extends Command> postProcessingCommands = commands.getPostProcessingCommands(context, true);
-			if (postProcessingCommands.isEmpty()) {
+			if (!postProcessingCommands.isEmpty()) {
+				progression.terminate(context, postProcessingCommands.size());
+				for (Command command : postProcessingCommands) {
+					result = command.execute(context);
+					if (!result) {
+						return ERROR;
+					}
+					progression.execute(context);
+				}
+			}
+
+			// Mosaic Commands after import before validation
+			List<? extends Command> mosaicPostCommands = commands.getMosaicCommands(context, true);
+			if (mosaicPostCommands.isEmpty()) {
 				progression.terminate(context, 1);
 				progression.execute(context);
 			} else {
-				progression.terminate(context, postProcessingCommands.size());
-				for (Command command : postProcessingCommands) {
+				progression.terminate(context, mosaicPostCommands.size());
+				for (Command command : mosaicPostCommands) {
 					result = command.execute(context);
 					if (!result) {
 						return ERROR;

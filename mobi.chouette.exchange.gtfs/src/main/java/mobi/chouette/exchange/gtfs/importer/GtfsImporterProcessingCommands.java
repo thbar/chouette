@@ -13,7 +13,13 @@ import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.gtfs.model.importer.Index;
-import mobi.chouette.exchange.importer.*;
+import mobi.chouette.exchange.importer.CleanRepositoryCommand;
+import mobi.chouette.exchange.importer.CopyCommand;
+import mobi.chouette.exchange.importer.GenerateRouteSectionsCommand;
+import mobi.chouette.exchange.importer.LineRegisterCommand;
+import mobi.chouette.exchange.importer.MergeTripIdCommand;
+import mobi.chouette.exchange.importer.StopAreaRegisterCommand;
+import mobi.chouette.exchange.importer.UncompressCommand;
 import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
 import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
 import org.apache.commons.collections.CollectionUtils;
@@ -88,7 +94,12 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             }
 
 
+            ArrayList<String> savedLines = new ArrayList<String>();
             for (GtfsRoute gtfsRoute : index) {
+                String newRouteId = gtfsRoute.getRouteId().split("-")[0];
+                if(savedLines.contains(newRouteId)) continue;
+                savedLines.add(newRouteId);
+                gtfsRoute.setRouteId(newRouteId);
 
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
@@ -188,6 +199,21 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             log.error(e, e);
             throw new RuntimeException("unable to call factories");
         }
+        return commands;
+    }
+
+    @Override
+    public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+        InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+        List<Command> commands = new ArrayList<>();
+
+        try {
+            commands.add(CommandFactory.create(initialContext, MergeTripIdCommand.class.getName()));
+        } catch (Exception e) {
+            log.error(e, e);
+            throw new RuntimeException("unable to call factories");
+        }
+
         return commands;
     }
 

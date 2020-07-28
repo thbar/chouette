@@ -34,123 +34,10 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
 
     public static final String PARTICIPANT_REF_CONTENT = "FR1";
 
-    protected static final String ID_STRUCTURE_REGEXP = "^([A-Z]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*:LOC)$";
+    protected static final String ID_STRUCTURE_REGEXP = "^([0-9A-Z]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*:LOC)$";
 
     public static final String _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT = "1-NETEXPROFILE-ReferenceToIllegalElement";
 
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CUSTOMER_SERVICE_CONTACT_DETAILS = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-CustomerServiceContactDetails";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CUSTOMER_SERVICE_CONTACT_DETAILS_URL = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-CustomerServiceContactDetails-Url";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CONTACT_DETAILS = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-ContactDetails";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CONTACT_DETAILS_URL_OR_PHONE_OR_EMAIL = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-ContactDetails-UrlOrPhoneOrEmail";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_LEGAL_NAME = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-LegalName";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_NAME = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-Name";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_COMPANY_NUMBER = "1-NETEXPROFILE-ResourceFrame-Organisations-Operator-CompanyNumber";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_CONTACT_DETAILS = "1-NETEXPROFILE-ResourceFrame-Organisations-Authority-ContactDetails";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_CONTACT_DETAILS_URL_OR_PHONE_OR_EMAIL = "1-NETEXPROFILE-ResourceFrame-Organisations-Authority-ContactDetails-UrlOrPhoneOrEmail";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_LEGAL_NAME = "1-NETEXPROFILE-ResourceFrame-Organisations-Authority-LegalName";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_NAME = "1-NETEXPROFILE-ResourceFrame-Organisations-Authority-Name";
-    public static final String _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_COMPANY_NUMBER = "1-NETEXPROFILE-ResourceFrame-Organisations-Authority-CompanyNumber";
-    public static final String _1_NETEX_RESOURCE_FRAME = "1-NETEXPROFILE-TimetableFrame";
-    public static final String _1_NETEX_TIMETABLE_FRAME = "1-NETEXPROFILE-TimetableFrame";
-    public static final String _1_NETEX_SERVICE_FRAME = "1-NETEXPROFILE-ServiceFrame";
-    public static final String _1_NETEX_CODESPACE = "1-NETEXPROFILE-CompositeFrame-Codespace";
-    public static final String _1_NETEX_SITE_FRAME = "1-NETEXPROFILE-SiteFrame";
-    public static final String _1_NETEX_SERVICE_FRAME_GROUPOFLINES_OUTSIDE_NETWORK = "1-NETEXPROFILE-ServiceFrame-GroupOfLinesOutsideNetwork";
-    public static final String _1_NETEX_SERVICE_FRAME_LINE = "1-NETEXPROFILE-ServiceFrame-Line";
-    public static final String _1_NETEX_SERVICE_FRAME_LINE_NAME = "1-NETEXPROFILE-ServiceFrame-Line-Name";
-    public static final String _1_NETEX_SERVICE_FRAME_NETWORK_AUTHORITY_REF = "1-NETEXPROFILE-ServiceFrame-Network-AutorityRef";
-    public static final String _1_NETEX_SERVICE_FRAME_NETWORK_NAME = "1-NETEXPROFILE-ServiceFrame-Network-Name";
-    public static final String _1_NETEX_SERVICE_FRAME_NETWORK_GROUPOFLINE_NAME = "1-NETEXPROFILE-ServiceFrame-Network-GroupOfLine-Name";
-    public static final String _1_NETEX_SERVICE_FRAME_TIMING_POINTS = "1-NETEXPROFILE-ServiceFrame_TimingPoints";
-    public static final String _1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN = "1-NETEXPROFILE-ServiceFrame_JourneyPattern";
-    public static final String _1_NETEX_SERVICE_FRAME_LINE_PUBLIC_CODE = "1-NETEXPROFILE-ServiceFrame-Line-PublicCode";
-    public static final String _1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTSUBMODE = "1-NETEXPROFILE-ServiceFrame-Line-IllegalTransportSubmode";
-    public static final String _1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTMODE = "1-NETEXPROFILE-ServiceFrame-Line-IllegalTransportMode";
-
-    public static final String _1_NETEX_TIMETABLE_FRAME_VEHICLEJOURNEY_OPERATORREF_OR_LINE_OPREATORREF = "1-NETEXPROFILE-TimetableFrame-ServiceJourney-OperatorRef-Or-Line-OperatorRef";
-    public static final String _1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN_ROUTE_REF = "1-NETEXPROFILE-ServiceFrame_JourneyPattern_RouteRef";
-    public static final String _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_MISSING_DESTINATIONDISPLAY = "1-NETEXPROFILE-ServiceFrame_JourneyPattern_First_StopPointInJourneyPattern_DestinationDisplayRef";
-    public static final String _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_DESTINATIONDISPLAY_ON_LAST_STOP = "1-NETEXPROFILE-ServiceFrame_JourneyPattern_First_StopPointInJourneyPattern_DestinationDisplayRefOnLastStop";
-
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_FLEXIBLELINETYPE = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_FlexibleLineType";
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_FLEXIBLELINETYPE = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_IllegalFlexibleLineType";
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGMETHODS = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_IllegalBookingMethods";
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKWHEN = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_IllegalBookWhen";
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGACCESS = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_IllegalBookingAccess";
-    public static final String _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BUYWHEN = "1-NETEXPROFILE-ServiceFrame_FlexibleLine_IllegalBuyWhen";
-
-    public static final String _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTMODE = "1-NETEXPROFILE-ServiceFrame_Line_TransportMode";
-    public static final String _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTSUBMODE = "1-NETEXPROFILE-ServiceFrame_Line_TransportSubmode";
-    public static final String _1_NETEX_SERVICE_FRAME_LINE_GROUPOFLINES_OR_NETWORK = "1-NETEXPROFILE-ServiceFrame_Line_GroupOfLinesNetwork";
-    public static final String _1_NETEX_SERVICE_FRAME_ROUTE_INDIRECTION = "1-NETEXPROFILE-ServiceFrame_Route";
-    public static final String _1_NETEX_SERVICE_FRAME_ROUTE_NAME = "1-NETEXPROFILE-ServiceFrame_Route_Name";
-    public static final String _1_NETEX_SERVICE_FRAME_ROUTE_LINEREF = "1-NETEXPROFILE-ServiceFrame_Route_LineRef";
-    public static final String _1_NETEX_SERVICE_FRAME_ROUTE_DIRECTIONREF = "1-NETEXPROFILE-ServiceFrame_Route_DirectionRef";
-    public static final String _1_NETEX_SERVICE_FRAME_ROUTE_POINTSINSEQUENCE = "1-NETEXPROFILE-ServiceFrame_Route_PointsInSequence";
-    public static final String _1_NETEX_SERVICE_FRAME_DESTINATION_DISPLAY_FRONTTEXT = "1-NETEXPROFILE-ServiceFrame-DestinationDisplay-FrontText";
-    public static final String _1_NETEX_SERVICE_FRAME_DESTINATION_DISPLAY_VIA_DESTINATIONDISPLAYREF = "1-NETEXPROFILE-ServiceFrame-DestinationDisplay-Via-DestinationDisplayRef";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_WITHOUT_BOARDING_OR_ALIGHTING = "1-NETEXPROFILE-ServiceFrame-StopPointInJourneyPattern-NoBoardingNoAlighting";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_WITH_REPEATING_DESTINATIONDISPLAYREF = "1-NETEXPROFILE-ServiceFrame-StopPointInJourneyPattern-Repeating-DestinationDisplayRef";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGMETHODS = "1-NETEXPROFILE-ServiceFrame_StopPointInJourneyPattern_IllegalBookingMethods";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKWHEN = "1-NETEXPROFILE-ServiceFrame_StopPointInJourneyPattern_IllegalBookWhen";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGACCESS = "1-NETEXPROFILE-ServiceFrame_StopPointInJourneyPattern_IllegalBookingAccess";
-    public static final String _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BUYWHEN = "1-NETEXPROFILE-ServiceFrame_StopPointInJourneyPattern_IllegalBuyWhen";
-    public static final String _1_NETEX_SERVICE_FRAME_PASSENGER_STOP_ASSIGNMENT_SCHEDULEDSTOPPOINTREF = "1-NETEXPROFILE-ServiceFrame-PassengerStopAssignment-ScheduledStopPointRef";
-    public static final String _1_NETEX_SERVICE_FRAME_PASSENGER_STOP_ASSIGNMENT_QUAYREF = "1-NETEXPROFILE-ServiceFrame-PassengerStopAssignment-QuayRef";
-
-    public static final String _1_NETEX_SERVICE_FRAME_SERVICE_LINK_TOPOINTREF = "1-NETEXPROFILE-ServiceFrame-ServiceLink-ToPointRef";
-    public static final String _1_NETEX_SERVICE_FRAME_SERVICE_LINK_FROMPOINTREF = "1-NETEXPROFILE-ServiceFrame-ServiceLink-FromPointRef";
-
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY = "1-NETEXPROFILE-TimetableFrame-ServiceJourney";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DAYTYPEREF = "1-NETEXPROFILE-TimetableFrame-ServiceJourney-DayTypeRef";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIMES = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_CALLS = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_Calls";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_MISSING_DEPARTURE_OR_ARRIVAL = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_Missing_DepartureTimeArrivalTime";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_FIRST_DEPARTURE = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_DepartureTime";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_LAST_ARRIVAL = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_Last_ArrivalTime";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_SAME_VALUE = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_Same_Value";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_ID = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_Id";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_VERSION = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TimetabledPassingTime_Version";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICEJOURNEY_JOURNEYPATTERN_REF = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_JourneyPatternRef";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_MISSING_PASSING_TIME = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_MissingTimetabledPassingTime";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_TRANSPORTMODE_OVERRIDE = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_TransportModeOverride";
-    public static final String _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DUPLICATE_WITH_DIFFERENT_VERSION = "1-NETEXPROFILE-TimetableFrame_ServiceJourney_DuplicateWithDifferentVersion";
-
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGCONTACT = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_BookingContact";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGMETHODS = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_BookingMethods";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ID = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_Id";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_VERSION = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_Version";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGMETHODS = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_IllegalBookingMethods";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKWHEN = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_BookWhen";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKWHEN = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_IllegalBookWhen";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGACCESS = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_IllegalBookingAccess";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BUYWHEN = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_IllegalBuyWhen";
-    public static final String _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_FLEXIBLESERVICETYPE = "1-NETEXPROFILE-TimetableFrame_FlexibleServiceProperties_IllegalFlexibleServiceType";
-
-    public static final String _1_NETEX_COMPOSITE_FRAME_VALIDITYCONDTITIONS = "1-NETEXPROFILE-CompositeFrame_ValidityConditions";
-    public static final String _1_NETEX_VALIDITYCONDITIONS_ON_FRAMES_INSIDE_COMPOSITEFRAME = "1-NETEXPROFILE-ValidityConditionsOnFramesInsideCompositeFrame";
-    public static final String _1_NETEX_NO_VALIDITYCONDITIONS_ON_FRAMES_OUTSIDE_COMPOSITEFRAME = "1-NETEXPROFILE-NoValidityConditionsOnServiceOrServiceCalendarOrTimetableFrame";
-    public static final String _1_NETEX_MULTIPLE_FRAMES_OF_SAME_TYPE_WITHOUT_VALIDITYCONDITIONS = "1-NETEXPROFILE-NoValidityConditionsOnFrameTypeOccuringTwiceOrMore";
-
-    public static final String _1_NETEX_COMMON_TIMETABLE_FRAME = "1-NETEXPROFILE-CommonFile-TimetableFrameNotAllowed";
-    public static final String _1_NETEX_COMMON_SERVICE_FRAME_LINE = "1-NETEXPROFILE-CommonFile-ServiceFrame-LineNotAllowed";
-    public static final String _1_NETEX_COMMON_SERVICE_FRAME_ROUTE = "1-NETEXPROFILE-CommonFile-ServiceFrame-RouteNotAllowed";
-    public static final String _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN = "1-NETEXPROFILE-CommonFile-ServiceFrame-JourneyPatternNotAllowed";
-
-    public static final String _1_NETEX_SERVICE_CALENDAR_FRAME_DAYTYPE_NOT_ASSIGNED = "1-NETEXPROFILE-ServiceCalendarFrame-DayTypeWithoutAssignment";
-    public static final String _1_NETEX_SERVICE_CALENDAR_FRAME_EMPTY_SERVICE_CALENDAR = "1-NETEXPROFILE-ServiceCalendarFrame-EmptyServiceCalendar";
-    public static final String _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_FROMDATE = "1-NETEXPROFILE-ServiceCalendarFrame-ServiceCalendar_FromDate";
-    public static final String _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_TODATE = "1-NETEXPROFILE-ServiceCalendarFrame-ServiceCalendar_ToDate";
-    public static final String _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_FROMDATE_AFTER_TODATE = "1-NETEXPROFILE-ServiceCalendarFrame-ServiceCalendar_FromDateAfterToDate";
-
-    public static final String _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK = "1-NETEXPROFILE-VehicleScheduleFrame_Block";
-    public static final String _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_JOURNEYS = "1-NETEXPROFILE-VehicleScheduleFrame_Block_journeys";
-    public static final String _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_DAYTYPES = "1-NETEXPROFILE-VehicleScheduleFrame_Block_dayTypes";
-
-    public static final String _1_NETEX_VALIDBETWEEN_INCOMPLETE = "1-NETEXPROFILE-ValidBetween_Incomplete";
-    public static final String _1_NETEX_VALIDBETWEEN_TODATE_BEFORE_FROMDATE = "1-NETEXPROFILE-ValidBetween_FromDateAfterToDate";
-    public static final String _1_NETEX_AVAILABILITYCONDITION_TODATE_BEFORE_FROMDATE = "1-NETEXPROFILE-AvailabilityCondition_FromDateAfterToDate";
-    public static final String _1_NETEX_AVAILABILITYCONDITION_INCOMPLETE = "1-NETEXPROFILE-AvailabilityCondition_Incomplete";
 
     public Collection<String> getSupportedProfiles() {
         return Arrays.asList(new String[] {PROFILE_IDFM_FR1});
@@ -160,7 +47,6 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
     @Override
     public void initializeCheckPoints(Context context) {
 
-        addCheckpoints(context, _1_NETEX_DUPLICATE_IDS_ACROSS_LINE_AND_COMMON_FILES, "E");
         addCheckpoints(context, _1_NETEX_DUPLICATE_IDS_ACROSS_LINE_FILES, "E");
         addCheckpoints(context, _1_NETEX_IDFM_VERSION_NOT_ANY_ON_LOCAL_ELEMENTS, "E");
         addCheckpoints(context, _1_NETEX_MISSING_REFERENCE_VERSION_TO_LOCAL_ELEMENTS, "E");
@@ -170,128 +56,6 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
         addCheckpoints(context, _1_NETEX_UNAPPROVED_CODESPACE_DEFINED, "E");
         addCheckpoints(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE, "E");
         addCheckpoints(context, _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT, "E");
-        addCheckpoints(context, _1_NETEX_UNRESOLVED_EXTERNAL_REFERENCE, "E");
-
-        addCheckpoints(context, _1_NETEX_VALIDBETWEEN_INCOMPLETE, "E");
-        addCheckpoints(context, _1_NETEX_VALIDBETWEEN_TODATE_BEFORE_FROMDATE, "E");
-        addCheckpoints(context, _1_NETEX_AVAILABILITYCONDITION_INCOMPLETE, "E");
-        addCheckpoints(context, _1_NETEX_AVAILABILITYCONDITION_TODATE_BEFORE_FROMDATE, "E");
-
-
-        addCheckpoints(context, _1_NETEX_RESOURCE_FRAME, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME, "E");
-        addCheckpoints(context, _1_NETEX_SITE_FRAME, "W");
-
-        addCheckpoints(context, _1_NETEX_COMPOSITE_FRAME_VALIDITYCONDTITIONS, "E");
-        addCheckpoints(context, _1_NETEX_VALIDITYCONDITIONS_ON_FRAMES_INSIDE_COMPOSITEFRAME, "W");
-        addCheckpoints(context, _1_NETEX_MULTIPLE_FRAMES_OF_SAME_TYPE_WITHOUT_VALIDITYCONDITIONS, "E");
-        addCheckpoints(context, _1_NETEX_NO_VALIDITYCONDITIONS_ON_FRAMES_OUTSIDE_COMPOSITEFRAME, "E");
-        addCheckpoints(context, _1_NETEX_CODESPACE, "E");
-
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE_NAME, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_GROUPOFLINES_OUTSIDE_NETWORK, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_NETWORK_AUTHORITY_REF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_NETWORK_GROUPOFLINE_NAME, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_NETWORK_NAME, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_FLEXIBLELINETYPE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGACCESS, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKINGMETHODS, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BOOKWHEN, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_BUYWHEN, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_FLEXBIBLE_LINE_ILLEGAL_FLEXIBLELINETYPE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGACCESS, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKINGMETHODS, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BOOKWHEN, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_POINT_ILLEGAL_BUYWHEN, "E");
-
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ID, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_VERSION, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKWHEN, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGMETHODS, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_BOOKINGCONTACT, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGACCESS, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKINGMETHODS, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BOOKWHEN, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_BUYWHEN, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_FLEXIBLE_SERVICE_PROPERTIES_ILLEGAL_FLEXIBLESERVICETYPE, "E");
-
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE_PUBLIC_CODE, "W");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_VEHICLEJOURNEY_OPERATORREF_OR_LINE_OPREATORREF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTMODE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE_TRANSPORTSUBMODE, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_LINE_GROUPOFLINES_OR_NETWORK, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_ROUTE_INDIRECTION, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_ROUTE_NAME, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_ROUTE_LINEREF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_ROUTE_DIRECTIONREF, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_ROUTE_POINTSINSEQUENCE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_TIMING_POINTS, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_JOURNEY_PATTERN_ROUTE_REF, "E");
-        addCheckpoints(context, _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_MISSING_DESTINATIONDISPLAY, "W");
-        addCheckpoints(context, _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN_DESTINATIONDISPLAY_ON_LAST_STOP, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_DESTINATION_DISPLAY_FRONTTEXT, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_DESTINATION_DISPLAY_VIA_DESTINATIONDISPLAYREF,"E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_WITHOUT_BOARDING_OR_ALIGHTING, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_STOP_WITH_REPEATING_DESTINATIONDISPLAYREF, "E");
-
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_PASSENGER_STOP_ASSIGNMENT_SCHEDULEDSTOPPOINTREF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_PASSENGER_STOP_ASSIGNMENT_QUAYREF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTMODE, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_INVALID_TRANSPORTSUBMODE, "E");
-
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_SERVICE_LINK_FROMPOINTREF, "E");
-        addCheckpoints(context, _1_NETEX_SERVICE_FRAME_SERVICE_LINK_TOPOINTREF, "E");
-
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICEJOURNEY_JOURNEYPATTERN_REF, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIMES, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_CALLS, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_FIRST_DEPARTURE, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_MISSING_DEPARTURE_OR_ARRIVAL, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_LAST_ARRIVAL, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_SAME_VALUE, "W");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_ID, "W");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_PASSING_TIME_VERSION, "W");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DAYTYPEREF, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_MISSING_PASSING_TIME, "E");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_TRANSPORTMODE_OVERRIDE, "W");
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME_SERVICE_JOURNEY_DUPLICATE_WITH_DIFFERENT_VERSION, "W");
-
-
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_COMPANY_NUMBER, "I");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_NAME, "E");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_LEGAL_NAME, "I");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CONTACT_DETAILS, "W");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CONTACT_DETAILS_URL_OR_PHONE_OR_EMAIL, "W");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CUSTOMER_SERVICE_CONTACT_DETAILS, "W");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_OPERATOR_CUSTOMER_SERVICE_CONTACT_DETAILS_URL, "W");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_COMPANY_NUMBER, "I");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_NAME, "E");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_LEGAL_NAME, "I");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_CONTACT_DETAILS, "W");
-        addCheckpoints(context, _1_NETEXPROFILE_RESOURCE_FRAME_ORGANISATIONS_AUTHORITY_CONTACT_DETAILS_URL_OR_PHONE_OR_EMAIL, "W");
-
-        addCheckpoints(context, _1_NETEX_SERVICE_CALENDAR_FRAME_DAYTYPE_NOT_ASSIGNED, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_CALENDAR_FRAME_EMPTY_SERVICE_CALENDAR, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_FROMDATE, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_TODATE, "W");
-        addCheckpoints(context, _1_NETEX_SERVICE_CALENDAR_FRAME_SERVICE_CALENDAR_FROMDATE_AFTER_TODATE, "E");
-
-        addCheckpoints(context, _1_NETEX_TIMETABLE_FRAME, "E");
-
-        addCheckpoints(context, _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK, "E");
-        addCheckpoints(context, _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_JOURNEYS, "E");
-        addCheckpoints(context, _1_NETEX_VEHICLE_SHCEDULE_FRAME_BLOCK_DAYTYPES, "E");
-
-        // Common file specific checkpoints
-        addCheckpoints(context, _1_NETEX_COMMON_TIMETABLE_FRAME, "E");
-        addCheckpoints(context, _1_NETEX_COMMON_SERVICE_FRAME_LINE, "E");
-        addCheckpoints(context, _1_NETEX_COMMON_SERVICE_FRAME_ROUTE, "E");
-        addCheckpoints(context, _1_NETEX_COMMON_SERVICE_FRAME_SERVICE_JOURNEY_PATTERN, "E");
-
     }
 
     private void addCheckpoints(Context context, String checkpointName, String error) {
@@ -307,10 +71,6 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
         XdmNode subLevel = dom;
         if (subLevelPath != null) {
             subLevel = (XdmNode)selectNode(subLevelPath, xpath, dom);
-        }
-
-        if (subLevel != null) {
-            // TODO Voir les vérifications de présence ou non car le profil de validation est aussi utilisé dans le cas d'un import NETEX
         }
     }
 
@@ -420,6 +180,5 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
             validationReporter.reportSuccess(context, _1_NETEX_IDFM_VERSION_NOT_ANY_ON_LOCAL_ELEMENTS);
         }
     }
-
 
 }

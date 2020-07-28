@@ -52,8 +52,10 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		List<Command> commands = new ArrayList<>();
 		try {
 			initialContext.addToEnvironment(SCHEDULED_STOP_POINTS, context.get(SCHEDULED_STOP_POINTS));
-			if (withDao)
+			if (withDao) {
+				commands.add(CommandFactory.create(initialContext, DaoGtfsAgencyProducerCommand.class.getName()));
 				commands.add(CommandFactory.create(initialContext, DaoGtfsLineProducerCommand.class.getName()));
+			}
 			else
 				commands.add(CommandFactory.create(initialContext, GtfsLineProducerCommand.class.getName()));
 		} catch (Exception e) {
@@ -71,6 +73,8 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		GtfsExportParameters parameters = (GtfsExportParameters) context.get(CONFIGURATION);
 		List<Command> commands = new ArrayList<>();
 		try {
+			commands.add(CommandFactory.create(initialContext, DaoGtfsFeedInfoProducerCommand.class.getName()));
+			commands.add(CommandFactory.create(initialContext, GtfsFeedInfoProducerCommand.class.getName()));
 			if (!(parameters.getReferencesType().equalsIgnoreCase("stop_area"))) {
 				commands.add(CommandFactory.create(initialContext, GtfsSharedDataProducerCommand.class.getName()));
 			}
@@ -112,6 +116,11 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 	public List<? extends Command> getDisposeCommands(Context context, boolean withDao) {
 		List<Command> commands = new ArrayList<>();
 		return commands;
+	}
+
+	@Override
+	public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+		return new ArrayList<>();
 	}
 
 }

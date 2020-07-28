@@ -104,12 +104,12 @@ public class FileUtil {
 
 	}
 
-	public static void compress(String path, String filename) throws IOException {
+	public static void compress(String path, String filename, String type) throws IOException {
 
 		File directoryToZip = new File(path);
 		List<File> fileList = new ArrayList<File>();
 		getAllFiles(directoryToZip, fileList);
-		writeZipFile(directoryToZip, filename, fileList);
+		writeZipFile(directoryToZip, filename, fileList, type);
 
 		// Path dir = Paths.get(path);
 		// DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
@@ -147,7 +147,7 @@ public class FileUtil {
 
 	}
 
-	private static void writeZipFile(File path, String zipName, List<File> fileList) {
+	private static void writeZipFile(File path, String zipName, List<File> fileList, String type) {
 
 		try {
 			FileOutputStream fos = new FileOutputStream(zipName);
@@ -155,7 +155,7 @@ public class FileUtil {
 
 			for (File file : fileList) {
 				if (!file.isDirectory()) { // we only zip files, not directories
-					addToZip(path, file, zos);
+					addToZip(path, file, zos, zipName, type);
 				}
 			}
 
@@ -168,16 +168,26 @@ public class FileUtil {
 		}
 	}
 
-	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos) throws FileNotFoundException,
+	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String zipName, String type) throws FileNotFoundException,
 			IOException {
 
 		FileInputStream fis = new FileInputStream(file);
+
+		zipName = zipName.substring(zipName.lastIndexOf("/"));
+		String folderNameInZip = zipName.replace(".zip", "");
 
 		// we want the zipEntry's path to be a relative path that is relative
 		// to the directory being zipped, so chop off the rest of the path
 		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
 				file.getCanonicalPath().length());
-		ZipEntry zipEntry = new ZipEntry(zipFilePath);
+
+		ZipEntry zipEntry;
+		if(type.equals("gtfs")){
+			zipEntry = new ZipEntry(zipFilePath);
+		}
+		else{
+			zipEntry = new ZipEntry(folderNameInZip + "/" + zipFilePath);
+		}
 		zos.putNextEntry(zipEntry);
 
 		byte[] bytes = new byte[1024];

@@ -23,4 +23,5 @@ public interface ProcessingCommands {
 	List<? extends Command> getPostProcessingCommands(Context context, boolean withDao);
 	List<? extends Command> getPostProcessingCommands(Context context, boolean withDao, boolean allSchemas);
 	List<? extends Command> getDisposeCommands(Context context,boolean withDao);
+	List<? extends Command> getMosaicCommands(Context context, boolean b);
 }

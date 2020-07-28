@@ -86,4 +86,9 @@ public class ValidatorProcessingCommands implements ProcessingCommands, Constant
 		return commands;
 	}
 
+	@Override
+	public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+		return new ArrayList<>();
+	}
+
 }

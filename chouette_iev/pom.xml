@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.chouette</groupId>
         <artifactId>mobi.chouette</artifactId>
-        <version>4.0.3-MOSAIC_SNAPSHOT</version>
+        <version>4.1.0_MOSAIC-SNAPSHOT</version>
     </parent>
     <artifactId>chouette_iev</artifactId>
     <packaging>ear</packaging>
@@ -198,5 +198,17 @@
             <type>war</type>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.13</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -24,6 +24,7 @@ import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
+import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
@@ -84,8 +85,12 @@ public class GtfsTripProducer extends AbstractProducer {
 		List<RouteSection> routeSections = vj.getJourneyPattern().getRouteSections();
 		int index = 0;
 		for (VehicleJourneyAtStop vjas : lvjas) {
-			if (vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject() != null) {
-				String newStopId = GtfsStopUtils.getNewStopId(vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject());
+			StopArea stopArea = vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject();
+			if (stopArea != null) {
+				String newStopId = GtfsStopUtils.getNewStopId(stopArea);
+				if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")) {
+					newStopId = stopArea.getOriginalStopId();
+				}
 				if(StringUtils.isEmpty(newStopId)) {
 					time.setStopId(toGtfsId(vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), sharedPrefix, keepOriginalId));
 				} else {
@@ -329,8 +334,14 @@ public class GtfsTripProducer extends AbstractProducer {
 					: GtfsTrip.WheelchairAccessibleType.NoAllowed);
 		else
 			trip.setWheelchairAccessible(GtfsTrip.WheelchairAccessibleType.NoInformation);
+
+		if (vj.getBikesAllowed() != null)
+			trip.setBikesAllowed(vj.getBikesAllowed() ? GtfsTrip.BikesAllowedType.Allowed
+					: GtfsTrip.BikesAllowedType.NoAllowed);
+		else
+			trip.setBikesAllowed(GtfsTrip.BikesAllowedType.NoInformation);
+
 		// trip.setBlockId(...);
-		// trip.setBikeAllowed();
 
 		// add StopTimes
 		if (saveTimes(vj,  prefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas)) {

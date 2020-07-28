@@ -86,21 +86,16 @@ public class ServiceJourneyIDFMProducer {
 
                 if (arrivalTime != null) {
                     if (arrivalTime.equals(departureTime)) {
-                        if (i > 0) {
-                            NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, true, vehicleJourneyAtStop);
-                        }
+                        NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, true, vehicleJourneyAtStop);
                     } else {
                         NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, true, vehicleJourneyAtStop);
                     }
                 }
                 if (departureTime != null) {
-                    if ((i + 1 < vehicleJourneyAtStops.size())) {
-                        NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, false, vehicleJourneyAtStop);
-                        timetabledPassingTime.setDepartureTime(TimeUtil.toLocalTimeFromJoda(departureTime));
-                        if (vehicleJourneyAtStop.getDepartureDayOffset() > 0) {
-                            timetabledPassingTime.setDepartureDayOffset(BigInteger.valueOf(vehicleJourneyAtStop.getDepartureDayOffset()));
-                        }
-
+                    NetexTimeConversionUtil.populatePassingTimeUtc(timetabledPassingTime, false, vehicleJourneyAtStop);
+                    timetabledPassingTime.setDepartureTime(TimeUtil.toLocalTimeFromJoda(departureTime));
+                    if (vehicleJourneyAtStop.getDepartureDayOffset() > 0) {
+                        timetabledPassingTime.setDepartureDayOffset(BigInteger.valueOf(vehicleJourneyAtStop.getDepartureDayOffset()));
                     }
                 }
 

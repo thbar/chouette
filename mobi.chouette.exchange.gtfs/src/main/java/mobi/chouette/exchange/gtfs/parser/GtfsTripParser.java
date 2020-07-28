@@ -8,24 +8,57 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.gtfs.model.*;
+import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
+import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+import mobi.chouette.exchange.gtfs.model.GtfsShape;
+import mobi.chouette.exchange.gtfs.model.GtfsStop;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
+import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.DropOffType;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.PickupType;
+import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer.TransferType;
+import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip.DirectionType;
-import mobi.chouette.exchange.gtfs.model.importer.*;
+import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
+import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
+import mobi.chouette.exchange.gtfs.model.importer.Index;
+import mobi.chouette.exchange.gtfs.model.importer.RouteById;
+import mobi.chouette.exchange.gtfs.model.importer.ShapeById;
+import mobi.chouette.exchange.gtfs.model.importer.StopById;
+import mobi.chouette.exchange.gtfs.model.importer.StopTimeByTrip;
 import mobi.chouette.exchange.gtfs.validation.Constant;
 import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.Validator;
-import mobi.chouette.model.*;
-import mobi.chouette.model.type.*;
+import mobi.chouette.model.DestinationDisplay;
+import mobi.chouette.model.Interchange;
+import mobi.chouette.model.JourneyFrequency;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
+import mobi.chouette.model.Route;
+import mobi.chouette.model.RoutePoint;
+import mobi.chouette.model.RouteSection;
+import mobi.chouette.model.ScheduledStopPoint;
+import mobi.chouette.model.SimpleObjectReference;
+import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.Timeband;
+import mobi.chouette.model.Timetable;
+import mobi.chouette.model.VehicleJourney;
+import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingPossibilityEnum;
+import mobi.chouette.model.type.JourneyCategoryEnum;
+import mobi.chouette.model.type.PTDirectionEnum;
+import mobi.chouette.model.type.SectionStatusEnum;
+import mobi.chouette.model.type.TransportModeNameEnum;
+import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.ObjectIdTypes;
@@ -35,7 +68,15 @@ import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Log4j
@@ -362,6 +403,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             int i = 1;
             boolean unsuedId = true;
             for (GtfsRoute bean : importer.getRouteById()) {
+                String newRouteId = bean.getRouteId().split("-")[0];
+                bean.setRouteId(newRouteId);
                 if (routeIds.add(bean.getRouteId())) {
                     unsuedId = false;
                     gtfsValidationReporter.reportError(context, new GtfsException(GTFS_ROUTES_FILE, i,
@@ -498,6 +541,22 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             for (GtfsStopTime gtfsStopTime : importer.getStopTimeByTrip().values(gtfsTrip.getTripId())) {
                 VehicleJourneyAtStopWrapper vehicleJourneyAtStop = new VehicleJourneyAtStopWrapper(
                         gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
+
+                // TAD probalement à faire évoluer un jour
+                if(vehicleJourneyAtStop.getDropOff().equals(DropOffType.AgencyCall)){
+                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
+                    } else if(vehicleJourneyAtStop.getPickup() == null || vehicleJourneyAtStop.getPickup().equals(PickupType.Scheduled)){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnly);
+                    }
+                } else if(vehicleJourneyAtStop.getDropOff() == null || vehicleJourneyAtStop.getDropOff().equals(DropOffType.Scheduled)){
+                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnly);
+                    } else {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.NeitherBoardOrAlight);
+                    }
+                }
+
                 convert(context, gtfsStopTime, gtfsTrip, vehicleJourneyAtStop);
 
                 if (afterMidnight) {
@@ -571,15 +630,15 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         String result = null;
 
-        if (drop == DropOffType.Scheduled && pickup == PickupType.Scheduled) {
+//        if (drop == DropOffType.Scheduled && pickup == PickupType.Scheduled) {
             result = vehicleJourneyAtStop.stopId;
-        } else {
-            result = vehicleJourneyAtStop.stopId + "." + drop.ordinal() + "" + pickup.ordinal();
-        }
-
-        if (vehicleJourneyAtStop.stopHeadsign != null) {
-            result += vehicleJourneyAtStop.stopHeadsign;
-        }
+//        } else {
+//            result = vehicleJourneyAtStop.stopId + "." + drop.ordinal() + "" + pickup.ordinal();
+//        }
+//
+//        if (vehicleJourneyAtStop.stopHeadsign != null) {
+//            result += vehicleJourneyAtStop.stopHeadsign;
+//        }
 
         return result;
     }
@@ -754,7 +813,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         JourneyPattern journeyPattern;
 
         // Route
-        Route route = createRoute(referential, configuration, gtfsTrip);
+        Route route = createRoute(referential, configuration, gtfsTrip, vehicleJourney.getVehicleJourneyAtStops());
 
         // JourneyPattern
         String journeyPatternId = route.getObjectId().replace(Route.ROUTE_KEY, JourneyPattern.JOURNEYPATTERN_KEY);
@@ -997,7 +1056,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * @param gtfsTrip
      * @return
      */
-    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip) {
+    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip, List<VehicleJourneyAtStop> list) {
         String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
                 gtfsTrip.getRouteId(), log);
         Line line = ObjectFactory.getLine(referential, lineId);
@@ -1012,7 +1071,16 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         String routeKey = gtfsTrip.getRouteId() + "_" + gtfsTrip.getDirectionId().ordinal();
         if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty())
             routeKey += "_" + gtfsTrip.getShapeId();
-        routeKey += "_" + line.getRoutes().size();
+        for (VehicleJourneyAtStop vehicleJourneyAtStop : list) {
+            VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
+            if(wrapper.stopSequence == 1 || wrapper.stopSequence == list.size()){
+                String stopIdWithDropOffPickup = createJourneyKeyFragment(wrapper);
+                routeKey += "_" + stopIdWithDropOffPickup;
+            }
+        }
+
+        routeKey += "_" + list.size();
+//        routeKey += "_" + line.getRoutes().size();
         String routeId = AbstractConverter.composeObjectId(configuration, Route.ROUTE_KEY,
                 routeKey, log);
 
@@ -1114,6 +1182,21 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                     break;
             }
         }
+
+        if (gtfsTrip.getBikesAllowed() != null) {
+            switch (gtfsTrip.getBikesAllowed()) {
+                case NoInformation:
+                    vehicleJourney.setBikesAllowed(null);
+                    break;
+                case NoAllowed:
+                    vehicleJourney.setBikesAllowed(Boolean.FALSE);
+                    break;
+                case Allowed:
+                    vehicleJourney.setBikesAllowed(Boolean.TRUE);
+                    break;
+            }
+        }
+
         vehicleJourney.setFilled(true);
 
     }
@@ -1184,7 +1267,9 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         String stopId;
         int stopSequence;
         Float shapeDistTraveled;
+        @Getter
         DropOffType dropOff;
+        @Getter
         PickupType pickup;
         String stopHeadsign;
     }

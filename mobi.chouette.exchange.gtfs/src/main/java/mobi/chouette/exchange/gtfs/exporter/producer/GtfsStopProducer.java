@@ -37,7 +37,7 @@ public class GtfsStopProducer extends AbstractProducer
 
     public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes){
 		String stopId = toGtfsId(neptuneObject.getObjectId(), prefix, keepOriginalId);
-		if(!StringUtils.isEmpty(neptuneObject.getOriginalStopId())){
+		if(StringUtils.isEmpty(neptuneObject.getOriginalStopId()) || stopId.contains(".")){
 			stopId = neptuneObject.getOriginalStopId();
 		}
         return save(neptuneObject, prefix, validParents, keepOriginalId, useTPEGRouteTypes, stopId);
@@ -100,17 +100,17 @@ public class GtfsStopProducer extends AbstractProducer
 			return false;
 		}
 		stop.setStopLon(neptuneObject.getLongitude());
-		//stop.setStopCode(neptuneObject.getRegistrationNumber());
+		stop.setStopCode(neptuneObject.getRegistrationNumber());
 		
 		// name and description must be different
-		if (neptuneObject.getName().equals(neptuneObject.getComment()))
-		{
-			stop.setStopDesc(null);
-		}
-		else
-		{
-		    stop.setStopDesc(neptuneObject.getComment());
-		}
+//		if (neptuneObject.getName().equals(neptuneObject.getComment()))
+//		{
+//			stop.setStopDesc(null);
+//		}
+//		else
+//		{
+		stop.setStopDesc(neptuneObject.getComment());
+//		}
 		stop.setStopUrl(getUrl(neptuneObject.getUrl()));
 		// manage stop_timezone
 		stop.setStopTimezone(null);
@@ -149,7 +149,7 @@ public class GtfsStopProducer extends AbstractProducer
 			stop.setWheelchairBoarding(null);
 		}
 		
-		stop.setPlatformCode(neptuneObject.getRegistrationNumber());
+		stop.setPlatformCode(neptuneObject.getPlatformCode());
 
 		
 	      if (neptuneObject.getTransportModeName() != null)

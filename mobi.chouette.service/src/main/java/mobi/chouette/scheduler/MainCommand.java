@@ -1,14 +1,5 @@
 package mobi.chouette.scheduler;
 
-import java.io.IOException;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
@@ -21,6 +12,14 @@ import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.exchange.validation.report.ValidationReport;
 import mobi.chouette.service.JobService;
 import mobi.chouette.service.JobServiceManager;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.IOException;
 
 @Log4j
 @Stateless(name = MainCommand.COMMAND)
@@ -57,7 +56,7 @@ public class MainCommand implements Command, Constant {
 
 			ActionReport report = (ActionReport) context.get(REPORT);
 			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
-					&& report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INTERNAL_ERROR))
+					&& !report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INVALID_DATA))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);
@@ -67,7 +66,7 @@ public class MainCommand implements Command, Constant {
 			// just ignore this exception
 			ActionReport report = (ActionReport) context.get(REPORT);
 			if (report.getResult().equals(ReportConstant.STATUS_ERROR)
-					&& report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INTERNAL_ERROR))
+					&& !report.getFailure().getCode().equals(ActionReporter.ERROR_CODE.INVALID_DATA))
 				jobManager.abort(jobService);
 			else
 				jobManager.terminate(jobService);

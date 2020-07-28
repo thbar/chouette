@@ -89,6 +89,7 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 	 * @return The actual value
 	 */
 	@Getter
+	@Setter
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "categories_for_line_id")
 	private CategoriesForLines categoriesForLine;

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>4.0.3-MOSAIC_SNAPSHOT</version>
+		<version>4.1.0_MOSAIC-SNAPSHOT</version>
 
     </parent>
     <artifactId>mobi.chouette.exchange</artifactId>
@@ -28,6 +28,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
         <!-- Default Dependencies -->

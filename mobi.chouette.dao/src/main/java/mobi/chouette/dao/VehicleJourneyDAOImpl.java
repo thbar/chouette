@@ -1,23 +1,21 @@
 package mobi.chouette.dao;
 
+import lombok.extern.log4j.Log4j;
+import mobi.chouette.model.VehicleJourney;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
+import org.jboss.jca.adapters.jdbc.WrappedConnection;
+import org.postgresql.PGConnection;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import lombok.extern.log4j.Log4j;
-import mobi.chouette.model.VehicleJourney;
-
-import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
-import org.jboss.jca.adapters.jdbc.WrappedConnection;
-import org.postgresql.PGConnection;
 
 @Stateless
 @Log4j
@@ -91,7 +89,7 @@ public class VehicleJourneyDAOImpl extends GenericDAOImpl<VehicleJourney> implem
 							+ "objectid, object_version, creation_time, creator_id, "
 							+ "vehicle_journey_id, stop_point_id, "
 							+ "arrival_time, departure_time, "
-							+ "arrival_day_offset, departure_day_offset)"
+							+ "arrival_day_offset, departure_day_offset, boardingalightingpossibility)"
 							// + "arrival_time, departure_time, "
 							// + "elapse_duration, headway_frequency)"
 							+ " FROM STDIN WITH DELIMITER '|'";

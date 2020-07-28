@@ -177,19 +177,20 @@ public class RestService implements Constant {
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			context.put("inputStreamByName", inputStreamByName);
 
-			try {
-				ContextHolder.setContext(referential);
-				Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
-				command.execute(context);
-				return Response.ok().build();
-			} catch (Exception e) {
-				throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
-			} finally {
-				ContextHolder.setContext(null);
+			ContextHolder.setContext(referential);
+			Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
+			if (!command.execute(context)) {
+				String message = "Fichier invalide - requis : CSV avec entête de fichier invalide : idfcod [, idfarr, ...]";
+				throw new WebApplicationException(message, Status.INTERNAL_SERVER_ERROR);
 			}
+
+			return Response.ok().build();
+		} catch (WebApplicationException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
 		} finally {
+			ContextHolder.setContext(null);
 			if (inputStreamByName != null) {
 				for (InputStream is : inputStreamByName.values()) {
 					try {
@@ -236,6 +237,30 @@ public class RestService implements Constant {
 			}
 		} catch (Exception e) {
 			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GET
+	@Path("/{ref}/update-stoparea-from-okina/{stopId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response updateStopareaFromOkina(@PathParam("ref") String ref,
+											   @PathParam("stopId") Long stopId) {
+		try {
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			Referential referential = new Referential();
+			context.put("ref", ref);
+			context.put("stopId", stopId);
+			context.put(REFERENTIAL, referential);
+
+				ContextHolder.setContext(ref);
+				Command command = CommandFactory.create(new InitialContext(), UpdateStopareaFromOkinaCommand.class.getName());
+				command.execute(context);
+				return Response.ok().build();
+		} catch (Exception e) {
+			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
+		}
+		finally {
+			ContextHolder.setContext(null);
 		}
 	}
 

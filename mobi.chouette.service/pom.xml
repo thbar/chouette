@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>4.0.3-MOSAIC_SNAPSHOT</version>
+    <version>4.1.0_MOSAIC-SNAPSHOT</version>
 
   </parent>
   <artifactId>mobi.chouette.service</artifactId>
@@ -70,9 +70,8 @@
       </dependency>
 
        <dependency>
-           <groupId>org.entur.helpers</groupId>
-           <artifactId>gcp-storage</artifactId>
-           <version>${rutebanken.helpers.version}</version>
+           <groupId>com.okina.helpers</groupId>
+           <artifactId>aws-storage</artifactId>
            <exclusions>
                <exclusion>
                    <groupId>javax.servlet</groupId>
@@ -86,7 +85,46 @@
                    <groupId>com.google.protobuf</groupId>
                    <artifactId>protobuf-lite</artifactId>
                </exclusion>
+               <exclusion>
+                   <groupId>com.fasterxml.jackson.core</groupId>
+                   <artifactId>jackson-databind</artifactId>
+               </exclusion>
            </exclusions>
+       </dependency>
+
+       <dependency>
+           <groupId>com.okina.helpers</groupId>
+           <artifactId>gcp-storage</artifactId>
+           <exclusions>
+               <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>io.netty</groupId>
+                   <artifactId>netty-codec-http2</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>com.google.protobuf</groupId>
+                   <artifactId>protobuf-lite</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>com.fasterxml.jackson.core</groupId>
+                   <artifactId>jackson-databind</artifactId>
+               </exclusion>
+
+           </exclusions>
+       </dependency>
+
+       <dependency>
+           <groupId>org.apache.httpcomponents</groupId>
+           <artifactId>httpclient</artifactId>
+           <version>4.5.5</version>
+       </dependency>
+        <dependency>
+           <groupId>org.apache.httpcomponents</groupId>
+           <artifactId>httpcore</artifactId>
+           <version>4.4.13</version>
        </dependency>
 
 
@@ -127,12 +165,24 @@
 		<artifactId>joda-time</artifactId>
 		</dependency>
        <dependency>
-           <groupId>org.entur.helpers</groupId>
+           <groupId>com.okina.helpers</groupId>
            <artifactId>calendar-helper</artifactId>
+           <exclusions>
+               <exclusion>
+                   <groupId>com.fasterxml.jackson.core</groupId>
+                   <artifactId>jackson-databind</artifactId>
+               </exclusion>
+           </exclusions>
        </dependency>
        <dependency>
-           <groupId>org.entur.helpers</groupId>
+           <groupId>com.okina.helpers</groupId>
            <artifactId>hazelcast-helper</artifactId>
+           <exclusions>
+               <exclusion>
+                   <groupId>com.fasterxml.jackson.core</groupId>
+                   <artifactId>jackson-databind</artifactId>
+               </exclusion>
+           </exclusions>
        </dependency>
       <!-- Modules -->
       <dependency>

@@ -5,9 +5,7 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.MappingHastusZdepDAO;
-import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.model.MappingHastusZdep;
-import mobi.chouette.model.StopArea;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,7 +20,6 @@ import javax.naming.NamingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -35,9 +32,6 @@ public class MappingZdepHastusPlageCommand implements Command {
 	public static final String COMMAND = "MappingZdepHastusPlageCommand";
 
 	@EJB
-	private StopAreaDAO stopAreaDAO;
-
-	@EJB
 	private MappingHastusZdepDAO mappingHastusZdepDAO;
 
 	@Override
@@ -48,7 +42,7 @@ public class MappingZdepHastusPlageCommand implements Command {
 		final Map<String, InputStream> inputStreamsByName = (Map<String, InputStream>) context.get("inputStreamByName");
 
 		String inputStreamName = selectDataInputStreamName(inputStreamsByName);
-		String hastus = null;
+		String hastusOriginal = null;
 		String zdep;
 
 		if (inputStreamName != null) {
@@ -59,7 +53,11 @@ public class MappingZdepHastusPlageCommand implements Command {
 				// entête
 				if(cpt < headerNbLine) {
 					cpt++;
-					continue;
+					if(validateHeader(csvRecord)) {
+						continue;
+					} else {
+						return ERROR;
+					}
 				}
 
 				if(csvRecord.size() == 0) {
@@ -69,7 +67,7 @@ public class MappingZdepHastusPlageCommand implements Command {
 				zdep = csvRecord.get(0);
 				if(zdep == null || zdep.length() == 0) continue;
 
-				if(csvRecord.size() > 1) hastus = csvRecord.get(1);
+				if(csvRecord.size() > 1) hastusOriginal = csvRecord.get(1);
 
 				Optional<MappingHastusZdep> daoByZdep = mappingHastusZdepDAO.findByZdep(zdep);
 				if (daoByZdep.isPresent()) {
@@ -77,24 +75,7 @@ public class MappingZdepHastusPlageCommand implements Command {
 					continue;
 				}
 
-				GetObjectIdAndStopAreaFromHastus getObjectIdAndStopAreaFromHastus = new GetObjectIdAndStopAreaFromHastus(hastus).invoke();
-				String objectId = getObjectIdAndStopAreaFromHastus.getObjectId();
-				StopArea stopArea = getObjectIdAndStopAreaFromHastus.getStopArea();
-				if(stopArea != null){
-					if(stopArea.getMappingHastusZdep() != null){
-						// On checke que c'est la bonne plage
-						if(!stopArea.getMappingHastusZdep().getZdep().equals(zdep)){
-							throw new Exception("INVALID_ZDEP_MAPPING");
-						}
-					} else {
-						// On attache la zdep
-						MappingHastusZdep hastusZdep = createMapping(zdep, hastus, objectId);
-						stopArea.setMappingHastusZdep(hastusZdep);
-						stopAreaDAO.update(stopArea);
-					}
-				} else {
-					createMapping(zdep, hastus, null);
-				}
+				createMapping(zdep, hastusOriginal);
 			}
 			result = SUCCESS;
 		}
@@ -102,12 +83,23 @@ public class MappingZdepHastusPlageCommand implements Command {
 		return result;
 	}
 
-	private MappingHastusZdep createMapping(String zdep, String hastus, String objectId) {
+	private boolean validateHeader(CSVRecord csvRecord) {
+		if(!csvRecord.get((0)).toLowerCase().equals("idfcod")){
+			return ERROR;
+		}
+		if(csvRecord.size() == 1) return SUCCESS;
+		if(!csvRecord.get((1)).toLowerCase().equals("idfarr")){
+			return ERROR;
+		}
+		return SUCCESS;
+	}
+
+	private MappingHastusZdep createMapping(String zdep, String hastusoriginal) {
 		MappingHastusZdep mappingHastusZdep = new MappingHastusZdep();
 		mappingHastusZdep.setReferential(ContextHolder.getContext());
 		mappingHastusZdep.setZdep(zdep);
-		mappingHastusZdep.setHastusOriginal(hastus);
-		mappingHastusZdep.setHastusChouette(objectId);
+		mappingHastusZdep.setHastusOriginal(hastusoriginal);
+		mappingHastusZdep.setHastusChouette(null);
 		mappingHastusZdepDAO.create(mappingHastusZdep);
 		return mappingHastusZdep;
 	}
@@ -144,47 +136,5 @@ public class MappingZdepHastusPlageCommand implements Command {
 
 	static {
 		CommandFactory.factories.put(MappingZdepHastusPlageCommand.class.getName(), new DefaultCommandFactory());
-	}
-
-	private class GetObjectIdAndStopAreaFromHastus {
-		private String hastus;
-		private String objectId;
-		private StopArea stopArea;
-
-		public GetObjectIdAndStopAreaFromHastus(String hastus) {
-			this.hastus = hastus;
-		}
-
-		public String getObjectId() {
-			return objectId;
-		}
-
-		public StopArea getStopArea() {
-			return stopArea;
-		}
-
-		public GetObjectIdAndStopAreaFromHastus invoke() {
-			if(hastus == null) return this;
-
-			objectId = ContextHolder.getContext().toUpperCase() + ":BoardingPosition:" + hastus;
-			stopArea = stopAreaDAO.findByObjectId(objectId);
-			if(stopArea != null) return this;
-
-			objectId = ContextHolder.getContext().toUpperCase() + ":Quay:" + hastus;
-			stopArea = stopAreaDAO.findByObjectId(objectId);
-			if(stopArea != null) return this;
-
-			objectId = ContextHolder.getContext().toUpperCase() + ":CommercialStopPoint:" + hastus;
-			stopArea = stopAreaDAO.findByObjectId(objectId);
-			if(stopArea != null) return this;
-
-			objectId = ContextHolder.getContext().toUpperCase() + ":StopPlace:" + hastus;
-			stopArea = stopAreaDAO.findByObjectId(objectId);
-			if(stopArea != null) return this;
-
-			objectId = ContextHolder.getContext().toUpperCase() + ":ITL:" + hastus;
-			stopArea = stopAreaDAO.findByObjectId(objectId);
-			return this;
-		}
 	}
 }

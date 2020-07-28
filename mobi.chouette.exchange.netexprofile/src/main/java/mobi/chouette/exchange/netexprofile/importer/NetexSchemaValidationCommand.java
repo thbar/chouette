@@ -158,7 +158,8 @@ public class NetexSchemaValidationCommand implements Command, Constant {
 			
 			try {
 				// validate xml file
-				NetexVersion schemaVersion = importer.detectNetexSchemaVersion(file);
+//				NetexVersion schemaVersion = importer.detectNetexSchemaVersion(file);
+				NetexVersion schemaVersion = NetexVersion.v1_0_9;
 				if(schemaVersion == null) {
 					schemaVersion = NeTExValidator.LATEST;
 					log.warn("Could not detect schema version for file "+file.getName()+", defaulting to latest ("+schemaVersion+")");

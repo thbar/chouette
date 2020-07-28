@@ -10,6 +10,7 @@ import mobi.chouette.common.chain.Chain;
 import mobi.chouette.common.chain.ChainCommand;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.common.parallel.ParallelExecutionCommand;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
@@ -117,18 +118,17 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 			List<Path> allFilePaths = FileUtil.listFiles(path, "*.xml", ".*.xml");
 			Collections.sort(allFilePaths);
 			for (Path p : allFilePaths) {
-				reporter.setFileState(context, p.getFileName().toString(), IO_TYPE.INPUT, ActionReporter.FILE_STATE.IGNORED);
+				reporter.setFileState(context, p.getFileName().toString(), IO_TYPE.INPUT, ActionReporter.FILE_STATE.OK);
 			}
 			context.put(NETEX_FILE_PATHS, allFilePaths);
 
 			// schema validation
-
-			/*if (parameters.isValidateAgainstSchema()) {
+			if (parameters.isValidateAgainstSchema()) {
 				NetexSchemaValidationCommand schemaValidation = (NetexSchemaValidationCommand) CommandFactory.create(initialContext,
 						NetexSchemaValidationCommand.class.getName());
 
 				mainChain.add(schemaValidation);
-			}*/
+			}
 			// common file parsing
 
 			List<Path> commonFilePaths = allFilePaths.stream().filter(
@@ -155,10 +155,10 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 				commonFileChain.add(initializer);
 
 				// profile validation
-				/*if(parameters.isValidateAgainstProfile()) {
+				if(parameters.isValidateAgainstProfile()) {
 					Command validator = CommandFactory.create(initialContext, NetexValidationCommand.class.getName());
 					commonFileChain.add(validator);
-				}*/
+				}
 				NetexCommonFilesParserCommand commonFilesParser = (NetexCommonFilesParserCommand) CommandFactory.create(initialContext,
 						NetexCommonFilesParserCommand.class.getName());
 				commonFileChain.add(commonFilesParser);
@@ -178,7 +178,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 			// profile validation
 			if (parameters.isValidateAgainstProfile()) {
 
-				/*ParallelExecutionCommand lineValidationCommands = (ParallelExecutionCommand) CommandFactory.create(initialContext, ParallelExecutionCommand.class.getName());
+				ParallelExecutionCommand lineValidationCommands = (ParallelExecutionCommand) CommandFactory.create(initialContext, ParallelExecutionCommand.class.getName());
 				if (lineValidationTimeoutSeconds != null) {
 					lineValidationCommands.setTimeoutSeconds(lineValidationTimeoutSeconds);
 				}
@@ -202,7 +202,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 					Command validator = CommandFactory.create(initialContext, NetexValidationCommand.class.getName());
 					lineChain.add(validator);
 
-				}*/
+				}
 			}
 
 			if (withDao && !parameters.isNoSave()) {
@@ -240,8 +240,8 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 					}
 					if (level3validation) {
 						// add validation
-						/*Command validate = CommandFactory.create(initialContext, ImportedLineValidatorCommand.class.getName());
-						lineChain.add(validate);*/
+						Command validate = CommandFactory.create(initialContext, ImportedLineValidatorCommand.class.getName());
+						lineChain.add(validate);
 					}
 				}
 			}
@@ -267,7 +267,7 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 
 			if (level3validation) {
 				// add shared data validation
-				//commands.add(CommandFactory.create(initialContext, SharedDataValidatorCommand.class.getName()));
+				 commands.add(CommandFactory.create(initialContext, SharedDataValidatorCommand.class.getName()));
 			}
 			if (!CollectionUtils.isEmpty(parameters.getGenerateMissingRouteSectionsForModes())) {
 				commands.add(CommandFactory.create(initialContext, GenerateRouteSectionsCommand.class.getName()));
@@ -300,6 +300,11 @@ public class NetexImporterProcessingCommands implements ProcessingCommands, Cons
 			throw new RuntimeException("unable to call factories");
 		}
 		return commands;
+	}
+
+	@Override
+	public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+		return new ArrayList<>();
 	}
 
 }

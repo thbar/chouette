@@ -26,7 +26,7 @@ import static mobi.chouette.exchange.validation.report.ValidationReporter.RESULT
 public class IDFMLineNetexProfileValidatorTest {
 
     @Test
-    public void testValidateSimpleFile() throws Exception {
+    public void testValidateLineFile() throws Exception {
         NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
 
         Context context = createContext(importer);
@@ -35,11 +35,11 @@ public class IDFMLineNetexProfileValidatorTest {
         context.put(Constant.VALIDATION_REPORT, vr);
 
         Set<Codespace> validCodespaces = new HashSet<>();
-        Codespace validCodespace = createCodespace(1L, "SQYBUS", "http://ratp.mosaic.pro/sqybus");
+        Codespace validCodespace = createCodespace(1L, "PERRIER", "http://ratp.mosaic.pro/sqybus");
         validCodespaces.add(validCodespace);
         context.put(Constant.NETEX_VALID_CODESPACES, validCodespaces);
 
-        File file = new File("src/test/data/idfm/offre_C00535_448.xml");
+        File file = new File("src/test/data/idfm/offre_C00482_3615.xml");
         XdmNode dom = importer.parseFileToXdmNode(file, new HashSet<>());
         PublicationDeliveryStructure lineDeliveryStructure = importer.unmarshal(file, new HashSet<>());
 

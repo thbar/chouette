@@ -66,7 +66,7 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
     static void writeScheduledStopPointsElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
         try {
-            for (ScheduledStopPoint scheduledStopPoint : exportableNetexData.getSharedScheduledStopPoints().values()) {
+            for (ScheduledStopPoint scheduledStopPoint : exportableNetexData.getScheduledStopPoints().values()) {
                 marshaller.marshal(netexFactory.createScheduledStopPoint(scheduledStopPoint), writer);
             }
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
     static void writePassengerStopAssignmentsElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
         try {
-            for (PassengerStopAssignment stopAssignment : exportableNetexData.getSharedStopAssignments().values()) {
+            for (PassengerStopAssignment stopAssignment : exportableNetexData.getStopAssignments().values()) {
                 marshaller.marshal(netexFactory.createPassengerStopAssignment(stopAssignment), writer);
             }
         } catch (Exception e) {
@@ -86,8 +86,8 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
     static void writeDestinationDisplaysElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
         try {
-            if (exportableNetexData.getSharedDestinationDisplays().values().size() > 0) {
-                for (DestinationDisplay destinationDisplay : exportableNetexData.getSharedDestinationDisplays().values()) {
+            if (exportableNetexData.getDestinationDisplays().values().size() > 0) {
+                for (DestinationDisplay destinationDisplay : exportableNetexData.getDestinationDisplays().values()) {
                     marshaller.marshal(netexFactory.createDestinationDisplay(destinationDisplay), writer);
                 }
             }

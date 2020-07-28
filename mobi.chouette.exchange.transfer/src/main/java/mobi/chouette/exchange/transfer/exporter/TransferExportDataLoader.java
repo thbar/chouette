@@ -4,10 +4,14 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.AgencyDAO;
+import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.transfer.Constant;
+import mobi.chouette.model.Agency;
+import mobi.chouette.model.FeedInfo;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
@@ -33,6 +37,9 @@ public class TransferExportDataLoader implements Command, Constant {
 	public static final String COMMAND = "TransferExporterDataLoader";
 
 	@EJB
+	private AgencyDAO agencyDAO;
+
+	@EJB
 	private LineDAO lineDAO;
 
 	@EJB
@@ -41,6 +48,9 @@ public class TransferExportDataLoader implements Command, Constant {
 	@EJB
 	private OperatorDAO operatorDAO;
 
+	@EJB
+	private FeedInfoDAO feedInfoDAO;
+
 	@PersistenceContext(unitName = "referential")
 	private EntityManager em;
 
@@ -48,12 +58,16 @@ public class TransferExportDataLoader implements Command, Constant {
 	@TransactionTimeout(value = 2, unit = TimeUnit.HOURS)
 	public boolean execute(Context context) throws Exception {
 
+		List<Agency> agenciesToTransfer = prepareAgencies();
+		context.put(AGENCIES, agenciesToTransfer);
 		List<Line> lineToTransfer = prepareLines(context);
 		context.put(LINES, lineToTransfer);
 	    List<StopArea> stopAreaToTransfer = prepareStopAreas(context);
 		context.put(STOP_AREAS, stopAreaToTransfer);
 		List<Operator> operatorToTransfer = prepareOperators(context);
 		context.put(OPERATORS, operatorToTransfer);
+		List<FeedInfo> feedInfosToTransfer = prepareFeedInfos();
+		context.put(FEED_INFOS, feedInfosToTransfer);
 		return true;
 	}
 
@@ -130,6 +144,40 @@ public class TransferExportDataLoader implements Command, Constant {
 
 		em.clear();
 		return operators;
+	}
+
+	private List<FeedInfo> prepareFeedInfos() {
+		if (!em.isJoinedToTransaction()) {
+			throw new RuntimeException("No transaction");
+		}
+
+		log.info("Loading all feed infos...");
+		List<FeedInfo> feedInfos = feedInfoDAO.findAll();
+
+		log.info("Removing Hibernate proxies");
+		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
+		feedInfos = deProxy.deepDeproxy(feedInfos);
+		log.info("Removing Hibernate proxies completed");
+
+		em.clear();
+		return feedInfos;
+	}
+
+	private List<Agency> prepareAgencies() {
+		if (!em.isJoinedToTransaction()) {
+			throw new RuntimeException("No transaction");
+		}
+
+		log.info("Loading all agencies...");
+		List<Agency> agencies = agencyDAO.findAll();
+
+		log.info("Removing Hibernate proxies");
+		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
+		agencies = deProxy.deepDeproxy(agencies);
+		log.info("Removing Hibernate proxies completed");
+
+		em.clear();
+		return agencies;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
