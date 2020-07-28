@@ -1,11 +1,19 @@
 package mobi.chouette.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.joda.time.LocalTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,16 +24,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.joda.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chouette VehicleJourneyAtStop : passing time on stops
@@ -77,9 +77,8 @@ public class VehicleJourneyAtStop extends NeptuneIdentifiedObject {
 	 */
 	@Getter
 	@Setter
-//	@Enumerated(EnumType.STRING)
-	@Transient
-//	@Column(name = "boarding_alighting_possibility")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "boardingalightingpossibility")
 	private BoardingAlightingPossibilityEnum boardingAlightingPossibility;
 
 	/**

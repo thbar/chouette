@@ -168,20 +168,20 @@ public class LineRegisterCommand implements Command {
 				}
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
-	
+
 				if (optimized) {
 					Monitor wMonitor = MonitorFactory.start("prepareCopy");
 					StringWriter buffer = new StringWriter(1024);
 					final List<String> list = new ArrayList<String>(referential.getVehicleJourneys().keySet());
 					for (VehicleJourney item : referential.getVehicleJourneys().values()) {
 						VehicleJourney vehicleJourney = cache.getVehicleJourneys().get(item.getObjectId());
-	
+
 						List<VehicleJourneyAtStop> vehicleJourneyAtStops = item.getVehicleJourneyAtStops();
 						for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourneyAtStops) {
-	
+
 							StopPoint stopPoint = cache.getStopPoints().get(
 									vehicleJourneyAtStop.getStopPoint().getObjectId());
-	
+
 							write(buffer, vehicleJourney, stopPoint, vehicleJourneyAtStop);
 						}
 					}
@@ -325,6 +325,12 @@ public class LineRegisterCommand implements Command {
 		buffer.write(Integer.toString(vehicleJourneyAtStop.getArrivalDayOffset()));
 		buffer.append(SEP);
 		buffer.write(Integer.toString(vehicleJourneyAtStop.getDepartureDayOffset()));
+		buffer.append(SEP);
+		if (vehicleJourneyAtStop.getBoardingAlightingPossibility() != null) {
+			buffer.write(vehicleJourneyAtStop.getBoardingAlightingPossibility().name());
+		} else {
+			buffer.write(NULL);
+		}
 
 		buffer.append('\n');
 
