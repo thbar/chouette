@@ -32,11 +32,13 @@ import mobi.chouette.model.Line;
 import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.Timetable;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -103,6 +105,53 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		} else {
 			endDate = startDate.plusDays(30);
 		}
+
+
+		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
+			if(t.getStartOfPeriod() == null || t.getEndOfPeriod() == null) {
+				List<org.joda.time.LocalDate> effectiveDates = t.getEffectiveDates();
+				if(effectiveDates.size() > 0) {
+					Collections.sort(effectiveDates);
+					if(t.getStartOfPeriod() == null) {
+						t.setStartOfPeriod(effectiveDates.get(0));
+					}
+					if(t.getEndOfPeriod() == null) {
+						t.setEndOfPeriod(effectiveDates.get(effectiveDates.size()-1));
+					}
+				} else {
+					if(t.getStartOfPeriod() != null && t.getEndOfPeriod() == null) {
+						t.setEndOfPeriod(t.getStartOfPeriod());
+					} else if(t.getEndOfPeriod() != null && t.getStartOfPeriod() == null) {
+						t.setStartOfPeriod(t.getEndOfPeriod());
+					} else {
+						// Both empty
+						t.setStartOfPeriod(org.joda.time.LocalDate.now());
+						t.setEndOfPeriod(org.joda.time.LocalDate.now());
+					}
+				}
+			}
+		}
+
+		LocalDate maxDate = null;
+		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
+			if(maxDate == null){
+				maxDate = t.getEndOfPeriod();
+			} else if(maxDate.isBefore(t.getEndOfPeriod())){
+				maxDate = t.getEndOfPeriod();
+			}
+		}
+
+		LocalDate minDate = null;
+		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
+			if(minDate == null){
+				minDate = t.getStartOfPeriod();
+			} else if(minDate.isAfter(t.getStartOfPeriod())){
+				minDate = t.getStartOfPeriod();
+			}
+		}
+
+		if(minDate.isAfter(startDate)) startDate = minDate;
+		if(maxDate.isBefore(endDate)) endDate = maxDate;
 
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		List<StopArea> zderStops = new ArrayList<>();

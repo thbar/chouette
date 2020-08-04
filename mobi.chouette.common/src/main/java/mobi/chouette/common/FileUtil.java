@@ -4,6 +4,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -201,16 +202,17 @@ public class FileUtil {
 	}
 
 	public static void mergeFilesInPath(String path, String filename) {
-		FileUtil.mergeFilesInPath(path, filename, null);
+		FileUtil.mergeFilesInPath(path, filename, null, true);
 	}
 
 
-	public static void mergeFilesInPath(String path, String filename, String oneOccurence) {
+	public static void mergeFilesInPath(String path, String filename, String oneOccurence, boolean deleteOldFiles) {
 		boolean oneOccurenceIsFound = false;
 		File directoryToMerge = new File(path);
 		List<File> fileList = new ArrayList<File>();
 		getAllFiles(directoryToMerge, fileList);
 		fileList.sort(Comparator.comparing(File::getName));
+		List<File> filesToDel = new ArrayList<File>();
 
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(filename);
@@ -229,8 +231,13 @@ public class FileUtil {
 					}
 					fileInputStream.close();
 				}
+				if(deleteOldFiles) filesToDel.add(file);
 			}
 			fileOutputStream.close();
+
+			for (File file : filesToDel) {
+				FileUtils.forceDelete(file);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
