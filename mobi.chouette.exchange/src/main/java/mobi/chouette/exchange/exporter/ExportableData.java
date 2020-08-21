@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import mobi.chouette.model.AccessLink;
 import mobi.chouette.model.AccessPoint;
-import mobi.chouette.model.Agency;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.Footnote;
@@ -36,9 +35,6 @@ public class ExportableData {
 	@Getter
 	@Setter
 	private Line line;
-	@Getter
-	@Setter
-	private Agency agency;
 	@Getter
 	@Setter
 	private Set<Company> companies = new HashSet<>();
