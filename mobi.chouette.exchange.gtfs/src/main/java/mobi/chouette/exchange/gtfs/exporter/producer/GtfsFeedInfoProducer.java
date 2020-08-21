@@ -22,7 +22,7 @@ public class GtfsFeedInfoProducer extends AbstractProducer {
         }
 
         if (feedInfo.getFeedPublisherName() == null) {
-            feedInfo.setFeedPublisherName("MOSAIC");
+            feedInfo.setFeedPublisherName("RATP Dev");
         }
 
         if (feedInfo.getFeedPublisherUrl() == null) {
