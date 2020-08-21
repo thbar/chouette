@@ -105,9 +105,14 @@ public class GtfsAgencyProducer extends AbstractProducer
 		  agency.setAgencyPhone(createPhoneFromProviderDefaults(neptuneObject));
 	  }
 
-      // unmanaged attributes
-      agency.setAgencyLang(null);
-      agency.setAgencyFareUrl(null);
+      agency.setAgencyLang(neptuneObject.getLang());
+
+      String fareUrl = sanitizeUrl(getValue(neptuneObject.getFareUrl()));
+      try {
+          agency.setAgencyFareUrl(new URL(fareUrl));
+      } catch (MalformedURLException e) {
+          log.error("malformed fare URL " + fareUrl);
+      }
       
       try
       {
