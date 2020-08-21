@@ -4,13 +4,11 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.AgencyDAO;
 import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.transfer.Constant;
-import mobi.chouette.model.Agency;
 import mobi.chouette.model.FeedInfo;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Operator;
@@ -37,9 +35,6 @@ public class TransferExportDataLoader implements Command, Constant {
 	public static final String COMMAND = "TransferExporterDataLoader";
 
 	@EJB
-	private AgencyDAO agencyDAO;
-
-	@EJB
 	private LineDAO lineDAO;
 
 	@EJB
@@ -58,8 +53,6 @@ public class TransferExportDataLoader implements Command, Constant {
 	@TransactionTimeout(value = 2, unit = TimeUnit.HOURS)
 	public boolean execute(Context context) throws Exception {
 
-		List<Agency> agenciesToTransfer = prepareAgencies();
-		context.put(AGENCIES, agenciesToTransfer);
 		List<Line> lineToTransfer = prepareLines(context);
 		context.put(LINES, lineToTransfer);
 	    List<StopArea> stopAreaToTransfer = prepareStopAreas(context);
@@ -161,23 +154,6 @@ public class TransferExportDataLoader implements Command, Constant {
 
 		em.clear();
 		return feedInfos;
-	}
-
-	private List<Agency> prepareAgencies() {
-		if (!em.isJoinedToTransaction()) {
-			throw new RuntimeException("No transaction");
-		}
-
-		log.info("Loading all agencies...");
-		List<Agency> agencies = agencyDAO.findAll();
-
-		log.info("Removing Hibernate proxies");
-		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
-		agencies = deProxy.deepDeproxy(agencies);
-		log.info("Removing Hibernate proxies completed");
-
-		em.clear();
-		return agencies;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {
