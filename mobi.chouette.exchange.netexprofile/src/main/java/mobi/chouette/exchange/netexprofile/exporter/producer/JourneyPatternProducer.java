@@ -12,6 +12,7 @@ import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import net.opengis.gml._3.LineStringType;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,6 +22,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.createUniqueId;
@@ -89,19 +91,19 @@ public class JourneyPatternProducer extends NetexProducer implements NetexEntity
 					stopPointInJourneyPattern.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(stopPointRefStruct));
 				}
 
-				BoardingPossibilityEnum forBoarding = stopPoint.getForBoarding();
-				AlightingPossibilityEnum forAlighting = stopPoint.getForAlighting();
-
-				if (AlightingPossibilityEnum.forbidden.equals(forAlighting)){
-					stopPointInJourneyPattern.setForAlighting(false);
-				}
-				if (BoardingPossibilityEnum.forbidden.equals(forBoarding)) {
-					stopPointInJourneyPattern.setForBoarding(false);
-				}
-
-				if (BoardingPossibilityEnum.request_stop.equals(forBoarding) || AlightingPossibilityEnum.request_stop.equals(forAlighting)){
-					stopPointInJourneyPattern.setRequestStop(true);
-				}
+//				BoardingPossibilityEnum forBoarding = stopPoint.getForBoarding();
+//				AlightingPossibilityEnum forAlighting = stopPoint.getForAlighting();
+//
+//				if (AlightingPossibilityEnum.forbidden.equals(forAlighting)){
+//					stopPointInJourneyPattern.setForAlighting(false);
+//				}
+//				if (BoardingPossibilityEnum.forbidden.equals(forBoarding)) {
+//					stopPointInJourneyPattern.setForBoarding(false);
+//				}
+//
+//				if (BoardingPossibilityEnum.request_stop.equals(forBoarding) || AlightingPossibilityEnum.request_stop.equals(forAlighting)){
+//					stopPointInJourneyPattern.setRequestStop(true);
+//				}
 
 				stopPointInJourneyPattern.setOrder(BigInteger.valueOf(i + 1));
 

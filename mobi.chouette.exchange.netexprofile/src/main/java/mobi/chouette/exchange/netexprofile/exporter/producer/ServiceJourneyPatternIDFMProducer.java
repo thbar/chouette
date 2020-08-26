@@ -2,6 +2,7 @@ package mobi.chouette.exchange.netexprofile.exporter.producer;
 
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.StopPoint;
+import mobi.chouette.model.VehicleJourneyAtStop;
 import org.rutebanken.netex.model.DestinationDisplayRefStructure;
 import org.rutebanken.netex.model.MultilingualString;
 import org.rutebanken.netex.model.PointInLinkSequence_VersionedChildStructure;
@@ -14,6 +15,8 @@ import org.rutebanken.netex.model.StopPointInJourneyPattern;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
 
@@ -57,6 +60,48 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
             stopPointInJourneyPattern.setScheduledStopPointRef(netexFactory.createScheduledStopPointRef(scheduledStopPointRefStructure));
 
             pointInLinkSequence_versionedChildStructures.add(stopPointInJourneyPattern);
+
+            List<VehicleJourneyAtStop> vehicleJourneyAtStops =
+                    journeyPattern.getRoute().getJourneyPatterns()
+                            .stream()
+                            .flatMap(journeyPattern1 -> journeyPattern1.getVehicleJourneys()
+                                    .stream()
+                                    .flatMap(vehicleJourney -> vehicleJourney.getVehicleJourneyAtStops().stream()))
+                            .collect(Collectors.toList());
+
+            if(vehicleJourneyAtStops
+                    .stream()
+                    .noneMatch(vehicleJourneyAtStop -> vehicleJourneyAtStops
+                            .stream()
+                            .anyMatch(vehicleJourneyAtStop1 -> !vehicleJourneyAtStop1.getBoardingAlightingPossibility().equals(vehicleJourneyAtStop.getBoardingAlightingPossibility()) && vehicleJourneyAtStop1.getBoardingAlightingPossibility() != null)
+                    )){
+                switch (vehicleJourneyAtStops.get(0).getBoardingAlightingPossibility())
+                {
+                    case AlightOnly:
+                        stopPointInJourneyPattern.setForBoarding(false);
+                        stopPointInJourneyPattern.setForAlighting(true);
+                        break;
+                    case BoardOnly:
+                        stopPointInJourneyPattern.setForBoarding(true);
+                        stopPointInJourneyPattern.setForAlighting(false);
+                        break;
+                    case NeitherBoardOrAlight:
+                        stopPointInJourneyPattern.setForAlighting(false);
+                        stopPointInJourneyPattern.setForBoarding(false);
+                        break;
+                    case BoardAndAlightOnRequest:
+                    case BoardOnRequest:
+                    case AlightOnRequest:
+                        stopPointInJourneyPattern.setForBoarding(true);
+                        stopPointInJourneyPattern.setForAlighting(true);
+                        stopPointInJourneyPattern.setRequestStop(true);
+                        break;
+                }
+            }
+            else{
+                stopPointInJourneyPattern.setForBoarding(true);
+                stopPointInJourneyPattern.setForAlighting(true);
+            }
 
         }
 
