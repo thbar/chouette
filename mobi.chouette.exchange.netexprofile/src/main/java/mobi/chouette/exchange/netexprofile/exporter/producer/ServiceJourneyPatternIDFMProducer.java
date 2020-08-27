@@ -69,6 +69,8 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
                                     .flatMap(vehicleJourney -> vehicleJourney.getVehicleJourneyAtStops().stream()))
                             .collect(Collectors.toList());
 
+            // On vérifie ici que tous les BoardingAlightingPossibility des VehicleJourneyAtStops d'un même itinéraire (et donc de tous les parcours et courses appartenant à cet itinéraire) sont identiques et non null
+
             if(vehicleJourneyAtStops
                     .stream()
                     .noneMatch(vehicleJourneyAtStop -> vehicleJourneyAtStops
