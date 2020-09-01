@@ -152,13 +152,19 @@ public class FileUtil {
 		try {
 			FileOutputStream fos = new FileOutputStream(zipName);
 			ZipOutputStream zos = new ZipOutputStream(fos);
+			String folder = "";
+			if(!type.equals("gtfs")){
+				folder = zipName.substring(zipName.lastIndexOf("/")+1).replace(".zip", "");
+				zos.putNextEntry(new ZipEntry(folder + "/"));
+			}
 
 			for (File file : fileList) {
 				if (!file.isDirectory()) { // we only zip files, not directories
-					addToZip(path, file, zos, zipName, type);
+					addToZip(path, file, zos, folder);
 				}
 			}
-
+			zos.flush();
+			fos.flush();
 			zos.close();
 			fos.close();
 		} catch (FileNotFoundException e) {
@@ -168,26 +174,17 @@ public class FileUtil {
 		}
 	}
 
-	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String zipName, String type) throws FileNotFoundException,
+	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String folder) throws FileNotFoundException,
 			IOException {
 
 		FileInputStream fis = new FileInputStream(file);
-
-		zipName = zipName.substring(zipName.lastIndexOf("/"));
-		String folderNameInZip = zipName.replace(".zip", "");
 
 		// we want the zipEntry's path to be a relative path that is relative
 		// to the directory being zipped, so chop off the rest of the path
 		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
 				file.getCanonicalPath().length());
 
-		ZipEntry zipEntry;
-		if(type.equals("gtfs")){
-			zipEntry = new ZipEntry(zipFilePath);
-		}
-		else{
-			zipEntry = new ZipEntry(folderNameInZip + "/" + zipFilePath);
-		}
+		ZipEntry zipEntry = new ZipEntry(folder + "/" + zipFilePath);
 		zos.putNextEntry(zipEntry);
 
 		byte[] bytes = new byte[1024];
@@ -195,7 +192,7 @@ public class FileUtil {
 		while ((length = fis.read(bytes)) >= 0) {
 			zos.write(bytes, 0, length);
 		}
-
+		zos.flush();
 		zos.closeEntry();
 		fis.close();
 	}
