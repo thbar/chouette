@@ -174,27 +174,34 @@ public class FileUtil {
 		}
 	}
 
-	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String folder) throws FileNotFoundException,
-			IOException {
+	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String folder) throws FileNotFoundException, IOException {
 
-		FileInputStream fis = new FileInputStream(file);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
 
-		// we want the zipEntry's path to be a relative path that is relative
-		// to the directory being zipped, so chop off the rest of the path
-		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
-				file.getCanonicalPath().length());
+			// we want the zipEntry's path to be a relative path that is relative
+			// to the directory being zipped, so chop off the rest of the path
+			String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
+					file.getCanonicalPath().length());
 
-		ZipEntry zipEntry = new ZipEntry(folder + "/" + zipFilePath);
-		zos.putNextEntry(zipEntry);
+			ZipEntry zipEntry = new ZipEntry(folder + "/" + zipFilePath);
+			zos.putNextEntry(zipEntry);
 
-		byte[] bytes = new byte[1024];
-		int length;
-		while ((length = fis.read(bytes)) >= 0) {
-			zos.write(bytes, 0, length);
+			byte[] bytes = new byte[1024];
+			int length;
+			while ((length = fis.read(bytes)) >= 0) {
+				zos.write(bytes, 0, length);
+			}
+		} catch(FileNotFoundException e){
+			throw e;
+		} catch(IOException e) {
+			throw e;
+		} finally {
+			zos.flush();
+			zos.closeEntry();
+			if(fis != null) fis.close();
 		}
-		zos.flush();
-		zos.closeEntry();
-		fis.close();
 	}
 
 	public static void mergeFilesInPath(String path, String filename) {
