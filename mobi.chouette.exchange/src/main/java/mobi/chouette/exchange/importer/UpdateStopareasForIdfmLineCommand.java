@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Log4j
@@ -93,18 +92,22 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
 			});
 
-
-            Referential referential = (Referential) context.get(REFERENTIAL);
-			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
-
+			// maj des arrêts dans tiamat
+			Referential referential = (Referential) context.get(REFERENTIAL);
+			CommandCallableToUpdateTiamat callableTiamat = new CommandCallableToUpdateTiamat();
+			callableTiamat.referential = referential;
+			areas.forEach(stopArea -> stopArea.getContainedStopAreas());
+			callableTiamat.areas = areas;
+			callableTiamat.contextBD = ContextHolder.getContext();
+			callableTiamat.ref = (String) context.get("ref");
+			executor.submit(callableTiamat);
 
 			//maj des zdlr
-			CommandCallable callable = new CommandCallable();
+			CommandCallableToUpdateZDLr callableZDLr = new CommandCallableToUpdateZDLr();
 			Optional<Provider> provider = providerDAO.findBySchema(ContextHolder.getContext());
-			callable.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
-			callable.context = ContextHolder.getContext();
-			Future<Void> future = executor.submit(callable);
-			future.isDone();
+			callableZDLr.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+			callableZDLr.context = ContextHolder.getContext();
+			executor.submit(callableZDLr);
 
 			return SUCCESS;
 		} catch (Exception e){
@@ -116,7 +119,28 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 		}
 	}
 
-	private class CommandCallable implements Callable<Void> {
+	private class CommandCallableToUpdateTiamat implements Callable<Void> {
+		private String contextBD;
+		private String ref;
+		private Referential referential;
+		private List<StopArea> areas;
+
+		@Override
+		@TransactionAttribute(TransactionAttributeType.REQUIRED)
+		public Void call() throws Exception {
+			ContextHolder.setContext(this.contextBD);
+			Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineFutureCommand.class.getName());
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			context.put("future_referential", this.referential);
+			context.put("future_areas", this.areas);
+			context.put("ref", this.ref);
+
+			if(!command.execute(context)) throw new Exception(">> MAJ TIAMAT KO");
+			return null;
+		}
+	}
+
+	private class CommandCallableToUpdateZDLr implements Callable<Void> {
 		private String codeIdfm;
 		private String context;
 
