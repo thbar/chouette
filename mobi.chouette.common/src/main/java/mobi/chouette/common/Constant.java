@@ -38,6 +38,7 @@ public interface Constant {
 	public static final String CANCEL_ASKED = "cancel_asked";
 	public static final String COMMAND_CANCELLED = "command_cancelled";
 	public static final String CLEAR_TABLE_CATEGORIES_FOR_LINES = "clear_table_categoriesfor_lines";
+	public static final String CLEAR_FOR_IMPORT = "clear_for_import";
 
 	public static final String COLUMN_NUMBER = "column_number";
 	public static final String LINE_NUMBER = "line_number";

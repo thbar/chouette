@@ -150,17 +150,10 @@ public class CleanRepositoryCommand implements Command {
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		try {
-
-			companyDAO.truncate();
-
-			groupOfLineDAO.truncate();
 			journeyFrequencyDAO.truncate();
 			journeyPatternDAO.truncate();
-			lineDAO.truncate();
-			networkDAO.truncate();
 			routeDAO.truncate();
 			routeSectionDAO.truncate();
-			footnoteDAO.truncate();
 			brandingDAO.truncate();
 			stopPointDAO.truncate();
 			scheduledStopPointDAO.truncate();
@@ -172,14 +165,32 @@ public class CleanRepositoryCommand implements Command {
 			interchangeDAO.truncate();
 			routePointDAO.truncate();
 			flexibleServicePropertiesDAO.truncate();
-			bookingArrangementDAO.truncate();
-			contactStructureDAO.truncate();
+			//useless in MOSAIC
 			accessLinkDao.truncate();
 			accessPointDAO.truncate();
 			connectionLinkDAO.truncate();
-			stopAreaDAO.truncate();
 
-			mappingHastusZdepDAO.truncate();
+			// si import on conserve lignes et arrêts
+			// sinon
+			if(context == null || !context.containsKey(CLEAR_FOR_IMPORT) || context.get(CLEAR_FOR_IMPORT) != Boolean.TRUE) {
+				//
+				// lignes
+				contactStructureDAO.truncate();
+				groupOfLineDAO.truncate();
+				footnoteDAO.truncate();
+				lineDAO.truncate();
+				categoriesForLinesDAO.truncate();
+				bookingArrangementDAO.truncate();
+				networkDAO.truncate();
+				companyDAO.truncate();
+
+				// arrêts
+				stopAreaDAO.truncate();
+				mappingHastusZdepDAO.truncate();
+			} else {
+				context.remove(CLEAR_FOR_IMPORT);
+			}
+
 			if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
 				categoriesForLinesDAO.truncate();
 				operatorDAO.truncate();
