@@ -109,7 +109,7 @@ public class GtfsExtendedStopProducer extends
       }
       else
       {
-         stop.setWheelchairBoarding(null);
+         stop.setWheelchairBoarding(WheelchairBoardingType.NoInformation);
       }
       
       try

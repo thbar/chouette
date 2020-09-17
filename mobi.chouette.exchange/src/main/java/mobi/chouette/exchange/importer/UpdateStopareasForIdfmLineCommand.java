@@ -5,27 +5,38 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.MappingHastusZdepDAO;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.dao.StopPointDAO;
+import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
-import mobi.chouette.model.Line;
-import mobi.chouette.model.NeptuneIdentifiedObject;
+import mobi.chouette.model.MappingHastusZdep;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.util.Referential;
+import mobi.chouette.persistence.hibernate.ContextHolder;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Hibernate;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 @Log4j
@@ -44,10 +55,19 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	private StopPointDAO stopPointDAO;
 
 	@EJB
+	private ProviderDAO providerDAO;
+
+	@EJB
 	ScheduledStopPointDAO scheduledStopPointDAO;
+
+	@EJB
+	MappingHastusZdepDAO mappingHastusZdepDAO;
 
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
+
+	@Resource(lookup = "java:comp/DefaultManagedExecutorService")
+	ManagedExecutorService executor;
 
 	@Override
 	//@TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -72,11 +92,23 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
 			});
 
+			// maj des arrêts dans tiamat
+			Referential referential = (Referential) context.get(REFERENTIAL);
+			CommandCallableToUpdateTiamat callableTiamat = new CommandCallableToUpdateTiamat();
+			callableTiamat.referential = referential;
+			areas.forEach(stopArea -> stopArea.getContainedStopAreas());
+			callableTiamat.areas = areas;
+			callableTiamat.contextBD = ContextHolder.getContext();
+			callableTiamat.ref = (String) context.get("ref");
+			executor.submit(callableTiamat);
 
-            Referential referential = (Referential) context.get(REFERENTIAL);
-            //referential = initRefential(referential, areas);
+			//maj des zdlr
+			CommandCallableToUpdateZDLr callableZDLr = new CommandCallableToUpdateZDLr();
+			Optional<Provider> provider = providerDAO.findBySchema(ContextHolder.getContext());
+			callableZDLr.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+			callableZDLr.context = ContextHolder.getContext();
+			executor.submit(callableZDLr);
 
-			neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 			return SUCCESS;
 		} catch (Exception e){
 			if(e.getMessage().contains("MOSAIC_SQL_ERROR:")){
@@ -87,23 +119,51 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 		}
 	}
 
-	public Referential initRefential(Referential referential, List<StopArea> areas){
-		referential.setLines(lineDAO.findAll().stream().collect(Collectors.toMap(Line::getObjectId, l -> l)));
+	private class CommandCallableToUpdateTiamat implements Callable<Void> {
+		private String contextBD;
+		private String ref;
+		private Referential referential;
+		private List<StopArea> areas;
 
-		referential.setStopAreas(areas.stream().collect(Collectors.toMap(StopArea::getObjectId, l -> l)));
-		referential.setSharedStopAreas(areas
-				.stream()
-				.filter(sa -> sa.getParent() != null)
-				.map(StopArea::getParent)
-				.collect(Collectors.toMap(sa -> sa.getId().toString(), sa -> sa)));
+		@Override
+		@TransactionAttribute(TransactionAttributeType.REQUIRED)
+		public Void call() throws Exception {
+			ContextHolder.setContext(this.contextBD);
+			Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineFutureCommand.class.getName());
+			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
+			context.put("future_referential", this.referential);
+			context.put("future_areas", this.areas);
+			context.put("ref", this.ref);
 
-		referential.setStopPoints(stopPointDAO.findAll().stream().collect(Collectors.toMap(StopPoint::getObjectId, l -> l)));
+			if(!command.execute(context)) throw new Exception(">> MAJ TIAMAT KO");
+			return null;
+		}
+	}
 
-		referential.getSharedStopAreas().forEach((k, area) -> {
-			Hibernate.initialize(area.getContainedScheduledStopPoints());
-			area.getContainedScheduledStopPoints().forEach(sp -> Hibernate.initialize(sp.getStopPoints()));
-		});
-		return referential;
+	private class CommandCallableToUpdateZDLr implements Callable<Void> {
+		private String codeIdfm;
+		private String context;
+
+		@Override
+		@TransactionAttribute(TransactionAttributeType.REQUIRED)
+		public Void call() throws Exception {
+			ContextHolder.setContext(this.context);
+			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), this.codeIdfm);
+			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
+			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
+
+			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
+				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
+				if (byZdep.isPresent()) {
+					MappingHastusZdep mappingHastusZdep = byZdep.get();
+					mappingHastusZdep.setZder(zderZdlrPair.getLeft());
+					mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
+					mappingHastusZdepDAO.update(mappingHastusZdep);
+				}
+			});
+
+			return null;
+		}
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {

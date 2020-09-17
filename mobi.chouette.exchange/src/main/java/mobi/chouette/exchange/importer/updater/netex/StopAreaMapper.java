@@ -6,10 +6,13 @@ import mobi.chouette.model.type.LongLatTypeEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang3.StringUtils;
-import org.rutebanken.netex.model.*;
-
-import javax.swing.text.html.Option;
-import java.util.Optional;
+import org.rutebanken.netex.model.LimitationStatusEnumeration;
+import org.rutebanken.netex.model.LocationStructure;
+import org.rutebanken.netex.model.MultilingualString;
+import org.rutebanken.netex.model.Quay;
+import org.rutebanken.netex.model.Quays_RelStructure;
+import org.rutebanken.netex.model.StopPlace;
+import org.rutebanken.netex.model.Zone_VersionStructure;
 
 /**
  * Map from NeTEx to chouette model
@@ -65,15 +68,7 @@ public class StopAreaMapper {
                 // Same as parent
                 stopArea.setName(quay.getName().getValue());
             } else {
-                // Different than parent
-                if (stopPlace.getName() != null) {
-                    String value = "";
-                            if(stopPlace.getName() != null) {
-                                value += stopPlace.getName().getValue() + " / ";
-                            }
-                            value += quay.getName().getValue();
-                    stopArea.setName(value);
-                }
+                stopArea.setName(quay.getName().getValue());
                 stopArea.setRegistrationNumber(quay.getPublicCode());
             }
         }

@@ -35,7 +35,9 @@ public class CalendarIDFMProducer extends NetexProducer {
 
                 List<DayOfWeekEnumeration> dayOfWeekEnumerations = NetexProducerUtils.toDayOfWeekEnumerationIDFM(timetable.getDayTypes());
                 if (!dayOfWeekEnumerations.isEmpty()) {
-                    dayType.setProperties(createPropertiesOfDay_RelStructure(dayOfWeekEnumerations));
+                    if (timetable.getPeriods().stream().allMatch(period -> period.getStartDate().isBefore(period.getEndDate()))) {
+                        dayType.setProperties(createPropertiesOfDay_RelStructure(dayOfWeekEnumerations));
+                    }
                 }
 
                 exportableNetexData.getSharedDayTypes().put(netexDaytypeId, dayType);
@@ -45,29 +47,42 @@ public class CalendarIDFMProducer extends NetexProducer {
 
                 // Operating periods
                 for (int i = 0; i < timetable.getPeriods().size(); i++) {
-                    Period p = timetable.getPeriods().get(i);
-                    // Create Operating period
-                    String operatingPeriodId = netexDaytypeId.replace("DayType", "OperatingPeriod");
-                    OperatingPeriod operatingPeriod = new OperatingPeriod().withVersion(dayType.getVersion())
-                            .withId(operatingPeriodId)
-                            .withFromDate(TimeUtil.toLocalDateFromJoda(p.getStartDate()).atStartOfDay()).withToDate(TimeUtil.toLocalDateFromJoda(p.getEndDate()).atStartOfDay());
-                    if (!exportableNetexData.getSharedOperatingPeriods().containsKey(operatingPeriodId)) {
-                        exportableNetexData.getSharedOperatingPeriods().put(operatingPeriodId, operatingPeriod);
-                    }
-
-                    OperatingPeriodRefStructure operatingPeriodRef = netexFactory.createOperatingPeriodRefStructure();
-                    NetexProducerUtils.populateReference(operatingPeriod, operatingPeriodRef, true);
-                    operatingPeriodRef.setVersion("any");
-
-                    // Assign operatingperiod to daytype
+                    // Assign operatingperiod or date to daytype
                     String dayTypeAssignmentId = netexDaytypeId.replace("DayType", "DayTypeAssignment");
                     dayTypeAssignmentId = dayTypeAssignmentId.substring(0, dayTypeAssignmentId.indexOf(":LOC")) + uniqueID + ":LOC";
                     uniqueID++;
-                    DayTypeAssignment dayTypeAssignment = netexFactory.createDayTypeAssignment()
-                            .withId(dayTypeAssignmentId).withVersion(NETEX_DEFAULT_OBJECT_VERSION)
-                            .withOrder(BigInteger.valueOf(0)).withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef)).withOperatingPeriodRef(operatingPeriodRef);
-                    exportableNetexData.getSharedDayTypeAssignments().add(dayTypeAssignment);
+                    DayTypeAssignment dayTypeAssignment;
 
+                    Period p = timetable.getPeriods().get(i);
+                    if (p.getStartDate().isBefore(p.getEndDate())) {
+                        OperatingPeriodRefStructure operatingPeriodRef = netexFactory.createOperatingPeriodRefStructure();
+                        // Create Operating period
+                        String operatingPeriodId = netexDaytypeId.replace("DayType", "OperatingPeriod");
+                        OperatingPeriod operatingPeriod = new OperatingPeriod().withVersion(dayType.getVersion())
+                                .withId(operatingPeriodId)
+                                .withFromDate(TimeUtil.toLocalDateFromJoda(p.getStartDate()).atStartOfDay()).withToDate(TimeUtil.toLocalDateFromJoda(p.getEndDate()).atStartOfDay());
+                        if (!exportableNetexData.getSharedOperatingPeriods().containsKey(operatingPeriodId)) {
+                            exportableNetexData.getSharedOperatingPeriods().put(operatingPeriodId, operatingPeriod);
+                        }
+
+                        NetexProducerUtils.populateReference(operatingPeriod, operatingPeriodRef, true);
+                        operatingPeriodRef.setVersion("any");
+                        dayTypeAssignment = netexFactory.createDayTypeAssignment()
+                                .withId(dayTypeAssignmentId)
+                                .withVersion(NETEX_DEFAULT_OBJECT_VERSION)
+                                .withOrder(BigInteger.valueOf(0))
+                                .withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef))
+                                .withOperatingPeriodRef(operatingPeriodRef);
+                    }
+                    else{
+                        dayTypeAssignment = netexFactory.createDayTypeAssignment()
+                                .withId(dayTypeAssignmentId)
+                                .withVersion(NETEX_DEFAULT_OBJECT_VERSION)
+                                .withOrder(BigInteger.valueOf(0))
+                                .withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef))
+                                .withDate(TimeUtil.toLocalDateFromJoda(p.getStartDate()).atStartOfDay());
+                    }
+                    exportableNetexData.getSharedDayTypeAssignments().add(dayTypeAssignment);
                 }
 
                 for (CalendarDay day : timetable.getCalendarDays()) {
@@ -75,8 +90,10 @@ public class CalendarIDFMProducer extends NetexProducer {
                     dayTypeAssignmentId = dayTypeAssignmentId.substring(0, dayTypeAssignmentId.indexOf(":LOC")) + uniqueID + ":LOC";
                     uniqueID++;
                     DayTypeAssignment dayTypeAssignment = netexFactory.createDayTypeAssignment()
-                            .withId(dayTypeAssignmentId).withVersion(NETEX_DEFAULT_OBJECT_VERSION)
-                            .withOrder(BigInteger.valueOf(0)).withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef))
+                            .withId(dayTypeAssignmentId)
+                            .withVersion(NETEX_DEFAULT_OBJECT_VERSION)
+                            .withOrder(BigInteger.valueOf(0))
+                            .withDayTypeRef(netexFactory.createDayTypeRef(dayTypeRef))
                             .withDate(TimeUtil.toLocalDateFromJoda(day.getDate()).atStartOfDay());
 
                     if (day.getIncluded() != null && !day.getIncluded()) {

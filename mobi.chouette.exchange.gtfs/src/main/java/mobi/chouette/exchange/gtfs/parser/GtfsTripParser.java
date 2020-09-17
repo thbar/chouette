@@ -542,18 +542,39 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 VehicleJourneyAtStopWrapper vehicleJourneyAtStop = new VehicleJourneyAtStopWrapper(
                         gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
 
-                // TAD probalement à faire évoluer un jour
-                if(vehicleJourneyAtStop.getDropOff().equals(DropOffType.AgencyCall)){
-                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
+                // TAD probalement à faire évoluer un jour pour les interruptions
+                // 2X
+
+                boolean isDropOff0 = vehicleJourneyAtStop.getDropOff() == null || vehicleJourneyAtStop.getDropOff().equals(DropOffType.Scheduled);
+                boolean isPickUp0 = vehicleJourneyAtStop.getPickup() == null || vehicleJourneyAtStop.getPickup().equals(PickupType.Scheduled);
+                boolean isDropOff1 = vehicleJourneyAtStop.getDropOff() != null && vehicleJourneyAtStop.getDropOff().equals(DropOffType.NoAvailable);
+                boolean isPickUp1 = vehicleJourneyAtStop.getPickup() != null && vehicleJourneyAtStop.getPickup().equals(PickupType.NoAvailable);
+                boolean isDropOff2 = vehicleJourneyAtStop.getDropOff() != null && vehicleJourneyAtStop.getDropOff().equals(DropOffType.AgencyCall);
+                boolean isPickUp2 = vehicleJourneyAtStop.getPickup() != null && vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall);
+
+                if(isDropOff2) {
+                    if (isPickUp2) {
                         vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
-                    } else if(vehicleJourneyAtStop.getPickup() == null || vehicleJourneyAtStop.getPickup().equals(PickupType.Scheduled)){
-                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnly);
+                    } else if (isPickUp0){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
+                    } else if(isPickUp1){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnRequest);
                     }
-                } else if(vehicleJourneyAtStop.getDropOff() == null || vehicleJourneyAtStop.getDropOff().equals(DropOffType.Scheduled)){
-                    if(vehicleJourneyAtStop.getPickup().equals(PickupType.AgencyCall)) {
-                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnly);
-                    } else {
+                } else if (isDropOff1) {
+                    if(isPickUp1) {
                         vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.NeitherBoardOrAlight);
+                    } else if(isPickUp0) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnly);
+                    } else if(isPickUp2){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardOnRequest);
+                    }
+                } else if(isDropOff0) {
+                    if(isPickUp0){
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlight);
+                    } else if(isPickUp1) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.AlightOnly);
+                    } else if(isPickUp2) {
+                        vehicleJourneyAtStop.setBoardingAlightingPossibility(BoardingAlightingPossibilityEnum.BoardAndAlightOnRequest);
                     }
                 }
 

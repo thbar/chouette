@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.AgencyDAO;
 import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.InterchangeDAO;
 import mobi.chouette.dao.LineDAO;
@@ -14,7 +13,6 @@ import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
 import mobi.chouette.exchange.transfer.Constant;
-import mobi.chouette.model.Agency;
 import mobi.chouette.model.FeedInfo;
 import mobi.chouette.model.Interchange;
 import mobi.chouette.model.JourneyPattern;
@@ -54,9 +52,6 @@ public class TransferExportDataWriter implements Command, Constant {
 	public static final String COMMAND = "TransferExporterDataWriter";
 
 	@EJB
-	private AgencyDAO agencyDAO;
-
-	@EJB
 	private LineDAO lineDAO;
 
 	@EJB
@@ -84,7 +79,6 @@ public class TransferExportDataWriter implements Command, Constant {
 			throw new RuntimeException("No transaction");
 		}
 
-		List<Agency> agenciesToTransfer = (List<Agency>) context.get(AGENCIES);
 		List<Line> lineToTransfer = (List<Line>) context.get(LINES);
 		List<StopArea> stopAreasToTransfer = (List<StopArea>) context.get(STOP_AREAS);
 		List<Operator> operatorToTransfer = (List<Operator>) context.get(OPERATORS);
@@ -174,11 +168,6 @@ public class TransferExportDataWriter implements Command, Constant {
 			for(FeedInfo f : feedInfosToTransfer){
 				f.setId(1L);
 				feedInfoDAO.create(f);
-			}
-
-			for(Agency a : agenciesToTransfer){
-				a.setId(1L);
-				agencyDAO.create(a);
 			}
 
 			log.info("Final flush");

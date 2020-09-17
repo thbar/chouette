@@ -10,7 +10,6 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.CodespaceDAO;
 import mobi.chouette.dao.ProviderDAO;
-import mobi.chouette.exchange.ProviderReferentialID;
 import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
@@ -35,7 +34,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Log4j
 @Stateless(name = NetexInitExportCommand.COMMAND)
@@ -66,7 +69,7 @@ public class NetexInitExportCommand implements Command, Constant {
 			String referential = jobData.getReferential();
             log.info("NetexInitExportCommand.execute : ref => " + referential);
 			Optional<Provider> provider = providerDAO.findBySchema(referential);
-			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+			String idSite = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé pour " + referential)).getCodeIdfm();
 			log.info("NetexInitExportCommand.execute : " + referential + " " + idSite);
 
 
