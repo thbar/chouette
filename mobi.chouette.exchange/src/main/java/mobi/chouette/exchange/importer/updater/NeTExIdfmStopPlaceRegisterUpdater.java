@@ -89,6 +89,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
 
     private void initializeClient(String ref){
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
+        url = url.replace("ID_MATCH", "MATCH");
         if(!StringUtils.isEmpty(ref)) {
             if(url.contains("?"))
                 url = url + "&providerCode=" + ref;
