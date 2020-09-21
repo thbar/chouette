@@ -36,7 +36,12 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  *
@@ -167,15 +172,11 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 			agencyProducer.save(company, prefix, timezone, configuration.isKeepOriginalId());
 		}
 
-		HashSet<String> timetablesId = new HashSet<>();
 		for (List<Timetable> tms : timetables.values()) {
-			for(Timetable tm : tms){
-				if(!timetablesId.contains(tm.getObjectId())){
-					calendarProducer.save(tm, sharedPrefix, configuration.isKeepOriginalId(), configuration.getStartDate(), configuration.getEndDate());
-					timetablesId.add(tm.getObjectId());
-					if (metadata != null) {
-						metadata.getTemporalCoverage().update(tm.getStartOfPeriod(), tm.getEndOfPeriod());
-					}
+			calendarProducer.save(tms, sharedPrefix, configuration.isKeepOriginalId());
+			if (metadata != null) {
+				for (Timetable tm : tms) {
+					metadata.getTemporalCoverage().update(tm.getStartOfPeriod(), tm.getEndOfPeriod());
 				}
 			}
 		}

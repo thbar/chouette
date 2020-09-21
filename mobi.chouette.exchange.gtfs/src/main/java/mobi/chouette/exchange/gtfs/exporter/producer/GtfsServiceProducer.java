@@ -8,7 +8,12 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.gtfs.model.GtfsCalendar;
@@ -46,19 +51,19 @@ AbstractProducer
    GtfsCalendar calendar = new GtfsCalendar();
    GtfsCalendarDate calendarDate = new GtfsCalendarDate();
 
-   public boolean save(Timetable timetable, String prefix, boolean keepOriginalId, Date startDate, Date endDate)
+   public boolean save(List<Timetable> timetables,  String prefix, boolean keepOriginalId)
    {
 
-//      Timetable reduced = merge(timetables, prefix,keepOriginalId);
-//
-//      if (reduced == null) return false;
+      Timetable reduced = merge(timetables, prefix,keepOriginalId);
 
-      String serviceId = toGtfsId(timetable.getObjectId(), prefix, keepOriginalId);
+      if (reduced == null) return false;
 
-      if (!isEmpty(timetable.getPeriods()))
+      String serviceId = toGtfsId(reduced.getObjectId(), prefix, keepOriginalId);
+
+      if (!isEmpty(reduced.getPeriods()))
       {
          clear(calendar);
-         for (DayTypeEnum dayType : timetable.getDayTypes())
+         for (DayTypeEnum dayType : reduced.getDayTypes())
          {
             switch (dayType)
             {
@@ -100,21 +105,9 @@ AbstractProducer
          }
          calendar.setServiceId(serviceId);
 
-         Period period = timetable.getPeriods().get(0);
-
-         if(startDate != null && !period.getStartDate().toDate().after(startDate)){
-            calendar.setStartDate(new LocalDate(startDate));
-         }
-         else{
-            calendar.setStartDate(period.getStartDate());
-         }
-
-         if(endDate != null && !period.getEndDate().toDate().before(endDate)){
-            calendar.setEndDate(new LocalDate(endDate));
-         }
-         else{
-            calendar.setEndDate(period.getEndDate());
-         }
+         Period period = reduced.getPeriods().get(0);
+         calendar.setStartDate(period.getStartDate());
+         calendar.setEndDate(period.getEndDate());
 
          try
          {
@@ -126,20 +119,11 @@ AbstractProducer
             return false;
          }
       }
-      if (!isEmpty(timetable.getCalendarDays()))
+      if (!isEmpty(reduced.getCalendarDays()))
       {
-         for (CalendarDay day : timetable.getCalendarDays())
+         for (CalendarDay day : reduced.getCalendarDays())
          {
-            boolean calendarDayBeforeOrSameDayOfEndDate = (startDate == null && endDate!= null && !day.getDate().toDate().after(endDate));
-            boolean calendarDayAfterOrSameDayOfStartDate = (startDate != null && endDate == null && !day.getDate().toDate().before(startDate));
-            boolean calendarDayAfterOrSameDayOfStartDateAndBeforeOrSameDayOfEndDate = (startDate != null && endDate != null && !day.getDate().toDate().before(startDate) && !day.getDate().toDate().after(endDate));
-
-            if(calendarDayBeforeOrSameDayOfEndDate ||
-                    calendarDayAfterOrSameDayOfStartDate ||
-                    calendarDayAfterOrSameDayOfStartDateAndBeforeOrSameDayOfEndDate ||
-                    startDate ==  null && endDate == null){
-               saveDay(serviceId,day);
-            }
+            saveDay(serviceId,day);
          }
       }
 
