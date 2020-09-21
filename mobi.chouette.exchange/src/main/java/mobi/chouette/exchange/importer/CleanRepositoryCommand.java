@@ -170,16 +170,19 @@ public class CleanRepositoryCommand implements Command {
 			accessPointDAO.truncate();
 			connectionLinkDAO.truncate();
 
-			// si import on conserve lignes et arrêts
-			// sinon
+			// si pas import et ( transfert ou clean admin )
 			if(context == null || !context.containsKey(CLEAR_FOR_IMPORT) || context.get(CLEAR_FOR_IMPORT) != Boolean.TRUE) {
-				//
+				// si clean pour transfert
+				if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
+					categoriesForLinesDAO.truncate();
+					operatorDAO.truncate();
+					feedInfoDAO.truncate();
+				}
 				// lignes
 				contactStructureDAO.truncate();
 				groupOfLineDAO.truncate();
 				footnoteDAO.truncate();
 				lineDAO.truncate();
-				categoriesForLinesDAO.truncate();
 				bookingArrangementDAO.truncate();
 				networkDAO.truncate();
 				companyDAO.truncate();
@@ -188,15 +191,9 @@ public class CleanRepositoryCommand implements Command {
 				stopAreaDAO.truncate();
 				mappingHastusZdepDAO.truncate();
 			} else {
+				// si import on conserve lignes et arrêts
 				context.remove(CLEAR_FOR_IMPORT);
 			}
-
-			if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
-				categoriesForLinesDAO.truncate();
-				operatorDAO.truncate();
-				feedInfoDAO.truncate();
-			}
-
 			result = SUCCESS;
 		} catch (Exception e) {
 			log.error(e);
