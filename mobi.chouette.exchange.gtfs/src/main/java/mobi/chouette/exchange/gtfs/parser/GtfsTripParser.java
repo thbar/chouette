@@ -36,6 +36,7 @@ import org.joda.time.LocalTime;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j
@@ -469,6 +470,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
         Map<String, JourneyPattern> journeyPatternByStopSequence = new HashMap<String, JourneyPattern>();
 
+        Line line = ObjectFactory.getLine(referential, lineId);
+
         // VehicleJourney
         Index<GtfsTrip> gtfsTrips = importer.getTripByRoute();
 
@@ -499,45 +502,31 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             // VehicleJourneyAtStop
             boolean afterMidnight = true;
 
+            List<BookingMethodEnum> bookingMethodList = new ArrayList<>();
+
             for (GtfsStopTime gtfsStopTime : importer.getStopTimeByTrip().values(gtfsTrip.getTripId())) {
                 VehicleJourneyAtStopWrapper vehicleJourneyAtStop = new VehicleJourneyAtStopWrapper(
                         gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
                 convert(context, gtfsStopTime, gtfsTrip, vehicleJourneyAtStop);
 
-                if(PickupType.AgencyCall.equals(vehicleJourneyAtStop.pickup) || PickupType.DriverCall.equals(vehicleJourneyAtStop.pickup) || DropOffType.AgencyCall.equals(vehicleJourneyAtStop.dropOff) || DropOffType.DriverCall.equals(vehicleJourneyAtStop.dropOff)){
-                    if(!lineId.contains(Line.FLEXIBLE_LINE_KEY)){
-                        Line line = ObjectFactory.getLine(referential, lineId);
-                        line.setObjectId(line.getObjectId().replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY));
+                if (PickupType.AgencyCall.equals(vehicleJourneyAtStop.pickup) ||
+                        PickupType.DriverCall.equals(vehicleJourneyAtStop.pickup) ||
+                        DropOffType.AgencyCall.equals(vehicleJourneyAtStop.dropOff) ||
+                        DropOffType.DriverCall.equals(vehicleJourneyAtStop.dropOff)) {
 
-                        line.setFlexibleService(true);
+                    vehicleJourney.setFlexibleService(true);
 
-                        FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
-                        flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
-                        line.setFlexibleLineProperties(flexibleLineProperties);
-
-                        ContactStructure contactStructure = new ContactStructure();
-                        if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getUrl())){
-                            contactStructure.setUrl(line.getNetwork().getCompany().getUrl());
-                        }
-                        if(StringUtils.isNotEmpty(line.getNetwork().getCompany().getPhone())){
-                            contactStructure.setPhone(line.getNetwork().getCompany().getPhone());
-                        }
-
-                        BookingArrangement bookingArrangement = new BookingArrangement();
-                        bookingArrangement.setBookingContact(contactStructure);
-                        if(vehicleJourneyAtStop.pickup.equals(PickupType.DriverCall)){
-                            bookingArrangement.setBookingMethods(Collections.singletonList(BookingMethodEnum.callDriver));
-                        }
-                        else if(vehicleJourneyAtStop.pickup.equals(PickupType.AgencyCall)){
-                            bookingArrangement.setBookingMethods(Collections.singletonList(BookingMethodEnum.callOffice));
-                        }
-
-                        flexibleLineProperties.setBookingArrangement(bookingArrangement);
-
-                        referential.getLines().put(line.getObjectId(), line);
-                        referential.getLines().remove(lineId);
-
-                        lineId = lineId.replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY);
+                    if (PickupType.DriverCall.equals(vehicleJourneyAtStop.pickup) && !bookingMethodList.contains(BookingMethodEnum.callDriver)) {
+                        bookingMethodList.add(BookingMethodEnum.callDriver);
+                    }
+                    if (PickupType.AgencyCall.equals(vehicleJourneyAtStop.pickup) && !bookingMethodList.contains(BookingMethodEnum.callOffice)) {
+                        bookingMethodList.add(BookingMethodEnum.callOffice);
+                    }
+                    if (DropOffType.DriverCall.equals(vehicleJourneyAtStop.dropOff) && !bookingMethodList.contains(BookingMethodEnum.callDriver)) {
+                        bookingMethodList.add(BookingMethodEnum.callDriver);
+                    }
+                    if (DropOffType.AgencyCall.equals(vehicleJourneyAtStop.dropOff) && !bookingMethodList.contains(BookingMethodEnum.callOffice)) {
+                        bookingMethodList.add(BookingMethodEnum.callOffice);
                     }
                 }
 
@@ -549,6 +538,10 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 }
 
                 vehicleJourneyAtStop.setVehicleJourney(vehicleJourney);
+            }
+
+            if(vehicleJourney.getFlexibleService() != null && vehicleJourney.getFlexibleService()){
+                setVJFlexibleService(line, vehicleJourney, bookingMethodList);
             }
 
             Collections.sort(vehicleJourney.getVehicleJourneyAtStops(), VEHICLE_JOURNEY_AT_STOP_COMPARATOR);
@@ -582,7 +575,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                         vehicleJourney, journeyKey, journeyPatternByStopSequence);
             }
 
-            if(StringUtils.isBlank(vehicleJourney.getPublishedJourneyName())){
+            if (StringUtils.isBlank(vehicleJourney.getPublishedJourneyName())) {
                 vehicleJourney.setPublishedJourneyName(journeyPattern.getRoute().getStopPoints().get(journeyPattern.getRoute().getStopPoints().size() - 1).getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
             }
 
@@ -606,6 +599,14 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             }
 
         }
+
+        boolean allVJFlexible = referential.getVehicleJourneys().values().stream()
+                .allMatch(vehicleJourney -> vehicleJourney.getFlexibleService() != null && vehicleJourney.getFlexibleService().equals(true));
+
+        if (allVJFlexible) {
+            setLineFlexible(referential, line);
+        }
+
         // dispose collections
         journeyPatternByStopSequence.clear();
     }
@@ -1165,6 +1166,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     /**
      * create stopPoints for Route
+     *
      * @param route
      * @param journeyPattern
      * @param list
@@ -1291,5 +1293,82 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             }
         }
         return null;
+    }
+
+
+    /**
+     * On valorise les informations TAD dans la course concernant le mode de réservation et le contact.
+     * @param line
+     * @param vehicleJourney
+     * @param bookingMethodList
+     */
+    void setVJFlexibleService(Line line, VehicleJourney vehicleJourney, List<BookingMethodEnum> bookingMethodList) {
+        FlexibleServiceProperties flexibleServiceProperties = new FlexibleServiceProperties();
+        flexibleServiceProperties.setObjectId(vehicleJourney.getObjectId().replace(VehicleJourney.VEHICLEJOURNEY_KEY, FlexibleServiceProperties.FLEXIBLE_SERVICE_PROPERTIES_KEY));
+
+        flexibleServiceProperties.setFlexibleServiceType(FlexibleServiceTypeEnum.fixedPassingTimes);
+
+        BookingArrangement bookingArrangement = new BookingArrangement();
+        bookingArrangement.setBookingContact(getContactInformations(line));
+        bookingArrangement.setBookingMethods(bookingMethodList);
+
+        flexibleServiceProperties.setBookingArrangement(bookingArrangement);
+
+        vehicleJourney.setFlexibleServiceProperties(flexibleServiceProperties);
+    }
+
+    /**
+     * On valorise une ligne en TAD si toutes les courses de cette ligne sont en TAD.
+     * @param referential
+     * @param line
+     */
+    void setLineFlexible(Referential referential, Line line) {
+        // On valorise la ligne en TAD (object id et type)
+        if(!lineId.contains(Line.FLEXIBLE_LINE_KEY) && line.getFlexibleService() == null || !lineId.contains(Line.FLEXIBLE_LINE_KEY) && line.getFlexibleService().equals(false)){
+            line.setObjectId(line.getObjectId().replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY));
+            line.setFlexibleService(true);
+            referential.getLines().put(line.getObjectId(), line);
+            referential.getLines().remove(lineId);
+            lineId = lineId.replace(Line.LINE_KEY, Line.FLEXIBLE_LINE_KEY);
+        }
+
+        FlexibleLineProperties flexibleLineProperties = new FlexibleLineProperties();
+
+        flexibleLineProperties.setFlexibleLineType(FlexibleLineTypeEnum.fixed);
+
+        // On récupère l'ensemble des moyens de réservations sur toutes les courses afin de les valoriser dans la ligne
+        List<BookingMethodEnum> bookingMethodEnumList = referential.getVehicleJourneys().values().stream()
+                .filter(vehicleJourney -> vehicleJourney.getFlexibleServiceProperties() != null &&
+                        vehicleJourney.getFlexibleServiceProperties().getBookingArrangement() != null &&
+                        vehicleJourney.getFlexibleServiceProperties().getBookingArrangement().getBookingMethods() != null)
+                .map(vehicleJourney -> vehicleJourney.getFlexibleServiceProperties().getBookingArrangement().getBookingMethods())
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+
+        BookingArrangement bookingArrangement = new BookingArrangement();
+        bookingArrangement.setBookingContact(getContactInformations(line));
+        bookingArrangement.setBookingMethods(bookingMethodEnumList);
+
+        flexibleLineProperties.setBookingArrangement(bookingArrangement);
+
+        line.setFlexibleLineProperties(flexibleLineProperties);
+    }
+
+
+    /**
+     * On récupère les informations de contact pour le TAD.
+     * @param line
+     * @return
+     */
+    ContactStructure getContactInformations(Line line) {
+        ContactStructure contactStructure = new ContactStructure();
+        if (StringUtils.isNotEmpty(line.getNetwork().getCompany().getUrl())) {
+            contactStructure.setUrl(line.getNetwork().getCompany().getUrl());
+        }
+        if (StringUtils.isNotEmpty(line.getNetwork().getCompany().getPhone())) {
+            contactStructure.setPhone(line.getNetwork().getCompany().getPhone());
+        }
+        return contactStructure;
     }
 }
