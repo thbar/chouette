@@ -149,19 +149,28 @@ public class FileUtil {
 	}
 
 	private static void writeZipFile(File path, String zipName, List<File> fileList, String type) {
+		if(!type.equals("gtfs")){
+			// NETETX
+			writeNetexZipFile(path, zipName, fileList, type);
+		} else {
+			// GTFS
+			writeGTFSZipFile(path, zipName, fileList, type);
+		}
+	}
+
+	private static void writeNetexZipFile(File path, String zipName, List<File> fileList, String type) {
 
 		try {
 			FileOutputStream fos = new FileOutputStream(zipName);
 			ZipOutputStream zos = new ZipOutputStream(fos);
 			String folder = "";
-			if(!type.equals("gtfs")){
-				folder = zipName.substring(zipName.lastIndexOf("/")+1).replace(".zip", "");
-				zos.putNextEntry(new ZipEntry(folder + "/"));
-			}
+
+			folder = zipName.substring(zipName.lastIndexOf("/")+1).replace(".zip", "");
+			zos.putNextEntry(new ZipEntry(folder + "/"));
 
 			for (File file : fileList) {
 				if (!file.isDirectory()) { // we only zip files, not directories
-					addToZip(path, file, zos, folder);
+					addNetexFileToZip(path, file, zos, folder);
 				}
 			}
 			zos.flush();
@@ -175,7 +184,7 @@ public class FileUtil {
 		}
 	}
 
-	private static void addToZip(File directoryToZip, File file, ZipOutputStream zos, String folder) throws FileNotFoundException, IOException {
+	private static void addNetexFileToZip(File directoryToZip, File file, ZipOutputStream zos, String folder) throws FileNotFoundException, IOException {
 
 		FileInputStream fis = null;
 		try {
@@ -203,6 +212,54 @@ public class FileUtil {
 			zos.closeEntry();
 			if(fis != null) fis.close();
 		}
+	}
+
+	private static void writeGTFSZipFile(File path, String zipName, List<File> fileList, String type) {
+
+		try {
+			FileOutputStream fos = new FileOutputStream(zipName);
+			ZipOutputStream zos = new ZipOutputStream(fos);
+
+			for (File file : fileList) {
+				if (!file.isDirectory()) { // we only zip files, not directories
+					addGTFSFileToZip(path, file, zos, zipName, type);
+				}
+			}
+
+			zos.close();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void addGTFSFileToZip(File directoryToZip, File file, ZipOutputStream zos, String zipName, String type) throws FileNotFoundException,
+			IOException {
+
+		FileInputStream fis = new FileInputStream(file);
+
+		zipName = zipName.substring(zipName.lastIndexOf("/"));
+		String folderNameInZip = zipName.replace(".zip", "");
+
+		// we want the zipEntry's path to be a relative path that is relative
+		// to the directory being zipped, so chop off the rest of the path
+		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
+				file.getCanonicalPath().length());
+
+		ZipEntry zipEntry;
+		zipEntry = new ZipEntry(zipFilePath);
+
+		zos.putNextEntry(zipEntry);
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zos.write(bytes, 0, length);
+		}
+
+		zos.closeEntry();
+		fis.close();
 	}
 
 	public static void mergeFilesInPath(String path, String filename) {
