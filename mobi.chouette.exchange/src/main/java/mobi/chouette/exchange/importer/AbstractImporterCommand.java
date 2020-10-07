@@ -75,8 +75,9 @@ public class AbstractImporterCommand implements Constant {
 
 				// check if CopyCommands ended (with timeout to 5 minutes >
 				// transaction timeout)
+				// time out update from 5 to 15 minutes for big GTFS
 				if (context.containsKey(COPY_IN_PROGRESS)) {
-					long timeout = 5;
+					long timeout = 15;
 					TimeUnit unit = TimeUnit.MINUTES;
 					List<Future<Void>> futures = (List<Future<Void>>) context.get(COPY_IN_PROGRESS);
 					for (Future<Void> future : futures) {
