@@ -61,6 +61,7 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
 
             pointInLinkSequence_versionedChildStructures.add(stopPointInJourneyPattern);
 
+            // On récupère l'ensemble des vehicleJourneyAtStops
             List<VehicleJourneyAtStop> vehicleJourneyAtStops =
                     journeyPattern.getRoute().getJourneyPatterns()
                             .stream()
@@ -69,42 +70,48 @@ public class ServiceJourneyPatternIDFMProducer extends NetexProducer {
                                     .flatMap(vehicleJourney -> vehicleJourney.getVehicleJourneyAtStops().stream()))
                             .collect(Collectors.toList());
 
-            // On vérifie ici que tous les BoardingAlightingPossibility des VehicleJourneyAtStops d'un même itinéraire (et donc de tous les parcours et courses appartenant à cet itinéraire) sont identiques et non null
+            // On ne récupère que les vehicleJourneyAtStop qui sont liés à un même stoppoint et qui ont un boardingAlighting identique
+            for(VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourneyAtStops){
+                boolean getVehicleJourneyAtStopWithBoardingAlighting = false;
 
-            if(vehicleJourneyAtStops
-                    .stream()
-                    .noneMatch(vehicleJourneyAtStop -> vehicleJourneyAtStops
-                            .stream()
-                            .anyMatch(vehicleJourneyAtStop1 -> !vehicleJourneyAtStop1.getBoardingAlightingPossibility().equals(vehicleJourneyAtStop.getBoardingAlightingPossibility()) && vehicleJourneyAtStop1.getBoardingAlightingPossibility() != null)
-                    )){
-                switch (vehicleJourneyAtStops.get(0).getBoardingAlightingPossibility())
-                {
-                    case AlightOnly:
-                        stopPointInJourneyPattern.setForBoarding(false);
-                        stopPointInJourneyPattern.setForAlighting(true);
-                        break;
-                    case BoardOnly:
-                        stopPointInJourneyPattern.setForBoarding(true);
-                        stopPointInJourneyPattern.setForAlighting(false);
-                        break;
-                    case NeitherBoardOrAlight:
-                        stopPointInJourneyPattern.setForAlighting(false);
-                        stopPointInJourneyPattern.setForBoarding(false);
-                        break;
-                    case BoardAndAlightOnRequest:
-                    case BoardOnRequest:
-                    case AlightOnRequest:
-                        stopPointInJourneyPattern.setForBoarding(true);
-                        stopPointInJourneyPattern.setForAlighting(true);
-                        stopPointInJourneyPattern.setRequestStop(true);
-                        break;
+                for(VehicleJourneyAtStop vehicleJourneyAtStop1 : vehicleJourneyAtStops) {
+                    if(stopPoint.getObjectId().equals(vehicleJourneyAtStop.getStopPoint().getObjectId()) &&
+                            stopPoint.getObjectId().equals(vehicleJourneyAtStop1.getStopPoint().getObjectId())){
+                        if(vehicleJourneyAtStop.getBoardingAlightingPossibility() != null && vehicleJourneyAtStop1.getBoardingAlightingPossibility() != null){
+                            getVehicleJourneyAtStopWithBoardingAlighting = vehicleJourneyAtStop.getBoardingAlightingPossibility().equals(vehicleJourneyAtStop1.getBoardingAlightingPossibility());
+                        }
+                        else{
+                            getVehicleJourneyAtStopWithBoardingAlighting = false;
+                        }
+
+                        if(!getVehicleJourneyAtStopWithBoardingAlighting)
+                            break;
+                    }
+                }
+                if(getVehicleJourneyAtStopWithBoardingAlighting && vehicleJourneyAtStop.getBoardingAlightingPossibility() != null){
+                    switch (vehicleJourneyAtStop.getBoardingAlightingPossibility()) {
+                        case AlightOnly:
+                            stopPointInJourneyPattern.setForBoarding(false);
+                            stopPointInJourneyPattern.setForAlighting(true);
+                            break;
+                        case BoardOnly:
+                            stopPointInJourneyPattern.setForBoarding(true);
+                            stopPointInJourneyPattern.setForAlighting(false);
+                            break;
+                        case NeitherBoardOrAlight:
+                            stopPointInJourneyPattern.setForAlighting(false);
+                            stopPointInJourneyPattern.setForBoarding(false);
+                            break;
+                        case BoardAndAlightOnRequest:
+                        case BoardOnRequest:
+                        case AlightOnRequest:
+                            stopPointInJourneyPattern.setForBoarding(true);
+                            stopPointInJourneyPattern.setForAlighting(true);
+                            stopPointInJourneyPattern.setRequestStop(true);
+                            break;
+                    }
                 }
             }
-            else{
-                stopPointInJourneyPattern.setForBoarding(true);
-                stopPointInJourneyPattern.setForAlighting(true);
-            }
-
         }
 
         pointsInJourneyPattern_relStructure.withPointInJourneyPatternOrStopPointInJourneyPatternOrTimingPointInJourneyPattern(pointInLinkSequence_versionedChildStructures);
