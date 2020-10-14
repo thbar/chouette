@@ -119,9 +119,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 		return result;
 	}
 
-	private boolean saveLine(Context context,
-
-	Line line) {
+	private boolean saveLine(Context context, Line line) {
 		Metadata metadata = (Metadata) context.get(METADATA);
 		GtfsExporter exporter = (GtfsExporter) context.get(GTFS_EXPORTER);
 		GtfsServiceProducer calendarProducer = new GtfsServiceProducer(exporter);
