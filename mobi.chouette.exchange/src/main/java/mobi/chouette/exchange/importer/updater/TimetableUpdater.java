@@ -1,10 +1,5 @@
 package mobi.chouette.exchange.importer.updater;
 
-import java.util.Collection;
-import java.util.Comparator;
-
-import javax.ejb.Stateless;
-
 import mobi.chouette.common.CollectionUtil;
 import mobi.chouette.common.Context;
 import mobi.chouette.model.CalendarDay;
@@ -12,6 +7,11 @@ import mobi.chouette.model.Period;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.type.DayTypeEnum;
 import mobi.chouette.model.util.NamingUtil;
+import org.apache.commons.lang.StringUtils;
+
+import javax.ejb.Stateless;
+import java.util.Collection;
+import java.util.Comparator;
 
 @Stateless(name = TimetableUpdater.BEAN_NAME)
 public class TimetableUpdater implements Updater<Timetable> {
@@ -91,6 +91,10 @@ public class TimetableUpdater implements Updater<Timetable> {
 				&& !newValue.getVersion().equals(oldValue.getVersion())) {
 			oldValue.setVersion(newValue.getVersion());
 		}
+		if(StringUtils.isEmpty(oldValue.getVersion())){
+			oldValue.setVersion(oldValue.getComment());
+		}
+
 		if (newValue.getIntDayTypes() != null
 				&& !newValue.getIntDayTypes().equals(oldValue.getIntDayTypes())) {
 			oldValue.setIntDayTypes(newValue.getIntDayTypes());
