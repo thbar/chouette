@@ -6,6 +6,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.naming.InitialContext;
 
@@ -36,8 +38,11 @@ public class GtfsInitExportCommand implements Command, Constant {
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			Date currentDate = new Date();
+
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("export_" + jobData.getType() + "_" + jobData.getId() + ".zip");
+			jobData.setOutputFilename("GTFS_" + sdf.format(currentDate) + "Z.zip");
 			context.put(REFERENTIAL, new Referential());
 			
 			Metadata metadata = new Metadata(); // if not asked, will be used as dummy
