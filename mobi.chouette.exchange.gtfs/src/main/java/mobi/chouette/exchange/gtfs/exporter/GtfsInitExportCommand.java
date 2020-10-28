@@ -42,7 +42,9 @@ public class GtfsInitExportCommand implements Command, Constant {
 			Date currentDate = new Date();
 
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("GTFS_" + sdf.format(currentDate) + "Z.zip");
+			String date = sdf.format(currentDate);
+			String nameFile = "GTFS_" + date + "Z.zip";
+			jobData .setOutputFilename(nameFile);
 			context.put(REFERENTIAL, new Referential());
 			
 			Metadata metadata = new Metadata(); // if not asked, will be used as dummy

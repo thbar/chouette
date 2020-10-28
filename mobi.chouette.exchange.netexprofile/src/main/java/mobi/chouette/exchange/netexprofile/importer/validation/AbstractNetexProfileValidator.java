@@ -485,18 +485,18 @@ public abstract class AbstractNetexProfileValidator implements Constant, NetexPr
                     allIdStructuresNameValid = false;
                 }
 
-                if (validPrefixes != null) {
-                    String prefix = m.group(1);
-                    if (!validPrefixes.contains(prefix)) {
-                        validationReporter.addCheckPointReportError(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE, null,
-                                DataLocationHelper.findDataLocation(id), id.getId());
-                        if (log.isDebugEnabled()) {
-                            log.debug("Id " + id + " in file are using an unaccepted codespace prefix " + prefix + ". Valid prefixes are "
-                                    + ToStringBuilder.reflectionToString(validPrefixes, ToStringStyle.SIMPLE_STYLE));
-                        }
-                        allCodespacesValid = false;
-                    }
-                }
+//                if (validPrefixes != null) {
+//                    String prefix = m.group(1);
+//                    if (!validPrefixes.contains(prefix)) {
+//                        validationReporter.addCheckPointReportError(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE, null,
+//                                DataLocationHelper.findDataLocation(id), id.getId());
+//                        if (log.isDebugEnabled()) {
+//                            log.debug("Id " + id + " in file are using an unaccepted codespace prefix " + prefix + ". Valid prefixes are "
+//                                    + ToStringBuilder.reflectionToString(validPrefixes, ToStringStyle.SIMPLE_STYLE));
+//                        }
+//                        allCodespacesValid = false;
+//                    }
+//                }
             }
         }
 
@@ -506,9 +506,9 @@ public abstract class AbstractNetexProfileValidator implements Constant, NetexPr
         if (allIdStructuresNameValid) {
             validationReporter.reportSuccess(context, _1_NETEX_INVALID_ID_STRUCTURE_NAME);
         }
-        if (allCodespacesValid) {
-            validationReporter.reportSuccess(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE);
-        }
+//        if (allCodespacesValid) {
+//            validationReporter.reportSuccess(context, _1_NETEX_USE_OF_UNAPPROVED_CODESPACE);
+//        }
     }
 
 }
