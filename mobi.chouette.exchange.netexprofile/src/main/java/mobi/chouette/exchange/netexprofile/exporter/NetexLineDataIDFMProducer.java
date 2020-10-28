@@ -60,7 +60,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         ExportableNetexData exportableNetexData = (ExportableNetexData) context.get(EXPORTABLE_NETEX_DATA);
         mobi.chouette.model.Line neptuneLine = exportableData.getLine();
 
-        deleteSpacesInIdsAndChangeSpecialCharacters(exportableData);
+        deleteSpacesInIdsAndChangeSpecialCharacters(exportableData, parameters.getDefaultCodespacePrefix());
 
         // Pour info il n'y a pas de produceAndCollectCommonData car les notices utilisés pour créer ce fichier sont récupérés dans les deux méthodes ci dessous
         produceAndCollectLineData(context, exportableData, exportableNetexData);
@@ -87,36 +87,47 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         calendarIDFMProducer.produce(exportableData, exportableNetexData);
     }
 
-    private void deleteSpacesInIdsAndChangeSpecialCharacters(ExportableData exportableData) {
+    /**
+     * On remplace dans les object_id les espaces par rien, les caractères spéciaux par un _
+     * On remplace le nom de l'espace de données qui constitue la première partie de l'object id par le defaultCodespacePrefix si il est différent (defaultCodespacePrefix vient du nameNetexOffreIdfm dans Okina/Baba)
+     * @param exportableData
+     * @param defaultCodespacePrefix
+     */
+    private void deleteSpacesInIdsAndChangeSpecialCharacters(ExportableData exportableData, String defaultCodespacePrefix) {
         for (Route route : exportableData.getRoutes()) {
-            route.setObjectId(replaceAllSpacesAndSpecialCharacter(route.getObjectId()));
-            route.getLine().setObjectId(replaceAllSpacesAndSpecialCharacter(route.getLine().getObjectId()));
+            route.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(route.getObjectId(), defaultCodespacePrefix));
+            route.getLine().setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(route.getLine().getObjectId(), defaultCodespacePrefix));
             for (mobi.chouette.model.RoutePoint routePoint : route.getRoutePoints()) {
-                routePoint.setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getObjectId()));
-                routePoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(routePoint.getScheduledStopPoint().getObjectId()));
+                routePoint.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(routePoint.getObjectId(), defaultCodespacePrefix));
+                routePoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(routePoint.getScheduledStopPoint().getObjectId(), defaultCodespacePrefix));
             }
         }
         for (JourneyPattern journeyPattern : exportableData.getJourneyPatterns()) {
-            journeyPattern.setObjectId(replaceAllSpacesAndSpecialCharacter(journeyPattern.getObjectId()));
+            journeyPattern.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(journeyPattern.getObjectId(), defaultCodespacePrefix));
             for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
-                stopPoint.setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getObjectId()));
-                stopPoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getScheduledStopPoint().getObjectId()));
+                stopPoint.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(stopPoint.getObjectId(), defaultCodespacePrefix));
+                stopPoint.getScheduledStopPoint().setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(stopPoint.getScheduledStopPoint().getObjectId(), defaultCodespacePrefix));
                 if (stopPoint.getDestinationDisplay() != null) {
-                    stopPoint.getDestinationDisplay().setObjectId(replaceAllSpacesAndSpecialCharacter(stopPoint.getDestinationDisplay().getObjectId()));
+                    stopPoint.getDestinationDisplay().setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(stopPoint.getDestinationDisplay().getObjectId(), defaultCodespacePrefix));
                 }
             }
         }
         for (Timetable timetable : exportableData.getTimetables()) {
-            timetable.setObjectId(replaceAllSpacesAndSpecialCharacter(timetable.getObjectId()));
+            timetable.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(timetable.getObjectId(), defaultCodespacePrefix));
         }
         for (VehicleJourney vehicleJourney : exportableData.getVehicleJourneys()) {
-            vehicleJourney.setObjectId(replaceAllSpacesAndSpecialCharacter(vehicleJourney.getObjectId()));
+            vehicleJourney.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(vehicleJourney.getObjectId(), defaultCodespacePrefix));
         }
     }
 
-    private String replaceAllSpacesAndSpecialCharacter(String objectId){
+    private String replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(String objectId, String defaultCodespacePrefix){
         objectId = objectId.replaceAll("\\s+", "");
         objectId = objectId.replaceAll(ID_STRUCTURE_REGEXP_SPECIAL_CHARACTER, "_");
+
+        String[] nameDataSpace = objectId.split(":");
+        if(!nameDataSpace[0].equals(defaultCodespacePrefix)){
+            objectId = objectId.replace(nameDataSpace[0], defaultCodespacePrefix);
+        }
 
         return objectId;
     }
