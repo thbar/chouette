@@ -6,4 +6,6 @@ public interface LineDAO extends GenericDAO<Line> {
 
     String updateStopareasForIdfmLineCommand(Long lineId) throws Exception;
 
+    void mergeDuplicateJourneyPatternsOfLineAndAddSuffix(Long lineId, String lineName);
+
 }

@@ -17,6 +17,7 @@ import mobi.chouette.exchange.importer.CleanRepositoryCommand;
 import mobi.chouette.exchange.importer.CopyCommand;
 import mobi.chouette.exchange.importer.GenerateRouteSectionsCommand;
 import mobi.chouette.exchange.importer.LineRegisterCommand;
+import mobi.chouette.exchange.importer.MergeDuplicatedJourneyPatternsCommand;
 import mobi.chouette.exchange.importer.MergeTripIdCommand;
 import mobi.chouette.exchange.importer.StopAreaRegisterCommand;
 import mobi.chouette.exchange.importer.UncompressCommand;
@@ -213,6 +214,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 
         try {
             commands.add(CommandFactory.create(initialContext, MergeTripIdCommand.class.getName()));
+            commands.add(CommandFactory.create(initialContext, MergeDuplicatedJourneyPatternsCommand.class.getName()));
         } catch (Exception e) {
             log.error(e, e);
             throw new RuntimeException("unable to call factories");

@@ -39,5 +39,17 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 
 		return retour;
 	}
-	
+
+	@Override
+	public void mergeDuplicateJourneyPatternsOfLineAndAddSuffix(Long lineId, String lineName) {
+		em.createNativeQuery("SELECT merge_identicals_journey_patterns_for_line FROM merge_identicals_journey_patterns_for_line(:lineId, :lineName);")
+				.setParameter("lineId", lineId)
+				.setParameter("lineName", lineName)
+				.getSingleResult();
+
+		em.createNativeQuery("SELECT rename_identicals_journey_patterns_for_line FROM rename_identicals_journey_patterns_for_line(:lineId);")
+				.setParameter("lineId", lineId)
+				.getSingleResult();
+
+	}
 }
