@@ -105,13 +105,13 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-//			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
-//				gtfsAgency.setAgencyName(configuration.getReferentialName());
-//			}
-//
-//			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
-//				gtfsAgency.setAgencyName(configuration.getReferentialName());
-//			}
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
+			}
+
+			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
+				gtfsAgency.setAgencyName(configuration.getReferentialName());
+			}
 
 
 			// Create both as operator and as authority
