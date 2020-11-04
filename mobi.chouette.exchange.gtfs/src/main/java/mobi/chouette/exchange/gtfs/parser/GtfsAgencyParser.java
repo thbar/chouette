@@ -98,21 +98,20 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 	}
 	
 	@Override
-	public void parse(Context context) throws Exception {
+	public void parse(Context context) {
 
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		GtfsImporter importer = (GtfsImporter) context.get(PARSER);
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
-        NetworksNames networksNames = new NetworksNames();
 
 		for (GtfsAgency gtfsAgency : importer.getAgencyById()) {
-			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
-				gtfsAgency.setAgencyName(configuration.getReferentialName());
-			}
-
-			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
-				gtfsAgency.setAgencyName(configuration.getReferentialName());
-			}
+//			if(StringUtils.isEmpty(gtfsAgency.getAgencyId())){
+//				gtfsAgency.setAgencyName(configuration.getReferentialName());
+//			}
+//
+//			if(StringUtils.isEmpty(gtfsAgency.getAgencyName())){
+//				gtfsAgency.setAgencyName(configuration.getReferentialName());
+//			}
 
 
 			// Create both as operator and as authority
