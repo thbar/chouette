@@ -61,8 +61,6 @@ public class ShapeExporter extends ExporterImpl<GtfsShape> implements
 			values.add(FLOAT_CONVERTER.to(context, FIELDS.shape_pt_lon, input
 					.getShapePtLon().floatValue(), true));
 			values.add(INTEGER_CONVERTER.to(context, FIELDS.shape_pt_sequence, input.getShapePtSequence(), true));
-			values.add(FLOAT_CONVERTER.to(context, FIELDS.shape_dist_traveled, input
-					.getShapeDistTraveled().floatValue(), false));
 			
 			result = Tokenizer.untokenize(values);
 			return result;
