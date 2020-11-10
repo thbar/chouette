@@ -29,6 +29,7 @@ import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
@@ -196,12 +197,42 @@ public class GtfsTripProducer extends AbstractProducer {
 			time.setDropOffType(DropOffType.Scheduled);
 		}
 		// check stoppoint specifications
-		StopPoint point = vjas.getStopPoint();
-		if (point.getForBoarding() != null) {
-			time.setPickupType(toPickUpType(point.getForBoarding(), time.getPickupType()));
-		}
-		if (point.getForAlighting() != null) {
-			time.setDropOffType(toDropOffType(point.getForAlighting(), time.getDropOffType()));
+//		StopPoint point = vjas.getStopPoint();
+//		if (point.getForBoarding() != null) {
+//			time.setPickupType(toPickUpType(point.getForBoarding(), time.getPickupType()));
+//		}
+//		if (point.getForAlighting() != null) {
+//			time.setDropOffType(toDropOffType(point.getForAlighting(), time.getDropOffType()));
+//		}
+
+
+		if(vjas.getBoardingAlightingPossibility() != null){
+			switch (vjas.getBoardingAlightingPossibility()) {
+				case AlightOnly:
+					time.setPickupType(PickupType.NoAvailable);
+					time.setDropOffType(DropOffType.Scheduled);
+					break;
+				case BoardOnly:
+					time.setPickupType(PickupType.Scheduled);
+					time.setDropOffType(DropOffType.NoAvailable);
+					break;
+				case NeitherBoardOrAlight:
+					time.setPickupType(PickupType.NoAvailable);
+					time.setDropOffType(DropOffType.NoAvailable);
+					break;
+				case BoardAndAlightOnRequest:
+					time.setPickupType(PickupType.AgencyCall);
+					time.setDropOffType(DropOffType.AgencyCall);
+					break;
+				case BoardOnRequest:
+					time.setPickupType(PickupType.AgencyCall);
+					time.setDropOffType(DropOffType.Scheduled);
+					break;
+				case AlightOnRequest:
+					time.setPickupType(PickupType.Scheduled);
+					time.setDropOffType(DropOffType.AgencyCall);
+					break;
+			}
 		}
 
 	}

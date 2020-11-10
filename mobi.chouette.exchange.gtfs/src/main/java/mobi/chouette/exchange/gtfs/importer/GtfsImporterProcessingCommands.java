@@ -15,6 +15,7 @@ import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.gtfs.model.importer.Index;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
 import mobi.chouette.exchange.importer.CopyCommand;
+import mobi.chouette.exchange.importer.DeleteLineWithoutOfferCommand;
 import mobi.chouette.exchange.importer.GenerateRouteSectionsCommand;
 import mobi.chouette.exchange.importer.LineRegisterCommand;
 import mobi.chouette.exchange.importer.MergeDuplicatedJourneyPatternsCommand;
@@ -213,6 +214,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         List<Command> commands = new ArrayList<>();
 
         try {
+            commands.add(CommandFactory.create(initialContext, DeleteLineWithoutOfferCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, MergeTripIdCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, MergeDuplicatedJourneyPatternsCommand.class.getName()));
         } catch (Exception e) {
