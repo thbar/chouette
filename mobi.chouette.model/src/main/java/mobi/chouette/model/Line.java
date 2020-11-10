@@ -11,9 +11,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import mobi.chouette.model.type.BikeAccessEnum;
+import mobi.chouette.model.type.TadEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.type.UserNeedEnum;
+import mobi.chouette.model.type.WheelchairAccessEnum;
 import mobi.chouette.model.util.ObjectIdTypes;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -502,6 +505,24 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 		}
 
 	}
+
+	@Getter
+	@Setter
+	@Enumerated(EnumType.STRING)
+	@Column(name = "tad")
+	private TadEnum tad;
+
+	@Getter
+	@Setter
+	@Enumerated(EnumType.STRING)
+	@Column(name = "pmr")
+	private WheelchairAccessEnum wheelchairAccess;
+
+	@Getter
+	@Setter
+	@Enumerated(EnumType.STRING)
+	@Column(name = "bike")
+	private BikeAccessEnum bike;
 
 	@Getter
 	@Setter
