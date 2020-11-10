@@ -15,6 +15,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.time.LocalDateTime;
 
+import static mobi.chouette.common.Constant.CREATION_DATE;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.NETEX_DEFAULT_OBJECT_VERSION;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer.netexFactory;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.COMPOSITE_FRAME;
@@ -33,7 +34,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
     public static void write(Context context, XMLStreamWriter writer, ExportableData exportableData, ExportableNetexData exportableNetexData,
                              NetexFragmentMode fragmentMode, Marshaller marshaller) {
 
-        LocalDateTime timestamp = LocalDateTime.now();
+        LocalDateTime timestamp = (LocalDateTime) context.get(CREATION_DATE);
         String [] splitTimestampFormatted = formatter.format(timestamp).split("\\.");
         String timestampFormatted = splitTimestampFormatted[0];
 
