@@ -11,6 +11,7 @@ import mobi.chouette.common.file.FileServiceException;
 import mobi.chouette.common.file.FileStore;
 import mobi.chouette.common.file.FileStoreFactory;
 import mobi.chouette.dao.CompanyDAO;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.iev.JobDAO;
 import mobi.chouette.dao.iev.StatDAO;
 import mobi.chouette.exchange.InputValidator;
@@ -21,13 +22,20 @@ import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
 import mobi.chouette.model.iev.Stat;
 import mobi.chouette.persistence.hibernate.ChouetteIdentifierGenerator;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import mobi.chouette.scheduler.Scheduler;
 import org.apache.commons.lang.ObjectUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +44,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton(name = JobServiceManager.BEAN_NAME)
@@ -63,6 +78,9 @@ public class JobServiceManager {
 
 	@EJB
 	CompanyDAO companyDAO;
+
+	@EJB
+	ProviderDAO providerDAO;
 
 	private Set<Object> referentials = Collections.synchronizedSet(new HashSet<>());
 
@@ -247,7 +265,12 @@ public class JobServiceManager {
 	 * @return
 	 */
 	public List<JobService> getNextJobs() {
-		return jobDAO.getNextJobs().stream().map(job -> new JobService(rootDirectory, job)).collect(Collectors.toList());
+		return jobDAO.getNextJobs().stream().map(job ->
+		{
+			ContextHolder.setContext(job.getReferential());
+			return new JobService(rootDirectory, job, providerDAO.findBySchema(job.getReferential()).get());
+		})
+				.collect(Collectors.toList());
 	}
 
 
@@ -462,7 +485,8 @@ public class JobServiceManager {
 	private List<JobService> wrapAsJobServices(List<Job> jobs) {
 		List<JobService> jobServices = new ArrayList<>(jobs.size());
 		for (Job job : jobs) {
-			jobServices.add(new JobService(rootDirectory, job));
+			ContextHolder.setContext(job.getReferential());
+			jobServices.add(new JobService(rootDirectory, job, providerDAO.findBySchema(job.getReferential()).get()));
 		}
 
 		return jobServices;
@@ -490,7 +514,8 @@ public class JobServiceManager {
 
 		Job job = jobDAO.find(id);
 		if (job != null && job.getReferential().equals(referential)) {
-			return new JobService(rootDirectory, job);
+			ContextHolder.setContext(job.getReferential());
+			return new JobService(rootDirectory, job, providerDAO.findBySchema(job.getReferential()).get());
 		}
 		throw new RequestServiceException(RequestExceptionCode.UNKNOWN_JOB, "referential = " + referential + " ,id = "
 				+ id);
@@ -499,7 +524,8 @@ public class JobServiceManager {
 	public JobService getJobService(Long id) throws ServiceException {
 		Job job = jobDAO.find(id);
 		if (job != null) {
-			return new JobService(rootDirectory, job);
+			ContextHolder.setContext(job.getReferential());
+			return new JobService(rootDirectory, job, providerDAO.findBySchema(job.getReferential()).get());
 		}
 		throw new RequestServiceException(RequestExceptionCode.UNKNOWN_JOB, " id = " + id);
 	}
@@ -529,7 +555,8 @@ public class JobServiceManager {
 
 		List<JobService> jobServices = new ArrayList<>(filtered.size());
 		for (Job job : filtered) {
-			jobServices.add(new JobService(rootDirectory, job));
+			ContextHolder.setContext(job.getReferential());
+			jobServices.add(new JobService(rootDirectory, job, providerDAO.findBySchema(job.getReferential()).get()));
 		}
 		return jobServices;
 	}

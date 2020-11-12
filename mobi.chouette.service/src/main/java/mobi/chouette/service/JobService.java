@@ -13,6 +13,7 @@ import mobi.chouette.exchange.InputValidatorFactory;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
 import mobi.chouette.exchange.parameters.AbstractParameter;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Link;
 import org.apache.commons.io.IOUtils;
@@ -43,14 +44,17 @@ public class JobService implements JobData, ServiceConstants {
 
     private InputValidator inputValidator;
 
+    private Provider provider;
+
     /**
      * create a jobService on existing job
      *
      * @param job
      */
-    public JobService(String rootDirectory, Job job) {
+    public JobService(String rootDirectory, Job job, Provider provider) {
         this.job = job;
         this.rootDirectory = rootDirectory;
+        this.provider = provider;
         // TODO Exception si le job n'est pas persistent
     }
 
@@ -83,6 +87,10 @@ public class JobService implements JobData, ServiceConstants {
                 throw new RequestServiceException(RequestExceptionCode.MISSING_PARAMETERS, "");
             }
 
+            if(provider == null) {
+                throw new RequestServiceException(RequestExceptionCode.UNKNOWN_REFERENTIAL, "");
+            }
+
             StringWriter writer = new StringWriter();
             IOUtils.copy(inputStreamsByName.get(PARAMETERS_FILE), writer, "UTF-8");
 
@@ -93,14 +101,14 @@ public class JobService implements JobData, ServiceConstants {
 
             FileStore fileStore = FileStoreFactory.getFileStore();
             log.info("using File Store for parameters file : " + fileStore.toString());
-            fileStore.writeFile(filePath(PARAMETERS_FILE), IOUtils.toInputStream(getParametersAsString() + "+n", "UTF-8"));
+            fileStore.writeFile(filePathForAws(PARAMETERS_FILE, provider), IOUtils.toInputStream(getParametersAsString() + "+n", "UTF-8"));
 
             addLink(MediaType.APPLICATION_JSON, Link.PARAMETERS_REL);
 
 
             String inputStreamName = selectDataInputStreamName(inputStreamsByName);
             if (inputStreamName != null) {
-                fileStore.writeFile(filePath(inputStreamName), inputStreamsByName.get(inputStreamName));
+                fileStore.writeFile(filePathForAws(inputStreamName, provider), inputStreamsByName.get(inputStreamName));
                 addLink(MediaType.APPLICATION_OCTET_STREAM, Link.DATA_REL);
                 addLink(MediaType.APPLICATION_OCTET_STREAM, Link.INPUT_REL);
                 job.setInputFilename(inputStreamName);
@@ -119,12 +127,12 @@ public class JobService implements JobData, ServiceConstants {
 
             JSONUtil.toJSON(filePath(ACTION_PARAMETERS_FILE), parameters.getConfiguration());
             if (parameters.getConfiguration() != null) {
-                fileStore.writeFile(filePath(ACTION_PARAMETERS_FILE), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getConfiguration()).getBytes()));
+                fileStore.writeFile(filePathForAws(ACTION_PARAMETERS_FILE, provider), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getConfiguration()).getBytes()));
                 addLink(MediaType.APPLICATION_JSON, Link.ACTION_PARAMETERS_REL);
             }
 
             if (parameters.getValidation() != null) {
-                fileStore.writeFile(filePath(VALIDATION_PARAMETERS_FILE), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getValidation()).getBytes()));
+                fileStore.writeFile(filePathForAws(VALIDATION_PARAMETERS_FILE, provider), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getValidation()).getBytes()));
                 addLink(MediaType.APPLICATION_JSON, Link.VALIDATION_PARAMETERS_REL);
             }
 
@@ -155,6 +163,10 @@ public class JobService implements JobData, ServiceConstants {
 
     private java.nio.file.Path filePath(String fileName) {
         return Paths.get(getPathName(), fileName);
+    }
+
+    private java.nio.file.Path filePathForAws(String fileName, Provider provider) {
+        return Paths.get(getAwsPathName(provider), fileName);
     }
 
     private Parameters getParameters() throws ServiceException {
@@ -200,6 +212,14 @@ public class JobService implements JobData, ServiceConstants {
     public String getPathName() {
         if (jobPersisted()) {
             return Paths.get(rootDirectory, ROOT_PATH, job.getReferential(), "data", job.getId().toString()).toString();
+        }
+        // TODO Non, lever une exception
+        return null;
+    }
+
+    public String getAwsPathName(Provider provider) {
+        if (jobPersisted()) {
+            return Paths.get(rootDirectory, ROOT_PATH, provider.getMosaicId().toString(), "logs").toString();
         }
         // TODO Non, lever une exception
         return null;
