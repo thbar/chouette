@@ -67,7 +67,6 @@ public class StopTimeExporter extends ExporterImpl<GtfsStopTime> implements Gtfs
 			values.add(STRING_CONVERTER.to(context, FIELDS.stop_headsign, input.getStopHeadsign(), false));
 			values.add(PICKUP_CONVERTER.to(context, FIELDS.pickup_type, input.getPickupType(), false));
 			values.add(DROPOFFTYPE_CONVERTER.to(context, FIELDS.drop_off_type, input.getDropOffType(), false));
- 			values.add(FLOAT_CONVERTER.to(context, FIELDS.shape_dist_traveled, input.getShapeDistTraveled(), false));
 
 			result = Tokenizer.untokenize(values);
 			return result;
