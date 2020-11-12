@@ -22,6 +22,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Log4j
 @Stateless(name = NetexprofileExporterCommand.COMMAND)
@@ -42,6 +43,8 @@ public class NetexprofileExporterCommand extends AbstractExporterCommand impleme
         ProgressionCommand progression = (ProgressionCommand) CommandFactory.create(initialContext, ProgressionCommand.class.getName());
 
         try {
+            context.put(CREATION_DATE,LocalDateTime.now());
+
 
             // read parameters
             Object configuration = context.get(CONFIGURATION);

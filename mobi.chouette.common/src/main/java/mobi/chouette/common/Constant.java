@@ -68,5 +68,7 @@ public interface Constant {
 	public static final String NULL = "\\N";
 	
 	public static final String BUFFER = "buffer";
+
+	public static final String CREATION_DATE = "CreationDate";
 	
 }

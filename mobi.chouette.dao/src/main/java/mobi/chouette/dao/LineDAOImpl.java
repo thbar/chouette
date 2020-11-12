@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import java.util.List;
 
 @Stateless (name="LineDAO")
 public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
@@ -51,5 +52,15 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 				.setParameter("lineId", lineId)
 				.getSingleResult();
 
+	}
+
+	@Override
+	public List<Line> findByNetworkId(Long networkId) {
+		return em.createQuery("SELECT l " +
+				"                   FROM Line l " +
+				"                   JOIN l.network n" +
+				"                  WHERE n.id = :networkId", Line.class)
+				.setParameter("networkId", networkId)
+				.getResultList();
 	}
 }
