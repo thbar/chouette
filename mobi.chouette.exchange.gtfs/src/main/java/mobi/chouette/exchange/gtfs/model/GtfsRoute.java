@@ -1,15 +1,15 @@
 package mobi.chouette.exchange.gtfs.model;
 
-import java.awt.Color;
-import java.io.Serializable;
-import java.net.URL;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.awt.*;
+import java.io.Serializable;
+import java.net.URL;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
@@ -56,8 +56,12 @@ public class GtfsRoute extends GtfsObject implements Serializable
    @Setter
    private Color routeTextColor;
 
+   @Getter
+   @Setter
+   private Integer position;
+
    public GtfsRoute(GtfsRoute bean) {
-	   this(bean.getRouteId(), bean.getAgencyId(), bean.getRouteShortName(), bean.getRouteLongName(), bean.getRouteDesc(), bean.getRouteType(), bean.getRouteUrl(), bean.getRouteColor(), bean.getRouteTextColor());
+	   this(bean.getRouteId(), bean.getAgencyId(), bean.getRouteShortName(), bean.getRouteLongName(), bean.getRouteDesc(), bean.getRouteType(), bean.getRouteUrl(), bean.getRouteColor(), bean.getRouteTextColor(), bean.getPosition());
 	   this.setId(bean.getId());
    }
    

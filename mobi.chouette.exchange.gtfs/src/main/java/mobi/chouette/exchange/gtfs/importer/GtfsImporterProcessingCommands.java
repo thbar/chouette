@@ -102,6 +102,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 
 
             ArrayList<String> savedLines = new ArrayList<String>();
+            Integer cpt = 1;
             for (GtfsRoute gtfsRoute : index) {
                 String newRouteId = gtfsRoute.getRouteId().split("-")[0];
                 if(savedLines.contains(newRouteId)) continue;
@@ -113,6 +114,8 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 GtfsRouteParserCommand parser = (GtfsRouteParserCommand) CommandFactory.create(initialContext,
                         GtfsRouteParserCommand.class.getName());
                 parser.setGtfsRouteId(gtfsRoute.getRouteId());
+                parser.setPosition(cpt);
+                cpt++;
                 chain.add(parser);
                 if (withDao && !parameters.isNoSave()) {
 

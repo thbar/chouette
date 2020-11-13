@@ -166,6 +166,7 @@ public class LineRegisterCommand implements Command {
 				if(oldValue.getCategoriesForLine() == null){
 					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(Long.valueOf(0)));
 				}
+				oldValue.setPosition(newValue.getPosition());
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
 

@@ -1,13 +1,7 @@
 package mobi.chouette.exchange.gtfs.importer;
 
-import java.io.IOException;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import java.util.Calendar;
-
-import javax.naming.InitialContext;
-
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -29,9 +23,10 @@ import mobi.chouette.model.Network;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.joda.time.LocalDate;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
+import javax.naming.InitialContext;
+import java.io.IOException;
 
 @Log4j
 public class GtfsRouteParserCommand implements Command, Constant {
@@ -41,6 +36,10 @@ public class GtfsRouteParserCommand implements Command, Constant {
 	@Getter
 	@Setter
 	private String gtfsRouteId;
+
+	@Getter
+	@Setter
+	private Integer position;
 
 	@Override
 	public boolean execute(Context context) throws Exception {
@@ -121,6 +120,7 @@ public class GtfsRouteParserCommand implements Command, Constant {
 			// Line
 			GtfsRouteParser gtfsRouteParser = (GtfsRouteParser) ParserFactory.create(GtfsRouteParser.class.getName());
 			gtfsRouteParser.setGtfsRouteId(gtfsRouteId);
+			gtfsRouteParser.setPosition(position);
 			gtfsRouteParser.parse(context);
 
 			addStats(context, referential);

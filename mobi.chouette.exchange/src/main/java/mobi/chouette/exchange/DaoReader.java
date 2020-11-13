@@ -15,6 +15,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,8 @@ public class DaoReader {
 				}
 			}
 		}
+		// ordonnancement des lignes
+		lines.stream().sorted(Comparator.comparing(Line::getPosition));
 		for (Line line : lines) {
 			lineIds.add(line.getId());
 		}

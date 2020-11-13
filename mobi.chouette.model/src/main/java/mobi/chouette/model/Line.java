@@ -526,6 +526,11 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 
 	@Getter
 	@Setter
+	@Column(name = "pos")
+	private Integer position;
+
+	@Getter
+	@Setter
 	private FlexibleLineProperties flexibleLineProperties;
 
 	public boolean equals(Object o) {
