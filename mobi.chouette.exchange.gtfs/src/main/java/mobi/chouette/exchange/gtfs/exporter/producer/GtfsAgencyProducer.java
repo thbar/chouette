@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
 import mobi.chouette.model.Company;
+import mobi.chouette.model.type.OrganisationTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;
@@ -44,6 +45,10 @@ public class GtfsAgencyProducer extends AbstractProducer
    {
       agency.setAgencyId(toGtfsId(neptuneObject.getObjectId(),prefix,keepOriginalId));
 
+      if(OrganisationTypeEnum.Operator.equals(neptuneObject.getOrganisationType()) && agency.getAgencyId().endsWith("o")){
+          agency.setAgencyId(StringUtils.chop(agency.getAgencyId()));
+      }
+
       String name = neptuneObject.getName();
       if (name.trim().isEmpty())
       {
@@ -55,9 +60,6 @@ public class GtfsAgencyProducer extends AbstractProducer
          return false;
       }
 
-      if(StringUtils.isEmpty(agency.getAgencyId()) || agency.getAgencyId().endsWith("default")){
-          agency.setAgencyId(name);
-      }
       agency.setAgencyName(name);
 
       // manage agency_timezone
