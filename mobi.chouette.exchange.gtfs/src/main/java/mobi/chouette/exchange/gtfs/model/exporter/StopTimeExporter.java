@@ -2,6 +2,7 @@ package mobi.chouette.exchange.gtfs.model.exporter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
@@ -24,7 +25,9 @@ public class StopTimeExporter extends ExporterImpl<GtfsStopTime> implements Gtfs
 
 	@Override
 	public void writeHeader() throws IOException {
-		write(FIELDS.values());
+		write(Arrays.stream(FIELDS.values())
+					.filter(field->!field.equals(FIELDS.shape_dist_traveled))
+					.toArray(FIELDS[]::new));
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import mobi.chouette.exchange.gtfs.model.importer.GtfsConverter;
 public class ShapeExporter extends ExporterImpl<GtfsShape> implements
 		GtfsConverter {
 	public static enum FIELDS {
-		shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, shape_dist_traveled;
+		shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence;
 	};
 
 	public static final String FILENAME = "shapes.txt";
