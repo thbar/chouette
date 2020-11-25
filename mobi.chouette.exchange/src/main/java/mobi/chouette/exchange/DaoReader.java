@@ -15,10 +15,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless 
 public class DaoReader {
@@ -41,7 +39,6 @@ public class DaoReader {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Set<Long> loadLines(String type, List<Long> ids) {
 		Set<Line> lines = new HashSet<Line>();
-		Set<Long> lineIds = new HashSet<Long>();
 		if (ids == null || ids.isEmpty()) {
 			lines.addAll(lineDAO.findAll());
 		} else {
@@ -65,11 +62,10 @@ public class DaoReader {
 			}
 		}
 		// ordonnancement des lignes
-		lines.stream().sorted(Comparator.comparing(Line::getPosition));
-		for (Line line : lines) {
-			lineIds.add(line.getId());
-		}
-		return lineIds;
+		return lines.stream()
+				     .sorted(Comparator.comparing(Line::getPosition))
+				     .map(Line::getId)
+				     .collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 
