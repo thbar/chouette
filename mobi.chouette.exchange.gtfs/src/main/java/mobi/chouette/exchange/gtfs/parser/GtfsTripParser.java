@@ -57,7 +57,6 @@ import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
 import mobi.chouette.model.type.SectionStatusEnum;
-import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
@@ -67,7 +66,10 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 
+import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -615,6 +617,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
                 String stopIdWithDropOffPickup = createJourneyKeyFragment((VehicleJourneyAtStopWrapper) vehicleJourneyAtStop);
                 journeyKey += "," + stopIdWithDropOffPickup;
             }
+            journeyKey += "_" + vehicleJourney.getVehicleJourneyAtStops().size();
             JourneyPattern journeyPattern = journeyPatternByStopSequence.get(journeyKey);
             if (journeyPattern == null) {
                 journeyPattern = createJourneyPattern(context, referential, configuration, gtfsTrip, gtfsShapes,
@@ -830,11 +833,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
     private JourneyPattern createJourneyPattern(Context context, Referential referential,
                                                 GtfsImportParameters configuration, GtfsTrip gtfsTrip, Iterable<GtfsShape> gtfsShapes,
-                                                VehicleJourney vehicleJourney, String journeyKey, Map<String, JourneyPattern> journeyPatternByStopSequence) {
+                                                VehicleJourney vehicleJourney, String journeyKey, Map<String, JourneyPattern> journeyPatternByStopSequence) throws NoSuchAlgorithmException {
         JourneyPattern journeyPattern;
 
         // Route
-        Route route = createRoute(referential, configuration, gtfsTrip, vehicleJourney.getVehicleJourneyAtStops());
+        Route route = createRoute(referential, configuration, gtfsTrip, vehicleJourney.getVehicleJourneyAtStops(), journeyKey);
 
         // JourneyPattern
         String journeyPatternId = route.getObjectId().replace(Route.ROUTE_KEY, JourneyPattern.JOURNEYPATTERN_KEY);
@@ -893,6 +896,13 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         addSyntheticDestinationDisplayIfMissingOnFirstStopPoint(configuration, referential, journeyPattern);
 
         return journeyPattern;
+    }
+
+    private String computeEndId(String journeyKey) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(journeyKey.getBytes());
+        byte[] digest = md.digest();
+        return DatatypeConverter.printHexBinary(digest).toUpperCase();
     }
 
     private RoutePoint createRoutePointFromStopPoint(Referential referential, StopPoint firstStopPoint) {
@@ -1075,23 +1085,21 @@ public class GtfsTripParser implements Parser, Validator, Constant {
      * @param referential
      * @param configuration
      * @param gtfsTrip
+     * @param journeyKey
      * @return
      */
-    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip, List<VehicleJourneyAtStop> list) {
+    private Route createRoute(Referential referential, GtfsImportParameters configuration, GtfsTrip gtfsTrip, List<VehicleJourneyAtStop> list, String journeyKey) throws NoSuchAlgorithmException {
         String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
                 gtfsTrip.getRouteId(), log);
         Line line = ObjectFactory.getLine(referential, lineId);
 
-        // For SNCF rail data (France), update line submode according to trip "trip_headsign" column.
-        if (line.getTransportModeName() != null && line.getTransportModeName().equals(TransportModeNameEnum.Rail)) {
-            TransportSubModeNameEnum subModeFromTripHeadSign = getSubModeFromTripHeadSign(gtfsTrip.getTripHeadSign());
-            line.setTransportSubModeName(subModeFromTripHeadSign);
-            log.info("Set sub transport mode for line " + line.getName() + " - " + line.getObjectId() + " to : " + subModeFromTripHeadSign);
-        }
 
         String routeKey = gtfsTrip.getRouteId() + "_" + gtfsTrip.getDirectionId().ordinal();
         if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty())
             routeKey += "_" + gtfsTrip.getShapeId();
+
+        routeKey += "_" + computeEndId(journeyKey);
+
         for (VehicleJourneyAtStop vehicleJourneyAtStop : list) {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
             if(wrapper.stopSequence == 1 || wrapper.stopSequence == list.size()){
