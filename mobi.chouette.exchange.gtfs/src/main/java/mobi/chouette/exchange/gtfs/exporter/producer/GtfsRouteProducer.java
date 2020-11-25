@@ -16,6 +16,7 @@ import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.type.OrganisationTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -42,7 +43,7 @@ public class GtfsRouteProducer extends AbstractProducer
            // Use network->authority as agency if it is an authority
            Network network = neptuneObject.getNetwork();
            if (network != null && network.getCompany() != null) {
-               if (OrganisationTypeEnum.Authority.equals(network.getCompany().getOrganisationType())) {
+               if (OrganisationTypeEnum.Operator.equals(network.getCompany().getOrganisationType())) {
                    c = network.getCompany();
                }
            }
@@ -59,6 +60,9 @@ public class GtfsRouteProducer extends AbstractProducer
            }
        }
        route.setAgencyId(toGtfsId(agencyId, prefix, keepOriginalId));
+       if(OrganisationTypeEnum.Operator.equals(c.getOrganisationType()) && agencyId.endsWith("o")){
+           route.setAgencyId(StringUtils.chop(route.getAgencyId()));
+       }
        route.setRouteShortName(null);
        route.setRouteLongName(null);
 

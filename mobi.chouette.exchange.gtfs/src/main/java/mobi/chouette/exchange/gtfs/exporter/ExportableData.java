@@ -17,9 +17,14 @@ public class ExportableData  extends mobi.chouette.exchange.exporter.ExportableD
 	@Setter
 	private Set<Company> agencyCompanies = new HashSet<>();
 
+	@Getter
+	@Setter
+	private Set<Company> operatorCompanies = new HashSet<>();
+
 	@Override
 	public void clear() {
 		super.clear();
 		agencyCompanies.clear();
+		operatorCompanies.clear();
 	}
 }
