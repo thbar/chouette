@@ -78,8 +78,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			// - stop areas maj avec zdep
 			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
 			lineDAO.flush();
-			stopAreaDAO.flush();
-			mappingHastusZdepDAO.flush();
+
 			// - send to tiamat
 			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
 			List<StopArea> areas = stopAreaDAO.findAll(idList);
