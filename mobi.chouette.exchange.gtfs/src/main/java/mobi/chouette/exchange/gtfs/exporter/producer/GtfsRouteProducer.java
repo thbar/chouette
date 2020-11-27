@@ -52,12 +52,7 @@ public class GtfsRouteProducer extends AbstractProducer
        if (c == null) {
            agencyId = neptuneObject.getNetwork().getObjectId();
        } else {
-           if(c.getObjectId().contains("default")){
-               // pas bon si on modifie le nom de la filiale
-               agencyId = c.getName();
-           } else {
-               agencyId = c.getObjectId();
-           }
+           agencyId = c.getObjectId();
        }
        route.setAgencyId(toGtfsId(agencyId, prefix, keepOriginalId));
        if(OrganisationTypeEnum.Operator.equals(c.getOrganisationType()) && agencyId.endsWith("o")){
