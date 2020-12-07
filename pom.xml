@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>4.0.14_MOSAIC-SNAPSHOT</version>
+    <version>4.0.15_MOSAIC-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 

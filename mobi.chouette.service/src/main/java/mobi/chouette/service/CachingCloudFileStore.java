@@ -136,15 +136,9 @@ public class CachingCloudFileStore implements FileStore {
                 bis = new ByteArrayInputStream(IOUtils.toByteArray(content));
             }
 
-            if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "gcs") || StringUtils.equals(ievExportDestination, "both")){
-                log.info("Preparing to write with cloudFileStore");
-                cloudFileStore.writeFile(filePath, bis);
-                bis.reset();
-            }
-            if(StringUtils.isBlank(ievExportDestination) || StringUtils.equals(ievExportDestination, "local") || StringUtils.equals(ievExportDestination, "both")){
-                log.info("Preparing to write with localFileStore");
-                localFileStore.writeFile(filePath, bis);
-            }
+            cloudFileStore.writeFile(filePath, bis);
+            bis.reset();
+            localFileStore.writeFile(filePath, bis);
         } catch (IOException ioE) {
             throw new FileServiceException("Failed to write file to permanent storage: " + ioE.getMessage(), ioE);
         }

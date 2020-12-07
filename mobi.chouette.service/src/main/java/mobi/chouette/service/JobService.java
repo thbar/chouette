@@ -81,7 +81,7 @@ public class JobService implements JobData, ServiceConstants {
      * @param inputStreamsByName
      * @throws ServiceException : if inputStream not valid with job
      */
-    public void saveInputStreams(final Map<String, InputStream> inputStreamsByName) throws ServiceException {
+    public void saveInputStreams(final Map<String, InputStream> inputStreamsByName, Provider provider) throws ServiceException {
         try {
             if (!inputStreamsByName.containsKey(PARAMETERS_FILE)) {
                 throw new RequestServiceException(RequestExceptionCode.MISSING_PARAMETERS, "");
@@ -101,14 +101,14 @@ public class JobService implements JobData, ServiceConstants {
 
             FileStore fileStore = FileStoreFactory.getFileStore();
             log.info("using File Store for parameters file : " + fileStore.toString());
-            fileStore.writeFile(filePathForAws(PARAMETERS_FILE, provider), IOUtils.toInputStream(getParametersAsString() + "+n", "UTF-8"));
+            fileStore.writeFile(filePath(PARAMETERS_FILE), IOUtils.toInputStream(getParametersAsString() + "+n", "UTF-8"));
 
             addLink(MediaType.APPLICATION_JSON, Link.PARAMETERS_REL);
 
 
             String inputStreamName = selectDataInputStreamName(inputStreamsByName);
             if (inputStreamName != null) {
-                fileStore.writeFile(filePathForAws(inputStreamName, provider), inputStreamsByName.get(inputStreamName));
+                fileStore.writeFile(filePath(inputStreamName), inputStreamsByName.get(inputStreamName));
                 addLink(MediaType.APPLICATION_OCTET_STREAM, Link.DATA_REL);
                 addLink(MediaType.APPLICATION_OCTET_STREAM, Link.INPUT_REL);
                 job.setInputFilename(inputStreamName);
@@ -127,12 +127,12 @@ public class JobService implements JobData, ServiceConstants {
 
             JSONUtil.toJSON(filePath(ACTION_PARAMETERS_FILE), parameters.getConfiguration());
             if (parameters.getConfiguration() != null) {
-                fileStore.writeFile(filePathForAws(ACTION_PARAMETERS_FILE, provider), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getConfiguration()).getBytes()));
+                fileStore.writeFile(filePath(ACTION_PARAMETERS_FILE), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getConfiguration()).getBytes()));
                 addLink(MediaType.APPLICATION_JSON, Link.ACTION_PARAMETERS_REL);
             }
 
             if (parameters.getValidation() != null) {
-                fileStore.writeFile(filePathForAws(VALIDATION_PARAMETERS_FILE, provider), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getValidation()).getBytes()));
+                fileStore.writeFile(filePath(VALIDATION_PARAMETERS_FILE), new ByteArrayInputStream(JSONUtil.toJSON(parameters.getValidation()).getBytes()));
                 addLink(MediaType.APPLICATION_JSON, Link.VALIDATION_PARAMETERS_REL);
             }
 
@@ -211,7 +211,7 @@ public class JobService implements JobData, ServiceConstants {
      */
     public String getPathName() {
         if (jobPersisted()) {
-            return Paths.get(rootDirectory, ROOT_PATH, job.getReferential(), "data", job.getId().toString()).toString();
+            return Paths.get(rootDirectory, ROOT_PATH, job.getReferential(), "logs", job.getId().toString()).toString();
         }
         // TODO Non, lever une exception
         return null;

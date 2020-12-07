@@ -17,6 +17,7 @@ import mobi.chouette.dao.iev.StatDAO;
 import mobi.chouette.exchange.InputValidator;
 import mobi.chouette.exchange.TestDescription;
 import mobi.chouette.model.Company;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
@@ -50,6 +51,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -179,6 +181,11 @@ public class JobServiceManager {
 		JobService jobService = null;
 		try {
 			log.info("Creating job referential="+referential+" ...");
+
+			Optional<Provider> provider = providerDAO.findBySchema(referential);
+
+			Provider provider1 = provider.get();
+
 			// Instancier le modèle du service 'upload'
 			jobService = new JobService(rootDirectory, referential, action, type);
 
@@ -191,7 +198,7 @@ public class JobServiceManager {
 			fileStore.createFolder(jobService.getPath());
 
 			// Enregistrer des paramètres à conserver sur fichier
-			jobService.saveInputStreams(inputStreamsByName);
+			jobService.saveInputStreams(inputStreamsByName, provider1);
 
 			// set cancel link
 			jobService.addLink(MediaType.APPLICATION_JSON, Link.CANCEL_REL);

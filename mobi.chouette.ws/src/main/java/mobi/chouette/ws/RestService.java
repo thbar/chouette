@@ -98,6 +98,7 @@ public class RestService implements Constant {
 			ResponseBuilder builder = Response.accepted();
 			{
 
+				ContextHolder.setContext(referential);
 				JobService jobService = jobServiceManager.create(referential, action, type, inputStreamByName);
 
 				// Produire la vue
