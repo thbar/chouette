@@ -758,7 +758,7 @@ public abstract class AbstractValidation<T extends NeptuneIdentifiedObject> impl
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_2_2, "WARNING"));
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_2_3, "WARNING"));
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_2_4, "INFO"));
-			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_2_5, "ERROR"));
+			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_2_5, "WARNING"));
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_3, "WARNING"));
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_4, "WARNING"));
 			testLevel3FileList.add(new TestDescription(3, VEHICLE_JOURNEY_5, "ERROR"));
@@ -842,7 +842,7 @@ public abstract class AbstractValidation<T extends NeptuneIdentifiedObject> impl
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_2_2, "WARNING"));
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_2_3, "WARNING"));
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_2_4, "INFO"));
-			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_2_5, "ERROR"));
+			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_2_5, "WARNING"));
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_3, "WARNING"));
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_4, "WARNING"));
 			testLevel3DatabaseList.add(new TestDescription(3, VEHICLE_JOURNEY_5, "ERROR"));
