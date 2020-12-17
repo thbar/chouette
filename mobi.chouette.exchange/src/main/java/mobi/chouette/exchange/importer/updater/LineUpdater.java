@@ -1,11 +1,5 @@
 package mobi.chouette.exchange.importer.updater;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-
 import mobi.chouette.common.CollectionUtil;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.Pair;
@@ -27,6 +21,11 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.Collection;
+import java.util.List;
 
 @Stateless(name = LineUpdater.BEAN_NAME)
 public class LineUpdater implements Updater<Line> {
@@ -143,10 +142,6 @@ public class LineUpdater implements Updater<Line> {
 			if (newValue.getRegistrationNumber() != null
 					&& !newValue.getRegistrationNumber().equals(oldValue.getRegistrationNumber())) {
 				oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
-			}
-			if (newValue.getTransportModeName() != null
-					&& !newValue.getTransportModeName().equals(oldValue.getTransportModeName())) {
-				oldValue.setTransportModeName(newValue.getTransportModeName());
 			}
 			if (newValue.getTransportSubModeName() != null
 					&& !newValue.getTransportSubModeName().equals(oldValue.getTransportSubModeName())) {

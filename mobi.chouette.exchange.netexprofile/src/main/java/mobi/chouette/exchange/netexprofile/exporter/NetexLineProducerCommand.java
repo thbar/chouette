@@ -37,10 +37,15 @@ public class NetexLineProducerCommand implements Command, Constant {
             Line line = (Line) context.get(LINE);
             log.info("processing line " + NamingUtil.getName(line));
 
-            if(line != null && StringUtils.isEmpty(line.getCodifligne())) {
-                reporter.addErrorToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE,
-                        ActionReporter.ERROR_CODE.INVALID_DATA, "Codifligne manquant");
-                reporter.setActionError(context, ActionReporter.ERROR_CODE.INVALID_DATA, "Codifligne manquant");
+            if(line != null && line.getCategoriesForLine() != null && !line.getCategoriesForLine().getName().equalsIgnoreCase("idfm")){
+                log.error("Ligne : " + line.getObjectId() + " en catégorie IDFM mais CODIFLIGNE manquant.");
+                return SUCCESS;
+            }
+
+            if(line != null && StringUtils.isEmpty(line.getCodifligne()) && line.getCategoriesForLine() != null && line.getCategoriesForLine().getName().equalsIgnoreCase("idfm")) {
+                reporter.addObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE,
+                        "Codifligne manquant", ActionReporter.OBJECT_STATE.ERROR, IO_TYPE.OUTPUT);
+                reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_FOUND, "Codifligne manquant");
                 return ERROR;
             }
 
