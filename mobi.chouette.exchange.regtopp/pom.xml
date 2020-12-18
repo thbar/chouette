@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>3.4.OKI-SNAPSHOT</version>
+		<version>5.0.0-OKI-SNAPSHOT</version>
 	</parent>
 	<artifactId>mobi.chouette.exchange.regtopp</artifactId>
 	<packaging>ejb</packaging>
