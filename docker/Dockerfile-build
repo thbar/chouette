@@ -1,0 +1,7 @@
+ARG CHOUETTE_BASE_VERSION
+
+FROM $CHOUETTE_BASE_VERSION
+
+COPY chouette_iev/target/chouette.ear /tmp/chouette.ear
+
+CMD [ "/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--debug"]

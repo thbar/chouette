@@ -1,10 +1,10 @@
 batch
 
-module add --name=org.postgres --resources=/opt/jboss/wildfly/customization/postgresql-9.3-1103.jdbc41.jar:/opt/jboss/wildfly/customization/postgis-jdbc-2.1.7.2.jar --dependencies=javax.api,javax.transaction.api
+module add --name=org.postgres --resources=/opt/jboss/wildfly/customization/postgresql-42.2.6.jar:/opt/jboss/wildfly/customization/postgis-jdbc-2.3.0.jar --dependencies=javax.api,javax.transaction.api
 
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name="postgresql",driver-module-name="org.postgres",driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
 
-data-source add --jndi-name=java:jboss/datasources/iev --name=iev --connection-url=jdbc:postgresql://${env.CHOUETTE_DB_HOST}:${env.CHOUETTE_DB_PORT}/${env.CHOUETTE_IEV_DB_NAME}  --driver-name=postgresql --user-name=${env.CHOUETTE_DB_USER} --password=${env.CHOUETTE_DB_PASSWORD} --check-valid-connection-sql="select version();" --use-fast-fail=false --validate-on-match=false --background-validation=true --background-validation-millis=10000 --share-prepared-statements=false
+data-source add --jndi-name=java:jboss/datasources/iev --name=iev --connection-url=jdbc:postgresql://${env.CHOUETTE_DB_HOST}:${env.CHOUETTE_DB_PORT}/iev  --driver-name=postgresql --user-name=${env.CHOUETTE_DB_USER} --password=${env.CHOUETTE_DB_PASSWORD} --check-valid-connection-sql="select version();" --use-fast-fail=false --validate-on-match=false --background-validation=true --background-validation-millis=10000 --share-prepared-statements=false
 
 data-source add --jndi-name=java:jboss/datasources/chouette --name=chouette --connection-url=jdbc:postgresql_postGIS://${env.CHOUETTE_DB_HOST}:${env.CHOUETTE_DB_PORT}/${env.CHOUETTE_DB_NAME}?preparedStatementCacheQueries=1024&preparedStatementCacheSizeMiB=15 --driver-class=org.postgis.DriverWrapper --driver-name=postgresql --user-name=${env.CHOUETTE_DB_USER} --password=${env.CHOUETTE_DB_PASSWORD} --min-pool-size=20 --max-pool-size=60 --check-valid-connection-sql="select version();" --use-fast-fail=false --validate-on-match=false --background-validation=true --background-validation-millis=10000 --share-prepared-statements=false
 
