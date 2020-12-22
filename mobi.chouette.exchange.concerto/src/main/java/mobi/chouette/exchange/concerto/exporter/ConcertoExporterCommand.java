@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.exchange.CommandCancelledException;
 import mobi.chouette.exchange.ProcessingCommands;
@@ -13,6 +14,7 @@ import mobi.chouette.exchange.exporter.AbstractExporterCommand;
 import mobi.chouette.exchange.exporter.MergeCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
+import mobi.chouette.model.Operator;
 import mobi.chouette.model.Provider;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 
@@ -34,6 +36,9 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 
 	@EJB
 	ProviderDAO providerDAO;
+
+	@EJB
+	OperatorDAO operatorDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -67,14 +72,31 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				allSchemas = true;
 				List<Provider> all = providerDAO.findAll();
 				all.forEach(p -> {
-					if(p.isIdfm() && p.getName().toLowerCase().contains("mosaic")) schemas.add(p.getSchemaName());
+					if(p.isIdfm() && p.getName().toLowerCase().contains("mosaic") && !p.getName().toLowerCase().contains("technique")){
+						schemas.add(p.getSchemaName());
+					}
 				});
 			} else {
 				allSchemas = false;
 				schemas.add(ContextHolder.getContext());
 			}
-			boolean goodProcessing = false;
+			boolean goodProcessing;
+
+			List<String> schemasWithOperator = new ArrayList<>();
+
 			for(String schema : schemas){
+				List<Operator> operators = operatorDAO.findByReferential(schema);
+				if(operators != null && operators.size() > 0){
+					schemasWithOperator.add(schema);
+				}
+			}
+
+			if(schemasWithOperator.size() == 0){
+				reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_PROCEEDED, "no data exported");
+				return ERROR;
+			}
+
+			for(String schema : schemasWithOperator){
 				if(!schema.startsWith("mosaic_")) schema = "mosaic_" + schema;
 				if(context.containsKey(EXPORTABLE_DATA)){
                     context.put(EXPORTABLE_DATA, new ExportableData());

@@ -36,7 +36,7 @@ public class ConcertoStopProducer extends AbstractProducer
 		super(exporter);
 	}
 
-	public UUID save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate startDate, LocalDate endDate, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType)
+	public UUID save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate startDate, LocalDate endDate, String objectId, UUID[] lines, StopAreaTypeEnum stopAreaType)
 	{
 		UUID uuid;
 		if(neptuneObject.getUuid() != null) {
@@ -44,14 +44,14 @@ public class ConcertoStopProducer extends AbstractProducer
 		} else {
 			uuid = UUID.randomUUID();
 		}
-		for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
+		for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
 			save(neptuneObject, parent, referent, date, uuid, objectId, lines, stopAreaType);
 		}
 
 		return uuid;
 	}
 
-	private void save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate date, UUID uuid, ConcertoObjectId objectId, UUID[] lines, StopAreaTypeEnum stopAreaType){
+	private void save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate date, UUID uuid, String objectId, UUID[] lines, StopAreaTypeEnum stopAreaType){
 		switch(stopAreaType) {
 			case ZDEP:
 				break;

@@ -9,12 +9,18 @@
 package mobi.chouette.exchange.concerto.exporter.producer;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.JSONUtil;
+import mobi.chouette.exchange.concerto.exporter.ConcertoExportParameters;
 import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
 import mobi.chouette.exchange.concerto.model.ConcertoOperator;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoExporterInterface;
 import mobi.chouette.model.Operator;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.LocalDate;
 
+import javax.xml.bind.JAXBException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,16 +40,22 @@ public class ConcertoOperatorProducer extends AbstractProducer
 
    private ConcertoOperator operator = new ConcertoOperator();
 
-   public boolean save(LocalDate startDate, LocalDate endDate, List<Operator> operators){
+   public boolean save(LocalDate startDate, LocalDate endDate, List<Operator> operators, ConcertoExportParameters parameters){
       AtomicBoolean isTrue = new AtomicBoolean(true);
 
       operators.forEach(o -> {
          UUID uuid = UUID.randomUUID();
-         for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1))
+         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1))
          {
-            ConcertoObjectId concertoObjectId = new ConcertoObjectId();
-            concertoObjectId.setStif(o.getStifValue());
-            concertoObjectId.setHastus(o.getHastusValue());
+            ConcertoObjectId objectId = new ConcertoObjectId();
+            objectId.setStif(o.getStifValue());
+            objectId.setHastus(o.getHastusValue());
+            String concertoObjectId = null;
+            try {
+               concertoObjectId = getObjectIdConcerto(objectId, parameters);
+            } catch (JAXBException | JSONException e) {
+               e.printStackTrace();
+            }
             if(!save(uuid, date, o.getName(), concertoObjectId)) isTrue.set(false);
          }
       });
@@ -51,7 +63,7 @@ public class ConcertoOperatorProducer extends AbstractProducer
       return isTrue.get();
    }
 
-   private boolean save(UUID uuid, LocalDate date, String name, ConcertoObjectId objectId)
+   private boolean save(UUID uuid, LocalDate date, String name, String objectId)
    {
       operator.setType(TYPE);
       operator.setUuid(uuid);

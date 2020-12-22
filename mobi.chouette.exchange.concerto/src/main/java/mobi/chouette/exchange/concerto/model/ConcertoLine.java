@@ -38,7 +38,7 @@ public class ConcertoLine extends ConcertoObject implements Serializable
 
    @Getter
    @Setter
-   private ConcertoObjectId objectId;
+   private String objectId;
 
    @Getter
    @Setter

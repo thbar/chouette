@@ -71,8 +71,7 @@ public class DaoReader {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<Operator> loadOperators() {
-		List<Operator> operators = operatorDAO.findAll();
-		return operators;
+		return operatorDAO.findAll();
 	}
 
 }

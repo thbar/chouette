@@ -38,5 +38,5 @@ public class ConcertoOperator extends ConcertoObject implements Serializable
 
    @Getter
    @Setter
-   private ConcertoObjectId objectId;
+   private String objectId;
 }

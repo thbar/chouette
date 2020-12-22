@@ -32,16 +32,16 @@ public class ConcertoLineProducer extends AbstractProducer
 
     private ConcertoLine line = new ConcertoLine();
 
-    public UUID save(Line neptuneObject, LocalDate startDate, LocalDate endDate, ConcertoObjectId objectId){
+    public UUID save(Line neptuneObject, LocalDate startDate, LocalDate endDate, String objectId){
         UUID uuid = UUID.randomUUID();
-        for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1))
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1))
         {
             if(!save(neptuneObject, date, objectId, uuid)) ;
         }
         return uuid;
     }
 
-    public boolean save(Line neptuneObject, LocalDate date, ConcertoObjectId objectId, UUID uuid)
+    public boolean save(Line neptuneObject, LocalDate date, String objectId, UUID uuid)
     {
         // On ne traite que les lignes IDFM
         if(!neptuneObject.getCategoriesForLine().getName().equals("IDFM")){

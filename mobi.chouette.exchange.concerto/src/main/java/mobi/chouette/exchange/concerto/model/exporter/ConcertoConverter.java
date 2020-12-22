@@ -29,20 +29,16 @@ public interface ConcertoConverter {
 
 	};
 
-	DefaultFieldConverter<ConcertoObjectId> OBJECT_ID_CONVERTER = new DefaultFieldConverter<ConcertoObjectId>() {
+	DefaultFieldConverter<String> OBJECT_ID_CONVERTER = new DefaultFieldConverter<String>() {
 
 		@Override
-		protected ConcertoObjectId convertFrom(String input) throws Exception {
-			return JSONUtil.fromJSON(input, ConcertoObjectId.class);
+		protected String convertFrom(String input) throws Exception {
+			return JSONUtil.fromJSON(input, String.class);
 		}
 
 		@Override
-		protected String convertTo(ConcertoObjectId input) throws Exception {
-			String json = JSONUtil.toJSON(input);
-			String val = (new JSONObject(json)).getString("root");
-			val = val.replace("\\\"", "\"");
-			val = val.replaceAll("\"\"", "\"");
-			return val;
+		protected String convertTo(String input) throws Exception {
+			return (input != null) ? input : "";
 		}
 
 	};

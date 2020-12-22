@@ -3,11 +3,14 @@ package mobi.chouette.exchange.concerto.exporter;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 import lombok.extern.log4j.Log4j;
+import lombok.val;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
+import mobi.chouette.common.JSONUtil;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.concerto.Constant;
+import mobi.chouette.exchange.concerto.exporter.producer.AbstractProducer;
 import mobi.chouette.exchange.concerto.exporter.producer.ConcertoLineProducer;
 import mobi.chouette.exchange.concerto.model.ConcertoLineObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
@@ -17,16 +20,22 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
+import mobi.chouette.model.Timetable;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 //@todo SCH revoir les trucs de reporters etc après avoir vu le chargement des données
 @Log4j
@@ -96,14 +105,53 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 
 			ConcertoDataCollector collector = new ConcertoDataCollector();
 			boolean cont = collector.collect(collection, line, startDate, endDate);
+
+			for (Timetable t : collection.getTimetables()) {
+				if (t.getStartOfPeriod() == null || t.getEndOfPeriod() == null) {
+					List<LocalDate> effectiveDates = t.getEffectiveDates();
+					if (effectiveDates.size() > 0) {
+						Collections.sort(effectiveDates);
+						if (t.getStartOfPeriod() == null) {
+							t.setStartOfPeriod(effectiveDates.get(0));
+						}
+						if (t.getEndOfPeriod() == null) {
+							t.setEndOfPeriod(effectiveDates.get(effectiveDates.size() - 1));
+						}
+					} else {
+						if (t.getStartOfPeriod() != null) {
+							t.setEndOfPeriod(t.getStartOfPeriod());
+						} else if (t.getEndOfPeriod() != null) {
+							t.setStartOfPeriod(t.getEndOfPeriod());
+						} else {
+							// Both empty
+							t.setStartOfPeriod(org.joda.time.LocalDate.now());
+							t.setEndOfPeriod(org.joda.time.LocalDate.now());
+						}
+					}
+				}
+			}
+
+			LongSummaryStatistics statsMax = collection.getTimetables().stream()
+					.mapToLong(t -> t.getEndOfPeriod().toDate().getTime())
+					.summaryStatistics();
+			LocalDate maxDate = new LocalDate(statsMax.getMax());
+
+			LongSummaryStatistics statsMin = collection.getTimetables().stream()
+					.mapToLong(t -> t.getStartOfPeriod().toDate().getTime())
+					.summaryStatistics();
+			LocalDate minDate = new LocalDate(statsMin.getMin());
+
+			if(minDate.isAfter(startDate)) startDate = minDate;
+			if(maxDate.isBefore(endDate)) endDate = maxDate;
+
+
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.LINE, 0);
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.ROUTE, collection.getRoutes().size());
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.VEHICLE_JOURNEY,collection.getVehicleJourneys().size());
 
 			if (cont) {
 				context.put(EXPORTABLE_DATA, collection);
-				ConcertoObjectId objectId = ConcertoLineObjectIdGenerator.getConcertoObjectId(line.getCodifligne(), line.getNumber());
-				UUID uuid = saveLine(context, line, startDate, endDate, objectId);
+				UUID uuid = saveLine(context, line, startDate, endDate, parameters);
 				reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.LINE, 1);
 				mappingLineUUIDList.add(new MappingLineUUID(uuid, line.getId()));
 				result = SUCCESS;
@@ -121,16 +169,19 @@ public class ConcertoLineProducerCommand implements Command, Constant {
 		return result;
 	}
 
-	private UUID saveLine(Context context, Line line, LocalDate startDate, LocalDate endDate, ConcertoObjectId objectId) {
+	private UUID saveLine(Context context, Line line, LocalDate startDate, LocalDate endDate, ConcertoExportParameters parameters) throws JAXBException, JSONException {
 		ConcertoExporter exporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
         ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 		ConcertoLineProducer lineProducer = new ConcertoLineProducer(exporter);
 
+		ConcertoObjectId objectId = ConcertoLineObjectIdGenerator.getConcertoObjectId(line.getCodifligne(), line.getNumber());
+		String concertoObjectId = lineProducer.getObjectIdConcerto(objectId, parameters);
+
 		UUID uuid = null;
-		boolean hasVj = collection.getVehicleJourneys().stream().anyMatch(vehicleJourney -> vehicleJourney.getRoute().getLine().getId() == line.getId());
+		boolean hasVj = collection.getVehicleJourneys().stream().anyMatch(vehicleJourney -> vehicleJourney.getRoute().getLine().getId().equals(line.getId()));
 
 		if (hasVj) {
-			uuid = lineProducer.save(line, startDate, endDate, objectId);
+			uuid = lineProducer.save(line, startDate, endDate, concertoObjectId);
 		}
 
 		return uuid;

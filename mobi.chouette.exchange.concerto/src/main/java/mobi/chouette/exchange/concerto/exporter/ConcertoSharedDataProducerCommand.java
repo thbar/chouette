@@ -33,13 +33,16 @@ import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
+import org.codehaus.jettison.json.JSONException;
 import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -81,13 +84,13 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		return result;
 	}
 
-	private void saveData(Context context) {
+	private void saveData(Context context) throws JSONException, JAXBException {
 		ConcertoExporter exporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
 		ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(CONFIGURATION);
 		ConcertoStopProducer stopProducer = new ConcertoStopProducer(exporter);
 		ConcertoOperatorProducer operatorProducer = new ConcertoOperatorProducer(exporter);
 		ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
-		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>)context.get(MAPPING_LINE_UUID);
+		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>) context.get(MAPPING_LINE_UUID);
 		List<StopPoint> stopPointList = collection.getAllParsedStopPoints();
 
 		LocalDate startDate;
@@ -107,21 +110,21 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		}
 
 
-		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
+		for(Timetable t : collection.getTimetables()) {
 			if(t.getStartOfPeriod() == null || t.getEndOfPeriod() == null) {
 				List<org.joda.time.LocalDate> effectiveDates = t.getEffectiveDates();
 				if(effectiveDates.size() > 0) {
 					Collections.sort(effectiveDates);
-					if(t.getStartOfPeriod() == null) {
+					if (t.getStartOfPeriod() == null) {
 						t.setStartOfPeriod(effectiveDates.get(0));
 					}
-					if(t.getEndOfPeriod() == null) {
-						t.setEndOfPeriod(effectiveDates.get(effectiveDates.size()-1));
+					if (t.getEndOfPeriod() == null) {
+						t.setEndOfPeriod(effectiveDates.get(effectiveDates.size() - 1));
 					}
 				} else {
-					if(t.getStartOfPeriod() != null && t.getEndOfPeriod() == null) {
+					if (t.getStartOfPeriod() != null) {
 						t.setEndOfPeriod(t.getStartOfPeriod());
-					} else if(t.getEndOfPeriod() != null && t.getStartOfPeriod() == null) {
+					} else if (t.getEndOfPeriod() != null) {
 						t.setStartOfPeriod(t.getEndOfPeriod());
 					} else {
 						// Both empty
@@ -132,23 +135,15 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			}
 		}
 
-		LocalDate maxDate = null;
-		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
-			if(maxDate == null){
-				maxDate = t.getEndOfPeriod();
-			} else if(maxDate.isBefore(t.getEndOfPeriod())){
-				maxDate = t.getEndOfPeriod();
-			}
-		}
+		LongSummaryStatistics statsMax = collection.getTimetables().stream()
+				.mapToLong(t -> t.getEndOfPeriod().toDate().getTime())
+				.summaryStatistics();
+		LocalDate maxDate = new LocalDate(statsMax.getMax());
 
-		LocalDate minDate = null;
-		for(Timetable t : collection.getTimetables().stream().collect(Collectors.toList())) {
-			if(minDate == null){
-				minDate = t.getStartOfPeriod();
-			} else if(minDate.isAfter(t.getStartOfPeriod())){
-				minDate = t.getStartOfPeriod();
-			}
-		}
+		LongSummaryStatistics statsMin = collection.getTimetables().stream()
+				.mapToLong(t -> t.getStartOfPeriod().toDate().getTime())
+				.summaryStatistics();
+		LocalDate minDate = new LocalDate(statsMin.getMin());
 
 		if(minDate.isAfter(startDate)) startDate = minDate;
 		if(maxDate.isBefore(endDate)) endDate = maxDate;
@@ -176,35 +171,38 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
 			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
 			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, null, stopZder, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDEP);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
+			stopProducer.save(stop, null, stopZder, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDEP);
 		}
 
 		//zder
 		for (StopArea stop : zderStops) {
-			if(stop.getMappingHastusZdep() == null) continue;
+			if (stop.getMappingHastusZdep() == null) continue;
 			UUID[] lineIdArray = mapperLinesAndZders.getLinesForZone(stop.getMappingHastusZdep().getZder());
 			StopArea stopZdlr = createStopZdlr(stop, zdlrStops);
 			zdlrStops = addZdlrStopIfNotExists(zdlrStops, stopZdlr);
 			ConcertoObjectId objectId = ConcertoStopAreaZderObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, stopZdlr, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDER);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
+			stopProducer.save(stop, stopZdlr, null, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDER);
 		}
 
 		//zdlr
 		for (StopArea stop : zdlrStops) {
 			boolean wasParsed = parsedZdlr.stream()
-									.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr() == stop.getMappingHastusZdep().getZdlr());
-			if(wasParsed) continue;
-			if(stop.getMappingHastusZdep() == null) continue;
-			if(!stop.getIsExternal().booleanValue()) continue;
+					.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr() == stop.getMappingHastusZdep().getZdlr());
+			if (wasParsed) continue;
+			if (stop.getMappingHastusZdep() == null) continue;
+			if (!stop.getIsExternal().booleanValue()) continue;
 			UUID[] lineIdArray = mapperLinesAndZdlrs.getLinesForZone(stop.getMappingHastusZdep().getZdlr());
 			ConcertoObjectId objectId = ConcertoStopAreaZdlrObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, null, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDLR);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
+			stopProducer.save(stop, null, null, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDLR);
 			parsedZdlr.add(stop);
 		}
 		context.put(PARSED_ZDLR, parsedZdlr);
 
 		List<Operator> operators = (List<Operator>) context.get(EXPORTABLE_OPERATORS);
-		operatorProducer.save(startDate, endDate, operators);
+		operatorProducer.save(startDate, endDate, operators, parameters);
 	}
 
 
