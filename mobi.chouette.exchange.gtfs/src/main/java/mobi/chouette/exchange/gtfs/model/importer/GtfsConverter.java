@@ -26,6 +26,34 @@ public interface GtfsConverter {
 
 	public static DateTimeFormatter BASIC_ISO_DATE =  DateTimeFormat.forPattern("yyyyMMdd");
 
+	public static final char DELIMITER = ',';
+	public static final char DQUOTE = '"';
+
+	/**
+	 * Add additionnal " if the input string contains ". And encapsulate the input string between ".
+	 * @param inputString
+	 * @return the formatted String
+	 */
+	static String formatToCSV(String inputString){
+		StringBuilder builder = new StringBuilder();
+		builder.append(DQUOTE);
+		if (inputString.contains("\"")) {
+			final int length = inputString.length();
+			for (int j = 0; j < length; j++) {
+				char c = inputString.charAt(j);
+				if (c == DQUOTE) {
+					builder.append(DQUOTE);
+				}
+				builder.append(c);
+			}
+
+		} else {
+			builder.append(inputString);
+		}
+		builder.append(DQUOTE);
+		return builder.toString();
+	}
+
 	public static DefaultFieldConverter<String> STRING_CONVERTER = new DefaultFieldConverter<String>() {
 
 		@Override
@@ -35,9 +63,8 @@ public interface GtfsConverter {
 
 		@Override
 		protected String convertTo(String input) throws Exception {
-			return (input != null) ? input.toString() : "";
+			return (input != null) ? formatToCSV(input.toString()) : "";
 		}
-
 	};
 
 	public static DefaultFieldConverter<Integer> INTEGER_CONVERTER = new DefaultFieldConverter<Integer>() {
@@ -152,7 +179,7 @@ public interface GtfsConverter {
 
 		@Override
 		protected String convertTo(URL input) throws Exception {
-			return (input != null) ? input.toString() : "";
+			return (input != null) ? formatToCSV(input.toString()) : "";
 		}
 	};
 
@@ -169,7 +196,7 @@ public interface GtfsConverter {
 
 		@Override
 		protected String convertTo(TimeZone input) throws Exception {
-			return (input != null) ? input.getID() : "";
+			return (input != null) ? formatToCSV(input.getID()) : "";
 		}
 	};
 
