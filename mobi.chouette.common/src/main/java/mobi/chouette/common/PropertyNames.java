@@ -15,7 +15,7 @@ public interface PropertyNames {
     String STOP_PLACE_ID_MAPPING = ".stop.place.id.mapping";
     String STOP_PLACE_REGISTER_UPDATE = ".stop.place.register.update";
     String STOP_PLACE_REGISTER_URL = ".stop.place.register.update.url";
-    String STOP_PLACE_REGISTER_IDFM_URL = ".stop.place.register.idfm.import.url";
+    String STOP_PLACE_REGISTER_MOBIITI_URL = ".stop.place.register.mobiiti.import.url";
 
     String REFERENTIAL_LOCK_MANAGER_IMPLEMENTATION = ".referential.lock.manager.impl";
     String KUBERNETES_ENABLED = ".kubernetes.enabled";

@@ -90,7 +90,7 @@ public class NeTExStopPlaceRegisterUpdater {
     }
 
     private void initializeClient(String ref){
-        String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_IDFM_URL);
+        String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_MOBIITI_URL);
         if(!StringUtils.isEmpty(ref)) {
             if(url.contains("?"))
                 url = url + "&providerCode=" + ref;
