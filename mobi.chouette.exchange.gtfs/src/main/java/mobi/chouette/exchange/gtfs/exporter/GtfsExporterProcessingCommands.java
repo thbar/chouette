@@ -72,7 +72,7 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 		List<Command> commands = new ArrayList<>();
 		try {
 			commands.add(CommandFactory.create(initialContext, DaoGtfsFeedInfoProducerCommand.class.getName()));
-			commands.add(CommandFactory.create(initialContext, GtfsFeedInfoProducerCommand.class.getName()));
+//			commands.add(CommandFactory.create(initialContext, GtfsFeedInfoProducerCommand.class.getName()));
 			if (!(parameters.getReferencesType().equalsIgnoreCase("stop_area"))) {
 				commands.add(CommandFactory.create(initialContext, GtfsSharedDataProducerCommand.class.getName()));
 			}

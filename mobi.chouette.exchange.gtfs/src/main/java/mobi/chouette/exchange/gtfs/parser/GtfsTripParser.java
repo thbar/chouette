@@ -405,8 +405,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             int i = 1;
             boolean unsuedId = true;
             for (GtfsRoute bean : importer.getRouteById()) {
-                String newRouteId = bean.getRouteId().split("-")[0];
-                bean.setRouteId(newRouteId);
+//                String newRouteId = bean.getRouteId().split("-")[0];
+//                bean.setRouteId(newRouteId);
                 if (routeIds.add(bean.getRouteId())) {
                     unsuedId = false;
                     gtfsValidationReporter.reportError(context, new GtfsException(GTFS_ROUTES_FILE, i,
