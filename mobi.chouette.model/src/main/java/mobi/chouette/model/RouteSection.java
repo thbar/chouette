@@ -2,15 +2,7 @@ package mobi.chouette.model;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import com.vividsolutions.jts.geom.LineString;
+import mobi.chouette.model.converter.LineStringToStringConverter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -81,13 +74,15 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "input_geometry")
-	@Type(type = "org.hibernate.spatial.GeometryType")
+	//@Type(type = "org.hibernate.spatial.GeometryType")
+	@Convert(converter = LineStringToStringConverter.class)
 	private LineString inputGeometry;
 
 	@Getter
 	@Setter
 	@Column(name = "processed_geometry")
-	@Type(type = "org.hibernate.spatial.GeometryType")
+	//@Type(type = "org.hibernate.spatial.GeometryType")
+	@Convert(converter = LineStringToStringConverter.class)
 	private LineString processedGeometry;
 
 	/**

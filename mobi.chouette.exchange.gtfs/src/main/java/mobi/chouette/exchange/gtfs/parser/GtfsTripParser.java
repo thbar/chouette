@@ -11,17 +11,11 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.TimeUtil;
 import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
-import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
-import mobi.chouette.exchange.gtfs.model.GtfsRoute;
-import mobi.chouette.exchange.gtfs.model.GtfsShape;
-import mobi.chouette.exchange.gtfs.model.GtfsStop;
+import mobi.chouette.exchange.gtfs.model.*;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
-import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.DropOffType;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime.PickupType;
-import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer.TransferType;
-import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip.DirectionType;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
@@ -1311,19 +1305,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             return rightIndex - leftIndex;
         }
     };
-
-    class OrderedCoordinate extends Coordinate {
-        private static final long serialVersionUID = 1L;
-        public int order;
-
-        public OrderedCoordinate(double x, double y, Integer order) {
-            this.x = x;
-            this.y = y;
-            this.order = order.intValue();
-        }
-    }
-
-    ;
 
     static class OrderedCoordinateComparator implements Comparator<OrderedCoordinate> {
         @Override
