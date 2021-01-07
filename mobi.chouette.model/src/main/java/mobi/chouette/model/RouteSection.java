@@ -16,11 +16,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mobi.chouette.model.converter.LineStringToStringConverter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.vividsolutions.jts.geom.LineString;
+import org.hibernate.annotations.Type;
 
 /**
  * Chouette Route Section : geographic route between to stop areas
@@ -81,15 +81,15 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "input_geometry")
-	@Convert(converter = LineStringToStringConverter.class)
-//	@Type(type = "org.hibernate.spatial.GeometryType")
+	//@Convert(converter = LineStringToStringConverter.class)
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString inputGeometry;
 
 	@Getter
 	@Setter
 	@Column(name = "processed_geometry")
-	@Convert(converter = LineStringToStringConverter.class)
-//	@Type(type = "org.hibernate.spatial.GeometryType")
+//	@Convert(converter = LineStringToStringConverter.class)
+	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString processedGeometry;
 
 	/**
