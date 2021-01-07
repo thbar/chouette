@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mobi.chouette</groupId>
 	<artifactId>mobi.chouette</artifactId>
-	<version>3.4.9_MOSAIC</version>
+	<version>3.5.0_MOBIITI</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -28,19 +28,6 @@
 		<arquillian-version>1.1.11.Final</arquillian-version>
 		<project.rootDir>${project.basedir}</project.rootDir>
 	</properties>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>chouette-snapshot-repository</id>
-			<name>Chouette Snapshot Repository</name>
-			<url>scp://chouette.marseille.cityway.fr/var/lib/tomcat6/webapps/maven-snapshot</url>
-		</snapshotRepository>
-		<repository>
-			<id>chouette-repository</id>
-			<name>Chouette Repository</name>
-			<url>scp://chouette.marseille.cityway.fr/var/lib/tomcat6/webapps/maven</url>
-		</repository>
-		<downloadUrl>http://maven.chouette.mobi</downloadUrl>
-	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>jboss</id>
