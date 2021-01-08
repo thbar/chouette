@@ -36,8 +36,8 @@ public interface GtfsConverter {
 	 */
 	static String formatToCSV(String inputString){
 		StringBuilder builder = new StringBuilder();
-		builder.append(DQUOTE);
-		if (inputString.contains("\"")) {
+		if (inputString.contains("\"") || inputString.contains(",")) {
+			builder.append(DQUOTE);
 			final int length = inputString.length();
 			for (int j = 0; j < length; j++) {
 				char c = inputString.charAt(j);
@@ -46,11 +46,10 @@ public interface GtfsConverter {
 				}
 				builder.append(c);
 			}
-
+			builder.append(DQUOTE);
 		} else {
 			builder.append(inputString);
 		}
-		builder.append(DQUOTE);
 		return builder.toString();
 	}
 
