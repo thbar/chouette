@@ -4,14 +4,11 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
-import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.model.util.Referential;
 import org.hibernate.Hibernate;
 
 import javax.ejb.EJB;
@@ -31,13 +28,7 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 	public static final String COMMAND = "UpdateStopareaFromOkinaCommand";
 
 	@EJB
-	private LineDAO lineDAO;
-
-	@EJB
 	private StopAreaDAO stopAreaDAO;
-
-	@EJB
-	private StopPointDAO stopPointDAO;
 
 	@EJB
 	ScheduledStopPointDAO scheduledStopPointDAO;
@@ -46,7 +37,6 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
 
 	@Override
-	//@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
 		Long stopId = (Long) context.get("stopId");
@@ -65,10 +55,7 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 		stopArea.getParent().setContainedScheduledStopPoints(scheduledStopPointsContainedInStopAreaParent);
 		stopArea.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
 
-
-		Referential referential = (Referential) context.get(REFERENTIAL);
-
-		neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
+		neTExIdfmStopPlaceRegisterUpdater.update(context, areas);
 		return SUCCESS;
 	}
 

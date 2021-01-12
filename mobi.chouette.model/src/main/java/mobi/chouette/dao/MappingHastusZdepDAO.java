@@ -8,4 +8,6 @@ public interface MappingHastusZdepDAO extends GenericDAO<MappingHastusZdep> {
 
     Optional<MappingHastusZdep> findByZdep(String zdep);
 
+    Optional<MappingHastusZdep> findByHastus(String hastus);
+
 }

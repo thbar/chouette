@@ -27,4 +27,12 @@ public class MappingHastusZdepDAOImpl extends GenericDAOImpl<MappingHastusZdep> 
                 .getResultList();
         return  resultList.stream().findFirst();
     }
+
+    @Override
+    public Optional<MappingHastusZdep> findByHastus(String hastus) {
+        List<MappingHastusZdep> resultList = em.createQuery("SELECT m FROM MappingHastusZdep m WHERE m.hastusOriginal = :hastus", MappingHastusZdep.class)
+                .setParameter("hastus", hastus)
+                .getResultList();
+        return  resultList.stream().findFirst();
+    }
 }

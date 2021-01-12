@@ -7,14 +7,15 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.MappingHastusZdepDAO;
 import mobi.chouette.dao.ProviderDAO;
-import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
-import mobi.chouette.dao.StopPointDAO;
 import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
+import mobi.chouette.model.JourneyPattern;
+import mobi.chouette.model.Line;
 import mobi.chouette.model.MappingHastusZdep;
+import mobi.chouette.model.ObjectReference;
 import mobi.chouette.model.Provider;
-import mobi.chouette.model.ScheduledStopPoint;
+import mobi.chouette.model.Route;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
@@ -32,7 +33,7 @@ import javax.naming.NamingException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -52,13 +53,8 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	private StopAreaDAO stopAreaDAO;
 
 	@EJB
-	private StopPointDAO stopPointDAO;
-
-	@EJB
 	private ProviderDAO providerDAO;
 
-	@EJB
-	ScheduledStopPointDAO scheduledStopPointDAO;
 
 	@EJB
 	MappingHastusZdepDAO mappingHastusZdepDAO;
@@ -70,38 +66,54 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	ManagedExecutorService executor;
 
 	@Override
-	//@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
 		try {
 			Long lineId = (Long) context.get("lineId");
-			// - stop areas maj avec zdep
-			String updatedStopArea = lineDAO.updateStopareasForIdfmLineCommand(lineId);
-			lineDAO.flush();
-
-			// - send to tiamat
-			List<Long> idList = Arrays.asList(updatedStopArea.split("-")).stream().map(Long::parseLong).collect(Collectors.toList());
-			List<StopArea> areas = stopAreaDAO.findAll(idList);
-
-			areas.forEach(sa -> {
-				List<ScheduledStopPoint> scheduledStopPointsContainedInStopArea = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getObjectId());
-				sa.setContainedScheduledStopPoints(scheduledStopPointsContainedInStopArea);
-				sa.getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
-
-				List<ScheduledStopPoint> scheduledStopPointsContainedInStopAreaParent = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(sa.getParent().getObjectId());
-				sa.getParent().setContainedScheduledStopPoints(scheduledStopPointsContainedInStopAreaParent);
-				sa.getParent().getContainedScheduledStopPoints().forEach(scheduledStopPoint -> Hibernate.initialize(scheduledStopPoint.getStopPoints()));
-			});
-
-			// maj des arrêts dans tiamat
 			Referential referential = (Referential) context.get(REFERENTIAL);
-			CommandCallableToUpdateTiamat callableTiamat = new CommandCallableToUpdateTiamat();
-			callableTiamat.referential = referential;
-			areas.forEach(stopArea -> stopArea.getContainedStopAreas());
-			callableTiamat.areas = areas;
-			callableTiamat.contextBD = ContextHolder.getContext();
-			callableTiamat.ref = (String) context.get("ref");
-			executor.submit(callableTiamat);
+
+
+			// - stop areas maj avec zdep
+			Line line = lineDAO.find(lineId);
+			if(line.getCategoriesForLine() == null || !line.getCategoriesForLine().getName().equalsIgnoreCase("IDFM")) {
+				return SUCCESS;
+			}
+			Hibernate.initialize(line.getRoutes());
+			line.getRoutes().forEach(route -> {
+				Hibernate.initialize(route.getStopPoints());
+				route.getStopPoints().forEach(stopPoint -> {
+					Hibernate.initialize(stopPoint.getScheduledStopPoint());
+					Hibernate.initialize(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject());
+				});
+			});
+			List<StopArea> areasTosend = new ArrayList<StopArea>();
+			List<StopArea> areas = line.getRoutes().stream()
+					.map(Route::getJourneyPatterns)
+					.flatMap(List::stream)
+					.map(JourneyPattern::getStopPoints)
+					.flatMap(List::stream)
+					.map(stopPoint -> stopPoint.getScheduledStopPoint().getContainedInStopAreaRef())
+					.map(ObjectReference::getObject)
+					.filter(stopArea -> stopArea.getMappingHastusZdep() == null)
+					.distinct()
+					.collect(Collectors.toList());
+
+
+			for (StopArea stopArea : areas) {
+				Optional<MappingHastusZdep> byHastus = mappingHastusZdepDAO.findByHastus(stopArea.getOriginalStopId());
+				byHastus.ifPresent(mappingHastusZdep -> {
+					mappingHastusZdep.setHastusChouette(stopArea.getOriginalStopId());
+					MappingHastusZdep update = mappingHastusZdepDAO.update(mappingHastusZdep);
+					StopArea stopArea1 = stopAreaDAO.find(stopArea.getId());
+					stopArea1.setMappingHastusZdep(update);
+					stopAreaDAO.update(stopArea1);
+					areasTosend.add(stopArea);
+				});
+			}
+
+			mappingHastusZdepDAO.flush();
+			stopAreaDAO.flush();
+			lineDAO.flush();
 
 			//maj des zdlr
 			CommandCallableToUpdateZDLr callableZDLr = new CommandCallableToUpdateZDLr();
@@ -110,6 +122,10 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			callableZDLr.context = ContextHolder.getContext();
 			executor.submit(callableZDLr);
 
+
+			List<StopArea> areasTiamat = areasTosend.stream().map(stopArea -> stopAreaDAO.find(stopArea.getId())).collect(Collectors.toList());
+			neTExIdfmStopPlaceRegisterUpdater.update(context, areasTiamat);
+
 			return SUCCESS;
 		} catch (Exception e){
 			if(e.getMessage().contains("MOSAIC_SQL_ERROR:")){
@@ -117,27 +133,6 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 				context.put("MOSAIC_SQL_ERROR", splitErrors[1]);
 			}
 			throw new Exception(e.getMessage());
-		}
-	}
-
-	private class CommandCallableToUpdateTiamat implements Callable<Void> {
-		private String contextBD;
-		private String ref;
-		private Referential referential;
-		private List<StopArea> areas;
-
-		@Override
-		@TransactionAttribute(TransactionAttributeType.REQUIRED)
-		public Void call() throws Exception {
-			ContextHolder.setContext(this.contextBD);
-			Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineFutureCommand.class.getName());
-			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
-			context.put("future_referential", this.referential);
-			context.put("future_areas", this.areas);
-			context.put("ref", this.ref);
-
-			if(!command.execute(context)) throw new Exception(">> MAJ TIAMAT KO");
-			return null;
 		}
 	}
 

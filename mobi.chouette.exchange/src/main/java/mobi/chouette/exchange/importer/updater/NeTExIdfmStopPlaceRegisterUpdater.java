@@ -100,14 +100,6 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
         String realm = getAndValidateProperty(KC_CLIENT_REALM);
         String authServerUrl = getAndValidateProperty(KC_CLIENT_AUTH_URL);
 
-        /**
-         * WORKAROUND
-         */
-//        url = "http://kong:8000/api/stop_places/1.0/netex";
-//        clientId = "chouette";
-//        clientSecret = "314a5096-ed83-45ae-8dd6-904639a68806";
-//        realm = "Naq";
-//        authServerUrl = "https://auth-rmr.nouvelle-aquitaine.pro/auth/";
 
         try {
             this.client = new PublicationDeliveryClient(url, false, new TokenService(clientId, clientSecret, realm, authServerUrl));
@@ -116,7 +108,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
         }
     }
 
-    public void update(Context context, Referential referential, List<StopArea> stopAreas) throws JAXBException, DatatypeConfigurationException,
+    public void update(Context context, List<StopArea> stopAreas) throws JAXBException, DatatypeConfigurationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String ref = (String) context.get("ref");
@@ -143,12 +135,8 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             List<StopPlace> stopPlaceList =  Arrays.asList(finalStopArea).stream()
                     .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
-                    //.map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, stopAreas))
                     .collect(Collectors.toList());
-            /*
-            SCH
-             */
-            List<StopPoint> stopPoints = area.getContainedScheduledStopPoints().stream().map(ScheduledStopPoint::getStopPoints).flatMap(List::stream).collect(Collectors.toList());
+
             Set<TransportModeNameEnum> transportMode = findTransportModeForStopArea(new HashSet<>(), area);
 
             if (transportMode.size() > 1) {
@@ -160,9 +148,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             } else if (transportMode.size() == 1) {
                 stopPlaceMapper.mapTransportMode(stopPlaceList.get(0), transportMode.iterator().next());
             }
-            /*
-            SCH
-             */
+
 
             if(stopPlaces == null || stopPlaces.size() == 0)
                 stopPlaces = stopPlaceList;
@@ -178,25 +164,6 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             // Only keep uniqueIds to avoid duplicate processing
             Set<String> uniqueIds = stopPlaces.stream().map(s -> s.getId()).collect(Collectors.toSet());
             stopPlaces = stopPlaces.stream().filter(s -> uniqueIds.remove(s.getId())).collect(Collectors.toList());
-
-//            // Find transport mode for stop place
-//            for (StopPlace stopPlace : stopPlaces) {
-//                StopArea stopArea = referential.getSharedStopAreas().get(stopPlace.getId());
-//                if (stopArea != null) {
-//
-//                    // Recursively find all transportModes
-//                    Set<TransportModeNameEnum> transportMode = NeTExStopPlaceUtil.findTransportModeForStopArea(new HashSet<>(), stopArea);
-//                    if (transportMode.size() > 1) {
-//                        if (busEnums.equals(transportMode)) {
-//                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Bus);
-//                        } else {
-//                            stopPlaceMapper.mapTransportMode(stopPlace, TransportModeNameEnum.Other);
-//                        }
-//                    } else if (transportMode.size() == 1) {
-//                        stopPlaceMapper.mapTransportMode(stopPlace, transportMode.iterator().next());
-//                    }
-//                }
-//            }
 
             siteFrame.setStopPlaces(new StopPlacesInFrame_RelStructure().withStopPlace(stopPlaces));
         }
