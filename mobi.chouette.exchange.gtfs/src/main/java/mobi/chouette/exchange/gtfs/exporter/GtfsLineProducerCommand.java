@@ -141,7 +141,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			for (VehicleJourney vj : collection.getVehicleJourneys()) {
 				String tmKey = calendarProducer.key(vj.getTimetables(), sharedPrefix, configuration.isKeepOriginalId());
 				if (tmKey != null) {
-					if (tripProducer.save(vj, tmKey, prefix, sharedPrefix, configuration.isKeepOriginalId())) {
+					if (tripProducer.save(vj, tmKey, prefix, sharedPrefix, configuration.isKeepOriginalId(),configuration.getIdPrefix(),configuration.getIdFormat())) {
 						hasVj = true;
 						jps.add(vj.getJourneyPattern());
 						if (!timetables.containsKey(tmKey)) {

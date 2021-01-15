@@ -121,7 +121,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
 			StopArea stop = iterator.next();
-			String newStopId = GtfsStopUtils.getNewStopId(stop);
+			String newStopId = GtfsStopUtils.getNewStopId(stop,configuration.getIdPrefix(),configuration.getIdFormat());
 			if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
 				newStopId = stop.getOriginalStopId();
 			}
@@ -137,7 +137,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
-            String newStopId = GtfsStopUtils.getNewStopId(stop);
+            String newStopId = GtfsStopUtils.getNewStopId(stop,configuration.getIdPrefix(),configuration.getIdFormat());
             if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
             	newStopId = stop.getOriginalStopId();
 			}
