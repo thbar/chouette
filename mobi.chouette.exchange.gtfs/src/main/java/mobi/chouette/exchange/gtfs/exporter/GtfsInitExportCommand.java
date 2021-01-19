@@ -22,6 +22,7 @@ import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporter;
 import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.model.util.Referential;
 
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 import org.joda.time.LocalDateTime;
@@ -42,7 +43,14 @@ public class GtfsInitExportCommand implements Command, Constant {
 			Date currentDate = new Date();
 
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("GTFS_" + sdf.format(currentDate) + "Z.zip");
+			GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
+			String exportedFileName = configuration.getExportedFileName();
+			if (exportedFileName != null){
+				jobData.setOutputFilename(exportedFileName);
+			}else{
+				jobData.setOutputFilename("GTFS_" + sdf.format(currentDate) + "Z.zip");
+			}
+
 			context.put(REFERENTIAL, new Referential());
 			
 			Metadata metadata = new Metadata(); // if not asked, will be used as dummy
