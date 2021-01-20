@@ -101,14 +101,8 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             }
 
 
-            ArrayList<String> savedLines = new ArrayList<String>();
-            Integer cpt = 1;
+           Integer cpt = 1;
             for (GtfsRoute gtfsRoute : index) {
-                String newRouteId = gtfsRoute.getRouteId().split("-")[0];
-                if(savedLines.contains(newRouteId)) continue;
-                savedLines.add(newRouteId);
-                gtfsRoute.setRouteId(newRouteId);
-
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
                 GtfsRouteParserCommand parser = (GtfsRouteParserCommand) CommandFactory.create(initialContext,
@@ -219,7 +213,6 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 
         try {
             commands.add(CommandFactory.create(initialContext, DeleteLineWithoutOfferCommand.class.getName()));
-            commands.add(CommandFactory.create(initialContext, MergeTripIdCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, MergeDuplicatedJourneyPatternsCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, UpdateLineInfosCommand.class.getName()));
         } catch (Exception e) {

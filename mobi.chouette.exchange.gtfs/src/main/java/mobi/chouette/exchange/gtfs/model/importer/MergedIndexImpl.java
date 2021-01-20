@@ -245,107 +245,109 @@ public abstract class MergedIndexImpl<T> extends AbstractIndex<T> {
 	@Override
 	protected void index() throws IOException {
 		//Monitor monitor = MonitorFactory.start("INDEX IMPL");
-		boolean hasDefaultId = false;
-		
-		while (_reader.hasNext()) {
-			_total++;
-			
-			if (hasDefaultId)
-				throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
-			
-			if (_reader.next()) {
-				String key = getField(_key);
-				if(((this instanceof RouteById) || (this instanceof TripByRoute)) && this._key.equals("route_id")){
-					key = key.split("-")[0];
-				}
-				if (key == null || key.trim().isEmpty()) { // key cannot be null! "" or GtfsAgency.DEFAULT_ID
-					if(_ignoreRowsWithMissingKey) {
-						continue;
-					} else {
-						throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.MISSING_FIELD, null, null);
-					}
-				}
-				
-				if (GtfsAgency.DEFAULT_ID.equals(key)) {
-					if (_tokens.isEmpty()) {
-						hasDefaultId = true;
-					}
-					else {
-						throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
-					}
-				}
-				
-				Token token = _tokens.get(key);
-				if (token == null) {
-					token = new Token();
-					token.offset = 0;
-					token.lenght = 1;
-					_tokens.put(key, token);
-				} else {
-					if (_unique && !(this instanceof RouteById)) {
-						if (GtfsAgency.DEFAULT_ID.equals(key)) {
-							throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
-						} else {
-							throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_FIELD, null, key);
-						}
-					}
-					token.lenght++;
-				}
-			} else {
-				throw new GtfsException(_path, _total, _key, GtfsException.ERROR.INVALID_FILE_FORMAT, null, null);
-			}
-		}
-
-		String name = Paths.get(_path).getFileName().toString();
-		_temp = File.createTempFile(name + ".", ".index");
-		_temp.deleteOnExit();
-		RandomAccessFile file = new RandomAccessFile(_temp, "rw");
-		_channel2 = file.getChannel();
-		_index = _channel2.map(FileChannel.MapMode.READ_WRITE, 0, _total * 8).asIntBuffer();
-		for (int i = 0; i < _total; i++) {
-			_index.put(-1);
-			_index.put(-1);
-		}
-
-		Token previous = null;
-		for (String key : _tokens.keySet()) {
-			Token token = _tokens.get(key);
-			if (previous != null) {
-				token.offset = previous.offset + previous.lenght * 2;
-			}
-			previous = token;
-		}
-
-		_reader.setPosition(0);
-		_reader.next();
-		int position = _reader.getPosition();
-		int line = 1;
-		while (_reader.hasNext()) {
-			if (_reader.next()) {
-				String key = getField(_key);				
-				if ((key == null || key.trim().isEmpty()) && _ignoreRowsWithMissingKey) { // key cannot be null! "" or GtfsAgency.DEFAULT_ID
-					continue;
-				}
-				if(((this instanceof RouteById) || (this instanceof TripByRoute)) && this._key.equals("route_id")){
-					key = key.split("-")[0];
-				}
-
-				Token token = _tokens.get(key);
-				for (int i = 0; i < token.lenght; i++) {
-					int n = token.offset + i * 2;
-					if (_index.get(n) == -1) {
-						_index.put(n, position);
-						_index.put(n + 1, ++line);
-						break;
-					}
-				}
-				position = _reader.getPosition();
-			}
-		}
-		
-		//log.info(Color.YELLOW + "[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop() + Color.NORMAL);
-		//log.debug("[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop());
-		file.close();
+		// Désactivation méthode index() pour éviter erreurs de compilation dus à l'héritage supprimé entre MergedIndexImpl et RouteByID/TripIndex
+		// Pour remettre en place le MergedIndexImpl, décommenter cette méthode après avoir remis les héritages
+//		boolean hasDefaultId = false;
+//
+//		while (_reader.hasNext()) {
+//			_total++;
+//
+//			if (hasDefaultId)
+//				throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
+//
+//			if (_reader.next()) {
+//				String key = getField(_key);
+//				if(((this instanceof RouteById) || (this instanceof TripByRoute)) && this._key.equals("route_id")){
+//					key = key.split("-")[0];
+//				}
+//				if (key == null || key.trim().isEmpty()) { // key cannot be null! "" or GtfsAgency.DEFAULT_ID
+//					if(_ignoreRowsWithMissingKey) {
+//						continue;
+//					} else {
+//						throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.MISSING_FIELD, null, null);
+//					}
+//				}
+//
+//				if (GtfsAgency.DEFAULT_ID.equals(key)) {
+//					if (_tokens.isEmpty()) {
+//						hasDefaultId = true;
+//					}
+//					else {
+//						throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
+//					}
+//				}
+//
+//				Token token = _tokens.get(key);
+//				if (token == null) {
+//					token = new Token();
+//					token.offset = 0;
+//					token.lenght = 1;
+//					_tokens.put(key, token);
+//				} else {
+//					if (_unique && !(this instanceof RouteById)) {
+//						if (GtfsAgency.DEFAULT_ID.equals(key)) {
+//							throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
+//						} else {
+//							throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_FIELD, null, key);
+//						}
+//					}
+//					token.lenght++;
+//				}
+//			} else {
+//				throw new GtfsException(_path, _total, _key, GtfsException.ERROR.INVALID_FILE_FORMAT, null, null);
+//			}
+//		}
+//
+//		String name = Paths.get(_path).getFileName().toString();
+//		_temp = File.createTempFile(name + ".", ".index");
+//		_temp.deleteOnExit();
+//		RandomAccessFile file = new RandomAccessFile(_temp, "rw");
+//		_channel2 = file.getChannel();
+//		_index = _channel2.map(FileChannel.MapMode.READ_WRITE, 0, _total * 8).asIntBuffer();
+//		for (int i = 0; i < _total; i++) {
+//			_index.put(-1);
+//			_index.put(-1);
+//		}
+//
+//		Token previous = null;
+//		for (String key : _tokens.keySet()) {
+//			Token token = _tokens.get(key);
+//			if (previous != null) {
+//				token.offset = previous.offset + previous.lenght * 2;
+//			}
+//			previous = token;
+//		}
+//
+//		_reader.setPosition(0);
+//		_reader.next();
+//		int position = _reader.getPosition();
+//		int line = 1;
+//		while (_reader.hasNext()) {
+//			if (_reader.next()) {
+//				String key = getField(_key);
+//				if ((key == null || key.trim().isEmpty()) && _ignoreRowsWithMissingKey) { // key cannot be null! "" or GtfsAgency.DEFAULT_ID
+//					continue;
+//				}
+//				if(((this instanceof RouteById) || (this instanceof TripByRoute)) && this._key.equals("route_id")){
+//					key = key.split("-")[0];
+//				}
+//
+//				Token token = _tokens.get(key);
+//				for (int i = 0; i < token.lenght; i++) {
+//					int n = token.offset + i * 2;
+//					if (_index.get(n) == -1) {
+//						_index.put(n, position);
+//						_index.put(n + 1, ++line);
+//						break;
+//					}
+//				}
+//				position = _reader.getPosition();
+//			}
+//		}
+//
+//		//log.info(Color.YELLOW + "[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop() + Color.NORMAL);
+//		//log.debug("[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop());
+//		file.close();
 	}
 
 	// @Override
