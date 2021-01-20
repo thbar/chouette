@@ -20,7 +20,7 @@ public class GtfsStopUtils {
             if (IdFormat.TRIDENT.equals(idFormat) && StringUtils.isNotEmpty(idPrefix)){
                 return createTridentId(stop,idPrefix);
             }
-            return stop.getOriginalStopId();
+            return idPrefix+stop.getOriginalStopId();
         }
         String inputStopId = stop.getObjectId();
         if(StringUtils.isEmpty(inputStopId)) return null;
