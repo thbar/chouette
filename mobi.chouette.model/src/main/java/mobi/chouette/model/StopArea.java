@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -416,6 +417,20 @@ public class StopArea extends NeptuneLocalizedObject {
 	@Setter
 	@OneToMany(mappedBy = "containedInStopArea")
 	private List<StopPoint> containedStopPoints = new ArrayList<StopPoint>(0);
+
+	/**
+	 * stop points children<br/>
+	 * only for areaType = BoardingPosition and Quay
+	 *
+	 * @param containedScheduledStopPoints
+	 *            New value
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@Transient
+	private List<ScheduledStopPoint> containedScheduledStopPoints = new ArrayList<>(0);
+
 
 	/**
 	 * access links<br/>

@@ -127,6 +127,34 @@ public class StopPoint extends NeptuneIdentifiedObject {
 	private Route route;
 
 	/**
+	 * scheduled stop point
+	 *
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "scheduled_stop_point_id")
+	private ScheduledStopPoint scheduledStopPoint;
+
+
+	/**
+	 * set ScheduledStopPoint
+	 *
+	 * @param scheduledStopPoint
+	 */
+	public void setScheduledStopPoint(ScheduledStopPoint scheduledStopPoint) {
+		if (this.scheduledStopPoint != null) {
+			this.scheduledStopPoint.getStopPoints().remove(this);
+		}
+		this.scheduledStopPoint = scheduledStopPoint;
+		if (scheduledStopPoint != null) {
+			scheduledStopPoint.getStopPoints().add(this);
+		}
+	}
+
+
+	/**
 	 * set route
 	 * 
 	 * @param route

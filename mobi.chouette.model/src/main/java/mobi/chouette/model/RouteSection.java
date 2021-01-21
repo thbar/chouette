@@ -2,25 +2,17 @@ package mobi.chouette.model;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import mobi.chouette.model.converter.LineStringToStringConverter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.vividsolutions.jts.geom.LineString;
-import org.hibernate.annotations.Type;
 
 /**
  * Chouette Route Section : geographic route between to stop areas
@@ -81,15 +73,15 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "input_geometry")
-	//@Convert(converter = LineStringToStringConverter.class)
-	@Type(type = "org.hibernate.spatial.GeometryType")
+	@Convert(converter = LineStringToStringConverter.class)
+//	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString inputGeometry;
 
 	@Getter
 	@Setter
 	@Column(name = "processed_geometry")
-//	@Convert(converter = LineStringToStringConverter.class)
-	@Type(type = "org.hibernate.spatial.GeometryType")
+	@Convert(converter = LineStringToStringConverter.class)
+//	@Type(type = "org.hibernate.spatial.GeometryType")
 	private LineString processedGeometry;
 
 	/**
@@ -129,5 +121,28 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	public void setArrival(StopArea stopArea) {
 		this.arrival = stopArea;
 	}
+
+	/**
+	 * Scheduled stop point at start of section.
+	 *
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "from_scheduled_stop_point_id")
+	private ScheduledStopPoint fromScheduledStopPoint;
+
+
+	/**
+	 * Scheduled stop point at end of section
+	 *
+	 * @return The actual value
+	 */
+	@Getter
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "to_scheduled_stop_point_id")
+	private ScheduledStopPoint toScheduledStopPoint;
 
 }
