@@ -1,14 +1,21 @@
 package mobi.chouette.model;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import mobi.chouette.model.converter.DurationToTimeConverter;
-import mobi.chouette.model.converter.LineStringToStringConverter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -70,13 +77,13 @@ public class Interchange extends NeptuneIdentifiedObject {
 	@Getter
 	@Setter
 	@Column(name = "maximum_wait_time")
-	@Convert(converter = DurationToTimeConverter.class)
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration maximumWaitTime;
 
 	@Getter
 	@Setter
 	@Column(name = "minimum_transfer_time")
-	@Convert(converter = DurationToTimeConverter.class)
+	@Type(type = "mobi.chouette.jadira.PersistentDurationAsSqlTime")
 	private Duration minimumTransferTime;
 
 	// Field mapped twice in order to handle that the to_vehicle_journey
