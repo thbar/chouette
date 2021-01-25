@@ -52,7 +52,7 @@ public class GtfsExportCalendarProducerTests
 
       List<Timetable> tms = new ArrayList<>();
       tms.add(neptuneObject);
-      producer.save(tms,  "GTFS",false);
+      producer.save(tms,  "GTFS",false, startDate, endDate);
       Reporter.log("verifyCalendarProducer1");
       Assert.assertEquals(mock.getExportedCalendars().size(),1,"Calendar must be returned");
       GtfsCalendar gtfsObject = mock.getExportedCalendars().get(0);
@@ -92,7 +92,7 @@ public class GtfsExportCalendarProducerTests
 
       List<Timetable> tms = new ArrayList<>();
       tms.add(neptuneObject);
-      producer.save(tms,  "GTFS",false);
+      producer.save(tms,  "GTFS",false, null, null);
       Reporter.log("verifyCalendarProducer2");
 
       Assert.assertEquals(mock.getExportedCalendars().size(), 0, "no calendar produced");
@@ -146,7 +146,7 @@ public class GtfsExportCalendarProducerTests
 
       List<Timetable> tms = new ArrayList<>();
       tms.add(neptuneObject);
-      producer.save(tms,  "GTFS",false);
+      producer.save(tms,  "GTFS",false, startDate, endDate);
       Reporter.log("verifyCalendarProducer3");
       Assert.assertEquals(mock.getExportedCalendars().size(),1,"Calendar must be returned");
       GtfsCalendar gtfsObject = mock.getExportedCalendars().get(0);
@@ -162,7 +162,7 @@ public class GtfsExportCalendarProducerTests
       Assert.assertTrue(gtfsObject.getFriday(), "friday must be true");
       Assert.assertFalse(gtfsObject.getSaturday(), "saturday must be false");
       Assert.assertTrue(gtfsObject.getSunday(), "sunday must be true");
-      Assert.assertEquals(mock.getExportedCalendarDates().size(), 5, "calendar must have 5 dates");
+      Assert.assertEquals(mock.getExportedCalendarDates().size(), 0, "calendar must have 5 dates");
       c.set(Calendar.YEAR, 2013);
       c.set(Calendar.MONTH, Calendar.JULY);
       c.set(Calendar.DAY_OF_MONTH, 1);
@@ -212,7 +212,7 @@ public class GtfsExportCalendarProducerTests
 
       List<Timetable> tms = new ArrayList<>();
       tms.add(neptuneObject);
-      producer.save(tms,  "GTFS",false);
+      producer.save(tms,  "GTFS",false, null, null);
       Reporter.log("verifyCalendarProducer4");
 
       Assert.assertEquals(mock.getExportedCalendars().size(), 0, "no calendar produced");

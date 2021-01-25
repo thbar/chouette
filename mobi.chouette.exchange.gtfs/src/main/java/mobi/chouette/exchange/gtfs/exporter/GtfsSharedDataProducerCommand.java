@@ -33,6 +33,7 @@ import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.Timetable;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -56,6 +57,18 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		Monitor monitor = MonitorFactory.start(COMMAND);
 		ActionReporter reporter = ActionReporter.Factory.getInstance();
 
+		GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
+
+		LocalDate startDate = null;
+		if (configuration.getStartDate() != null) {
+			startDate = new LocalDate(configuration.getStartDate());
+		}
+
+		LocalDate endDate = null;
+		if (configuration.getEndDate() != null) {
+			endDate = new LocalDate(configuration.getEndDate());
+		}
+
 		try {
 
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
@@ -63,7 +76,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 				return ERROR;
 			}
 
-			saveData(context);
+			saveData(context, startDate, endDate);
 			reporter.addObjectReport(context, "merged", OBJECT_TYPE.COMPANY, "companies", OBJECT_STATE.OK,
 					IO_TYPE.OUTPUT);
 			reporter.setStatToObjectReport(context, "merged", OBJECT_TYPE.COMPANY, OBJECT_TYPE.COMPANY, collection
@@ -90,7 +103,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		return result;
 	}
 
-	private void saveData(Context context) {
+	private void saveData(Context context, LocalDate startDate, LocalDate endDate) {
 		Metadata metadata = (Metadata) context.get(METADATA);
 		GtfsExporter exporter = (GtfsExporter) context.get(GTFS_EXPORTER);
 		GtfsStopProducer stopProducer = new GtfsStopProducer(exporter);
@@ -174,7 +187,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 		}
 
 		for (List<Timetable> tms : timetables.values()) {
-			calendarProducer.save(tms, sharedPrefix, configuration.isKeepOriginalId());
+			calendarProducer.save(tms, sharedPrefix, configuration.isKeepOriginalId(), startDate, endDate);
 			if (metadata != null) {
 				for (Timetable tm : tms) {
 					metadata.getTemporalCoverage().update(tm.getStartOfPeriod(), tm.getEndOfPeriod());

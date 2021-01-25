@@ -51,7 +51,7 @@ AbstractProducer
    GtfsCalendar calendar = new GtfsCalendar();
    GtfsCalendarDate calendarDate = new GtfsCalendarDate();
 
-   public boolean save(List<Timetable> timetables,  String prefix, boolean keepOriginalId)
+   public boolean save(List<Timetable> timetables, String prefix, boolean keepOriginalId, LocalDate startDate, LocalDate endDate)
    {
 
       Timetable reduced = merge(timetables, prefix,keepOriginalId);
@@ -106,8 +106,21 @@ AbstractProducer
          calendar.setServiceId(serviceId);
 
          Period period = reduced.getPeriods().get(0);
-         calendar.setStartDate(period.getStartDate());
-         calendar.setEndDate(period.getEndDate());
+
+         if(startDate != null && startDate.isAfter(period.getStartDate())){
+            calendar.setStartDate(startDate);
+         }
+         else{
+            calendar.setStartDate(period.getStartDate());
+
+         }
+
+         if(endDate != null && endDate.isBefore(period.getEndDate())){
+            calendar.setEndDate(endDate);
+         }
+         else{
+            calendar.setEndDate(period.getEndDate());
+         }
 
          try
          {
@@ -123,7 +136,10 @@ AbstractProducer
       {
          for (CalendarDay day : reduced.getCalendarDays())
          {
-            saveDay(serviceId,day);
+            if(startDate == null && endDate == null ||
+                    startDate != null && endDate != null && !day.getDate().isBefore(startDate) && !day.getDate().isAfter(endDate)) {
+               saveDay(serviceId,day);
+            }
          }
       }
 
