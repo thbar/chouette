@@ -494,6 +494,7 @@ public class NeTExStopPlaceRegisterUpdater {
                 if (!currentObjectId.equals(newObjectId)) {
                     StopArea newStopArea = referential.getSharedStopAreas().get(newObjectId);
                     if (newStopArea != null) {
+                        newStopArea.setFareCode(stopArea.getFareCode());
                         scheduledStopPoint.setContainedInStopAreaRef(new SimpleObjectReference<>(newStopArea));
                         discardedStopAreas.add(currentObjectId);
                     } else {

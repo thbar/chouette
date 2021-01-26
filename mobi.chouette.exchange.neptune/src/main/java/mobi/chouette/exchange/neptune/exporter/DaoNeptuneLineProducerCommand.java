@@ -17,6 +17,7 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.exchange.neptune.Constant;
 import mobi.chouette.model.Line;
 
@@ -35,6 +36,9 @@ public class DaoNeptuneLineProducerCommand implements Command, Constant {
 	@EJB 
 	private LineDAO lineDAO;
 
+	@EJB
+	private ScheduledStopPointDAO scheduledStopPointDAO;
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
@@ -50,7 +54,8 @@ public class DaoNeptuneLineProducerCommand implements Command, Constant {
 			InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 			
 			Command export = CommandFactory.create(initialContext, NeptuneLineProducerCommand.class.getName());
-			
+			((NeptuneLineProducerCommand) export).setScheduledStopPointDAO(scheduledStopPointDAO);
+
 			context.put(LINE, line);
 			result = export.execute(context);
 			daoContext.setRollbackOnly();

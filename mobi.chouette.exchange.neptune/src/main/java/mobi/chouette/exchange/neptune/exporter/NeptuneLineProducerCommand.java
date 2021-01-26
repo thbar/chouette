@@ -10,6 +10,7 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.exchange.exporter.SharedDataKeys;
 import mobi.chouette.exchange.neptune.Constant;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -28,6 +29,8 @@ import org.xml.sax.SAXParseException;
 public class NeptuneLineProducerCommand implements Command, Constant {
 
 	public static final String COMMAND = "NeptuneLineProducerCommand";
+
+	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	public boolean execute(Context context) throws Exception {
 
@@ -64,6 +67,8 @@ public class NeptuneLineProducerCommand implements Command, Constant {
 			}
 
 			NeptuneDataCollector collector = new NeptuneDataCollector();
+			collector.setScheduledStopPointDAO(scheduledStopPointDAO);
+
 			boolean cont = (collector.collect(collection, line, startDate, endDate));
 			reporter.addObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, NamingUtil.getName(line),
 					OBJECT_STATE.OK, IO_TYPE.OUTPUT);
@@ -138,6 +143,15 @@ public class NeptuneLineProducerCommand implements Command, Constant {
 
 		return result;
 	}
+
+	public ScheduledStopPointDAO getScheduledStopPointDAO() {
+		return scheduledStopPointDAO;
+	}
+
+	public void setScheduledStopPointDAO(ScheduledStopPointDAO scheduledStopPointDAO) {
+		this.scheduledStopPointDAO = scheduledStopPointDAO;
+	}
+
 
 	public static class DefaultCommandFactory extends CommandFactory {
 

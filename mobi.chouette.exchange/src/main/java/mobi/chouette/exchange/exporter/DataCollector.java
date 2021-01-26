@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.exporter;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.model.AccessLink;
 import mobi.chouette.model.AccessPoint;
 import mobi.chouette.model.ConnectionLink;
@@ -17,11 +18,16 @@ import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NeptuneUtil;
 import org.joda.time.LocalDate;
 
+import javax.ejb.EJB;
 import java.util.Collection;
 import java.util.List;
 
+
+
 @Log4j
 public class DataCollector {
+
+	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	protected boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate,
 							  boolean skipNoCoordinate, boolean followLinks) {
@@ -155,6 +161,14 @@ public class DataCollector {
 		return validLine;
 	}
 
+	public ScheduledStopPointDAO getScheduledStopPointDAO() {
+		return scheduledStopPointDAO;
+	}
+
+	public void setScheduledStopPointDAO(ScheduledStopPointDAO scheduledStopPointDAO) {
+		this.scheduledStopPointDAO = scheduledStopPointDAO;
+	}
+
 	private void collectInterchanges(ExportableData collection, VehicleJourney vehicleJourney, boolean skipNoCoordinate, boolean followLinks, LocalDate startDate, LocalDate endDate) {
 		for (Interchange interchange : vehicleJourney.getConsumerInterchanges()) {
 			if (interchange.getFeederVehicleJourney() != null && !isVehicleJourneyValid(interchange.getFeederVehicleJourney(), collection, startDate, endDate)) {
@@ -192,6 +206,7 @@ public class DataCollector {
 		if (collection.getStopAreas().contains(stopArea))
 			return;
 		if (!skipNoCoordinate || stopArea.hasCoordinates()) {
+			initScheduledStopPointsInStopArea(stopArea);
 			collection.getStopAreas().add(stopArea);
 			switch (stopArea.getAreaType()) {
 			case BoardingPosition:
@@ -216,6 +231,13 @@ public class DataCollector {
 				collectStopAreas(collection, stopArea.getParent(), skipNoCoordinate, followLinks);
 		}
 	}
+
+	private void initScheduledStopPointsInStopArea(StopArea stopArea){
+		if (scheduledStopPointDAO != null){
+			stopArea.setContainedScheduledStopPoints(scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(stopArea.getObjectId()));
+		}
+	}
+
 
 	protected void addConnectionLinks(ExportableData collection, List<ConnectionLink> links, boolean skipNoCoordinate,
 			boolean followLinks) {
