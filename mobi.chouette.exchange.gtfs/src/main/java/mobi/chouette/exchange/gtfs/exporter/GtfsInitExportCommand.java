@@ -45,7 +45,7 @@ public class GtfsInitExportCommand implements Command, Constant {
 			JobData jobData = (JobData) context.get(JOB_DATA);
 			GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
 			String exportedFileName = configuration.getExportedFileName();
-			if (exportedFileName != null){
+			if (exportedFileName != null && !"".equals(exportedFileName)){
 				jobData.setOutputFilename(exportedFileName);
 			}else{
 				jobData.setOutputFilename("GTFS_" + sdf.format(currentDate) + "Z.zip");
