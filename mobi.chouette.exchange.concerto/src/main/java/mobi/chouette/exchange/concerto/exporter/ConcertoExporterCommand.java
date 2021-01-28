@@ -11,7 +11,6 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
-import mobi.chouette.exchange.exporter.MergeCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.model.Operator;
@@ -27,6 +26,7 @@ import javax.naming.NamingException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @Stateless(name = ConcertoExporterCommand.COMMAND)
@@ -68,19 +68,14 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			//@TODO SCH intégrer keycloak
 			List<String> schemas = new ArrayList<>();
 			boolean allSchemas;
-			if("admin".equals(ContextHolder.getContext())){
-				allSchemas = true;
-				List<Provider> all = providerDAO.findAll();
-				all.forEach(p -> {
-					if(p.isIdfm() && p.getName().toLowerCase().contains("mosaic") && !p.getName().toLowerCase().contains("technique")){
-						schemas.add(p.getSchemaName());
-					}
-				});
-			} else {
-				allSchemas = false;
-				schemas.add(ContextHolder.getContext());
-			}
 			boolean goodProcessing;
+
+			List<Provider> all = providerDAO.findAll();
+			all.forEach(p -> {
+				if(p.isIdfm() && p.getName().toLowerCase().contains("mosaic") && !p.getName().toLowerCase().contains("technique")){
+					schemas.add(p.getSchemaName());
+				}
+			});
 
 			List<String> schemasWithOperator = new ArrayList<>();
 
@@ -102,12 +97,19 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
                     context.put(EXPORTABLE_DATA, new ExportableData());
                 }
 				ContextHolder.setContext(schema);
+
+				Optional<Provider> provider = providerDAO.findBySchema(schema);
+				provider.ifPresent(value -> context.put(OBJECT_TYPE_CONCERTO, value.getObjectTypeConcerto()));
+				provider.ifPresent(value -> context.put(PROVIDER, value.getSchemaName()));
+
+				if(schema.equals(schemasWithOperator.get(schemasWithOperator.size() - 1))){
+					allSchemas = true;
+				}
+				else{
+					allSchemas = false;
+				}
 				goodProcessing = process(context, commands, progression, false,Mode.line, allSchemas);
 				if(goodProcessing) result = true;
-			}
-			if(allSchemas){
-				Command mergedCommand = CommandFactory.create(initialContext, MergeCommand.class.getName());
-				result = mergedCommand.execute(context);
 			}
 		} catch (CommandCancelledException e) {
 			reporter.setActionError(context, ActionReporter.ERROR_CODE.INTERNAL_ERROR, "Command cancelled");

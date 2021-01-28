@@ -31,9 +31,7 @@ import java.io.IOException;
  *
  */
 @Log4j
-
 @Stateless(name = DaoConcertoLineProducerCommand.COMMAND)
-
 public class DaoConcertoLineProducerCommand implements Command, Constant
 {
 	public static final String COMMAND = "DaoConcertoLineProducerCommand";
@@ -73,7 +71,7 @@ public class DaoConcertoLineProducerCommand implements Command, Constant
 		protected Command create(InitialContext context) throws IOException {
 			Command result = null;
 			try {
-				String name = "java:app/mobi.chouette.exchange.gtfs/"
+				String name = "java:app/mobi.chouette.exchange.concerto/"
 						+ COMMAND;
 				result = (Command) context.lookup(name);
 			} catch (NamingException e) {

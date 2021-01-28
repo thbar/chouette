@@ -401,7 +401,7 @@ public class Timetable extends NeptuneIdentifiedObject {
 		}
 		if (getIntDayTypes() != null && getIntDayTypes().intValue() != 0 && getPeriods() != null) {
 
-			int aDayOfWeek = aDay.getDayOfWeek() - 1; // zero on monday
+ 			int aDayOfWeek = aDay.getDayOfWeek() - 1; // zero on monday
 			int aDayOfWeekFlag = buildDayTypeMask(dayTypeByInt[aDayOfWeek]);
 			if ((getIntDayTypes() & aDayOfWeekFlag) == aDayOfWeekFlag) {
 				// check if day is in a period
@@ -457,7 +457,7 @@ public class Timetable extends NeptuneIdentifiedObject {
 				startOfPeriod = startOfPeriod.plusDays(1);
 			}
 			while (endOfPeriod.isAfter(startOfPeriod) && !isActiveOn(endOfPeriod)) {
-				endOfPeriod = startOfPeriod.minusDays(1);
+				endOfPeriod = endOfPeriod.minusDays(1);
 			}
 		}
 		for (CalendarDay calendarDay : getCalendarDays()) {

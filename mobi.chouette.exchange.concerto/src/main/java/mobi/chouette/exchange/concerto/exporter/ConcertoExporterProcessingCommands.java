@@ -72,9 +72,11 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
-			commands.add(CommandFactory.create(initialContext, ConcertoSharedDataProducerCommand.class.getName()));
-			commands.add(CommandFactory.create(initialContext, ConcertoTerminateExportCommand.class.getName()));
-			if(!allSchemas) {
+			commands.add(CommandFactory.create(initialContext, DaoConcertoOperatorProducerCommand.class.getName()));
+			commands.add(CommandFactory.create(initialContext, ConcertoStopCollectCommand.class.getName()));
+			if(allSchemas) {
+				commands.add(CommandFactory.create(initialContext, ConcertoStopProducerCommand.class.getName()));
+				commands.add(CommandFactory.create(initialContext, ConcertoTerminateExportCommand.class.getName()));
 				commands.add(CommandFactory.create(initialContext, MergeCommand.class.getName()));
 			}
 		} catch (Exception e) {

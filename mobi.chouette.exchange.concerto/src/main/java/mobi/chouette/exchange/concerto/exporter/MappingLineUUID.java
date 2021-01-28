@@ -15,4 +15,8 @@ public class MappingLineUUID {
     @Getter
     @Setter
     Long LineId;
+
+    @Getter
+    @Setter
+    String provider;
 }

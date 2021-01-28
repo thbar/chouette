@@ -40,7 +40,7 @@ public class ConcertoOperatorProducer extends AbstractProducer
 
    private ConcertoOperator operator = new ConcertoOperator();
 
-   public boolean save(LocalDate startDate, LocalDate endDate, List<Operator> operators, ConcertoExportParameters parameters){
+   public boolean save(LocalDate startDate, LocalDate endDate, List<Operator> operators, String objectTypeConcerto){
       AtomicBoolean isTrue = new AtomicBoolean(true);
 
       operators.forEach(o -> {
@@ -52,7 +52,7 @@ public class ConcertoOperatorProducer extends AbstractProducer
             objectId.setHastus(o.getHastusValue());
             String concertoObjectId = null;
             try {
-               concertoObjectId = getObjectIdConcerto(objectId, parameters);
+               concertoObjectId = getObjectIdConcerto(objectId, objectTypeConcerto);
             } catch (JAXBException | JSONException e) {
                e.printStackTrace();
             }

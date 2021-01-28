@@ -47,8 +47,12 @@ public class ConcertoInitExportCommand implements Command, Constant {
 			if (!Files.exists(path)) {
 				Files.createDirectories(path);
 			}
-			ConcertoExporter concertoExporter = new ConcertoExporter(path.toString());
-			context.put(CONCERTO_EXPORTER, concertoExporter);
+
+			if(context.get(CONCERTO_EXPORTER) == null) {
+				ConcertoExporter concertoExporter = new ConcertoExporter(path.toString());
+				context.put(CONCERTO_EXPORTER, concertoExporter);
+			}
+
 			result = SUCCESS;
 
 		} catch (Exception e) {

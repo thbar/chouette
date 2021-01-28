@@ -32,4 +32,7 @@ public class Provider extends NeptuneObject {
 
     @Column(name = "code_idfm")
     private String codeIdfm;
+
+    @Column(name = "object_type_concerto")
+    private String objectTypeConcerto;
 }

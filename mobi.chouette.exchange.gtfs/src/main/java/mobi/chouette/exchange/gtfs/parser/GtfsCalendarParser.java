@@ -215,6 +215,7 @@ public class GtfsCalendarParser implements Parser, Validator, Constant {
 
 		List<Timetable> list = new ArrayList<Timetable>();
 		for (Timetable timetable : referential.getTimetables().values()) {
+			timetable.computeLimitOfPeriods();
 			list.add(cloneTimetableAfterMidnight(timetable));
 		}
 
