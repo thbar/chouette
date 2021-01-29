@@ -62,6 +62,10 @@ public class CachingCloudFileStore implements FileStore {
 
     private LocalDateTime syncedUntil;
 
+    private LocalDateTime deletingSyncedUntil;
+
+    private Integer cacheHistoryDays;
+
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
 
@@ -74,7 +78,6 @@ public class CachingCloudFileStore implements FileStore {
         if (BEAN_NAME.equals(implProp)) {
             log.info("Starting CachingCloudFileStore pre-fetch process");
 
-            Integer cacheHistoryDays = null;
             String cacheHistoryDaysKey = "iev.file.store.cache.history.days";
             if (System.getProperty(cacheHistoryDaysKey) != null) {
                 try {
@@ -85,10 +88,12 @@ public class CachingCloudFileStore implements FileStore {
             }
 
             if (cacheHistoryDays == null) {
-                syncedUntil = LocalDateTime.fromDateFields(new Date(0));
+                syncedUntil = LocalDateTime.now().minusDays(365);
             } else {
                 syncedUntil = LocalDateTime.now().minusDays(cacheHistoryDays);
             }
+
+            deletingSyncedUntil = syncedUntil;
 
             log.info("Set syncedUntil to : " + syncedUntil);
 
@@ -229,19 +234,20 @@ public class CachingCloudFileStore implements FileStore {
 
 
     /**
-     * Cleaning files older than 24h
+     * Cleaning files older than cache history days (or 24h by default)
      */
     private class CleanLocalCacheTask implements Runnable {
 
         @Override
         public void run() {
-            log.info("Cleaning local cache : Cleaning all files older than " + syncedUntil);
+
+            log.info("Cleaning local cache : Cleaning all files older than " + deletingSyncedUntil);
 
             try {
                 Files.find(Paths.get(jobServiceManager.getRootDirectory()), 5,
                         (path, basicFileAttrs) -> basicFileAttrs.lastModifiedTime()
                                 .toInstant().isBefore( ZonedDateTime.now()
-                                        .minusDays(1).toInstant()))
+                                        .minusDays(cacheHistoryDays).toInstant()))
                         .forEach(fileToDelete -> {
                             try {
                                 if (!Files.isDirectory(fileToDelete)) {
