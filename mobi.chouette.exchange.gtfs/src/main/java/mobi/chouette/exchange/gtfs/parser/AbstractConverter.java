@@ -12,6 +12,8 @@ import org.joda.time.LocalTime;
 
 public abstract class AbstractConverter implements Constant{
 
+	private static String COLON_REPLACEMENT_CODE="##3A##";
+
 	public static String extractOriginalId(String chouetteObjectId) {
 		return chouetteObjectId.split(":")[2];
 	}
@@ -63,9 +65,19 @@ public abstract class AbstractConverter implements Constant{
 				//return tokens[0].trim().replaceAll("[^a-zA-Z_0-9]", "_") + ":" + type + ":"+ tokens[1].trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
 			}
 		}
-		return configuration.getObjectIdPrefix() + ":" + type + ":" + id.trim();
+		return configuration.getObjectIdPrefix() + ":" + type + ":" + replaceColons(id.trim());
 		//return configuration.getObjectIdPrefix() + ":" + type + ":" + id.trim().replaceAll("[^a-zA-Z_0-9\\-]", "_");
 
+	}
+
+	/**
+	 * Replace colons(:) in input string by a special code handled by application (##3A##)
+	 * @param inputString
+	 * @return the string with colons encoded
+	 */
+
+	private static String replaceColons(String inputString){
+ 		return inputString.replace(":",COLON_REPLACEMENT_CODE);
 	}
 
 	public static String toString(URL url) {
