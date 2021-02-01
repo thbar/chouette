@@ -13,6 +13,7 @@ import mobi.chouette.common.JobData;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.gtfs.Constant;
+import mobi.chouette.exchange.gtfs.model.importer.FactoryParameters;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.validation.ValidationData;
 import mobi.chouette.model.util.Referential;
@@ -36,12 +37,15 @@ public class GtfsInitImportCommand implements Command, Constant {
 			context.put(REFERENTIAL, new Referential());
 			// prepare importer
 			GtfsImporter importer = (GtfsImporter) context.get(PARSER);
+			GtfsImportParameters parameters = (GtfsImportParameters) context.get(CONFIGURATION);
 			if (importer == null) {
 				Path path = Paths.get(jobData.getPathName(), INPUT);
-				importer = new GtfsImporter(path.toString());
+				FactoryParameters factoryParameters = new FactoryParameters();
+				factoryParameters.setSplitCharacter(parameters.getSplitCharacter());
+				importer = new GtfsImporter(path.toString(),factoryParameters);
 				context.put(PARSER, importer);
 			}
-			GtfsImportParameters parameters = (GtfsImportParameters) context.get(CONFIGURATION);
+
 			if (parameters.getReferencesType() == null || parameters.getReferencesType().isEmpty()) {
 				parameters.setReferencesType("line");
 			}

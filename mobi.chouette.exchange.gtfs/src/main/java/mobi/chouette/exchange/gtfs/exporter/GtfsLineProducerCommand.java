@@ -154,7 +154,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 				shapeProducer.save(jp, prefix, configuration.isKeepOriginalId());
 			}
 			if (hasVj) {
-				routeProducer.save(line, prefix, configuration.isKeepOriginalId(),configuration.isUseTpegHvt());
+				routeProducer.save(line, prefix, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(),configuration.getIdFormat(),configuration.getIdPrefix());
 				hasLine = true;
 				if (metadata != null) {
 					metadata.getResources().add(

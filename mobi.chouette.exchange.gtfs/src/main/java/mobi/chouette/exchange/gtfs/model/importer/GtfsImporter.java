@@ -18,6 +18,7 @@ import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException.ERROR;
+import org.apache.commons.lang.StringUtils;
 
 public class GtfsImporter {
 	public static enum INDEX {
@@ -26,9 +27,15 @@ public class GtfsImporter {
 
 	private String _path;
 	private Map<String, Index<GtfsObject>> _map = new HashMap<String, Index<GtfsObject>>();
+	private FactoryParameters _factoryParameters;
 
 	public GtfsImporter(String path) {
+		this(path,null);
+	}
+
+	public GtfsImporter(String path,FactoryParameters factoryParameters) {
 		_path = path;
+		_factoryParameters = factoryParameters;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -42,12 +49,19 @@ public class GtfsImporter {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Index getImporter(String name, String path, Class clazz) {
+		return getImporter(name,path,clazz,null);
+	}
+
+	public Index getImporter(String name, String path, Class clazz, FactoryParameters factoryParameters) {
 		Index importer = _map.get(name);
 
 		if (importer == null) {
 			try {
-				importer = IndexFactory.build(
-						Paths.get(_path, path).toString(), clazz.getName());
+				if (factoryParameters==null){
+					importer = IndexFactory.build(	Paths.get(_path, path).toString(), clazz.getName());
+				}else{
+					importer = IndexFactory.build(	Paths.get(_path, path).toString(), clazz.getName(),factoryParameters);
+				}
 				_map.put(name, importer);
 			} catch (ClassNotFoundException | IOException e) {
 				Context context = new Context();
@@ -131,8 +145,11 @@ public class GtfsImporter {
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsRoute> getRouteById() {
-		return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,
-				RouteById.class);
+		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
+			return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,RouteById.class);
+		}else{
+			return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,RouteByIdWithMergedIndex.class,_factoryParameters);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -173,14 +190,23 @@ public class GtfsImporter {
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsTrip> getTripById() {
-		return getImporter(INDEX.TRIP_BY_ID.name(), TripById.FILENAME,
-				TripById.class);
+		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
+			return getImporter(INDEX.TRIP_BY_ID.name(), TripById.FILENAME,TripById.class);
+		}else{
+			return getImporter(INDEX.TRIP_BY_ID.name(), TripById.FILENAME,TripById.class,_factoryParameters);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsTrip> getTripByRoute() {
-		return getImporter(INDEX.TRIP_BY_ROUTE.name(), TripById.FILENAME,
-				TripByRoute.class);
+		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
+			return getImporter(INDEX.TRIP_BY_ROUTE.name(), TripById.FILENAME,TripByRoute.class);
+		}else{
+			return getImporter(INDEX.TRIP_BY_ROUTE.name(), TripById.FILENAME,TripByRoute.class,_factoryParameters);
+		}
+
+
+
 	}
 
 	@SuppressWarnings("unchecked")

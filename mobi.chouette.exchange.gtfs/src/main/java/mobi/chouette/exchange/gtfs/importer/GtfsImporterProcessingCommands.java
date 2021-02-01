@@ -96,9 +96,17 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 commands.add(chain);
             }
 
-
+           ArrayList<String> savedLines = new ArrayList<String>();
            Integer cpt = 1;
             for (GtfsRoute gtfsRoute : index) {
+                String newRouteId = gtfsRoute.getRouteId().split(parameters.getSplitCharacter())[0];
+                if(parameters.getRouteMerge() && savedLines.contains(newRouteId)) continue;
+
+                savedLines.add(newRouteId);
+                if(parameters.getRouteMerge())
+                    gtfsRoute.setRouteId(newRouteId);
+
+
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
                 GtfsRouteParserCommand parser = (GtfsRouteParserCommand) CommandFactory.create(initialContext,
@@ -205,10 +213,15 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
     @Override
     public List<? extends Command> getMosaicCommands(Context context, boolean b) {
         InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+        GtfsImportParameters parameters = (GtfsImportParameters) context.get(CONFIGURATION);
+
         List<Command> commands = new ArrayList<>();
 
         try {
             commands.add(CommandFactory.create(initialContext, DeleteLineWithoutOfferCommand.class.getName()));
+            if (parameters.getRouteMerge()){
+                commands.add(CommandFactory.create(initialContext, MergeTripIdCommand.class.getName()));
+            }
             commands.add(CommandFactory.create(initialContext, MergeDuplicatedJourneyPatternsCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, UpdateLineInfosCommand.class.getName()));
         } catch (Exception e) {

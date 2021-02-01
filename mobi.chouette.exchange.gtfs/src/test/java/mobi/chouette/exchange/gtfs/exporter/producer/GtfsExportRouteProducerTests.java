@@ -2,6 +2,7 @@ package mobi.chouette.exchange.gtfs.exporter.producer;
 
 import mobi.chouette.core.ChouetteException;
 import mobi.chouette.exchange.gtfs.exporter.producer.mock.GtfsExporterMock;
+import mobi.chouette.exchange.gtfs.importer.IdFormat;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.RouteTypeEnum;
 import mobi.chouette.exchange.gtfs.model.exporter.RouteExporter;
@@ -27,20 +28,10 @@ public class GtfsExportRouteProducerTests
    {
       mock.reset();
 
-      Line neptuneObject = new Line();
-      neptuneObject.setObjectId("GTFS:Line:4321");
-      neptuneObject.setName("lineName");
-      neptuneObject.setNumber("lineNumber");
-      neptuneObject.setPublishedName("publishedLineName");
-      neptuneObject.setUrl("http://www.line.fr");
-      neptuneObject.setColor("0000FF");
-      neptuneObject.setTextColor("00FF00");
-      Company company = new Company();
-      company.setObjectId("GTFS:Company:1234");
-      company.setName("name");
-      neptuneObject.setCompany(company);
+      Line neptuneObject = buildStandardLine();
+      String expectedId = "4321";
 
-      producer.save(neptuneObject, "GTFS",false,false);
+      producer.save(neptuneObject, "GTFS",false,false,null,"");
       Reporter.log("verifyRouteProducerWithShortAndLongName");
       Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
       GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
@@ -55,7 +46,58 @@ public class GtfsExportRouteProducerTests
       Assert.assertEquals(gtfsObject.getRouteTextColor().getRed(), Integer.parseInt("00",16), "RouteTextColor must be correctly set");
       Assert.assertEquals(gtfsObject.getRouteTextColor().getGreen(), Integer.parseInt("FF",16), "RouteTextColor must be correctly set");
       Assert.assertEquals(gtfsObject.getRouteTextColor().getBlue(), Integer.parseInt("00",16), "RouteTextColor must be correctly set");
+      Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "RouteId not generated correctly");
+   }
 
+   private static Line buildStandardLine(){
+      Line neptuneObject = new Line();
+      neptuneObject.setObjectId("GTFS:Line:4321");
+      neptuneObject.setName("lineName");
+      neptuneObject.setNumber("lineNumber");
+      neptuneObject.setPublishedName("publishedLineName");
+      neptuneObject.setUrl("http://www.line.fr");
+      neptuneObject.setColor("0000FF");
+      neptuneObject.setTextColor("00FF00");
+      Company company = new Company();
+      company.setObjectId("GTFS:Company:1234");
+      company.setName("name");
+      neptuneObject.setCompany(company);
+      return neptuneObject;
+   }
+
+   @Test(groups = { "Producers" }, description = "test route with both short and long name")
+   public void verifyRouteID() throws ChouetteException
+   {
+      mock.reset();
+
+      Line neptuneObject = buildStandardLine();
+      String expectedId = "PREFIX4321";
+
+      producer.save(neptuneObject, "GTFS",false,false,null,"PREFIX");
+      Reporter.log("verifyRouteProducerWithShortAndLongName");
+      Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
+      GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
+      Reporter.log(RouteExporter.CONVERTER.to(context, gtfsObject));
+
+      Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "RouteId not generated correctly");
+   }
+
+   @Test(groups = { "Producers" }, description = "test route with both short and long name")
+   public void verifyRouteIDWithTridentFormat() throws ChouetteException
+   {
+      mock.reset();
+
+      Line neptuneObject = buildStandardLine();
+      String expectedId = "PREFIX:Line:4321";
+
+
+      producer.save(neptuneObject, "GTFS",false,false, IdFormat.TRIDENT,"PREFIX");
+      Reporter.log("verifyRouteProducerWithShortAndLongName");
+      Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
+      GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
+      Reporter.log(RouteExporter.CONVERTER.to(context, gtfsObject));
+
+      Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "Trident RouteId not generated correctly");
    }
 
    @Test(groups = { "Producers" }, description = "test route with no short name")
@@ -71,7 +113,7 @@ public class GtfsExportRouteProducerTests
       company.setObjectId("GTFS:Company:1234");
       company.setName("name");
       neptuneObject.setCompany(company);
-      producer.save(neptuneObject,"GTFS",false,false);
+      producer.save(neptuneObject,"GTFS",false,false,null,"");
       Reporter.log("verifyRouteProducerWithNoShortName");
       Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
       GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
@@ -97,7 +139,7 @@ public class GtfsExportRouteProducerTests
       company.setObjectId("GTFS:Company:1234");
       company.setName("name");
       neptuneObject.setCompany(company);
-      producer.save(neptuneObject,  "GTFS",false,false);
+      producer.save(neptuneObject,  "GTFS",false,false,null,"");
       Reporter.log("verifyRouteProducerWithNoLongName");
       Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
       GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
@@ -119,7 +161,7 @@ public class GtfsExportRouteProducerTests
       company.setObjectId("GTFS:Company:1234");
       company.setName("name");
       neptuneObject.setCompany(company);
-      boolean state = producer.save(neptuneObject, "GTFS",false,false);
+      boolean state = producer.save(neptuneObject, "GTFS",false,false,null,"");
       Reporter.log("verifyRouteProducerWithNoName");
       Assert.assertFalse(state, "GTFS Route must not be produced");
 
@@ -139,7 +181,7 @@ public class GtfsExportRouteProducerTests
       line.setCompany(company);
       line.setTransportModeName(TransportModeNameEnum.Air);
 
-      boolean result = routeProducer.save(line, "prefix", false,true);
+      boolean result = routeProducer.save(line, "prefix", false,true,null,"");
       Assert.assertTrue(result);
       Assert.assertEquals(mock.getExportedRoutes().size(), 1);
       Assert.assertEquals(mock.getExportedRoutes().get(0).getRouteType(), RouteTypeEnum.AirService);

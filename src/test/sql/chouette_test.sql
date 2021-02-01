@@ -980,7 +980,13 @@ CREATE TABLE lines (
     text_color character varying(6),
     stable_id character varying(255),
     flexible_line_type character varying,
-    booking_arrangement_id bigint
+    booking_arrangement_id bigint,
+    bike character varying(14),
+    categories_for_line_id bigint DEFAULT 0,
+    codifligne character varying(255),
+    tad character varying(14),
+    pmr character varying(14),
+    pos integer
 );
 
 
@@ -1143,8 +1149,8 @@ CREATE TABLE route_sections (
     object_version integer,
     creation_time timestamp without time zone,
     creator_id character varying(255),
-    input_geometry shared_extensions.geometry(LineString,4326),
-    processed_geometry shared_extensions.geometry(LineString,4326),
+    input_geometry TEXT,
+    processed_geometry TEXT,
     distance double precision,
     no_processing boolean
 );
@@ -1385,6 +1391,53 @@ ALTER TABLE chouette_gui.stop_points_id_seq OWNER TO chouette;
 --
 
 ALTER SEQUENCE stop_points_id_seq OWNED BY stop_points.id;
+
+
+
+CREATE TABLE chouette_gui.stop_areas (
+    id bigint NOT NULL,
+    area_type character varying(255),
+    bearing double precision DEFAULT 0,
+    city_name character varying(255),
+    comment character varying(255),
+    country_code character varying(255),
+    creation_time date,
+    creator_id character varying(255),
+    fare_code integer,
+    int_user_needs integer,
+    latitude double precision,
+    lift_availability boolean,
+    long_lat_type character varying(255),
+    longitude double precision,
+    mobility_restricted_suitability boolean,
+    name character varying(255),
+    nearest_topic_name character varying(255),
+    objectid character varying(255),
+    object_version integer,
+    registration_number character varying(255),
+    stairs_availability boolean,
+    street_name character varying(255),
+    time_zone character varying(255),
+    url character varying(255),
+    way character varying(255),
+    zip_code character varying(255),
+    company_id bigint,
+    parent_id bigint,
+    dtype character varying(31),
+    city_code character varying,
+    is_unique boolean,
+    is_validated boolean,
+    is_duplicated boolean,
+    external_ref character varying(255),
+    mapping_hastus_zdep_id bigint,
+    compass_bearing integer,
+    stop_place_type character varying(255),
+    transport_mode character varying(255),
+    transport_sub_mode character varying(255),
+    original_stop_id character varying(255),
+    is_external boolean DEFAULT false,
+    platform_code character varying(255)
+);
 
 -- Route points
 
@@ -1711,7 +1764,8 @@ CREATE TABLE vehicle_journeys (
     journey_category integer DEFAULT 0 NOT NULL,
     private_code character varying(255),
     service_alteration character varying(255),
-    flexible_service_properties_id bigint
+    flexible_service_properties_id bigint,
+    bikes_allowed boolean
 );
 
 
@@ -1723,6 +1777,17 @@ ALTER TABLE chouette_gui.vehicle_journeys OWNER TO chouette;
 --
 
 CREATE SEQUENCE vehicle_journeys_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: stop_areas_id_seq; Type: SEQUENCE; Owner: -
+--
+
+CREATE SEQUENCE stop_areas_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2778,6 +2843,16 @@ CREATE TABLE chouette_gui.variations (
     type character varying(255) NOT NULL,
     description character varying(255) NOT NULL,
     job bigint
+);
+
+CREATE TABLE chouette_gui.mapping_hastus_zdep (
+    id bigint NOT NULL,
+    referential character varying(50),
+    zdep character varying(255),
+    hastus_chouette character varying(255),
+    hastus_original character varying(255),
+    zder character varying(255),
+    zdlr character varying(255)
 );
 
 ALTER TABLE chouette_gui.variations OWNER TO chouette;

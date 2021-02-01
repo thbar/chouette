@@ -198,4 +198,15 @@ public class NamingUtilTest {
 		Assert.assertEquals(NamingUtil.getName(object),object.getObjectId(),"objectId should be returned");
 	}
 
+	@Test(groups = { "model" }, description = "VehicleJourney name")
+	public void testShortTripId() throws Exception
+	{
+		VehicleJourney object = new VehicleJourney();
+		object.setObjectId("test:VehicleJourney:1");
+		Assert.assertEquals(object.getShortTripId(),String.valueOf(1),"PublishedJourneyName should be returned");
+		object.setObjectId("onlyonecolon:1");
+		Assert.assertEquals(object.getShortTripId(),"onlyonecolon:1","PublishedJourneyName should be returned");
+	}
+
+
 }

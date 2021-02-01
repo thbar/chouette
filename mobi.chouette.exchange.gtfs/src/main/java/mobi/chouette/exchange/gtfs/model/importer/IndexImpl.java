@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import lombok.extern.log4j.Log4j;
 //import mobi.chouette.common.Color;
@@ -46,24 +47,44 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 	private boolean _unique;
 	private boolean _ignoreRowsWithMissingKey;
 
+	protected String _splitCharacter;
+
 	public IndexImpl(String path, String key) throws IOException {
-		this(path, key, "", true);
+		this(path, key, "");
+	}
+
+	public IndexImpl(String path, String key,String splitCharacter) throws IOException {
+		this(path, key, "", true,splitCharacter);
 	}
 
 	public IndexImpl(String path, String key, boolean unique) throws IOException {
-		this(path, key, "", unique);
+		this(path, key,unique,"");
+	}
+
+	public IndexImpl(String path, String key, boolean unique, String splitCharacter) throws IOException {
+		this(path, key, "", unique,splitCharacter);
 	}
 
 	public IndexImpl(String path, String key, String value, boolean unique) throws IOException {
-		this(path,key,value,unique,false);
+		this(path,key,value,unique,false,"");
 	}
+
+	public IndexImpl(String path, String key, String value, boolean unique, String splitCharacter) throws IOException {
+		this(path,key,value,unique,false,splitCharacter);
+	}
+
 	public IndexImpl(String path, String key, String value, boolean unique, boolean ignoreRowsWithMissingKey) throws IOException {
+		this(path, key, value, unique, ignoreRowsWithMissingKey, "");
+	}
+
+	public IndexImpl(String path, String key, String value, boolean unique, boolean ignoreRowsWithMissingKey, String splitCharacter) throws IOException {
 		_path = path;
 		_key = key;
 		_value = value;
 		_unique = unique;
 		_ignoreRowsWithMissingKey = ignoreRowsWithMissingKey;
 		_total = 0;
+		_splitCharacter = splitCharacter;
 
 		initialize();
 	}
@@ -254,6 +275,7 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 			
 			if (_reader.next()) {
 				String key = getField(_key);
+				key = handleKeyTransformation(key);
 								
 				if (key == null || key.trim().isEmpty()) { // key cannot be null! "" or GtfsAgency.DEFAULT_ID
 					if(_ignoreRowsWithMissingKey) {
@@ -279,7 +301,7 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 					token.lenght = 1;
 					_tokens.put(key, token);
 				} else {
-					if (_unique) {
+					if (_unique && !(this instanceof RouteByIdWithMergedIndex)) {
 						if (GtfsAgency.DEFAULT_ID.equals(key)) {
 							throw new GtfsException(_path, _total, getIndex(_key), _key, GtfsException.ERROR.DUPLICATE_DEFAULT_KEY_FIELD, null, "");
 						} else {
@@ -324,6 +346,8 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 					continue;
 				}
 
+				key = handleKeyTransformation(key);
+
 				Token token = _tokens.get(key);
 				for (int i = 0; i < token.lenght; i++) {
 					int n = token.offset + i * 2;
@@ -340,6 +364,17 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 		//log.info(Color.YELLOW + "[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop() + Color.NORMAL);
 		//log.debug("[DSU] index " + _path + " " + _tokens.size() + " objects " + monitor.stop());
 		file.close();
+	}
+
+
+	/**
+	 * Apply a transformation on a key if needed
+	 * By default, returns raw value.
+	 * Function overriden in children class if a another behaviour is needed
+	 * @return
+	 */
+	protected String handleKeyTransformation(String rawValue){
+		return rawValue;
 	}
 
 	// @Override

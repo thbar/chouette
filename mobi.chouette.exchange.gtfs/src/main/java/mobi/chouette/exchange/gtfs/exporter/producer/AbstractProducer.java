@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.Collection;
 
 import lombok.Getter;
+import mobi.chouette.exchange.gtfs.importer.IdFormat;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractProducer
 {
@@ -89,6 +91,14 @@ public abstract class AbstractProducer
    static boolean isTrue(Boolean value)
    {
 	   return value != null && value;
+   }
+
+   public String generateCustomRouteId(String originalId, IdFormat idFormat, String idPrefix){
+
+      if (IdFormat.TRIDENT.equals(idFormat) && StringUtils.isNotEmpty(idPrefix)){
+         return idPrefix+":Line:"+originalId;
+      }
+      return idPrefix+originalId;
    }
 
 }

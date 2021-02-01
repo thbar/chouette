@@ -11,8 +11,19 @@ public abstract class IndexFactory {
 	@SuppressWarnings("rawtypes")
 	protected abstract Index create(String path) throws IOException;
 
+	protected Index create(String path, FactoryParameters factoryParameters) throws IOException {
+		return null;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public static final Index build(String path, String clazz)
+			throws ClassNotFoundException, IOException
+
+	{
+		return build( path, clazz,null);
+	}
+
+	public static final Index build(String path, String clazz,FactoryParameters factoryParameters)
 			throws ClassNotFoundException, IOException
 
 	{
@@ -21,6 +32,7 @@ public abstract class IndexFactory {
 			if (!factories.containsKey(clazz))
 				throw new ClassNotFoundException(clazz);
 		}
-		return ((IndexFactory) factories.get(clazz)).create(path);
+
+		return factoryParameters==null?((IndexFactory) factories.get(clazz)).create(path):((IndexFactory) factories.get(clazz)).create(path,factoryParameters);
 	}
 }
