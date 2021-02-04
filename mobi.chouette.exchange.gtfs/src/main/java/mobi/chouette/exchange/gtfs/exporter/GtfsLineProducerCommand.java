@@ -21,6 +21,7 @@ import mobi.chouette.exchange.gtfs.exporter.producer.GtfsServiceProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsShapeProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsTripProducer;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporter;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.exchange.metadata.NeptuneObjectPresenter;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -141,7 +142,9 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			for (VehicleJourney vj : collection.getVehicleJourneys()) {
 				String tmKey = calendarProducer.key(vj.getTimetables(), sharedPrefix, configuration.isKeepOriginalId());
 				if (tmKey != null) {
-					if (tripProducer.save(vj, tmKey, prefix, sharedPrefix, configuration.isKeepOriginalId(),configuration.getIdPrefix(),configuration.getIdFormat())) {
+					IdParameters idParams = new IdParameters(configuration.getIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix());
+
+					if (tripProducer.save(vj, tmKey, prefix, sharedPrefix, configuration.isKeepOriginalId(),idParams)) {
 						hasVj = true;
 						jps.add(vj.getJourneyPattern());
 						if (!timetables.containsKey(tmKey)) {
@@ -154,7 +157,8 @@ public class GtfsLineProducerCommand implements Command, Constant {
 				shapeProducer.save(jp, prefix, configuration.isKeepOriginalId());
 			}
 			if (hasVj) {
-				routeProducer.save(line, prefix, configuration.isKeepOriginalId(),configuration.isUseTpegHvt());
+				IdParameters idParams = new IdParameters(configuration.getIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix());
+				routeProducer.save(line, prefix, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(),idParams);
 				hasLine = true;
 				if (metadata != null) {
 					metadata.getResources().add(

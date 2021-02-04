@@ -1,4 +1,4 @@
-package mobi.chouette.exchange.gtfs.importer;
+package mobi.chouette.exchange.gtfs.parameters;
 
 public enum IdFormat {
     SOURCE,

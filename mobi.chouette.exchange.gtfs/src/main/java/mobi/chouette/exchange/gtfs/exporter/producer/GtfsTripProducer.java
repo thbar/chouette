@@ -10,7 +10,7 @@ package mobi.chouette.exchange.gtfs.exporter.producer;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.exchange.gtfs.exporter.GtfsStopUtils;
-import mobi.chouette.exchange.gtfs.importer.IdFormat;
+import mobi.chouette.exchange.gtfs.parameters.IdFormat;
 import mobi.chouette.exchange.gtfs.model.GtfsFrequency;
 import mobi.chouette.exchange.gtfs.model.GtfsShape;
 import mobi.chouette.exchange.gtfs.model.GtfsStopTime;
@@ -19,6 +19,7 @@ import mobi.chouette.exchange.gtfs.model.GtfsStopTime.PickupType;
 import mobi.chouette.exchange.gtfs.model.GtfsTime;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.DestinationDisplay;
 import mobi.chouette.model.JourneyFrequency;
 import mobi.chouette.model.JourneyPattern;
@@ -26,11 +27,9 @@ import mobi.chouette.model.Line;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
-import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
@@ -71,11 +70,10 @@ public class GtfsTripProducer extends AbstractProducer {
 	 * @param keepOriginalId
 	 * @param changesDestinationDisplay
 	 * @param lvjas
-	 * @param idPrefix
-	 * @pram idformat
+	 * @pram idParams
 	 * @return list of stoptimes
 	 */
-	private boolean saveTimes(VehicleJourney vj, String prefix, String sharedPrefix, boolean keepOriginalId, boolean changesDestinationDisplay, List<VehicleJourneyAtStop> lvjas, String idPrefix, IdFormat idformat) {
+	private boolean saveTimes(VehicleJourney vj, String prefix, String sharedPrefix, boolean keepOriginalId, boolean changesDestinationDisplay, List<VehicleJourneyAtStop> lvjas, IdParameters idParams) {
 		if (vj.getVehicleJourneyAtStops().isEmpty())
 			return false;
 		Line l = vj.getRoute().getLine();
@@ -94,7 +92,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		for (VehicleJourneyAtStop vjas : lvjas) {
 			StopArea stopArea = vjas.getStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject();
 			if (stopArea != null) {
-				String newStopId = GtfsStopUtils.getNewStopId(stopArea,idPrefix,idformat);
+				String newStopId = GtfsStopUtils.getNewStopId(stopArea,idParams);
 				if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")) {
 					newStopId = stopArea.getOriginalStopId();
 				}
@@ -283,9 +281,6 @@ public class GtfsTripProducer extends AbstractProducer {
 
 
 
-	public boolean save(VehicleJourney vj, String serviceId,  String schemaPrefix, String sharedPrefix, boolean keepOriginalId) {
-		return save(vj, serviceId,  schemaPrefix, sharedPrefix, keepOriginalId, null, null);
-	}
 
 
 
@@ -299,13 +294,14 @@ public class GtfsTripProducer extends AbstractProducer {
 	 * 			Prefix of the database schema
 	 * @param sharedPrefix
 	 * @param keepOriginalId
-	 * @param idPrefix
-	 * 			Prefix for trident ID
-	 * @param idFormat
-	 * 			Format for Ids : TRIDENT (e.g: PREFIX:StopPlace:10545) or identical to source (e.g:10545)
+	 * @param idparams
+	 * 			Parameters about IDs:
+	 * 		    -	Format for Ids : TRIDENT (e.g: PREFIX:StopPlace:10545) or identical to source (e.g:10545)
+	 * 		    -   prefix
+	 * 		    - suffix
 	 * @return gtfs trip
 	 */
-	public boolean save(VehicleJourney vj, String serviceId,  String schemaPrefix, String sharedPrefix, boolean keepOriginalId, String idPrefix, IdFormat idFormat) {
+	public boolean save(VehicleJourney vj, String serviceId, String schemaPrefix, String sharedPrefix, boolean keepOriginalId, IdParameters idparams) {
 
 		time.setStopHeadsign(null); // Clear between each journey
 
@@ -324,7 +320,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		}
 		Route route = vj.getRoute();
 		Line line = route.getLine();
-		trip.setRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId));
+		trip.setRouteId(generateCustomRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId),idparams));
 		if ("R".equals(route.getWayBack()) || PTDirectionEnum.R.equals(route.getDirection())) {
 			trip.setDirectionId(GtfsTrip.DirectionType.Inbound);
 		} else {
@@ -391,7 +387,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		// trip.setBlockId(...);
 
 		// add StopTimes
-		if (saveTimes(vj,  schemaPrefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas,idPrefix,idFormat)) {
+		if (saveTimes(vj,  schemaPrefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas,idparams)) {
 			try {
 				getExporter().getTripExporter().export(trip);
 			} catch (Exception e) {

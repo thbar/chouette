@@ -21,6 +21,7 @@ import mobi.chouette.exchange.gtfs.exporter.producer.GtfsServiceProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsStopProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsTransferProducer;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporter;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.exchange.metadata.Metadata;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
@@ -112,6 +113,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 //		Set<Company> companies = collection.getAgencyCompanies();
 		Set<Company> companies = collection.getOperatorCompanies();
 		Set<Interchange> interchanges = collection.getInterchanges();
+		IdParameters idParams = new IdParameters(configuration.getIdPrefix(),configuration.getIdFormat(),null);
 		if (!companies.isEmpty()) {
 			agencyProducer = new GtfsAgencyProducer(exporter);
 		}
@@ -121,7 +123,8 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		for (Iterator<StopArea> iterator = commercialStops.iterator(); iterator.hasNext();) {
 			StopArea stop = iterator.next();
-			String newStopId = GtfsStopUtils.getNewStopId(stop,configuration.getIdPrefix(),configuration.getIdFormat());
+
+			String newStopId = GtfsStopUtils.getNewStopId(stop,idParams);
 			if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
 				newStopId = stop.getOriginalStopId();
 			}
@@ -137,7 +140,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 
 		List<String> stopGenerated = new ArrayList<>();
 		for (StopArea stop : physicalStops) {
-            String newStopId = GtfsStopUtils.getNewStopId(stop,configuration.getIdPrefix(),configuration.getIdFormat());
+            String newStopId = GtfsStopUtils.getNewStopId(stop,idParams);
             if(StringUtils.isEmpty(newStopId) || newStopId.contains(".")){
             	newStopId = stop.getOriginalStopId();
 			}

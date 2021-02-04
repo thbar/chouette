@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import mobi.chouette.exchange.gtfs.importer.IdFormat;
+import mobi.chouette.exchange.gtfs.parameters.IdFormat;
 import mobi.chouette.exchange.parameters.AbstractExportParameter;
 import org.apache.log4j.Logger;
 
@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
 @NoArgsConstructor
 @ToString(callSuper=true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={"objectIdPrefix","timeZone","keepOriginalId","useTpegHvt","exportedFileName","idPrefix","idFormat"})
+@XmlType(propOrder={"objectIdPrefix","timeZone","keepOriginalId","useTpegHvt","exportedFileName","idPrefix","idFormat","idSuffix"})
 
 public class GtfsExportParameters  extends AbstractExportParameter {
 		
@@ -50,7 +50,9 @@ public class GtfsExportParameters  extends AbstractExportParameter {
 	@XmlElement(name = "id_format",required = false)
 	private IdFormat idFormat;
 
-
+	@Getter @Setter
+	@XmlElement(name = "id_suffix",required = false)
+	private String idSuffix;
 
 
 	public boolean isValid(Logger log, String[] allowedTypes)

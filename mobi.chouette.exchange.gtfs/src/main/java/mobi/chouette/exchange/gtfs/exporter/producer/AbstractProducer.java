@@ -7,6 +7,9 @@ import java.util.Collection;
 
 import lombok.Getter;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import mobi.chouette.exchange.gtfs.parameters.IdFormat;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractProducer
 {
@@ -90,5 +93,35 @@ public abstract class AbstractProducer
    {
 	   return value != null && value;
    }
+
+   /**
+    * Generate a custom Id from an original String and parameters.
+    * Trident format : "prefix" :Line:xxx "Suffix". e.g : MOBIITI:Line:1426SUF
+    * Source format : "prefix" xxx "Suffix". e.g : MOBIITI1426SUF
+    * @param originalId
+    * @param idParams
+    * @return
+    */
+   public String generateCustomRouteId(String originalId, IdParameters idParams){
+      String idPrefix = idParams.getIdPrefix();
+      String idSuffix= idParams.getIdSuffix();
+      StringBuilder sb = new StringBuilder();
+
+      if (StringUtils.isNotEmpty(idPrefix))
+         sb.append(idPrefix);
+
+      if (IdFormat.TRIDENT.equals(idParams.getIdFormat()) && StringUtils.isNotEmpty(idPrefix)){
+         sb.append(":Line:");
+      }
+      sb.append(originalId);
+
+      if (StringUtils.isNotEmpty(idSuffix)){
+         sb.append(idSuffix);
+      }
+
+
+      return sb.toString();
+   }
+
 
 }

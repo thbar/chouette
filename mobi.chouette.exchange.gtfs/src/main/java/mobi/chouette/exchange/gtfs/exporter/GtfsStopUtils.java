@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.gtfs.exporter;
 
-import mobi.chouette.exchange.gtfs.importer.IdFormat;
+import mobi.chouette.exchange.gtfs.parameters.IdFormat;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.StopArea;
 import org.apache.commons.lang.StringUtils;
 
@@ -14,13 +15,13 @@ public class GtfsStopUtils {
 
 
 
-    public static String getNewStopId(StopArea stop, String idPrefix, IdFormat idFormat) {
-
+    public static String getNewStopId(StopArea stop, IdParameters idParams) {
+        String idPrefix = idParams.getIdPrefix();
         if(stop != null && StringUtils.isNotEmpty(stop.getOriginalStopId())){
-            if (IdFormat.TRIDENT.equals(idFormat) && StringUtils.isNotEmpty(idPrefix)){
+            if (IdFormat.TRIDENT.equals(idParams.getIdFormat()) && StringUtils.isNotEmpty(idPrefix)){
                 return createTridentId(stop,idPrefix);
             }
-            return idPrefix+stop.getOriginalStopId();
+            return createStandardId(stop,idParams.getIdPrefix());
         }
         String inputStopId = stop.getObjectId();
         if(StringUtils.isEmpty(inputStopId)) return null;
@@ -31,6 +32,19 @@ public class GtfsStopUtils {
         return findInPattern(pattern2, inputStopId);
     }
 
+
+    /**
+     * Creates a new standard ID
+     * e.g. : PREFIXxxxx
+     * @param stop
+     *       Stop for which a trident Id must be generated
+     * @param idPrefix
+     *       Prefix that will be used on Id beginning.
+     * @return
+     */
+    private static String createStandardId(StopArea stop, String idPrefix){
+        return StringUtils.isEmpty(idPrefix)?stop.getOriginalStopId():idPrefix+stop.getOriginalStopId();
+    }
 
     /**
      * Creates a new trident ID depending on the object type : Quay or StopPlace
