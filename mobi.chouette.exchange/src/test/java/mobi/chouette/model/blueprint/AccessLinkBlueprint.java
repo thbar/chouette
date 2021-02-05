@@ -54,7 +54,7 @@ public class AccessLinkBlueprint
    @Default
    Duration occasionalTravellerDuration = new Duration(173335738);
 
-   @Mapped
+   @Default
    boolean mobilityRestrictedSuitable = true;
 
 }

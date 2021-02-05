@@ -62,7 +62,7 @@ public class ConnectionLinkBlueprint
    @Default
    Duration mobilityRestrictedTravellerDuration = new Duration(1908888);
 
-   @Mapped
+   @Default
    boolean mobilityRestrictedSuitable = true;
 
 }
