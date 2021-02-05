@@ -296,14 +296,14 @@ public class GtfsTripProducer extends AbstractProducer {
 	 * 			Prefix of the database schema
 	 * @param sharedPrefix
 	 * @param keepOriginalId
-	 * @param idparams
+	 * @param idParams
 	 * 			Parameters about IDs:
 	 * 		    -	Format for Ids : TRIDENT (e.g: PREFIX:StopPlace:10545) or identical to source (e.g:10545)
 	 * 		    -   prefix
 	 * 		    - suffix
 	 * @return gtfs trip
 	 */
-	public boolean save(VehicleJourney vj, String serviceId, String schemaPrefix, String sharedPrefix, boolean keepOriginalId, IdParameters idparams) {
+	public boolean save(VehicleJourney vj, String serviceId, String schemaPrefix, String sharedPrefix, boolean keepOriginalId, IdParameters idParams) {
 
 		time.setStopHeadsign(null); // Clear between each journey
 
@@ -322,7 +322,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		}
 		Route route = vj.getRoute();
 		Line line = route.getLine();
-		trip.setRouteId(generateCustomRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId),idparams));
+		trip.setRouteId(generateCustomRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId),idParams));
 		if ("R".equals(route.getWayBack()) || PTDirectionEnum.R.equals(route.getDirection())) {
 			trip.setDirectionId(GtfsTrip.DirectionType.Inbound);
 		} else {
@@ -389,7 +389,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		// trip.setBlockId(...);
 
 		// add StopTimes
-		if (saveTimes(vj,  schemaPrefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas,idparams)) {
+		if (saveTimes(vj,  schemaPrefix, sharedPrefix, keepOriginalId,changesDestinationDisplay,lvjas,idParams)) {
 			try {
 				getExporter().getTripExporter().export(trip);
 			} catch (Exception e) {

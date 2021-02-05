@@ -16,12 +16,12 @@ public class GtfsStopUtils {
 
 
     public static String getNewStopId(StopArea stop, IdParameters idParams) {
-        String idPrefix = idParams.getIdPrefix();
+        String idPrefix = idParams.getStopIdPrefix();
         if(stop != null && StringUtils.isNotEmpty(stop.getOriginalStopId())){
             if (IdFormat.TRIDENT.equals(idParams.getIdFormat()) && StringUtils.isNotEmpty(idPrefix)){
                 return createTridentId(stop,idPrefix);
             }
-            return createStandardId(stop,idParams.getIdPrefix());
+            return createStandardId(stop,idParams.getStopIdPrefix());
         }
         String inputStopId = stop.getObjectId();
         if(StringUtils.isEmpty(inputStopId)) return null;

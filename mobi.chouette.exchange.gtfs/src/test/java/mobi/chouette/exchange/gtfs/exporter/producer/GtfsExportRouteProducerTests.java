@@ -76,7 +76,7 @@ public class GtfsExportRouteProducerTests
       Line neptuneObject = buildStandardLine();
       String expectedId = "PREFIX4321";
 
-      IdParameters idParams = new IdParameters("PREFIX",null,null);
+      IdParameters idParams = new IdParameters("PREFIXSTOP",null,null,"PREFIX");
 
       producer.save(neptuneObject, "GTFS",false,false,idParams);
       Reporter.log("verifyRouteID");
@@ -94,7 +94,7 @@ public class GtfsExportRouteProducerTests
       Line neptuneObject = buildStandardLine();
       String expectedId = "4321SUFFIX";
 
-      IdParameters idParams = new IdParameters(null,null,"SUFFIX");
+      IdParameters idParams = new IdParameters("PREFIXSTOP",null,"SUFFIX","");
 
       producer.save(neptuneObject, "GTFS",false,false,idParams);
       Reporter.log("verifyRouteIDSuffix");
@@ -112,7 +112,7 @@ public class GtfsExportRouteProducerTests
       Line neptuneObject = buildStandardLine();
       String expectedId = "PREFIX:Line:4321SUFFIX";
 
-      IdParameters idParams = new IdParameters("PREFIX", IdFormat.TRIDENT,"SUFFIX");
+      IdParameters idParams = new IdParameters("PREFIXSTOP", IdFormat.TRIDENT,"SUFFIX","PREFIX");
       producer.save(neptuneObject, "GTFS",false,false,idParams);
       Reporter.log("verifyRouteIDWithTridentFormatAndSuffix");
       Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
@@ -130,7 +130,7 @@ public class GtfsExportRouteProducerTests
       Line neptuneObject = buildStandardLine();
       String expectedId = "PREFIX:Line:4321";
 
-      IdParameters idParams = new IdParameters("PREFIX", IdFormat.TRIDENT,null);
+      IdParameters idParams = new IdParameters("PREFIXSTOP", IdFormat.TRIDENT,null,"PREFIX");
       producer.save(neptuneObject, "GTFS",false,false,idParams);
       Reporter.log("verifyRouteIDWithTridentFormat");
       Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");

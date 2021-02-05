@@ -103,7 +103,7 @@ public abstract class AbstractProducer
     * @return
     */
    public String generateCustomRouteId(String originalId, IdParameters idParams){
-      String idPrefix = idParams.getIdPrefix();
+      String idPrefix = idParams.getLineIdPrefix();
       String idSuffix= idParams.getIdSuffix();
       StringBuilder sb = new StringBuilder();
 

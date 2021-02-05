@@ -2,25 +2,35 @@ package mobi.chouette.exchange.gtfs.parameters;
 
 public class IdParameters {
 
-    private String idPrefix;
+    private String stopIdPrefix;
     private IdFormat idFormat;
     private String idSuffix;
+    private String lineIdPrefix;
 
     public IdParameters() {
     }
 
-    public IdParameters(String idPrefix, IdFormat idFormat, String idSuffix) {
-        this.idPrefix = idPrefix;
+    public IdParameters(String stopIdPrefix, IdFormat idFormat, String idSuffix, String lineIdPrefix) {
+        this.stopIdPrefix = stopIdPrefix;
         this.idFormat = idFormat;
         this.idSuffix = idSuffix;
+        this.lineIdPrefix = lineIdPrefix;
     }
 
-    public String getIdPrefix() {
-        return idPrefix;
+    public String getStopIdPrefix() {
+        return stopIdPrefix;
     }
 
-    public void setIdPrefix(String idPrefix) {
-        this.idPrefix = idPrefix;
+    public void setStopIdPrefix(String stopIdPrefix) {
+        this.stopIdPrefix = stopIdPrefix;
+    }
+
+    public String getLineIdPrefix() {
+        return lineIdPrefix;
+    }
+
+    public void setLineIdPrefix(String lineIdPrefix) {
+        this.lineIdPrefix = lineIdPrefix;
     }
 
     public IdFormat getIdFormat() {
