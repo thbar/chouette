@@ -105,6 +105,24 @@ public class GtfsExportRouteProducerTests
    }
 
    @Test(groups = { "Producers" }, description = "test route with both short and long name")
+   public void verifyRouteIDWithTridentFormatAndSuffix() throws ChouetteException
+   {
+      mock.reset();
+
+      Line neptuneObject = buildStandardLine();
+      String expectedId = "PREFIX:Line:4321SUFFIX";
+
+      IdParameters idParams = new IdParameters("PREFIX", IdFormat.TRIDENT,"SUFFIX");
+      producer.save(neptuneObject, "GTFS",false,false,idParams);
+      Reporter.log("verifyRouteIDWithTridentFormatAndSuffix");
+      Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
+      GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
+      Reporter.log(RouteExporter.CONVERTER.to(context, gtfsObject));
+
+      Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "Trident RouteId not generated correctly");
+   }
+
+   @Test(groups = { "Producers" }, description = "test route with both short and long name")
    public void verifyRouteIDWithTridentFormat() throws ChouetteException
    {
       mock.reset();
