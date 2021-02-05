@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 import javax.ejb.EJB;
 import java.io.File;
+import java.util.List;
 
 public class RelationsToStopAreaInterceptorTest extends Arquillian {
 
@@ -62,9 +63,10 @@ public class RelationsToStopAreaInterceptorTest extends Arquillian {
         Assert.assertEquals(dbScheduledStopPoint.getContainedInStopAreaRef().getObjectId(), stopArea.getObjectId());
 
         StopArea dbStopArea = stopAreaDAO.findByObjectId(stopArea.getObjectId());
+        List<ScheduledStopPoint> dbScheduledStopPointsList = scheduledStopPointDAO.getScheduledStopPointsContainedInStopArea(dbStopArea.getObjectId());
 
-        Assert.assertEquals(dbStopArea.getContainedScheduledStopPoints().size(), 1);
-        Assert.assertEquals(dbStopArea.getContainedScheduledStopPoints().get(0).getObjectId(), scheduledStopPoint.getObjectId());
+        Assert.assertEquals(dbScheduledStopPointsList.size(), 1);
+        Assert.assertEquals(dbScheduledStopPointsList.get(0).getObjectId(), scheduledStopPoint.getObjectId());
     }
 
 }

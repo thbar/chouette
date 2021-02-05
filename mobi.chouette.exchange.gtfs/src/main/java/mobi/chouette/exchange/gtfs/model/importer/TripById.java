@@ -12,10 +12,19 @@ public class TripById extends TripIndex {
 		super(name, KEY, true);
 	}
 
+	public TripById(String name,FactoryParameters factoryParameters) throws IOException {
+		super(name, KEY, true,factoryParameters.getSplitCharacter());
+	}
+
 	public static class DefaultImporterFactory extends IndexFactory {
 		@Override
 		protected Index<GtfsTrip> create(String name) throws IOException {
 			return new TripById(name);
+		}
+
+		@Override
+		protected Index<GtfsTrip> create(String name,FactoryParameters factoryParameters) throws IOException {
+			return new TripById(name,factoryParameters);
 		}
 	}
 

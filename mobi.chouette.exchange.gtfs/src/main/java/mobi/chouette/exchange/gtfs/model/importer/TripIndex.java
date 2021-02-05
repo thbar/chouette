@@ -2,6 +2,7 @@ package mobi.chouette.exchange.gtfs.model.importer;
 
 import mobi.chouette.common.HTMLTagValidator;
 import mobi.chouette.exchange.gtfs.model.GtfsTrip;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,8 +20,14 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 	protected String _routeId = null;
 	protected String _serviceId = null;
 
+
+
 	public TripIndex(String name, String id, boolean unique) throws IOException {
-		super(name, id, unique);
+		this(name,id,unique,"");
+	}
+
+	public TripIndex(String name, String id, boolean unique,String splitCharacter) throws IOException {
+		super(name, id, unique,splitCharacter);
 	}
 
 	@Override
@@ -97,6 +104,11 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 							GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
 		} else {
 			bean.setRouteId(STRING_CONVERTER.from(context, FIELDS.route_id, value, true));
+
+
+			bean.setRouteId(handleRouteIdTransformation(bean.getRouteId()));
+
+
 		}
 
 		value = array[i++];
@@ -177,6 +189,20 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 		}
 
 		return bean;
+	}
+
+	@Override
+	protected String handleKeyTransformation(String rawValue){
+		if(this._key.equals("route_id") ){
+			return handleRouteIdTransformation(rawValue);
+		}
+		return rawValue;
+	}
+
+	protected String handleRouteIdTransformation(String inputRouteId) {
+		if (StringUtils.isEmpty(_splitCharacter))
+			return inputRouteId;
+		return inputRouteId.split(_splitCharacter)[0];
 	}
 
 	@Override

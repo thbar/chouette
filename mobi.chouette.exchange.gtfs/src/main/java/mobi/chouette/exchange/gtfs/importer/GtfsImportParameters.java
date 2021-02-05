@@ -1,5 +1,7 @@
 package mobi.chouette.exchange.gtfs.importer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +24,10 @@ import java.util.Arrays;
 		"ignoreLastWord",
 		"referencesType",
 		"parseInterchanges",
-		"parseConnectionLinks"})
+		"parseConnectionLinks",
+		"routeMerge",
+		"splitCharacter"
+})
 public class GtfsImportParameters extends AbstractImportParameter {
 
 	@Getter@Setter
@@ -60,6 +65,14 @@ public class GtfsImportParameters extends AbstractImportParameter {
 	@Getter@Setter
 	@XmlElement(name = "parse_connection_links")
 	private boolean parseConnectionLinks = true;
+
+	@Getter@Setter
+	@XmlElement(name = "route_merge")
+	public Boolean routeMerge = false;
+
+	@Getter@Setter
+	@XmlElement(name = "split_character")
+	public String splitCharacter = "";
 
 
 	public boolean isValid(Logger log, String[] allowedTypes)

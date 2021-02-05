@@ -48,7 +48,23 @@ public class GtfsExportRouteProducerTests
       Assert.assertEquals(gtfsObject.getRouteTextColor().getGreen(), Integer.parseInt("FF",16), "RouteTextColor must be correctly set");
       Assert.assertEquals(gtfsObject.getRouteTextColor().getBlue(), Integer.parseInt("00",16), "RouteTextColor must be correctly set");
       Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "RouteId not generated correctly");
+   }
 
+
+   private static Line buildStandardLine(){
+      Line neptuneObject = new Line();
+      neptuneObject.setObjectId("GTFS:Line:4321");
+      neptuneObject.setName("lineName");
+      neptuneObject.setNumber("lineNumber");
+      neptuneObject.setPublishedName("publishedLineName");
+      neptuneObject.setUrl("http://www.line.fr");
+      neptuneObject.setColor("0000FF");
+      neptuneObject.setTextColor("00FF00");
+      Company company = new Company();
+      company.setObjectId("GTFS:Company:1234");
+      company.setName("name");
+      neptuneObject.setCompany(company);
+      return neptuneObject;
    }
 
 
@@ -104,40 +120,6 @@ public class GtfsExportRouteProducerTests
       Reporter.log(RouteExporter.CONVERTER.to(context, gtfsObject));
 
       Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "Trident RouteId not generated correctly");
-   }
-
-   @Test(groups = { "Producers" }, description = "test route with both short and long name")
-   public void verifyRouteIDWithTridentFormatAndSuffix() throws ChouetteException
-   {
-      mock.reset();
-
-      Line neptuneObject = buildStandardLine();
-      String expectedId = "PREFIX:Line:4321SUFFIX";
-
-      IdParameters idParams = new IdParameters("PREFIX", IdFormat.TRIDENT,"SUFFIX");
-      producer.save(neptuneObject, "GTFS",false,false,idParams);
-      Reporter.log("verifyRouteIDWithTridentFormatAndSuffix");
-      Assert.assertEquals(mock.getExportedRoutes().size(), 1, "Route should be returned");
-      GtfsRoute gtfsObject = mock.getExportedRoutes().get(0);
-      Reporter.log(RouteExporter.CONVERTER.to(context, gtfsObject));
-
-      Assert.assertEquals(gtfsObject.getRouteId(), expectedId, "Trident RouteId not generated correctly");
-   }
-
-   private static Line buildStandardLine(){
-      Line neptuneObject = new Line();
-      neptuneObject.setObjectId("GTFS:Line:4321");
-      neptuneObject.setName("lineName");
-      neptuneObject.setNumber("lineNumber");
-      neptuneObject.setPublishedName("publishedLineName");
-      neptuneObject.setUrl("http://www.line.fr");
-      neptuneObject.setColor("0000FF");
-      neptuneObject.setTextColor("00FF00");
-      Company company = new Company();
-      company.setObjectId("GTFS:Company:1234");
-      company.setName("name");
-      neptuneObject.setCompany(company);
-      return neptuneObject;
    }
 
    @Test(groups = { "Producers" }, description = "test route with no short name")

@@ -27,9 +27,11 @@ import mobi.chouette.model.Line;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
+import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
 import mobi.chouette.model.type.JourneyCategoryEnum;
 import mobi.chouette.model.type.PTDirectionEnum;
@@ -320,7 +322,7 @@ public class GtfsTripProducer extends AbstractProducer {
 		}
 		Route route = vj.getRoute();
 		Line line = route.getLine();
-		trip.setRouteId(generateCustomRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId),idparams));
+		trip.setRouteId(toGtfsId(line.getObjectId(), schemaPrefix, keepOriginalId));
 		if ("R".equals(route.getWayBack()) || PTDirectionEnum.R.equals(route.getDirection())) {
 			trip.setDirectionId(GtfsTrip.DirectionType.Inbound);
 		} else {

@@ -12,7 +12,7 @@ import mobi.chouette.exchange.gtfs.model.importer.AgencyById;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsException;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.gtfs.model.importer.Index;
-import mobi.chouette.exchange.gtfs.model.importer.RouteById.FIELDS;
+import mobi.chouette.exchange.gtfs.model.importer.AbstractRouteById.FIELDS;
 import mobi.chouette.exchange.gtfs.validation.Constant;
 import mobi.chouette.exchange.gtfs.validation.GtfsValidationReporter;
 import mobi.chouette.exchange.importer.Parser;
