@@ -36,6 +36,7 @@ public class DaoReader {
 	@EJB
 	protected OperatorDAO operatorDAO;
 
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Set<Long> loadLines(String type, List<Long> ids) {
 		Set<Line> lines = new HashSet<Line>();
@@ -62,10 +63,29 @@ public class DaoReader {
 			}
 		}
 		// ordonnancement des lignes
+		LineComparator lineComp = new LineComparator();
+
 		return lines.stream()
-				     .sorted(Comparator.comparing(Line::getPosition))
+				     .sorted(lineComp)
 				     .map(Line::getId)
 				     .collect(Collectors.toCollection(LinkedHashSet::new));
+	}
+
+
+	public class LineComparator implements Comparator<Line> {
+
+		@Override
+		public int compare(Line o1, Line o2) {
+
+			if (o1.getPosition() != null && o2.getPosition() != null){
+				return o1.getPosition().compareTo(o2.getPosition());
+			}
+
+			if (o1.getPublishedName() != null && o2.getPublishedName() != null){
+				return o1.getPublishedName().compareTo(o2.getPublishedName());
+			}
+			return o1.getObjectId().compareTo(o2.getObjectId());
+		}
 	}
 
 
