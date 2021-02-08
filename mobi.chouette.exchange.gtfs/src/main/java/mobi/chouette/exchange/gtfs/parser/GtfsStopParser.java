@@ -19,6 +19,7 @@ import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.LongLatTypeEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 
 @Log4j
 public class GtfsStopParser implements Parser, Validator, Constant {
@@ -139,6 +140,7 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 		stopArea.setComment(AbstractConverter.getNonEmptyTrimedString(gtfsStop.getStopDesc()));
 		stopArea.setTimeZone(AbstractConverter.toString(gtfsStop.getStopTimezone()));
 		stopArea.setFareCode(0);
+		stopArea.setOriginalStopId(gtfsStop.getStopId());
 
 		if (gtfsStop.getLocationType() == GtfsStop.LocationType.Station) {
 			stopArea.setAreaType(ChouetteAreaEnum.CommercialStopPoint);

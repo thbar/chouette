@@ -59,6 +59,8 @@ public class NeTExStopPlaceRegisterUpdater {
 
     public static final String IMPORTED_ID_VALUE_SEPARATOR = ",";
 
+    public static final String COMMERCIAL_STOP_POINT_KEYWORD = ":StopPlace:";
+
     private PublicationDeliveryClient client;
 
     private final StopPlaceMapper stopPlaceMapper = new StopPlaceMapper();
@@ -384,6 +386,9 @@ public class NeTExStopPlaceRegisterUpdater {
                 }
             }
         }
+
+        updateCommercialStopPoints(stopPlaceRegisterMap,referential);
+
         for (RouteSection rs : referential.getRouteSections().values()) {
 //            updateStopArea(correlationId, stopPlaceRegisterMap, referential, discardedStopAreas, rs, "arrival");
             updateRouteSectionArrival(correlationId, stopPlaceRegisterMap, referential, discardedStopAreas, rs);
@@ -407,12 +412,25 @@ public class NeTExStopPlaceRegisterUpdater {
             referential.getStopAreas().remove(obsoleteObjectId);
         }
 
-        for (
-
-                StopArea sa : createdParents) {
+        for (StopArea sa : createdParents) {
             referential.getStopAreas().remove(sa.getObjectId());
         }
 
+    }
+
+    private void updateCommercialStopPoints(Map<String, String> stopPlaceRegisterMap, Referential referential){
+        stopPlaceRegisterMap.entrySet().stream()
+                                       .filter(entry-> entry.getKey().contains(COMMERCIAL_STOP_POINT_KEYWORD))
+                                       .forEach(entry-> updateCommercialStopPoint(referential,entry.getKey(),entry.getValue()));
+    }
+
+    private void updateCommercialStopPoint(Referential referential, String srcStopAreaId, String dstStopAreaId){
+
+        StopArea dstStopArea = referential.getSharedStopAreas().get(dstStopAreaId);
+        StopArea srcStopArea = referential.getSharedStopAreas().get(srcStopAreaId);
+
+        if (StringUtils.isNotEmpty(srcStopArea.getOriginalStopId()))
+            dstStopArea.setOriginalStopId(srcStopArea.getOriginalStopId());
     }
 
 
@@ -495,6 +513,9 @@ public class NeTExStopPlaceRegisterUpdater {
                     StopArea newStopArea = referential.getSharedStopAreas().get(newObjectId);
                     if (newStopArea != null) {
                         newStopArea.setFareCode(stopArea.getFareCode());
+                        if(StringUtils.isNotEmpty(stopArea.getOriginalStopId()))
+                            newStopArea.setOriginalStopId(stopArea.getOriginalStopId());
+
                         scheduledStopPoint.setContainedInStopAreaRef(new SimpleObjectReference<>(newStopArea));
                         discardedStopAreas.add(currentObjectId);
                     } else {

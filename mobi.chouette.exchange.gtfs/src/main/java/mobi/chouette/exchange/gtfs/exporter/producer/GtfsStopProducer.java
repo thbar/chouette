@@ -128,8 +128,7 @@ public class GtfsStopProducer extends AbstractProducer
 		{
 			if (neptuneObject.getParent() != null && validParents.contains(neptuneObject.getParent()))
 			{
-				stop.setParentStation(toGtfsId(neptuneObject.getParent()
-						.getObjectId(),prefix, keepOriginalId));
+				stop.setParentStation(neptuneObject.getParent().getOriginalStopId());
 			}
 		}
 

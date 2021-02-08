@@ -36,6 +36,7 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
+import org.apache.commons.lang.StringUtils;
 
 @Stateless
 public class LineOptimiser {
@@ -120,6 +121,9 @@ public class LineOptimiser {
 				if (object == null) {
 					object = ObjectFactory.getStopArea(cache, item.getObjectId());
 				}
+
+				if (StringUtils.isNotEmpty(item.getOriginalStopId()))
+					object.setOriginalStopId(item.getOriginalStopId());
 			}
 		}
 	}
