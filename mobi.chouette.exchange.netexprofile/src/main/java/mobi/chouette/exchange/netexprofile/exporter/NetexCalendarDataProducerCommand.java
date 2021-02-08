@@ -9,7 +9,6 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.report.ActionReporter;
-import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.util.Referential;
 
 import javax.naming.InitialContext;
@@ -36,6 +35,8 @@ public class NetexCalendarDataProducerCommand implements Command, Constant {
             if (exportableNetexData == null) {
                 return ERROR;
             }
+
+            log.info("processing netex calendar file");
 
             NetexCalendarDataProducer producer = new NetexCalendarDataProducer();
             producer.produce(context);

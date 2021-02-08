@@ -70,5 +70,8 @@ public interface Constant {
 	public static final String BUFFER = "buffer";
 
 	public static final String CREATION_DATE = "CreationDate";
+
+	public static final String OBJECT_TYPE_CONCERTO = "object_type_concerto";
+	public static final String PROVIDER = "provider";
 	
 }

@@ -35,7 +35,7 @@ public class NetexLineProducerCommand implements Command, Constant {
         try {
 
             Line line = (Line) context.get(LINE);
-            log.info("processing line " + NamingUtil.getName(line));
+            log.info("processing netex line file for line : " + NamingUtil.getName(line));
 
             if(line != null && line.getCategoriesForLine() != null && !line.getCategoriesForLine().getName().equalsIgnoreCase("idfm")){
                 log.error("Ligne : " + line.getObjectId() + " en catégorie IDFM mais CODIFLIGNE manquant.");

@@ -24,11 +24,6 @@ public class ConcertoExportParameters extends AbstractExportParameter {
 	@XmlElement(name = "period_days")
 	private Integer periodDays;
 
-	@Getter
-	@Setter
-	@XmlElement (name = "object_type_concerto")
-	private String objectTypeConcerto;
-
 	public boolean isValid(Logger log) {
 		return true;
 	}

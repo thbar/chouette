@@ -25,8 +25,8 @@ public class ConcertoTerminateExportCommand implements Command, Constant {
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		try {
-			ConcertoExporter gtfsExporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
-			gtfsExporter.dispose(context);
+			ConcertoExporter concertoExporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
+			concertoExporter.dispose(context);
 			result = SUCCESS;
 
 		} catch (Exception e) {

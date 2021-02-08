@@ -121,12 +121,6 @@ public class AbstractExporterCommand implements Constant {
                     progression.execute(context);
                 }
             }
-			// post processing
-            // Process operators
-            // @TODO SCH créer une commande
-            if(context.containsKey("concerto_exporter")) {
-                context.put(EXPORTABLE_OPERATORS, reader.loadOperators());
-            }
 
 			List<? extends Command> postProcessingCommands = commands.getPostProcessingCommands(context, true, allSchemas);
 			progression.terminate(context, postProcessingCommands.size());

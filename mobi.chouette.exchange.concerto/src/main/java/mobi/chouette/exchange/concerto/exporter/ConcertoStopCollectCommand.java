@@ -16,9 +16,9 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.concerto.Constant;
-import mobi.chouette.exchange.concerto.exporter.producer.ConcertoOperatorProducer;
 import mobi.chouette.exchange.concerto.exporter.producer.ConcertoStopProducer;
 import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
+import mobi.chouette.exchange.concerto.model.ConcertoStopArea;
 import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdepObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZderObjectIdGenerator;
 import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdlrObjectIdGenerator;
@@ -29,10 +29,9 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.Operator;
+import mobi.chouette.model.MappingHastusZdep;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
-import mobi.chouette.model.Timetable;
 import org.codehaus.jettison.json.JSONException;
 import org.joda.time.LocalDate;
 
@@ -40,25 +39,30 @@ import javax.naming.InitialContext;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.LongSummaryStatistics;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDEP;
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDER;
+import static mobi.chouette.exchange.concerto.model.StopAreaTypeEnum.ZDLR;
 
 /**
  *
  */
 @Log4j
-public class ConcertoSharedDataProducerCommand implements Command, Constant {
-	public static final String COMMAND = "ConcertoSharedDataProducerCommand";
+public class ConcertoStopCollectCommand implements Command, Constant {
+	public static final String COMMAND = "ConcertoStopCollectCommand";
+
+	private final String TYPE = "stop_area";
 
 	@Override
 	public boolean execute(Context context) throws Exception {
 		boolean result = ERROR;
 		Monitor monitor = MonitorFactory.start(COMMAND);
 		ActionReporter reporter = ActionReporter.Factory.getInstance();
+
 
 		try {
 
@@ -88,10 +92,11 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		ConcertoExporter exporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
 		ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(CONFIGURATION);
 		ConcertoStopProducer stopProducer = new ConcertoStopProducer(exporter);
-		ConcertoOperatorProducer operatorProducer = new ConcertoOperatorProducer(exporter);
 		ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>) context.get(MAPPING_LINE_UUID);
 		List<StopPoint> stopPointList = collection.getAllParsedStopPoints();
+		String objectTypeConcerto = (String) context.get(OBJECT_TYPE_CONCERTO);
+		String provider = (String) context.get(PROVIDER);
 
 		LocalDate startDate;
 		if (parameters.getStartDate() != null) {
@@ -109,45 +114,6 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			endDate = startDate.plusDays(30);
 		}
 
-
-		for(Timetable t : collection.getTimetables()) {
-			if(t.getStartOfPeriod() == null || t.getEndOfPeriod() == null) {
-				List<org.joda.time.LocalDate> effectiveDates = t.getEffectiveDates();
-				if(effectiveDates.size() > 0) {
-					Collections.sort(effectiveDates);
-					if (t.getStartOfPeriod() == null) {
-						t.setStartOfPeriod(effectiveDates.get(0));
-					}
-					if (t.getEndOfPeriod() == null) {
-						t.setEndOfPeriod(effectiveDates.get(effectiveDates.size() - 1));
-					}
-				} else {
-					if (t.getStartOfPeriod() != null) {
-						t.setEndOfPeriod(t.getStartOfPeriod());
-					} else if (t.getEndOfPeriod() != null) {
-						t.setStartOfPeriod(t.getEndOfPeriod());
-					} else {
-						// Both empty
-						t.setStartOfPeriod(org.joda.time.LocalDate.now());
-						t.setEndOfPeriod(org.joda.time.LocalDate.now());
-					}
-				}
-			}
-		}
-
-		LongSummaryStatistics statsMax = collection.getTimetables().stream()
-				.mapToLong(t -> t.getEndOfPeriod().toDate().getTime())
-				.summaryStatistics();
-		LocalDate maxDate = new LocalDate(statsMax.getMax());
-
-		LongSummaryStatistics statsMin = collection.getTimetables().stream()
-				.mapToLong(t -> t.getStartOfPeriod().toDate().getTime())
-				.summaryStatistics();
-		LocalDate minDate = new LocalDate(statsMin.getMin());
-
-		if(minDate.isAfter(startDate)) startDate = minDate;
-		if(maxDate.isBefore(endDate)) endDate = maxDate;
-
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		List<StopArea> zderStops = new ArrayList<>();
 
@@ -160,19 +126,24 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		MapperLinesAndZone mapperLinesAndZders = new MapperLinesAndZone();
 		MapperLinesAndZone mapperLinesAndZdlrs = new MapperLinesAndZone();
 
+		List<ConcertoStopArea> concertoStopAreas = new ArrayList<>();
+
 		// no lambda : esprit chouette
 		// zdep
 		for (StopArea stop : physicalStops) {
 			if (stop.getMappingHastusZdep() == null) continue;
 			UUID[] lineIdArray = new UUID[0];
 			StopArea stopZder = createStopZder(stop, zderStops);
-			lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray);
+			lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray, provider);
 			zderStops = addZderStopIfNotExists(zderStops, stopZder);
 			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
 			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
 			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
-			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
-			stopProducer.save(stop, null, stopZder, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDEP);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, objectTypeConcerto);
+			for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+				ConcertoStopArea concertoStopArea =  save(stop, null, stopZder, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDEP, date);
+				concertoStopAreas.add(concertoStopArea);
+			}
 		}
 
 		//zder
@@ -182,27 +153,36 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 			StopArea stopZdlr = createStopZdlr(stop, zdlrStops);
 			zdlrStops = addZdlrStopIfNotExists(zdlrStops, stopZdlr);
 			ConcertoObjectId objectId = ConcertoStopAreaZderObjectIdGenerator.getConcertoObjectId(stop);
-			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
-			stopProducer.save(stop, stopZdlr, null, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDER);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, objectTypeConcerto);
+			for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+				ConcertoStopArea concertoStopArea = save(stop, stopZdlr, null, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDER, date);
+				concertoStopAreas.add(concertoStopArea);
+			}
 		}
 
 		//zdlr
 		for (StopArea stop : zdlrStops) {
 			boolean wasParsed = parsedZdlr.stream()
-					.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr() == stop.getMappingHastusZdep().getZdlr());
+					.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr()));
 			if (wasParsed) continue;
 			if (stop.getMappingHastusZdep() == null) continue;
 			if (!stop.getIsExternal().booleanValue()) continue;
 			UUID[] lineIdArray = mapperLinesAndZdlrs.getLinesForZone(stop.getMappingHastusZdep().getZdlr());
 			ConcertoObjectId objectId = ConcertoStopAreaZdlrObjectIdGenerator.getConcertoObjectId(stop);
-			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, parameters);
-			stopProducer.save(stop, null, null, startDate, endDate, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDLR);
+			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, objectTypeConcerto);
+			for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+				ConcertoStopArea concertoStopArea = save(stop, null, null, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDLR, date);
+				concertoStopAreas.add(concertoStopArea);
+			}
 			parsedZdlr.add(stop);
 		}
 		context.put(PARSED_ZDLR, parsedZdlr);
 
-		List<Operator> operators = (List<Operator>) context.get(EXPORTABLE_OPERATORS);
-		operatorProducer.save(startDate, endDate, operators, parameters);
+		if (context.get(CONCERTO_STOP_AREAS) != null) {
+			concertoStopAreas.addAll((List<ConcertoStopArea>) context.get(CONCERTO_STOP_AREAS));
+		}
+		context.put(CONCERTO_STOP_AREAS, concertoStopAreas);
+
 	}
 
 
@@ -213,8 +193,8 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		if(stops.stream()
 				.noneMatch(stopArea ->
 						stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZder() != null &&
-						stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder())))
+								stopArea.getMappingHastusZdep().getZder() != null &&
+								stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder())))
 		{
 			stops.add(stop);
 		}
@@ -229,20 +209,20 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		if(stops.stream()
 				.noneMatch(stopArea ->
 						stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZdlr() != null &&
-						stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr())))
+								stopArea.getMappingHastusZdep().getZdlr() != null &&
+								stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr())))
 		{
 			if(stop.getIsExternal().booleanValue()) stops.add(stop);
 		}
 		return stops;
 	}
 
-	private UUID[] getLineUuids(List<MappingLineUUID> mappingLineUUIDList, List<StopPoint> stopPointList, StopArea stop, UUID[] lineIdArray) {
+	private UUID[] getLineUuids(List<MappingLineUUID> mappingLineUUIDList, List<StopPoint> stopPointList, StopArea stop, UUID[] lineIdArray, String provider) {
 		List<Line> lines = getUsedLines(stopPointList, stop);
 		if(lines.size() > 0) {
 			List<UUID> uuids = lines.stream()
 					.map(line -> mappingLineUUIDList.stream()
-							.filter(mappingLineUUID -> mappingLineUUID.getLineId() == line.getId())
+							.filter(mappingLineUUID -> mappingLineUUID.getLineId().equals(line.getId()) && mappingLineUUID.getProvider().equals(provider))
 							.findFirst()
 							.orElse(null)
 							.getUuid())
@@ -299,17 +279,100 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 	}
 
 
+	private ConcertoStopArea save(StopArea neptuneObject, StopArea parent, StopArea referent, String objectId, UUID[] lines, StopAreaTypeEnum stopAreaType, LocalDate date)
+	{
+		UUID uuid;
+		ConcertoStopArea concertoStopArea;
+
+		if(neptuneObject.getUuid() != null) {
+			uuid = neptuneObject.getUuid();
+		} else {
+			uuid = UUID.randomUUID();
+		}
+
+		concertoStopArea = save(neptuneObject, parent, referent, date, uuid, objectId, lines, stopAreaType);
+
+		return concertoStopArea;
+	}
+
+	private ConcertoStopArea save(StopArea neptuneObject, StopArea parent, StopArea referent, LocalDate date, UUID uuid, String objectId, UUID[] lines, StopAreaTypeEnum stopAreaType) {
+		ConcertoStopArea stop = new ConcertoStopArea();
+
+		switch (stopAreaType) {
+			case ZDEP:
+				break;
+			case ZDER:
+				if (neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZder() == null)
+					return null;
+				break;
+			case ZDLR:
+				if (neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZdlr() == null)
+					return null;
+				break;
+			default:
+				return null;
+		}
+
+		stop.setType(TYPE);
+		stop.setUuid(uuid);
+		if (stopAreaType == ZDEP && referent != null) {
+			stop.setReferent_uuid(referent.getUuid());
+		} else {
+			stop.setReferent_uuid(null);
+		}
+
+		if (stopAreaType == ZDER && parent != null) {
+			stop.setParent_uuid(parent.getUuid());
+		} else {
+			stop.setParent_uuid(null);
+		}
+
+		// If name is empty, try to use parent name
+		String name = neptuneObject.getName();
+		if (stopAreaType == ZDLR && neptuneObject.getParent() != null) {
+			name = neptuneObject.getParent().getName();
+		}
+		if (name == null) {
+			return null;
+		}
+		stop.setDate(date);
+		stop.setName(name);
+		stop.setObjectId(objectId);
+
+		MappingHastusZdep mappingHastusZdep = neptuneObject.getMappingHastusZdep();
+		// @todo SCH PA NON IDFM ? A check avec Vincent
+		if (mappingHastusZdep == null) return null;
+		stop.setZdep(mappingHastusZdep.getZdep());
+		stop.setZder(mappingHastusZdep.getZder());
+		stop.setZdlr(mappingHastusZdep.getZdlr());
+		stop.setAttributes("{}");
+		stop.setReferences("{}");
+		stop.setCollectedAlways(true);
+		if (stopAreaType == ZDLR) {
+			stop.setLines(new UUID[0]);
+			stop.setCollectChildren(true);
+		} else {
+			stop.setLines(lines);
+			stop.setCollectChildren(false);
+		}
+		stop.setCollectGeneralMessages(true);
+
+		return stop;
+	}
+
+
+
 	public static class DefaultCommandFactory extends CommandFactory {
 
 		@Override
 		protected Command create(InitialContext context) throws IOException {
-			Command result = new ConcertoSharedDataProducerCommand();
+			Command result = new ConcertoStopCollectCommand();
 			return result;
 		}
 	}
 
 	static {
-		CommandFactory.factories.put(ConcertoSharedDataProducerCommand.class.getName(), new DefaultCommandFactory());
+		CommandFactory.factories.put(ConcertoStopCollectCommand.class.getName(), new DefaultCommandFactory());
 	}
 
 }

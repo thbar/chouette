@@ -78,6 +78,8 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			if(line.getCategoriesForLine() == null || !line.getCategoriesForLine().getName().equalsIgnoreCase("IDFM")) {
 				return SUCCESS;
 			}
+
+			log.info("MAJ ZDEP des PA de la ligne :" + line.getObjectId());
 			Hibernate.initialize(line.getRoutes());
 			line.getRoutes().forEach(route -> {
 				Hibernate.initialize(route.getStopPoints());
@@ -99,9 +101,12 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 					.collect(Collectors.toList());
 
 
+			log.info("MAJ ZDEP nombre de PA : " + areas.size());
+
 			for (StopArea stopArea : areas) {
 				Optional<MappingHastusZdep> byHastus = mappingHastusZdepDAO.findByHastus(stopArea.getOriginalStopId());
 				byHastus.ifPresent(mappingHastusZdep -> {
+					log.info("MAJ ZDEP : " + mappingHastusZdep + " du PA : " + stopArea.getOriginalStopId());
 					mappingHastusZdep.setHastusChouette(stopArea.getOriginalStopId());
 					MappingHastusZdep update = mappingHastusZdepDAO.update(mappingHastusZdep);
 					StopArea stopArea1 = stopAreaDAO.find(stopArea.getId());
@@ -110,6 +115,8 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 					areasTosend.add(stopArea);
 				});
 			}
+
+			log.info("Fin MAJ ZDEP");
 
 			mappingHastusZdepDAO.flush();
 			stopAreaDAO.flush();
@@ -124,6 +131,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 
 
 			List<StopArea> areasTiamat = areasTosend.stream().map(stopArea -> stopAreaDAO.find(stopArea.getId())).collect(Collectors.toList());
+			log.info("Envoi ZDEP vers Tiamat : " + areasTiamat.size() + " PA");
 			neTExIdfmStopPlaceRegisterUpdater.update(context, areasTiamat);
 
 			return SUCCESS;
