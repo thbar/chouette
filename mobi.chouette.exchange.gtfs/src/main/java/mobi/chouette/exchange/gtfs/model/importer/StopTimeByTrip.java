@@ -132,7 +132,7 @@ public class StopTimeByTrip extends IndexImpl<GtfsStopTime> implements GtfsConve
 			noArrivalTime = true;
 		} else {
 			if (!value.matches(regexTime)){
-				throw new GtfsException(_path, 1, FIELDS.stop_id.name(), GtfsException.ERROR.BAD_VALUE, null, "Time date format is not valid");
+				_bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.arrival_time.name()), FIELDS.arrival_time.name(), GtfsException.ERROR.INVALID_FORMAT, null, value));
 			}
 			try {
 				_bean.setArrivalTime(GTFSTIME_CONVERTER.from(context, FIELDS.arrival_time, value, true));
@@ -147,7 +147,7 @@ public class StopTimeByTrip extends IndexImpl<GtfsStopTime> implements GtfsConve
 			noDepartureTime = true;
 		} else {
 			if (!value.matches(regexTime)){
-				throw new GtfsException(_path, 1, FIELDS.stop_id.name(), GtfsException.ERROR.BAD_VALUE, null, "Time format is not valid");
+				_bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.departure_time.name()), FIELDS.departure_time.name(), GtfsException.ERROR.INVALID_FORMAT, null, value));
 			}
 			try {
 				_bean.setDepartureTime(GTFSTIME_CONVERTER.from(context, FIELDS.departure_time, value, true));

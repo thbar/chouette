@@ -34,7 +34,7 @@ public class StopAreaMapperTest {
 
         StopArea stopArea = stopAreaMapper.mapStopPlaceToStopArea(new Referential(), stopPlace);
 
-        assertEquals(stopArea.getContainedStopAreas().get(0).getName(), "Festningen / A");
+        assertEquals(stopArea.getContainedStopAreas().get(0).getName(), "A");
     }
 
     @Test

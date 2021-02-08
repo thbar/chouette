@@ -25,6 +25,7 @@ public class CompressCommandTest implements Constant
 		Context context = new Context();
 		context.put(INITIAL_CONTEXT, initialContext);
 		JobDataTest test = new JobDataTest();
+		test.setType("GTFS");
 		context.put(JOB_DATA, test);
 		test.setPathName("target/referential/test");
 		test.setOutputFilename("output.zip");
