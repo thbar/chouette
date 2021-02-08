@@ -66,6 +66,8 @@ public class NetexValidateExportCommand implements Command, Constant {
 
             try {
 
+                log.info("Validations des fichiers Netex");
+
                 ChainCommand validationChainCommand = (ChainCommand) CommandFactory.create(initialContext, ChainCommand.class.getName());
                 validationChainCommand.add(CommandFactory.create(initialContext, NetexInitImportCommand.class.getName()));
 

@@ -4,11 +4,8 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.core.ChouetteException;
-import mobi.chouette.core.ChouetteRuntimeException;
 import mobi.chouette.dao.MappingHastusZdepDAO;
 import mobi.chouette.dao.ProviderDAO;
-import mobi.chouette.exchange.ProviderReferentialID;
 import mobi.chouette.exchange.importer.updater.IdfmReflexParser;
 import mobi.chouette.model.MappingHastusZdep;
 import mobi.chouette.model.Provider;
@@ -24,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -51,9 +47,10 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 			String id = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
 			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), id);
 			log.info("provider: " + context.get("ref") + "provider id: " + id);
-			log.info("http request : " + requestHttpTarget + "id: " + id);
+			log.info("http request ZDLR ZDER : " + requestHttpTarget + "id: " + id);
 			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
 			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
+			log.info("Nombre ZDER ZDLR recuperes: " + stringPairHashMap.size());
 
 			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
 				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);

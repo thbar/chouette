@@ -65,6 +65,9 @@ public class GtfsExporterCommand extends AbstractExporterCommand implements Comm
 
 			GtfsExportParameters parameters = (GtfsExportParameters) configuration;
 
+			log.info("Lancement de l'export GTFS de la filiale : " + parameters.getReferentialName());
+
+
 			String type = parameters.getReferencesType();
 			// set default type
 			if (type == null || type.isEmpty()) {

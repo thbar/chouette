@@ -37,6 +37,8 @@ public class NetexCommonDataProducerCommand implements Command, Constant {
                 return ERROR;
             }
 
+            log.info("processing netex common file");
+
             NetexCommonDataProducer producer = new NetexCommonDataProducer();
             producer.produce(context);
 

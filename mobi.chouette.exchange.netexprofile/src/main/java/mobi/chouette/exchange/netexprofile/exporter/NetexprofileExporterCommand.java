@@ -64,6 +64,8 @@ public class NetexprofileExporterCommand extends AbstractExporterCommand impleme
                 }
             }
 
+            log.info("Lancement de l'export Netex de la filiale : " + parameters.getReferentialName());
+
             ProcessingCommands commands = ProcessingCommandsFactory.create(NetexExporterProcessingCommands.class.getName());
 
             result = process(context, commands, progression, true, Mode.line, false);

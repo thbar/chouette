@@ -87,9 +87,12 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 			}
 
 			if(schemasWithOperator.size() == 0){
+				log.error("Erreur export Concerto : il n'y a aucun schema avec au moins un operateur");
 				reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_PROCEEDED, "no data exported");
 				return ERROR;
 			}
+
+			log.info("Lancement de l'export Concerto");
 
 			for(String schema : schemasWithOperator){
 				if(!schema.startsWith("mosaic_")) schema = "mosaic_" + schema;
@@ -101,6 +104,7 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				Optional<Provider> provider = providerDAO.findBySchema(schema);
 				provider.ifPresent(value -> context.put(OBJECT_TYPE_CONCERTO, value.getObjectTypeConcerto()));
 				provider.ifPresent(value -> context.put(PROVIDER, value.getSchemaName()));
+				log.info("Export Concerto, filiale : " + schema);
 
 				if(schema.equals(schemasWithOperator.get(schemasWithOperator.size() - 1))){
 					allSchemas = true;
