@@ -29,7 +29,7 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 		CheckPointReport result = verifyValidation( log, context, "agency_1", GTFS_1_GTFS_Common_1,SEVERITY.ERROR, RESULT.NOK,true);
 
 		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
-		for (CheckPointErrorReport detail : getDetails(context, result)) 
+		for (CheckPointErrorReport detail : getDetails(context, result))
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
 			Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
@@ -38,7 +38,7 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 			Assert.assertNull(detail.getSource().getFile().getColumnNumber(), "detail must refer no column");
 		}
 	}
-	
+
 	// THIS IS 1-GTFS-Agency-5 NOT 1-GTFS-Agency-2
 	@Test(groups = { "Phase 1 Agency" }, description = "missing agency_id" ,priority=22 )
 	public void verifyTest_2_2() throws Exception {
@@ -47,7 +47,7 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 		CheckPointReport result = verifyValidation( log, context, "agency_2", GTFS_1_GTFS_Common_13,SEVERITY.ERROR, RESULT.NOK,true);
 
 		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
-		for (CheckPointErrorReport detail : getDetails(context, result)) 
+		for (CheckPointErrorReport detail : getDetails(context, result))
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
 			Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
@@ -55,7 +55,7 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 			Assert.assertEquals(detail.getSource().getFile().getLineNumber(), Integer.valueOf(3), "detail must refer bad line");
 		}
 	}
-	
+
 	@Test(groups = { "Phase 1 Agency" }, description = "duplicate agency_id" ,priority=23 )
 	public void verifyTest_2_3() throws Exception {
 		log.info(Color.GREEN + "Agency_3 : duplicate agency_id" + Color.NORMAL);
@@ -63,7 +63,7 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 		CheckPointReport result = verifyValidation( log, context, "agency_3", GTFS_1_GTFS_Common_8,SEVERITY.ERROR, RESULT.NOK,true);
 
 		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
-		for (CheckPointErrorReport detail : getDetails(context, result)) 
+		for (CheckPointErrorReport detail : getDetails(context, result))
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
 			Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
@@ -76,9 +76,10 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 	public void verifyTest_2_4_1() throws Exception {
 		log.info(Color.GREEN + "Agency_4_1 : missing column agency_id" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "agency_4_1", GTFS_1_GTFS_Common_10,SEVERITY.WARNING, RESULT.NOK,true);
+		//Agency_ID not mandatory anymore. Test is now unchecked
+		CheckPointReport result = verifyValidation( log, context, "agency_4_1", GTFS_1_GTFS_Common_10,SEVERITY.WARNING, RESULT.UNCHECK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		//Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");

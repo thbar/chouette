@@ -23,8 +23,7 @@ public class GtfsExportAbstractProducerTests
    {
 
       Assert.assertEquals(producer.toGtfsIdWrapper("GTFS:Type:1234", "GTFS",false), "1234", "gtfs id must contains only third part of neptune id");
-      Assert.assertEquals(producer.toGtfsIdWrapper("GTFS:Type:1234", "TEST",false), "GTFS.1234",
-            "gtfs id must contains combination of first and third parts of neptune id");
+      Assert.assertEquals(producer.toGtfsIdWrapper("GTFS:Type:1234", "TEST",false), "1234", "gtfs id must contains only third part of neptune id");
 
    }
 
