@@ -8,10 +8,12 @@
 
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
+import mobi.chouette.exchange.gtfs.exporter.GtfsStopUtils;
 import mobi.chouette.exchange.gtfs.model.GtfsStop;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.WheelchairBoardingType;
 import mobi.chouette.exchange.gtfs.model.RouteTypeEnum;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import org.apache.commons.lang.StringUtils;
@@ -40,10 +42,10 @@ public class GtfsStopProducer extends AbstractProducer
 		if(StringUtils.isEmpty(neptuneObject.getOriginalStopId()) || stopId.contains(".")){
 			stopId = neptuneObject.getOriginalStopId();
 		}
-        return save(neptuneObject, prefix, validParents, keepOriginalId, useTPEGRouteTypes, stopId);
+        return save(neptuneObject, prefix, validParents, keepOriginalId, useTPEGRouteTypes, stopId,new IdParameters());
     }
 
-	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes, String newStopId)
+	public boolean save(StopArea neptuneObject, String prefix, Collection<StopArea> validParents, boolean keepOriginalId, boolean useTPEGRouteTypes, String newStopId, IdParameters idParams)
 	{
 		Optional<StopArea> parent = Optional.ofNullable(neptuneObject.getParent());
 		if(validParents != null && !validParents.isEmpty() && parent.isPresent()){
@@ -128,7 +130,7 @@ public class GtfsStopProducer extends AbstractProducer
 		{
 			if (neptuneObject.getParent() != null && validParents.contains(neptuneObject.getParent()))
 			{
-				stop.setParentStation(neptuneObject.getParent().getOriginalStopId());
+				stop.setParentStation(GtfsStopUtils.getNewStopId(neptuneObject.getParent(),idParams));
 			}
 		}
 
