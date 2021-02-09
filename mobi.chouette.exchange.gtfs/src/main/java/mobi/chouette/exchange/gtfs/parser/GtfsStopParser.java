@@ -144,6 +144,8 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 
 		if (gtfsStop.getLocationType() == GtfsStop.LocationType.Station) {
 			stopArea.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
+
+			stopArea.setOriginalStopId(stopArea.getOriginalStopId().replaceFirst("^"+configuration.idPrefixToRemove,""));
 			if (AbstractConverter.getNonEmptyTrimedString(gtfsStop.getParentStation()) != null) {
 				// TODO report
 			}

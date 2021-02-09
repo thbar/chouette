@@ -26,7 +26,9 @@ import java.util.Arrays;
 		"parseInterchanges",
 		"parseConnectionLinks",
 		"routeMerge",
-		"splitCharacter"
+		"splitCharacter",
+		"idPrefixToRemove"
+
 })
 public class GtfsImportParameters extends AbstractImportParameter {
 
@@ -73,6 +75,10 @@ public class GtfsImportParameters extends AbstractImportParameter {
 	@Getter@Setter
 	@XmlElement(name = "split_character")
 	public String splitCharacter = "";
+
+	@Getter@Setter
+	@XmlElement(name = "id_prefix_to_remove")
+	public String idPrefixToRemove = "";
 
 
 	public boolean isValid(Logger log, String[] allowedTypes)
