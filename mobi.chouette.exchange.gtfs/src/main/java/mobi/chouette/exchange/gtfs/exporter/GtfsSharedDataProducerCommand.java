@@ -113,7 +113,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 //		Set<Company> companies = collection.getAgencyCompanies();
 		Set<Company> companies = collection.getOperatorCompanies();
 		Set<Interchange> interchanges = collection.getInterchanges();
-		IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),null,configuration.getLineIdPrefix());
+		IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),null,configuration.getLineIdPrefix(),configuration.getCommercialPointIdPrefix());
 		if (!companies.isEmpty()) {
 			agencyProducer = new GtfsAgencyProducer(exporter);
 		}

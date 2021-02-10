@@ -3,6 +3,7 @@ package mobi.chouette.exchange.gtfs.exporter;
 import mobi.chouette.exchange.gtfs.parameters.IdFormat;
 import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.type.ChouetteAreaEnum;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Matcher;
@@ -16,12 +17,12 @@ public class GtfsStopUtils {
 
 
     public static String getNewStopId(StopArea stop, IdParameters idParams) {
-        String idPrefix = idParams.getStopIdPrefix();
+        String idPrefix = ChouetteAreaEnum.BoardingPosition.equals(stop.getAreaType())?idParams.getStopIdPrefix():idParams.getCommercialPointIdPrefix();
         if(stop != null && StringUtils.isNotEmpty(stop.getOriginalStopId())){
             if (IdFormat.TRIDENT.equals(idParams.getIdFormat()) && StringUtils.isNotEmpty(idPrefix)){
                 return createTridentId(stop,idPrefix);
             }
-            return createStandardId(stop,idParams.getStopIdPrefix());
+            return createStandardId(stop,idPrefix);
         }
         String inputStopId = stop.getObjectId();
         if(StringUtils.isEmpty(inputStopId)) return null;

@@ -20,6 +20,7 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
+import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.util.ObjectIdTypes;
 
 import org.joda.time.LocalTime;
@@ -110,7 +111,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObject(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",null,null,"PREFIX"));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",null,null,"PREFIX","COMPREFIX"));
       Reporter.log("verifyTripProducerRouteId");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -131,7 +132,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObject(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",null,"SUFFIX",null));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",null,"SUFFIX",null,"COMPREFIX"));
       Reporter.log("verifyTripProducerRouteIdWithSuffix");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -151,7 +152,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObject(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",IdFormat.TRIDENT,null,"PREFIX"));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",IdFormat.TRIDENT,null,"PREFIX","COMPREFIX"));
       Reporter.log("verifyTripProducerRouteIdTrident");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -172,7 +173,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObject(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",IdFormat.TRIDENT,"SUFFIX","PREFIX"));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIXSTOP",IdFormat.TRIDENT,"SUFFIX","PREFIX","COMPREFIX"));
       Reporter.log("verifyTripProducerRouteIdTridentWithSuffix");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -194,7 +195,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObjectWithOriginalStopIds(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIX",null,null,"PREFIXROUTE"));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIX",null,null,"PREFIXROUTE","COMPREFIX"));
       Reporter.log("verifyStopIds");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -216,6 +217,36 @@ public class GtfsExportTripProducerTests
 
    }
 
+   @Test(groups = { "Producers" }, description = "test commercial point Stop Id generation")
+   public void verifyCommercialPointStopIds() throws Exception
+   {
+
+      mock.reset();
+
+      VehicleJourney neptuneObject = buildNeptuneObjectWithCommercialPointsIds(true);
+
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIX",null,null,"PREFIXROUTE","COMPREFIX"));
+      Reporter.log("verifyStopIds");
+
+      Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
+      Assert.assertEquals(mock.getExportedStopTimes().size(), 4, "StopTimes should be returned");
+      GtfsTrip gtfsObject = mock.getExportedTrips().get(0);
+      Reporter.log(TripExporter.CONVERTER.to(context,gtfsObject));
+
+      int i = 0;
+
+      /**
+       * Check that
+       */
+      for (GtfsStopTime gtfsStopTime : mock.getExportedStopTimes())
+      {
+         Reporter.log(StopTimeExporter.CONVERTER.to(context,gtfsStopTime));
+         Assert.assertEquals(gtfsStopTime.getStopId(), "COMPREFIXorigSA"+i, "StopId must be correctly set");
+         i++;
+      }
+
+   }
+
    @Test(groups = { "Producers" }, description = "test Stop Id generation")
    public void verifyStopIdsTrident() throws Exception
    {
@@ -224,7 +255,7 @@ public class GtfsExportTripProducerTests
 
       VehicleJourney neptuneObject = buildNeptuneObjectWithOriginalStopIds(true);
 
-      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIX", IdFormat.TRIDENT,null,"PREFIXLINE"));
+      producer.save(neptuneObject, "tm_01", "GTFS", "GTFS",false,new IdParameters("PREFIX", IdFormat.TRIDENT,null,"PREFIXLINE","COMPREFIX"));
       Reporter.log("verifyStopIds");
 
       Assert.assertEquals(mock.getExportedTrips().size(), 1, "Trip should be returned");
@@ -589,6 +620,98 @@ private VehicleJourney buildNeptuneObject(boolean full)
          sp.setObjectId("GTFS:StopPoint:SP"+i);
          sa.setObjectId("GTFS:StopPoint:SA"+i);
          sa.setOriginalStopId("origSA"+i);
+         sa.setAreaType(ChouetteAreaEnum.BoardingPosition);
+
+         ScheduledStopPoint scheduledStopPoint = new ScheduledStopPoint();
+         scheduledStopPoint.setObjectId("GTFS:" + ObjectIdTypes.SCHEDULED_STOP_POINT_KEY + ":SSP" + i);
+         scheduledStopPoint.setContainedInStopAreaRef(new SimpleObjectReference<>(sa));
+         sp.setScheduledStopPoint(scheduledStopPoint);
+         VehicleJourneyAtStop vjas = new VehicleJourneyAtStop();
+         vjas.setStopPoint(sp);
+         vjas.setArrivalDayOffset(current_arrival_offset);
+         vjas.setDepartureDayOffset(current_departure_offset);
+         vjas.setArrivalTime(new LocalTime(h,m,0));
+
+         h = h + 1;
+         if (h > 23)
+         {
+            h -= 24;
+
+         }
+
+         vjas.setDepartureTime(new LocalTime(h,m,0));
+
+         if(previous_vjas == null) {
+            if(vjas.getDepartureTime().isBefore(vjas.getArrivalTime())) {
+               current_departure_offset = current_departure_offset + 1;
+               vjas.setDepartureDayOffset(current_departure_offset);
+            }
+         } else {
+            if(vjas.getArrivalTime().isBefore(previous_vjas.getArrivalTime())) {
+               current_arrival_offset = current_arrival_offset + 1;
+               vjas.setArrivalDayOffset(current_arrival_offset);
+            }
+
+            if(vjas.getDepartureTime().isBefore(previous_vjas.getDepartureTime())) {
+               current_departure_offset = current_departure_offset + 1;
+               vjas.setDepartureDayOffset(current_departure_offset);
+            }
+         }
+         h = h + 8;
+         if (h > 23)
+         {
+            h -= 24;
+         }
+
+         Reporter.log("Current arrival offset : " + vjas.getArrivalDayOffset(), true);
+         Reporter.log("Current departure offset : " + vjas.getDepartureDayOffset(), true);
+         vjas.setVehicleJourney(neptuneObject);
+
+         previous_vjas = vjas;
+      }
+
+
+
+      return neptuneObject;
+   }
+
+   private VehicleJourney buildNeptuneObjectWithCommercialPointsIds(boolean full)
+   {
+      VehicleJourney neptuneObject = new VehicleJourney();
+      neptuneObject.setObjectId("GTFS:VehicleJourney:4321");
+      // if (full) neptuneObject.setName("name");
+      if (full) neptuneObject.setNumber(Long.valueOf(456));
+      if (full) neptuneObject.setMobilityRestrictedSuitability(Boolean.TRUE);
+      JourneyPattern jp = new JourneyPattern();
+      neptuneObject.setJourneyPattern(jp);
+      Route route = new Route();
+      neptuneObject.setRoute(route);
+      if (full) jp.setPublishedName("jp name");
+      Line line = new Line();
+      line.setObjectId("GTFS:Line:0123");
+
+      route.setLine(line);
+      if (full) route.setWayBack("A");
+
+
+      int h = 23;
+      int m = 59;
+      int current_departure_offset = 0;
+      int current_arrival_offset = 0;
+      VehicleJourneyAtStop previous_vjas = null;
+
+      /**
+       * Mocking journey during more than one day
+       */
+      for (int i = 0; i < 4; i++)
+      {
+         StopPoint sp = new StopPoint();
+         sp.setPosition(i*2);
+         StopArea sa = new StopArea();
+         sp.setObjectId("GTFS:StopPoint:SP"+i);
+         sa.setObjectId("GTFS:StopPoint:SA"+i);
+         sa.setOriginalStopId("origSA"+i);
+         sa.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
 
          ScheduledStopPoint scheduledStopPoint = new ScheduledStopPoint();
          scheduledStopPoint.setObjectId("GTFS:" + ObjectIdTypes.SCHEDULED_STOP_POINT_KEY + ":SSP" + i);

@@ -142,7 +142,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			for (VehicleJourney vj : collection.getVehicleJourneys()) {
 				String tmKey = calendarProducer.key(vj.getTimetables(), sharedPrefix, configuration.isKeepOriginalId());
 				if (tmKey != null) {
-					IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix(),configuration.getLineIdPrefix());
+					IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix(),configuration.getLineIdPrefix(), configuration.getCommercialPointIdPrefix());
 
 					if (tripProducer.save(vj, tmKey, prefix, sharedPrefix, configuration.isKeepOriginalId(),idParams)) {
 						hasVj = true;
@@ -157,7 +157,7 @@ public class GtfsLineProducerCommand implements Command, Constant {
 				shapeProducer.save(jp, prefix, configuration.isKeepOriginalId());
 			}
 			if (hasVj) {
-				IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix(),configuration.getLineIdPrefix());
+				IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),configuration.getIdSuffix(),configuration.getLineIdPrefix(),configuration.getCommercialPointIdPrefix());
 				routeProducer.save(line, prefix, configuration.isKeepOriginalId(),configuration.isUseTpegHvt(),idParams);
 				hasLine = true;
 				if (metadata != null) {
