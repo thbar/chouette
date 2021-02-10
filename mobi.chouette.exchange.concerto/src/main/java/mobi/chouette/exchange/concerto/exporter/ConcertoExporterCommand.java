@@ -114,6 +114,15 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				else{
 					allSchemas = false;
 				}
+
+				// TODO on réinitalise les étapes déjà passées car la boucle qui passe dans tous les schemas ne permet pas une bonne gestion des étapes actuellement
+				// TODO Le action_report est faussé avec seulement les infos de la dernière filiale exportée
+				ProgressionReport report = (ProgressionReport) context.get(REPORT);
+				report.getProgression().getSteps().get(StepProgression.STEP.INITIALISATION.ordinal()).setRealized(0);
+				report.getProgression().getSteps().get(StepProgression.STEP.PROCESSING.ordinal()).setRealized(0);
+				report.getProgression().getSteps().get(StepProgression.STEP.FINALISATION.ordinal()).setRealized(0);
+
+
 				goodProcessing = process(context, commands, progression, false,Mode.line, allSchemas);
 				if(goodProcessing) result = true;
 			}
