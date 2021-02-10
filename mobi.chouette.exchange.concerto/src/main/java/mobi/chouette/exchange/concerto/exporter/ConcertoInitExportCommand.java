@@ -33,7 +33,9 @@ public class ConcertoInitExportCommand implements Command, Constant {
 
 		try {
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("conversion_" + jobData.getType() + "_" + jobData.getId() + ".csv");
+			ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(Constant.CONFIGURATION);
+
+			jobData.setOutputFilename(parameters.getName());
 			context.put(REFERENTIAL, new Referential());
 			
 			Metadata metadata = new Metadata(); // if not asked, will be used as dummy
