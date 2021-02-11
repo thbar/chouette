@@ -27,9 +27,8 @@ public class UpdateAllLinesZdepInfosCommand implements Command, Constant {
         // update zdep des nouveaux points
         lineDAO.findAll().forEach(line -> {
             if (line.getCategoriesForLine() != null && line.getCategoriesForLine().getName().equalsIgnoreCase("IDFM")) {
-                Command command = null;
                 try {
-                    command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineCommand.class.getName());
+                    Command command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineCommand.class.getName());
                     context.put(LINEID, line.getId());
                     command.execute(context);
                     context.remove(LINEID);
