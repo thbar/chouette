@@ -142,7 +142,7 @@ public class RestService implements Constant {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response importMappingZdepHastus(@PathParam("ref") String referential, MultipartFormDataInput input) {
-		return getMappingZdepResponse(referential, input);
+		return Response.serverError().build();
 	}
 
 	@GET
@@ -164,44 +164,6 @@ public class RestService implements Constant {
 		return Response.notModified("Plages ZDer et ZDlr non récupérées pour le référentiel " + referential).build();
 	}
 
-	/**
-	 * Méthode générique pour gérer les différents imports zdep
-	 * @param referential
-	 * @param input
-	 * @return
-	 */
-	private Response getMappingZdepResponse(String referential, MultipartFormDataInput input) {
-		Map<String, InputStream> inputStreamByName = null;
-		try {
-			inputStreamByName = readParts(input);
-			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
-			context.put("inputStreamByName", inputStreamByName);
-
-			ContextHolder.setContext(referential);
-			Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());
-			if (!command.execute(context)) {
-				String message = "Fichier invalide - requis : CSV avec entête de fichier invalide : idfcod [, idfarr, ...]";
-				throw new WebApplicationException(message, Status.INTERNAL_SERVER_ERROR);
-			}
-
-			return Response.ok().build();
-		} catch (WebApplicationException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new WebApplicationException("INTERNAL_ERROR", e, Status.INTERNAL_SERVER_ERROR);
-		} finally {
-			ContextHolder.setContext(null);
-			if (inputStreamByName != null) {
-				for (InputStream is : inputStreamByName.values()) {
-					try {
-						is.close();
-					} catch (Exception e) {
-						Logger.getLogger(RestService.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-					}
-				}
-			}
-		}
-	}
 
 	//  https://mosaic.dev-2.okina.fr/api-proxy/api/chouette-iev/1.0/chouette_iev/referentials/test/update-stopareas-for-idfm-line/232
 	@GET

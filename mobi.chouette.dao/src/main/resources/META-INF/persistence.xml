@@ -55,7 +55,6 @@
 		<class>mobi.chouette.model.Line</class>
 		<class>mobi.chouette.model.MappingHastusZdep</class>
 		<class>mobi.chouette.model.CategoriesForLines</class>
-		<class>mobi.chouette.model.Operator</class>
 		<class>mobi.chouette.model.Provider</class>
 		<class>mobi.chouette.model.Period</class>
 		<class>mobi.chouette.model.Network</class>

@@ -6,12 +6,10 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.LineDAO;
-import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.transfer.Constant;
 import mobi.chouette.model.FeedInfo;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 
@@ -41,9 +39,6 @@ public class TransferExportDataLoader implements Command, Constant {
 	private StopAreaDAO stopAreaDAO;
 
 	@EJB
-	private OperatorDAO operatorDAO;
-
-	@EJB
 	private FeedInfoDAO feedInfoDAO;
 
 	@PersistenceContext(unitName = "referential")
@@ -57,8 +52,6 @@ public class TransferExportDataLoader implements Command, Constant {
 		context.put(LINES, lineToTransfer);
 	    List<StopArea> stopAreaToTransfer = prepareStopAreas(context);
 		context.put(STOP_AREAS, stopAreaToTransfer);
-		List<Operator> operatorToTransfer = prepareOperators(context);
-		context.put(OPERATORS, operatorToTransfer);
 		List<FeedInfo> feedInfosToTransfer = prepareFeedInfos();
 		context.put(FEED_INFOS, feedInfosToTransfer);
 		return true;
@@ -120,24 +113,6 @@ public class TransferExportDataLoader implements Command, Constant {
 		return allStopAreas;
 	}
 
-	protected List<Operator> prepareOperators(Context context) throws IllegalArgumentException, SecurityException {
-		if (!em.isJoinedToTransaction()) {
-			throw new RuntimeException("No transaction");
-		}
-
-		TransferExportParameters configuration = (TransferExportParameters) context.get(CONFIGURATION);
-
-		log.info("Loading all operators...");
-		List<Operator> operators = operatorDAO.findAll();
-
-		log.info("Removing Hibernate proxies");
-		HibernateDeproxynator<?> deProxy = new HibernateDeproxynator<>();
-		operators = deProxy.deepDeproxy(operators);
-		log.info("Removing Hibernate proxies completed");
-
-		em.clear();
-		return operators;
-	}
 
 	private List<FeedInfo> prepareFeedInfos() {
 		if (!em.isJoinedToTransaction()) {

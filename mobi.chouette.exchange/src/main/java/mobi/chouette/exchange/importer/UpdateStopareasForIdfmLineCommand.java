@@ -60,8 +60,6 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@EJB
 	ScheduledStopPointDAO scheduledStopPointDAO;
 
-	@EJB
-	MappingHastusZdepDAO mappingHastusZdepDAO;
 
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
@@ -153,15 +151,6 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
 			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
 
-			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
-				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
-				if (byZdep.isPresent()) {
-					MappingHastusZdep mappingHastusZdep = byZdep.get();
-					mappingHastusZdep.setZder(zderZdlrPair.getLeft());
-					mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
-					mappingHastusZdepDAO.update(mappingHastusZdep);
-				}
-			});
 
 			return null;
 		}

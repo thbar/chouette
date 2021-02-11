@@ -261,12 +261,6 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             QuayRefStructure quayRefStruct = netexFactory.createQuayRefStructure();
             NetexProducerUtils.populateReference(containedInStopArea, quayRefStruct, parameters.isExportStops());
 
-            if(containedInStopArea.getMappingHastusZdep() != null && containedInStopArea.getMappingHastusZdep().getZdep() != null){
-                quayRefStruct.setRef("FR::Quay:" + containedInStopArea.getMappingHastusZdep().getZdep() + ":FR1");
-            }
-            else{
-                //TODO voir le traitement à faire
-            }
             quayRefStruct.setValue("version=\"any\"");
 
             passengerStopAssignment.setQuayRef(quayRefStruct);

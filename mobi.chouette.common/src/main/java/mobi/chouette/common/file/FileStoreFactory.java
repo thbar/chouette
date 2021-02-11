@@ -15,6 +15,8 @@ public class FileStoreFactory {
 
 	private static FileStore FILE_STORE;
 
+	private static String DEFAULT_FILESTORE_PARAM="none";
+
 	private static final Object LOCK = new Object();
 
 	public static final FileStore getFileStore() {
@@ -34,7 +36,7 @@ public class FileStoreFactory {
 
 						log.info("FileStore implementation name : " + implBeanName);
 
-						if (StringUtils.isNotBlank(implBeanName)) {
+						if (StringUtils.isNotBlank(implBeanName) && !DEFAULT_FILESTORE_PARAM.equals(implBeanName)) {
 							Set<Bean<?>> beans = CDI.current().getBeanManager().getBeans(implBeanName);
 
 							if (beans.size() > 0) {

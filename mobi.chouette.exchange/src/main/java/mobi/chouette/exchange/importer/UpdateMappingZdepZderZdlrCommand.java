@@ -34,8 +34,6 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 
 	public static final String COMMAND = "UpdateMappingZdepZderZdlrCommand";
 
-	@EJB
-	private MappingHastusZdepDAO mappingHastusZdepDAO;
 
 	@EJB
 	private ProviderDAO providerDAO;
@@ -55,14 +53,6 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
 			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
 
-			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
-				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
-				if (byZdep.isPresent()) {
-					MappingHastusZdep mappingHastusZdep = byZdep.get();
-					mappingHastusZdep.setZder(zderZdlrPair.getLeft());
-					mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
-				}
-			});
 			log.info("Les plages ZDEP de " + context.get("ref") + " ont été mappées à leurs ZDER et ZDLR");
 		} catch (Exception e) {
             if (swallow == null || !swallow.booleanValue()) {

@@ -69,17 +69,8 @@ public class StopPlaceMapper {
         mapCompassBearing(stopArea, quay);
         mapComment(stopArea, quay);
         mapMobilityRestrictedSuitable(stopArea, quay);
-        mapZdep(stopArea, quay);
 
         return quay;
-    }
-
-    public void mapZdep(StopArea stopArea, Quay quay) {
-        if (stopArea.getMappingHastusZdep() != null) {
-            quay.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                    .withKey(NeTExIdfmStopPlaceRegisterUpdater.ZDEP)
-                    .withValue(stopArea.getMappingHastusZdep().getZdep())));
-        }
     }
 
     public void mapMobilityRestrictedSuitable(StopArea stopArea, Quay quay){

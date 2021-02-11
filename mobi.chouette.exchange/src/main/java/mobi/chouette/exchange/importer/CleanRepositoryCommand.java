@@ -24,9 +24,7 @@ import mobi.chouette.dao.InterchangeDAO;
 import mobi.chouette.dao.JourneyFrequencyDAO;
 import mobi.chouette.dao.JourneyPatternDAO;
 import mobi.chouette.dao.LineDAO;
-import mobi.chouette.dao.MappingHastusZdepDAO;
 import mobi.chouette.dao.NetworkDAO;
-import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.RouteDAO;
 import mobi.chouette.dao.RoutePointDAO;
 import mobi.chouette.dao.RouteSectionDAO;
@@ -131,13 +129,7 @@ public class CleanRepositoryCommand implements Command {
 	ConnectionLinkDAO connectionLinkDAO;
 
 	@EJB
-	MappingHastusZdepDAO mappingHastusZdepDAO;
-
-	@EJB
 	CategoriesForLinesDAO categoriesForLinesDAO;
-
-	@EJB
-	OperatorDAO operatorDAO;
 
 	@EJB
 	FeedInfoDAO feedInfoDAO;
@@ -175,7 +167,6 @@ public class CleanRepositoryCommand implements Command {
 				// si clean pour transfert
 				if(context != null && context.containsKey(CLEAR_TABLE_CATEGORIES_FOR_LINES) && context.get(CLEAR_TABLE_CATEGORIES_FOR_LINES) == Boolean.TRUE) {
 					categoriesForLinesDAO.truncate();
-					operatorDAO.truncate();
 					feedInfoDAO.truncate();
 				}
 				// lignes
@@ -189,7 +180,6 @@ public class CleanRepositoryCommand implements Command {
 
 				// arrêts
 				stopAreaDAO.truncate();
-				mappingHastusZdepDAO.truncate();
 			} else {
 				// si import on conserve lignes et arrêts
 				context.remove(CLEAR_FOR_IMPORT);

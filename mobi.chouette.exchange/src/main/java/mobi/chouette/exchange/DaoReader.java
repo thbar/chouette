@@ -4,12 +4,10 @@ import mobi.chouette.dao.CompanyDAO;
 import mobi.chouette.dao.GroupOfLineDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.NetworkDAO;
-import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.GroupOfLine;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
-import mobi.chouette.model.Operator;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -32,9 +30,6 @@ public class DaoReader {
 
 	@EJB 
 	protected GroupOfLineDAO groupOfLineDAO;
-
-	@EJB
-	protected OperatorDAO operatorDAO;
 
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -88,11 +83,5 @@ public class DaoReader {
 		}
 	}
 
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public List<Operator> loadOperators() {
-		List<Operator> operators = operatorDAO.findAll();
-		return operators;
-	}
 
 }

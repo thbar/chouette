@@ -56,13 +56,9 @@ public class ConcertoStopProducer extends AbstractProducer
 			case ZDEP:
 				break;
 			case ZDER:
-				if(neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZder() == null)
 					return;
-				break;
 			case ZDLR:
-				if(neptuneObject.getMappingHastusZdep() == null || neptuneObject.getMappingHastusZdep().getZdlr() == null)
 					return;
-				break;
 			default:
 				return;
 		}
@@ -93,12 +89,7 @@ public class ConcertoStopProducer extends AbstractProducer
 		stop.setName(name);
 		stop.setObjectId(objectId);
 
-		MappingHastusZdep mappingHastusZdep = neptuneObject.getMappingHastusZdep();
-		// @todo SCH PA NON IDFM ? A check avec Vincent
-		if(mappingHastusZdep == null) return;
-		stop.setZdep(mappingHastusZdep.getZdep());
-		stop.setZder(mappingHastusZdep.getZder());
-		stop.setZdlr(mappingHastusZdep.getZdlr());
+
 		stop.setAttributes("{}");
 		stop.setReferences("{}");
 		stop.setCollectedAlways(true);

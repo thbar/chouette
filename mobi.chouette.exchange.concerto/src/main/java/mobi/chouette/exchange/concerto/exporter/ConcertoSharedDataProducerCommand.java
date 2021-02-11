@@ -16,20 +16,13 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.concerto.Constant;
-import mobi.chouette.exchange.concerto.exporter.producer.ConcertoOperatorProducer;
 import mobi.chouette.exchange.concerto.exporter.producer.ConcertoStopProducer;
-import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
-import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdepObjectIdGenerator;
-import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZderObjectIdGenerator;
-import mobi.chouette.exchange.concerto.model.ConcertoStopAreaZdlrObjectIdGenerator;
-import mobi.chouette.exchange.concerto.model.StopAreaTypeEnum;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoExporter;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.Operator;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
@@ -85,7 +78,6 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		ConcertoExporter exporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
 		ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(CONFIGURATION);
 		ConcertoStopProducer stopProducer = new ConcertoStopProducer(exporter);
-		ConcertoOperatorProducer operatorProducer = new ConcertoOperatorProducer(exporter);
 		ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
 		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>)context.get(MAPPING_LINE_UUID);
 		List<StopPoint> stopPointList = collection.getAllParsedStopPoints();
@@ -165,79 +157,16 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		MapperLinesAndZone mapperLinesAndZders = new MapperLinesAndZone();
 		MapperLinesAndZone mapperLinesAndZdlrs = new MapperLinesAndZone();
 
-		// no lambda : esprit chouette
-		// zdep
-		for (StopArea stop : physicalStops) {
-			if (stop.getMappingHastusZdep() == null) continue;
-			UUID[] lineIdArray = new UUID[0];
-			StopArea stopZder = createStopZder(stop, zderStops);
-			lineIdArray = getLineUuids(mappingLineUUIDList, stopPointList, stop, lineIdArray);
-			zderStops = addZderStopIfNotExists(zderStops, stopZder);
-			mapperLinesAndZders.addMappingZoneLines(stop.getMappingHastusZdep().getZder(), lineIdArray);
-			mapperLinesAndZdlrs.addMappingZoneLines(stop.getMappingHastusZdep().getZdlr(), lineIdArray);
-			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, null, stopZder, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDEP);
-		}
 
-		//zder
-		for (StopArea stop : zderStops) {
-			if(stop.getMappingHastusZdep() == null) continue;
-			UUID[] lineIdArray = mapperLinesAndZders.getLinesForZone(stop.getMappingHastusZdep().getZder());
-			StopArea stopZdlr = createStopZdlr(stop, zdlrStops);
-			zdlrStops = addZdlrStopIfNotExists(zdlrStops, stopZdlr);
-			ConcertoObjectId objectId = ConcertoStopAreaZderObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, stopZdlr, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDER);
-		}
-
-		//zdlr
-		for (StopArea stop : zdlrStops) {
-			boolean wasParsed = parsedZdlr.stream()
-									.anyMatch(stopArea -> stopArea.getMappingHastusZdep().getZdlr() == stop.getMappingHastusZdep().getZdlr());
-			if(wasParsed) continue;
-			if(stop.getMappingHastusZdep() == null) continue;
-			if(!stop.getIsExternal().booleanValue()) continue;
-			UUID[] lineIdArray = mapperLinesAndZdlrs.getLinesForZone(stop.getMappingHastusZdep().getZdlr());
-			ConcertoObjectId objectId = ConcertoStopAreaZdlrObjectIdGenerator.getConcertoObjectId(stop);
-			stopProducer.save(stop, null, null, startDate, endDate, objectId, lineIdArray, StopAreaTypeEnum.ZDLR);
-			parsedZdlr.add(stop);
-		}
 		context.put(PARSED_ZDLR, parsedZdlr);
 
-		List<Operator> operators = (List<Operator>) context.get(EXPORTABLE_OPERATORS);
-		operatorProducer.save(startDate, endDate, operators);
+
 	}
 
 
-	private List<StopArea> addZderStopIfNotExists(List<StopArea> stops, StopArea stop) {
-		if(stop == null) return stops;
-		if(stop.getMappingHastusZdep() == null) return stops;
-		if(stop.getMappingHastusZdep().getZder() == null) return stops;
-		if(stops.stream()
-				.noneMatch(stopArea ->
-						stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZder() != null &&
-						stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder())))
-		{
-			stops.add(stop);
-		}
-		return stops;
-	}
 
-	private List<StopArea> addZdlrStopIfNotExists(List<StopArea> stops, StopArea stop) {
-		if(stop == null) return stops;
-		if(stop.getIsExternal() == null || !stop.getIsExternal().booleanValue()) return stops;
-		if(stop.getMappingHastusZdep() == null) return stops;
-		if(stop.getMappingHastusZdep().getZdlr() == null) return stops;
-		if(stops.stream()
-				.noneMatch(stopArea ->
-						stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZdlr() != null &&
-						stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr())))
-		{
-			if(stop.getIsExternal().booleanValue()) stops.add(stop);
-		}
-		return stops;
-	}
+
+
 
 	private UUID[] getLineUuids(List<MappingLineUUID> mappingLineUUIDList, List<StopPoint> stopPointList, StopArea stop, UUID[] lineIdArray) {
 		List<Line> lines = getUsedLines(stopPointList, stop);
@@ -265,40 +194,15 @@ public class ConcertoSharedDataProducerCommand implements Command, Constant {
 		return lines;
 	}
 
-	private StopArea createStopZder(StopArea stop, List<StopArea> stops) {
-		if(stop == null) return null;
-		if(stop.getMappingHastusZdep() == null) return null;
-		if(stop.getMappingHastusZdep().getZder() == null) return null;
-		return stops.stream()
-				.filter(stopArea -> stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZder() != null &&
-						stopArea.getMappingHastusZdep().getZder().equals(stop.getMappingHastusZdep().getZder()))
-				.findFirst()
-				.orElse(getNewStopAreaZdXX(stop));
-	}
 
 	private StopArea getNewStopAreaZdXX(StopArea stop) {
 		StopArea newStop = new StopArea();
 		newStop.setUuid(UUID.randomUUID());
 		newStop.setName(stop.getName());
-		newStop.setMappingHastusZdep(stop.getMappingHastusZdep());
 		newStop.setIsExternal(stop.getIsExternal());
 		return newStop;
 	}
 
-	private StopArea createStopZdlr(StopArea stop, List<StopArea> stops) {
-		if(stop == null) return null;
-		if(stop.getMappingHastusZdep() == null ) return null;
-		if(stop.getMappingHastusZdep().getZdlr() == null) return null;
-		if(stop.getIsExternal() == null) return null;
-		if(!stop.getIsExternal().booleanValue()) return null;
-		return stops.stream()
-				.filter(stopArea -> stopArea.getMappingHastusZdep() != null &&
-						stopArea.getMappingHastusZdep().getZder() != null &&
-						stopArea.getMappingHastusZdep().getZdlr().equals(stop.getMappingHastusZdep().getZdlr()))
-				.findFirst()
-				.orElse(getNewStopAreaZdXX(stop));
-	}
 
 
 	public static class DefaultCommandFactory extends CommandFactory {

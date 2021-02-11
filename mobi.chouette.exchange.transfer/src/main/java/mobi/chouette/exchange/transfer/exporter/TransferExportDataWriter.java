@@ -7,7 +7,6 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.FeedInfoDAO;
 import mobi.chouette.dao.InterchangeDAO;
 import mobi.chouette.dao.LineDAO;
-import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.RouteSectionDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.ProgressionCommand;
@@ -17,7 +16,6 @@ import mobi.chouette.model.FeedInfo;
 import mobi.chouette.model.Interchange;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
-import mobi.chouette.model.Operator;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.StopArea;
@@ -58,9 +56,6 @@ public class TransferExportDataWriter implements Command, Constant {
 	private StopAreaDAO stopAreaDAO;
 
 	@EJB
-	private OperatorDAO operatorDAO;
-
-	@EJB
 	private FeedInfoDAO feedInfoDAO;
 
 	@EJB
@@ -81,7 +76,6 @@ public class TransferExportDataWriter implements Command, Constant {
 
 		List<Line> lineToTransfer = (List<Line>) context.get(LINES);
 		List<StopArea> stopAreasToTransfer = (List<StopArea>) context.get(STOP_AREAS);
-		List<Operator> operatorToTransfer = (List<Operator>) context.get(OPERATORS);
 		List<FeedInfo> feedInfosToTransfer = (List<FeedInfo>) context.get(FEED_INFOS);
 		ProgressionCommand progression = (ProgressionCommand) context.get(PROGRESSION);
 
@@ -160,10 +154,7 @@ public class TransferExportDataWriter implements Command, Constant {
 					log.info("Intermediary flush completed");
 				}
 			}
-			for(Operator o : operatorToTransfer){
-				o.setSchemaName("mosaic_" + o.getSchemaName());
-				operatorDAO.create(o);
-			}
+
 
 			for(FeedInfo f : feedInfosToTransfer){
 				f.setId(1L);
@@ -172,7 +163,6 @@ public class TransferExportDataWriter implements Command, Constant {
 
 			log.info("Final flush");
 			lineDAO.flush();
-			operatorDAO.flush();
 			log.info("Final flush completed");
 
 			return true;

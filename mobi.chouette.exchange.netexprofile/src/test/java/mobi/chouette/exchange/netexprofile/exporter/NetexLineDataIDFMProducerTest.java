@@ -216,29 +216,17 @@ public class NetexLineDataIDFMProducerTest {
         destinationDisplay.setObjectId("TEST:DestinationDisplay:dd1");
         destinationDisplay.setFrontText("Test Destination Display");
 
-        MappingHastusZdep mappingHastusZdep1 = new MappingHastusZdep();
-        mappingHastusZdep1.setHastusChouette("testquay1");
-        mappingHastusZdep1.setZdep("testzdep1");
-
-        MappingHastusZdep mappingHastusZdep2 = new MappingHastusZdep();
-        mappingHastusZdep2.setHastusChouette("testquay2");
-        mappingHastusZdep2.setZdep("testzdep2");
-
-        MappingHastusZdep mappingHastusZdep3 = new MappingHastusZdep();
-        mappingHastusZdep3.setHastusChouette("testquay3");
-        mappingHastusZdep3.setZdep("testzdep3");
-
         StopArea stopArea1 = new StopArea();
         stopArea1.setObjectId("TEST:Quay:quay1");
-        stopArea1.setMappingHastusZdep(mappingHastusZdep1);
+
 
         StopArea stopArea2 = new StopArea();
         stopArea2.setObjectId("TEST:Quay:quay2");
-        stopArea2.setMappingHastusZdep(mappingHastusZdep2);
+
 
         StopArea stopArea3 = new StopArea();
         stopArea3.setObjectId("TEST:Quay:quay3");
-        stopArea3.setMappingHastusZdep(mappingHastusZdep3);
+
 
         ScheduledStopPoint scheduledStopPoint1 = new ScheduledStopPoint();
         scheduledStopPoint1.setObjectId("TEST:ScheduledStopPoint:ssp1");

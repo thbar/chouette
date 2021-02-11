@@ -71,9 +71,6 @@ public class StopPlaceMapperTest {
         StopArea stopArea = new StopArea();
         stopArea.setAreaType(ChouetteAreaEnum.BoardingPosition);
         stopArea.setComment("Comment text");
-        MappingHastusZdep mappingHastusZdep = new MappingHastusZdep();
-        mappingHastusZdep.setZdep("50012345");
-        stopArea.setMappingHastusZdep(mappingHastusZdep);
         Quay quay = stopPlaceMapper.mapQuay(stopArea);
         assertNotNull(quay.getDescription(), "description should not be null for quay");
         assertEquals(quay.getDescription().getValue(), stopArea.getComment());
