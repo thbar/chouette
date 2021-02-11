@@ -176,6 +176,7 @@ public class RestService implements Constant {
 			inputStreamByName = readParts(input);
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			context.put("inputStreamByName", inputStreamByName);
+			context.put("ref", referential);
 
 			ContextHolder.setContext(referential);
 			Command command = CommandFactory.create(new InitialContext(), MappingZdepHastusPlageCommand.class.getName());

@@ -17,7 +17,6 @@ import mobi.chouette.model.ObjectReference;
 import mobi.chouette.model.Provider;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Hibernate;
@@ -70,8 +69,6 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	public boolean execute(Context context) throws Exception {
 		try {
 			Long lineId = (Long) context.get("lineId");
-			Referential referential = (Referential) context.get(REFERENTIAL);
-
 
 			// - stop areas maj avec zdep
 			Line line = lineDAO.find(lineId);
@@ -106,7 +103,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			for (StopArea stopArea : areas) {
 				Optional<MappingHastusZdep> byHastus = mappingHastusZdepDAO.findByHastus(stopArea.getOriginalStopId());
 				byHastus.ifPresent(mappingHastusZdep -> {
-					log.info("MAJ ZDEP : " + mappingHastusZdep + " du PA : " + stopArea.getOriginalStopId());
+					log.info("MAJ ZDEP : " + mappingHastusZdep.getZdep() + " du PA : " + stopArea.getOriginalStopId());
 					mappingHastusZdep.setHastusChouette(stopArea.getOriginalStopId());
 					MappingHastusZdep update = mappingHastusZdepDAO.update(mappingHastusZdep);
 					StopArea stopArea1 = stopAreaDAO.find(stopArea.getId());
@@ -125,10 +122,9 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 			//maj des zdlr
 			CommandCallableToUpdateZDLr callableZDLr = new CommandCallableToUpdateZDLr();
 			Optional<Provider> provider = providerDAO.findBySchema(ContextHolder.getContext());
-			callableZDLr.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + referential)).getCodeIdfm();
+			callableZDLr.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + ContextHolder.getContext())).getCodeIdfm();
 			callableZDLr.context = ContextHolder.getContext();
 			executor.submit(callableZDLr);
-
 
 			List<StopArea> areasTiamat = areasTosend.stream().map(stopArea -> stopAreaDAO.find(stopArea.getId())).collect(Collectors.toList());
 			log.info("Envoi ZDEP vers Tiamat : " + areasTiamat.size() + " PA");

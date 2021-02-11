@@ -15,6 +15,7 @@ import mobi.chouette.model.type.BikeAccessEnum;
 import mobi.chouette.model.type.BoardingAlightingPossibilityEnum;
 import mobi.chouette.model.type.TadEnum;
 import mobi.chouette.model.type.WheelchairAccessEnum;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -93,6 +94,17 @@ public class UpdateLineInfosCommand implements Command, Constant {
             lineDAO.update(lineToUpdate);
         });
         lineDAO.flush(); // to prevent SQL error outside method
+
+        // update zdep des nouveaux points
+        Command command = null;
+        try {
+            context.put("ref", ContextHolder.getContext());
+            command = CommandFactory.create(new InitialContext(), UpdateAllLinesZdepInfosCommand.class.getName());
+            command.execute(context);
+        } catch (Exception e) {
+            log.error("MAJ des zdep KO depuis l'import");
+        }
+
 
         return SUCCESS;
     }
