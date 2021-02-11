@@ -61,6 +61,8 @@ public interface Constant {
 	public static final String METADATA = "metadata";
 	public static final String LINE = "line";
 	public static final String LINE_ID = "line_id";
+	public static final String LINEID = "lineId";
+
 	public static final String EXPORTABLE_OPERATORS = "exportable_operators";
 	public static final String FEED_INFO = "feed_info";
 
@@ -73,5 +75,5 @@ public interface Constant {
 
 	public static final String OBJECT_TYPE_CONCERTO = "object_type_concerto";
 	public static final String PROVIDER = "provider";
-	
+
 }

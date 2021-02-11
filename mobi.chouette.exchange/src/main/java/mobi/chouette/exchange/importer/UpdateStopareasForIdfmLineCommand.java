@@ -55,6 +55,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	private ProviderDAO providerDAO;
 
 
+
 	@EJB
 	MappingHastusZdepDAO mappingHastusZdepDAO;
 
@@ -68,7 +69,7 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
 		try {
-			Long lineId = (Long) context.get("lineId");
+			Long lineId = (Long) context.get(LINEID);
 
 			// - stop areas maj avec zdep
 			Line line = lineDAO.find(lineId);

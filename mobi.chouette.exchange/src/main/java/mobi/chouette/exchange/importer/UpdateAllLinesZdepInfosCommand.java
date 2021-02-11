@@ -26,13 +26,13 @@ public class UpdateAllLinesZdepInfosCommand implements Command, Constant {
     public boolean execute(Context context) throws Exception {
         // update zdep des nouveaux points
         lineDAO.findAll().forEach(line -> {
-            if(line.getCategoriesForLine() != null && line.getCategoriesForLine().getName().equalsIgnoreCase("IDFM")) {
+            if (line.getCategoriesForLine() != null && line.getCategoriesForLine().getName().equalsIgnoreCase("IDFM")) {
                 Command command = null;
                 try {
                     command = CommandFactory.create(new InitialContext(), UpdateStopareasForIdfmLineCommand.class.getName());
-                    context.put("lineId", line.getId());
+                    context.put(LINEID, line.getId());
                     command.execute(context);
-                    context.remove("lineid");
+                    context.remove(LINEID);
                 } catch (Exception e) {
                     log.error("MAJ des zdep KO");
                 }

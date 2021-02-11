@@ -214,7 +214,7 @@ public class RestService implements Constant {
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			Referential referential = new Referential();
 			context.put("ref", ref);
-			context.put("lineId", lineId);
+			context.put(LINEID, lineId);
 			context.put(REFERENTIAL, referential);
 			try {
 				ContextHolder.setContext(ref);
