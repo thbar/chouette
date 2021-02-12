@@ -79,14 +79,6 @@ public class MappingZdepHastusPlageCommand implements Command {
 			}
 		}
 
-		// update zdep des nouveaux lignes si besoin
-		Command command = null;
-		try {
-			command = CommandFactory.create(new InitialContext(), UpdateAllLinesZdepInfosCommand.class.getName());
-			command.execute(context);
-		} catch (Exception e) {
-			log.error("MAJ des zdep KO depuis l'import");
-		}
 		result = SUCCESS;
 		return result;
 	}
