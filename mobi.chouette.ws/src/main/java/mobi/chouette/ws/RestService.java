@@ -184,8 +184,12 @@ public class RestService implements Constant {
 				String message = "Fichier invalide - requis : CSV avec entête de fichier invalide : idfcod [, idfarr, ...]";
 				throw new WebApplicationException(message, Status.INTERNAL_SERVER_ERROR);
 			}
-
-			return Response.ok().build();
+			// update zdep des nouveaux lignes si besoin
+			command = CommandFactory.create(new InitialContext(), UpdateAllLinesZdepInfosCommand.class.getName());
+			if (!command.execute(context)) {
+				String message = "MAJ des zdep KO depuis l'import";
+				throw new WebApplicationException(message, Status.INTERNAL_SERVER_ERROR);
+			}
 		} catch (WebApplicationException e) {
 			throw e;
 		} catch (Exception e) {
@@ -202,6 +206,7 @@ public class RestService implements Constant {
 				}
 			}
 		}
+		return Response.ok().build();
 	}
 
 	//  https://mosaic.dev-2.okina.fr/api-proxy/api/chouette-iev/1.0/chouette_iev/referentials/test/update-stopareas-for-idfm-line/232
