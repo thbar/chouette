@@ -12,12 +12,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.validation.Schema;
@@ -25,6 +28,7 @@ import javax.xml.validation.SchemaFactory;
 
 import lombok.extern.log4j.Log4j;
 
+import mobi.chouette.exchange.neptune.exporter.producer.AbstractJaxbNeptuneProducer;
 import org.trident.schema.trident.ChouettePTNetworkType;
 import org.xml.sax.SAXException;
 
@@ -63,6 +67,11 @@ public class JaxbNeptuneFileConverter {
 		schema = schemaFactory.newSchema(getClass().getClassLoader().getResource("xsd/neptune.xsd"));
 	}
 
+	public void write(ChouettePTNetworkType rootObject, File file) throws JAXBException, IOException {
+		write(AbstractJaxbNeptuneProducer.tridentFactory.createChouettePTNetwork(rootObject), new FileOutputStream(file));
+	}
+
+
 	public void write(JAXBElement<ChouettePTNetworkType> rootObject, File file) throws JAXBException, IOException {
 		write(rootObject, new FileOutputStream(file));
 	}
@@ -76,7 +85,7 @@ public class JaxbNeptuneFileConverter {
 			marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.setEventHandler(new NeptuneValidationEventHandler());
 			NamespacePrefixMapper mapper = new NeptuneNamespacePrefixMapper();
-			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", mapper);
+			//marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", mapper);
 			marshaller.marshal(network, stream);
 		} finally {
 			stream.close();
@@ -124,6 +133,23 @@ public class JaxbNeptuneFileConverter {
 				break;
 			}
 			return false;
+		}
+	}
+
+	public Optional<ChouettePTNetworkType> read(Path path){
+		try {
+
+			JAXBContext jaxbContext = JAXBContext.newInstance(org.trident.schema.trident.ObjectFactory.class);
+
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+			JAXBElement<ChouettePTNetworkType> chouetteRoute = (JAXBElement<ChouettePTNetworkType>) unmarshaller.unmarshal(new File(path.toAbsolutePath().toString()));
+			return Optional.of(chouetteRoute.getValue());
+
+		} catch (JAXBException e) {
+			log.error("Error while reading xml file:"+path.toAbsolutePath());
+			log.error(e);
+			return Optional.empty();
 		}
 	}
 
