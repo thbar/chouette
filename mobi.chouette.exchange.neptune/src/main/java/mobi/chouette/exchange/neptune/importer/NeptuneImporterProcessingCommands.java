@@ -58,6 +58,7 @@ public class NeptuneImporterProcessingCommands implements ProcessingCommands, Co
 			}
 			commands.add(CommandFactory.create(initialContext, UncompressCommand.class.getName()));
 			commands.add(CommandFactory.create(initialContext, NeptuneInitImportCommand.class.getName()));
+			commands.add(CommandFactory.create(initialContext, NeptuneTimeTablePeriodFixerCommand.class.getName()));
 		} catch (Exception e) {
 			log.error(e, e);
 			throw new RuntimeException("unable to call factories");
