@@ -29,10 +29,13 @@ public class NeptuneBrokenRouteFixerCommandTests {
 
 	protected static InitialContext initialContext;
 
-	private static String test1GeneratedPath = "src/test/data/brokenRoutesTestData/test1/input/B-generated.xml";
-	private static String test1CopyPath = "src/test/data/brokenRoutesTestData/test1/B-generated.xml";
-	private static String test1SrcCommandPath = "src/test/data/brokenRoutesTestData/test1/input/B.xml";
-	private static String test1SrcPath = "src/test/data/brokenRoutesTestData/test1/B.xml";
+
+	private static String rootTestFolder = "src/test/data/EIS923TestData/test1/";
+
+	private static String test1GeneratedPath = rootTestFolder+"input/B-generated.xml";
+	private static String test1CopyPath = rootTestFolder+"B-generated.xml";
+	private static String test1SrcCommandPath = rootTestFolder+"input/B.xml";
+	private static String test1SrcPath = rootTestFolder+"B.xml";
 
 
 	protected void init() {
@@ -77,7 +80,7 @@ public class NeptuneBrokenRouteFixerCommandTests {
 		FileUtils.copyFile(new File(Paths.get(test1SrcPath).toString()),new File(Paths.get(test1SrcCommandPath).toString()));
 
 		NeptuneBrokenRouteFixerCommand command = (NeptuneBrokenRouteFixerCommand) CommandFactory.create(initialContext,NeptuneBrokenRouteFixerCommand.class.getName());
-		Context context = initImportContext(Paths.get("src/test/data/brokenRoutesTestData/test1").toString());
+		Context context = initImportContext(Paths.get(rootTestFolder).toString());
 		boolean returnCode=command.execute(context);
 
 		Assert.assertEquals(returnCode, true, "Incorrect Return code");
@@ -89,7 +92,7 @@ public class NeptuneBrokenRouteFixerCommandTests {
 
 		try {
 			JaxbNeptuneFileConverter converter = JaxbNeptuneFileConverter.getInstance();
-			Optional<ChouettePTNetworkType> chouetteNetworkOpt = converter.read(Paths.get("src/test/data/brokenRoutesTestData/test1/B-generated.xml"));
+			Optional<ChouettePTNetworkType> chouetteNetworkOpt = converter.read(Paths.get(test1CopyPath));
 
 			ChouettePTNetworkType network = chouetteNetworkOpt.get();
 			ChouettePTNetworkType.ChouetteLineDescription description = network.getChouetteLineDescription();
