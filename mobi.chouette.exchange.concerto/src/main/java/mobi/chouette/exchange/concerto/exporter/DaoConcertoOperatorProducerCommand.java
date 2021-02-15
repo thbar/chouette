@@ -58,10 +58,10 @@ public class DaoConcertoOperatorProducerCommand implements Command, Constant {
             LocalDate endDate;
             if (parameters.getEndDate() != null) {
                 endDate = LocalDate.fromDateFields(parameters.getEndDate());
-            } else if (parameters.getPeriodDays() != null) {
-                endDate = startDate.plusDays(parameters.getPeriodDays());
+            } else if (context.get(PERIOD) != null) {
+                endDate = startDate.plusDays((Integer) context.get(PERIOD) - 1);
             } else {
-                endDate = startDate.plusDays(30);
+                endDate = startDate.plusDays(29);
             }
 
             List<Operator> operators = operatorDAO.findAll();

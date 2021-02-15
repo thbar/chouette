@@ -18,11 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 
 public class ConcertoExportParameters extends AbstractExportParameter {
-		
-	@Getter
-	@Setter
-	@XmlElement(name = "period_days")
-	private Integer periodDays;
 
 	public boolean isValid(Logger log) {
 		return true;
