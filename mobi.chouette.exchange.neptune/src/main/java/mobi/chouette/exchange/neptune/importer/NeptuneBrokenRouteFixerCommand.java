@@ -13,7 +13,6 @@ import mobi.chouette.exchange.neptune.Constant;
 import mobi.chouette.exchange.neptune.jaxb.JaxbNeptuneFileConverter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.trident.schema.trident.ChouettePTNetworkType.ChouetteLineDescription.ChouetteRoute;
 import mobi.chouette.model.util.Referential;
 import org.trident.schema.trident.ChouettePTNetworkType;
@@ -101,6 +100,7 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
                 log.warn(brokenRoutes.size()+" broken routes detected");
                 brokenRoutes.forEach(brokenRoute->fixBrokenRoute(chouetteNetwork,brokenRoute));
                 fixVehicleJourneyRouteIds(chouetteNetwork);
+                cleanWaybackRoutes(chouetteNetwork);
 
                 File originalFile = new File(path.toAbsolutePath().toString());
                 File directory = originalFile.getParentFile();
@@ -123,6 +123,25 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
             log.error("Error while processing file ");
             log.error(e);
         }
+    }
+
+    /***
+     * Delete waybackRouteIds that refers to deleted routes
+     * @param chouetteNetwork
+     *      The network on which wayback routes must be checked
+     */
+    private void cleanWaybackRoutes(ChouettePTNetworkType chouetteNetwork){
+
+        ChouettePTNetworkType.ChouetteLineDescription description = chouetteNetwork.getChouetteLineDescription();
+        List<String> availableRouteIds = description.getChouetteRoute()
+                                                    .stream()
+                                                    .map(ChouetteRoute::getObjectId)
+                                                    .collect(Collectors.toList());
+
+        description.getChouetteRoute().stream()
+                                      .filter(route->!availableRouteIds.contains(route.getWayBackRouteId()))
+                                      .forEach(route-> route.setWayBackRouteId(null));
+
     }
 
 
