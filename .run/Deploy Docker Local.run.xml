@@ -1,0 +1,66 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Deploy Docker Local" type="JBossConfiguration" factoryName="Remote" APPLICATION_SERVER_NAME="JBoss 14.0.1.Final" ALTERNATIVE_JRE_ENABLED="false">
+    <option name="HOST" value="0.0.0.0" />
+    <option name="PORT" value="8081" />
+    <option name="LOCAL" value="false" />
+    <option name="OPEN_IN_BROWSER_URL" value="http://0.0.0.0:8081/chouette_iev/" />
+    <option name="UPDATING_POLICY" value="hot-swap-classes" />
+    <deployment>
+      <artifact name="chouette_iev:ear">
+        <settings DEPLOYMENT_METHOD="Native" />
+      </artifact>
+    </deployment>
+    <server-settings>
+      <data>
+        <option name="credentialAlias" value="e0e1c07c-5b31-4908-b221-52320212dd1e" />
+        <option name="managementPort" value="9991" />
+        <option name="serverGroup" value="" />
+        <option name="stagingRemotePath" value="" />
+        <option name="transportHostId" />
+        <option name="transportStagingTarget">
+          <TransportTarget>
+            <option name="id" value="6678fa99-ec6d-44fb-98ff-dc1ae48392ef" />
+            <id>6678fa99-ec6d-44fb-98ff-dc1ae48392ef</id>
+          </TransportTarget>
+        </option>
+        <option name="username" value="admin" />
+        <username>admin</username>
+        <credential-alias>e0e1c07c-5b31-4908-b221-52320212dd1e</credential-alias>
+        <management-port>9991</management-port>
+        <server-group />
+        <transport-target>
+          <TransportTarget>
+            <option name="id" value="6678fa99-ec6d-44fb-98ff-dc1ae48392ef" />
+            <id>6678fa99-ec6d-44fb-98ff-dc1ae48392ef</id>
+          </TransportTarget>
+        </transport-target>
+        <staging-path />
+      </data>
+    </server-settings>
+    <predefined_log_file enabled="true" id="JBoss" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+      </ENTRIES>
+    </extension>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="6544" />
+      <option name="LOCAL" value="false" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Debug with VisualVM">
+      <option name="DEBUG_PORT" value="38783" />
+      <option name="LOCAL" value="false" />
+    </RunnerSettings>
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="chouette_iev:ear" />
+      </option>
+    </method>
+  </configuration>
+</component>
