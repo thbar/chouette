@@ -1,9 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Deploy Docker Local" type="JBossConfiguration" factoryName="Remote" APPLICATION_SERVER_NAME="JBoss 14.0.1.Final" ALTERNATIVE_JRE_ENABLED="false">
-    <option name="HOST" value="0.0.0.0" />
     <option name="PORT" value="8081" />
     <option name="LOCAL" value="false" />
-    <option name="OPEN_IN_BROWSER_URL" value="http://0.0.0.0:8081/chouette_iev/" />
+    <option name="OPEN_IN_BROWSER" value="false" />
     <option name="UPDATING_POLICY" value="hot-swap-classes" />
     <deployment>
       <artifact name="chouette_iev:ear">
