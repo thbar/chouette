@@ -14,10 +14,12 @@ import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.Footnote;
 import mobi.chouette.model.GroupOfLine;
+import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
@@ -26,6 +28,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Stateless(name = LineUpdater.BEAN_NAME)
 public class LineUpdater implements Updater<Line> {
@@ -316,9 +319,33 @@ public class LineUpdater implements Updater<Line> {
 		}
 
 		updateFootnotes(context, oldValue,newValue,cache);
-
+		updateAreaCentroidOriginalStopIds(context,oldValue);
 //		monitor.stop();
 	}
+
+	private void updateAreaCentroidOriginalStopIds(Context context, Line line){
+
+		if (context.get(AREA_CENTROID_MAP) == null)
+			return ;
+
+		line.getRoutes().forEach(route->updateAreaCentroidOriginalIdsForRoute(context,route));
+	}
+
+	private void updateAreaCentroidOriginalIdsForRoute(Context context, Route route){
+		route.getJourneyPatterns().forEach(journeyPattern->updateAreaCentroidOriginalIdsForJourneyPattern(context,journeyPattern));
+	}
+
+	private void updateAreaCentroidOriginalIdsForJourneyPattern(Context context, JourneyPattern journeyPattern){
+		journeyPattern.getStopPoints().forEach(stopPoint->updateAreaCentroidOriginalIdsForStopPoint(context,stopPoint));
+	}
+
+	private void updateAreaCentroidOriginalIdsForStopPoint(Context context, StopPoint stopPoint){
+		Map<String,String> areaCentroidMap =  (Map<String,String>) context.get(AREA_CENTROID_MAP);
+		StopArea childArea = stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject();
+		childArea.getParent().setOriginalStopId(areaCentroidMap.get(childArea.getOriginalStopId()));
+	}
+
+
 	
 	private void updateFootnotes(Context context, Line oldValue, Line newValue, Referential cache) throws Exception {
 		Collection<Footnote> addedFootnote = CollectionUtil.substract(newValue.getFootnotes(),

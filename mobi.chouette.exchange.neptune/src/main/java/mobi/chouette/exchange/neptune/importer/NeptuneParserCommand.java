@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.naming.InitialContext;
 
@@ -18,6 +19,7 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.neptune.Constant;
+import mobi.chouette.exchange.neptune.model.AreaCentroid;
 import mobi.chouette.exchange.neptune.model.NeptuneObjectFactory;
 import mobi.chouette.exchange.neptune.parser.ChouettePTNetworkParser;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -79,6 +81,7 @@ public class NeptuneParserCommand implements Command, Constant {
 			if (factory == null) {
 				factory = new NeptuneObjectFactory();
 				context.put(NEPTUNE_OBJECT_FACTORY, factory);
+				context.put(AREA_CENTROID_MAP, new HashMap<String, String>());
 			} else {
 				factory.clear();
 			}

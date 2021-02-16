@@ -59,7 +59,7 @@ public class NeTExStopPlaceRegisterUpdater {
 
     public static final String IMPORTED_ID_VALUE_SEPARATOR = ",";
 
-    public static final String COMMERCIAL_STOP_POINT_KEYWORD = ":StopPlace:";
+    public static final String MOBI_ITI_PREFIX = "MOBIITI:";
 
     private PublicationDeliveryClient client;
 
@@ -420,7 +420,7 @@ public class NeTExStopPlaceRegisterUpdater {
 
     private void updateCommercialStopPoints(Map<String, String> stopPlaceRegisterMap, Referential referential){
         stopPlaceRegisterMap.entrySet().stream()
-                                       .filter(entry-> entry.getKey().contains(COMMERCIAL_STOP_POINT_KEYWORD))
+                                       .filter(entry-> !entry.getKey().contains(MOBI_ITI_PREFIX))
                                        .forEach(entry-> updateCommercialStopPoint(referential,entry.getKey(),entry.getValue()));
     }
 

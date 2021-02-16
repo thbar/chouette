@@ -3,6 +3,7 @@ package mobi.chouette.exchange.neptune.parser;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
@@ -82,6 +83,7 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 			if (xpp.getName().equals("objectId")) {
 				objectId = ParserUtils.getText(xpp.nextText());
 				stopArea = ObjectFactory.getStopArea(referential, objectId);
+				stopArea.setOriginalStopId(objectId);
 				stopArea.setFilled(true);
 			} else if (xpp.getName().equals("objectVersion")) {
 				Integer version = ParserUtils.getInt(xpp.nextText());
@@ -195,6 +197,8 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 		XmlPullParser xpp = (XmlPullParser) context.get(PARSER);
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		NeptuneObjectFactory factory =  (NeptuneObjectFactory) context.get(NEPTUNE_OBJECT_FACTORY);
+		Map<String,String> areaCentroidMap =  (Map<String,String>) context.get(AREA_CENTROID_MAP);
+
 
 		xpp.require(XmlPullParser.START_TAG, null, "AreaCentroid");
 		int columnNumber =  xpp.getColumnNumber();
@@ -214,6 +218,7 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 				String areaId = inverse.get(objectId);
 				stopArea = ObjectFactory.getStopArea(referential, areaId);
 				areaCentroid.setContainedIn(stopArea);
+				areaCentroidMap.put(stopArea.getOriginalStopId(),objectId);
 			} else if (xpp.getName().equals("name")) {
 				areaCentroid.setName(ParserUtils.getText(xpp.nextText()));
 				if (stopArea.getName() == null)
