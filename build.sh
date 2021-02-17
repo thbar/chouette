@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Version de l'image de base. Décorellé de la version applicative, n'évolue pas souvent.
-CHOUETTE_BASE_VERSION=1.0
+CHOUETTE_BASE_VERSION=1.1
 
 MVN_VERSION=$(mvn -q \
     -Dexec.executable=echo \
