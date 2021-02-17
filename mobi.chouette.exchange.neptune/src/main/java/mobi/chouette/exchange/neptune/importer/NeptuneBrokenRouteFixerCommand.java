@@ -105,16 +105,17 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
                 File originalFile = new File(path.toAbsolutePath().toString());
                 File directory = originalFile.getParentFile();
                 String originalFileName = FilenameUtils.removeExtension(originalFile.getName());
-                String newFileName = originalFileName+"-generated.xml";
-                File outPutFile = new File(directory,newFileName);
+                originalFile.delete();
+                File outPutFile = new File(directory,originalFile.getName());
                 converter.write(chouetteNetwork,outPutFile);
                 log.info(outPutFile.getName()+" created with fixed routes");
 
-                originalFile.delete();
+
 
                 //a backup copy of the generated file is stored in the job's root directory
                 File jobRootDirectory = directory.getParentFile();
-                File backupCopy = new File(jobRootDirectory,newFileName);
+                String copyName = originalFileName+"-brFix.xml";
+                File backupCopy = new File(jobRootDirectory,copyName);
                 FileUtils.copyFile(outPutFile,backupCopy);
 
             }

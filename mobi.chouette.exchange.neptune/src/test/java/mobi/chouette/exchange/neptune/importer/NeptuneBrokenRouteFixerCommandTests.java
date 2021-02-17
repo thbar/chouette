@@ -31,9 +31,8 @@ public class NeptuneBrokenRouteFixerCommandTests {
 
 
 	private static String rootTestFolder = "src/test/data/EIS923TestData/test1/";
-
 	private static String test1GeneratedPath = rootTestFolder+"input/B-generated.xml";
-	private static String test1CopyPath = rootTestFolder+"B-generated.xml";
+	private static String test1CopyPath = rootTestFolder+"B-brFix.xml";
 	private static String test1SrcCommandPath = rootTestFolder+"input/B.xml";
 	private static String test1SrcPath = rootTestFolder+"B.xml";
 

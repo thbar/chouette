@@ -37,7 +37,7 @@ public class NeptuneTimetablePeriodFixerCommandTests {
     private static String rootTestFolder = "src/test/data/EIS923TestData/test1/";
 
     private static String test1GeneratedPath = rootTestFolder+"input/B-generated.xml";
-    private static String test1CopyPath = rootTestFolder+"B-generated.xml";
+    private static String test1CopyPath = rootTestFolder+"B-calFixed.xml";
     private static String test1SrcCommandPath = rootTestFolder+"input/B.xml";
     private static String test1SrcPath = rootTestFolder+"B.xml";
 
@@ -111,7 +111,7 @@ public class NeptuneTimetablePeriodFixerCommandTests {
 
     private void checkTimetablePeriods(List<TimetableType> timetableList){
 
-        Assert.assertEquals(timetableList.size(), 11, "Number of timetables must not be changed");
+        Assert.assertEquals(timetableList.size(), 47, "Number of timetables must not be changed");
 
         DateTime now = new DateTime();
         int currentYear = now.getYear();
@@ -121,14 +121,14 @@ public class NeptuneTimetablePeriodFixerCommandTests {
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:148")){
                 Assert.assertEquals(timetable.getPeriod().size(), 1, "wrong nb of periods");
-                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), currentYear+"-01-01", "wrong start period");
-                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), currentYear+"-12-31", "wrong end period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), "2020-11-02", "wrong start period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), "2021-07-05", "wrong end period");
             }
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:149")){
                 Assert.assertEquals(timetable.getPeriod().size(), 1, "wrong nb of periods");
-                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), currentYear+"-01-01", "wrong start period");
-                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), currentYear+"-12-31", "wrong end period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), "2020-11-04", "wrong start period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), "2021-06-30", "wrong end period");
             }
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:150")){
@@ -137,8 +137,8 @@ public class NeptuneTimetablePeriodFixerCommandTests {
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:151")){
                 Assert.assertEquals(timetable.getPeriod().size(), 1, "wrong nb of periods");
-                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), currentYear+"-01-01", "wrong start period");
-                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), currentYear+"-12-31", "wrong end period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), "2020-11-04", "wrong start period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), "2021-07-03", "wrong end period");
             }
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:152")){
@@ -158,8 +158,8 @@ public class NeptuneTimetablePeriodFixerCommandTests {
 
             if (timetable.getObjectId().equals("SAMPLE_NET:TimeTable:156")){
                 Assert.assertEquals(timetable.getPeriod().size(), 1, "wrong nb of periods");
-                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), currentYear+"-01-01", "wrong start period");
-                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), currentYear+"-12-31", "wrong end period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getStartOfPeriod().toString(), "2020-11-06", "wrong start period");
+                Assert.assertEquals(timetable.getPeriod().get(0).getEndOfPeriod().toString(), "2021-07-02", "wrong end period");
             }
         }
 
