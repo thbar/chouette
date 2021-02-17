@@ -1,17 +1,6 @@
 package mobi.chouette.model;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import com.vividsolutions.jts.geom.LineString;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +9,8 @@ import mobi.chouette.model.converter.LineStringToStringConverter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import com.vividsolutions.jts.geom.LineString;
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * Chouette Route Section : geographic route between to stop areas
@@ -98,7 +88,7 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	 * @return The actual value
 	 */
 	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "departure_id")
 	private StopArea departure;
 
@@ -117,7 +107,7 @@ public class RouteSection extends NeptuneIdentifiedObject {
 	 * @return The actual value
 	 */
 	@Getter
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "arrival_id")
 	private StopArea arrival;
 
