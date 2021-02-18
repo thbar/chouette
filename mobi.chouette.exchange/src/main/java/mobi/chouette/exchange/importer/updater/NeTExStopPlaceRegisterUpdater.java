@@ -429,7 +429,7 @@ public class NeTExStopPlaceRegisterUpdater {
         StopArea dstStopArea = referential.getSharedStopAreas().get(dstStopAreaId);
         StopArea srcStopArea = referential.getSharedStopAreas().get(srcStopAreaId);
 
-        if (StringUtils.isNotEmpty(srcStopArea.getOriginalStopId()))
+        if (srcStopArea != null && dstStopArea!=null && StringUtils.isNotEmpty(srcStopArea.getOriginalStopId()))
             dstStopArea.setOriginalStopId(srcStopArea.getOriginalStopId());
     }
 
