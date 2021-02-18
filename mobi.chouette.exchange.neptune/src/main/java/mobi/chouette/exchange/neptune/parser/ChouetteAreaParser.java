@@ -13,6 +13,7 @@ import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.importer.ParserUtils;
 import mobi.chouette.exchange.neptune.Constant;
 import mobi.chouette.exchange.neptune.JsonExtension;
+import mobi.chouette.exchange.neptune.importer.NeptuneImportParameters;
 import mobi.chouette.exchange.neptune.model.AreaCentroid;
 import mobi.chouette.exchange.neptune.model.NeptuneObjectFactory;
 import mobi.chouette.exchange.neptune.validation.AreaCentroidValidator;
@@ -68,6 +69,8 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 			throws Exception {
 		XmlPullParser xpp = (XmlPullParser) context.get(PARSER);
 		Referential referential = (Referential) context.get(REFERENTIAL);
+		NeptuneImportParameters parameters = (NeptuneImportParameters) context.get(CONFIGURATION);
+
 
 		xpp.require(XmlPullParser.START_TAG, null, "StopArea");
 		int columnNumber =  xpp.getColumnNumber();
@@ -83,7 +86,7 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 			if (xpp.getName().equals("objectId")) {
 				objectId = ParserUtils.getText(xpp.nextText());
 				stopArea = ObjectFactory.getStopArea(referential, objectId);
-				stopArea.setOriginalStopId(objectId);
+				stopArea.setOriginalStopId(objectId.replaceFirst("^"+parameters.getStopAreaPrefixToRemove(),""));
 				stopArea.setFilled(true);
 			} else if (xpp.getName().equals("objectVersion")) {
 				Integer version = ParserUtils.getInt(xpp.nextText());
@@ -198,6 +201,7 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		NeptuneObjectFactory factory =  (NeptuneObjectFactory) context.get(NEPTUNE_OBJECT_FACTORY);
 		Map<String,String> areaCentroidMap =  (Map<String,String>) context.get(AREA_CENTROID_MAP);
+		NeptuneImportParameters parameters = (NeptuneImportParameters) context.get(CONFIGURATION);
 
 
 		xpp.require(XmlPullParser.START_TAG, null, "AreaCentroid");
@@ -218,7 +222,7 @@ public class ChouetteAreaParser implements Parser, Constant, JsonExtension {
 				String areaId = inverse.get(objectId);
 				stopArea = ObjectFactory.getStopArea(referential, areaId);
 				areaCentroid.setContainedIn(stopArea);
-				areaCentroidMap.put(stopArea.getOriginalStopId(),objectId);
+				areaCentroidMap.put(stopArea.getOriginalStopId(),objectId.replaceFirst("^"+parameters.getAreaCentroidPrefixToRemove(),""));
 			} else if (xpp.getName().equals("name")) {
 				areaCentroid.setName(ParserUtils.getText(xpp.nextText()));
 				if (stopArea.getName() == null)
