@@ -1,5 +1,6 @@
 package mobi.chouette.exchange.neptune.parser;
 
+import mobi.chouette.model.type.OrganisationTypeEnum;
 import org.joda.time.LocalDateTime;
 
 import lombok.extern.log4j.Log4j;
@@ -40,6 +41,7 @@ public class CompanyParser implements Parser, Constant {
 				objectId = ParserUtils.getText(xpp.nextText());
 				company = ObjectFactory.getCompany(referential, objectId);
 				company.setFilled(true);
+				company.setOrganisationType(OrganisationTypeEnum.Operator);
 			} else if (xpp.getName().equals("objectVersion")) {
 				Integer version = ParserUtils.getInt(xpp.nextText());
 				company.setObjectVersion(version);
