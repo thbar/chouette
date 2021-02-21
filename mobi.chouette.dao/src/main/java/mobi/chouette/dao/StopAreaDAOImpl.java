@@ -1,5 +1,8 @@
 package mobi.chouette.dao;
 
+import mobi.chouette.core.ChouetteException;
+import mobi.chouette.core.CoreException;
+import mobi.chouette.core.CoreExceptionCode;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 
@@ -25,4 +28,25 @@ public class StopAreaDAOImpl extends GenericDAOImpl<StopArea> implements StopAre
         return em.createQuery("select s.objectId from StopArea s where s.areaType = :areaType").setParameter("areaType", ChouetteAreaEnum.BoardingPosition).getResultList();
     }
 
+    /**
+     * Fusionner 2 stopAreas
+     *
+     * @param from
+     * @param into
+     * @throws CoreException
+     */
+    @Override
+    public void mergeStopArea30m(Long from, Long into) throws CoreException {
+        try {
+            em.createNativeQuery(
+                    "SELECT 1 FROM merge_duplicate_stop_area_30m( :safrom, :sainto)")
+                    .setParameter("safrom", from)
+                    .setParameter("sainto", into)
+                    .getSingleResult();
+        } catch (Exception e) {
+            throw new CoreException(CoreExceptionCode.DELETE_IMPOSSIBLE,"Error while trying to merge point:" + from + " to point:" + into);
+
+        }
+
+    }
 }

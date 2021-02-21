@@ -130,6 +130,10 @@ public class NeptuneImporterProcessingCommands implements ProcessingCommands, Co
 				}
 			}
 
+
+			//Merge duplicate stopAreas after line registration
+			commands.add(CommandFactory.create(initialContext, NeptuneStopAreaMergeCommand.class.getName()));
+
 		} catch (Exception e) {
 			log.error(e, e);
 			throw new RuntimeException("unable to call factories");
