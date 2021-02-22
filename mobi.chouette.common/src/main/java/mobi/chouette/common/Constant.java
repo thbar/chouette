@@ -75,5 +75,6 @@ public interface Constant {
 
 	public static final String OBJECT_TYPE_CONCERTO = "object_type_concerto";
 	public static final String PROVIDER = "provider";
+	public static final String PERIOD = "period";
 
 }
