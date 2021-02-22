@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static mobi.chouette.common.Constant.IMPORTED_ID;
 import static mobi.chouette.common.PropertyNames.*;
 
 @Log4j
@@ -51,7 +52,6 @@ public class NeTExStopPlaceRegisterUpdater {
 
     private static final String VERSION = "1";
 
-    public static final String IMPORTED_ID = "imported-id";
 
     public static final String MERGED_ID = "merged-id";
 
@@ -562,6 +562,7 @@ public class NeTExStopPlaceRegisterUpdater {
             }
         }
     }
+
 
 
     private String getAndValidateProperty(String propertyName) {

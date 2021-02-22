@@ -30,6 +30,8 @@ import org.rutebanken.netex.model.Zone_VersionStructure;
 import java.util.HashMap;
 import java.util.Map;
 
+import static mobi.chouette.common.Constant.IMPORTED_ID;
+
 /**
  * Map from chouette model to NeTEx
  */
@@ -205,7 +207,7 @@ public class StopPlaceMapper {
         String importedId = stopAreaMappingInverse.get(stopPlace.getId());
         if (StringUtils.isNotBlank(importedId)) {
             stopPlace.withKeyList(new KeyListStructure().withKeyValue(new KeyValueStructure()
-                    .withKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID)
+                    .withKey(IMPORTED_ID)
                     .withValue(importedId)));
         }
         return stopPlace;

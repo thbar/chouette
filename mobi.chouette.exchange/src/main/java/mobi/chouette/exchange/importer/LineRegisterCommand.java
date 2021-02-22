@@ -35,6 +35,7 @@ import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NamingUtil;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -50,6 +51,7 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Log4j
 @Stateless(name = LineRegisterCommand.COMMAND)
@@ -102,6 +104,7 @@ public class LineRegisterCommand implements Command {
 		context.put("ref", ref);
 
 		Referential referential = (Referential) context.get(REFERENTIAL);
+
 
 		// Use property based enabling of stop place updater, but allow disabling if property exist in context
 		Line newValue  = referential.getLines().values().iterator().next();
@@ -167,6 +170,7 @@ public class LineRegisterCommand implements Command {
 					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(Long.valueOf(0)));
 				}
 				oldValue.setPosition(newValue.getPosition());
+				searchEmptyOriginalStopIds(referential,oldValue);
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
 
@@ -259,6 +263,22 @@ public class LineRegisterCommand implements Command {
 		}
 		return result;
 	}
+
+
+	private void searchEmptyOriginalStopIds(Referential referential, Line line){
+		for (Route route : line.getRoutes()) {
+			for (JourneyPattern journeyPattern : route.getJourneyPatterns()) {
+				for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
+					StopArea stopArea = stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject();
+					if (StringUtils.isEmpty(stopArea.getOriginalStopId())){
+						StopArea sharedStopArea = referential.getSharedStopAreas().get(stopArea.getObjectId());
+						stopArea.setOriginalStopId(sharedStopArea != null ? sharedStopArea.getOriginalStopId() : null);
+					}
+				}
+			}
+		}
+	}
+
 
 	private boolean isLineValidInFuture(Line line) {
 

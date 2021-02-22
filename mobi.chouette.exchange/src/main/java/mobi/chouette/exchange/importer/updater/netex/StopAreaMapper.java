@@ -6,6 +6,8 @@ import mobi.chouette.model.type.LongLatTypeEnum;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang3.StringUtils;
+import org.rutebanken.netex.model.KeyListStructure;
+import org.rutebanken.netex.model.KeyValueStructure;
 import org.rutebanken.netex.model.LimitationStatusEnumeration;
 import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.MultilingualString;
@@ -13,6 +15,11 @@ import org.rutebanken.netex.model.Quay;
 import org.rutebanken.netex.model.Quays_RelStructure;
 import org.rutebanken.netex.model.StopPlace;
 import org.rutebanken.netex.model.Zone_VersionStructure;
+
+import java.util.List;
+import java.util.Optional;
+
+import static mobi.chouette.common.Constant.IMPORTED_ID;
 
 /**
  * Map from NeTEx to chouette model
@@ -98,6 +105,7 @@ public class StopAreaMapper {
         mapQuayUrl(quay, boardingPosition);
         mapQuayRegistrationNumber(quay, boardingPosition);
         createCompassBearing(quay, boardingPosition);
+        mapOriginalStopId(stopPlace,boardingPosition);
         return boardingPosition;
     }
 
@@ -141,8 +149,28 @@ public class StopAreaMapper {
 
         mapCentroidToChouette(stopPlace, stopArea);
         mapName(stopPlace, stopArea);
-
+        mapOriginalStopId(stopPlace,stopArea);
         return stopArea;
+    }
+
+    private void mapOriginalStopId(StopPlace srcStopPlace, StopArea createdStopArea){
+        Optional<String> importedId = getImportedId(srcStopPlace);
+        importedId.ifPresent(createdStopArea::setOriginalStopId);
+    }
+
+
+    private Optional<String> getImportedId(StopPlace stopPlace){
+
+        KeyListStructure keyList = stopPlace.getKeyList();
+        if (keyList != null && keyList.getKeyValue() != null) {
+            List<KeyValueStructure> keyValue = keyList.getKeyValue();
+            for (KeyValueStructure structure : keyValue) {
+                if (structure != null && IMPORTED_ID.equals(structure.getKey())) {
+                    return Optional.of(structure.getValue());
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private void createCompassBearing(Quay quay, StopArea boardingPosition) {

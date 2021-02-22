@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static mobi.chouette.common.Constant.IMPORTED_ID;
 import static org.testng.AssertJUnit.assertEquals;
 
 public class NeTExStopPlaceRegisterUpdaterTest {
@@ -168,7 +169,7 @@ public class NeTExStopPlaceRegisterUpdaterTest {
             protected KeyListStructure createKeyListStructure(String value) {
                 KeyListStructure kl = new KeyListStructure();
                 KeyValueStructure kv = new KeyValueStructure();
-                kv.setKey(NeTExStopPlaceRegisterUpdater.IMPORTED_ID);
+                kv.setKey(IMPORTED_ID);
                 kv.setValue(value);
                 kl.getKeyValue().add(kv);
                 return kl;
