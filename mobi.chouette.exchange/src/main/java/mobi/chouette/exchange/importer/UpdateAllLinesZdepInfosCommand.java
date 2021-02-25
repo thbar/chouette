@@ -37,7 +37,6 @@ public class UpdateAllLinesZdepInfosCommand implements Command, Constant {
                 }
             }
         });
-        lineDAO.flush(); // to prevent SQL error outside method
         return SUCCESS;
     }
 

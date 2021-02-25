@@ -106,19 +106,13 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 				byHastus.ifPresent(mappingHastusZdep -> {
 					log.info("MAJ ZDEP : " + mappingHastusZdep.getZdep() + " du PA : " + stopArea.getOriginalStopId());
 					mappingHastusZdep.setHastusChouette(stopArea.getOriginalStopId());
-					MappingHastusZdep update = mappingHastusZdepDAO.update(mappingHastusZdep);
-					StopArea stopArea1 = stopAreaDAO.find(stopArea.getId());
-					stopArea1.setMappingHastusZdep(update);
-					stopAreaDAO.update(stopArea1);
+					stopArea.setMappingHastusZdep(mappingHastusZdep);
+					stopAreaDAO.update(stopArea);
 					areasTosend.add(stopArea);
 				});
 			}
-
-			log.info("Fin MAJ ZDEP");
-
-			mappingHastusZdepDAO.flush();
 			stopAreaDAO.flush();
-			lineDAO.flush();
+			log.info("Fin MAJ ZDEP");
 
 			//maj des zdlr
 			CommandCallableToUpdateZDLr callableZDLr = new CommandCallableToUpdateZDLr();

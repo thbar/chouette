@@ -78,9 +78,8 @@ public class MappingZdepHastusPlageCommand implements Command {
 				createMapping(zdep, hastusOriginal);
 			}
 		}
-
-		result = SUCCESS;
-		return result;
+		mappingHastusZdepDAO.flush();
+		return SUCCESS;
 	}
 
 	private boolean validateHeader(CSVRecord csvRecord) {
