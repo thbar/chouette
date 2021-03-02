@@ -16,6 +16,8 @@ import mobi.chouette.model.Company;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Network;
 import mobi.chouette.model.type.OrganisationTypeEnum;
+import mobi.chouette.model.type.TransportModeNameEnum;
+import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -116,37 +118,41 @@ public class GtfsRouteProducer extends AbstractProducer
 
       if (neptuneObject.getTransportModeName() != null)
       {
-         if(useTPEGRouteTypes) {
-        	 route.setRouteType(RouteTypeEnum.from(neptuneObject.getTransportModeName(), neptuneObject.getTransportSubModeName()));
-         } else {
-    	  
-             switch (neptuneObject.getTransportModeName())
-             {
-             case Tram:
-                route.setRouteType(RouteTypeEnum.Tram);
-                break;
-             case Metro:
-                route.setRouteType(RouteTypeEnum.Subway);
-                break;
-             case Rail:
-                route.setRouteType(RouteTypeEnum.Rail);
-                break;
-             case Water:
-             case Ferry:
-                route.setRouteType(RouteTypeEnum.Ferry);
-                break;
-             case Funicular:
-            	 route.setRouteType(RouteTypeEnum.Funicular);
-             case Cableway:
-            	 route.setRouteType(RouteTypeEnum.Gondola);
-             case TrolleyBus:
-             case Coach:
-             case Bus:
-             default:
-                route.setRouteType(RouteTypeEnum.Bus);
-             }
-         }
-      
+          if(neptuneObject.getTransportModeName().equals(TransportModeNameEnum.Bus) && BooleanUtils.isTrue(neptuneObject.getFlexibleService())){
+              route.setRouteType(RouteTypeEnum.DemandandResponseBusService);
+          }
+          else {
+              if(useTPEGRouteTypes) {
+                  route.setRouteType(RouteTypeEnum.from(neptuneObject.getTransportModeName(), neptuneObject.getTransportSubModeName()));
+              } else {
+
+                  switch (neptuneObject.getTransportModeName())
+                  {
+                      case Tram:
+                          route.setRouteType(RouteTypeEnum.Tram);
+                          break;
+                      case Metro:
+                          route.setRouteType(RouteTypeEnum.Subway);
+                          break;
+                      case Rail:
+                          route.setRouteType(RouteTypeEnum.Rail);
+                          break;
+                      case Water:
+                      case Ferry:
+                          route.setRouteType(RouteTypeEnum.Ferry);
+                          break;
+                      case Funicular:
+                          route.setRouteType(RouteTypeEnum.Funicular);
+                      case Cableway:
+                          route.setRouteType(RouteTypeEnum.Gondola);
+                      case TrolleyBus:
+                      case Coach:
+                      case Bus:
+                      default:
+                          route.setRouteType(RouteTypeEnum.Bus);
+                  }
+              }
+          }
       }
       else
       {

@@ -38,6 +38,14 @@ public interface ObjectIdTypes {
 	    * default objectId type for lines
 	    */
 	   public static final String LINE_KEY = "Line";
+		/**
+	 	* default objectId type for flexible lines
+	 	*/
+		public static final String FLEXIBLE_LINE_KEY = "FlexibleLine";
+		/**
+	 	* default objectId type for flexible service properties
+	 	*/
+		public static final String FLEXIBLE_SERVICE_PROPERTIES_KEY = "FlexibleServiceProperties";
 	   /**
 	    * default objectId type for ptlinks  (deprecated in next release)
 	    */
