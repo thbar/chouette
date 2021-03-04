@@ -27,7 +27,9 @@ import org.rutebanken.netex.model.StopPlace;
 import org.rutebanken.netex.model.StopTypeEnumeration;
 import org.rutebanken.netex.model.Zone_VersionStructure;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static mobi.chouette.common.Constant.IMPORTED_ID;
@@ -50,10 +52,16 @@ public class StopPlaceMapper {
     public StopPlace mapStopAreaToStopPlace(StopArea stopArea) {
         StopPlace stopPlace = mapStopPlace(stopArea);
         if (stopArea.getContainedStopAreas().size() > 0) {
+            List<String> alreadyProcessedQuays = new ArrayList<>();
             stopPlace.setQuays(new Quays_RelStructure());
             for (StopArea children : stopArea.getContainedStopAreas()) {
+
+                if (alreadyProcessedQuays.contains(children.getObjectId()))
+                    continue;
+
                 Quay quay = mapQuay(children);
                 stopPlace.getQuays().getQuayRefOrQuay().add(quay);
+                alreadyProcessedQuays.add(children.getObjectId());
             }
         }
 

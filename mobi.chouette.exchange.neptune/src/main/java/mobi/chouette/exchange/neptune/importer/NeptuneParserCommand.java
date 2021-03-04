@@ -82,6 +82,9 @@ public class NeptuneParserCommand implements Command, Constant {
 				factory = new NeptuneObjectFactory();
 				context.put(NEPTUNE_OBJECT_FACTORY, factory);
 				context.put(AREA_CENTROID_MAP, new HashMap<String, String>());
+				context.put(FILE_TO_REFERENTIAL_STOP_ID_MAP, new HashMap<String, String>());
+				context.put(QUAY_TO_STOPPLACE_MAP, new HashMap<String, String>());
+
 			} else {
 				factory.clear();
 			}

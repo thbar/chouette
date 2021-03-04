@@ -73,6 +73,11 @@ public interface Constant {
 
 	public static final String AREA_CENTROID_MAP = "areaCentroidMap";
 
+	public static final String FILE_TO_REFERENTIAL_STOP_ID_MAP = "fileToReferentialStopIdMap";
+	public static final String QUAY_TO_STOPPLACE_MAP = "quayToStopPlaceMap";
+
 	public static final String IMPORTED_ID = "imported-id";
+
+	public static final String MOBIITI_PREFIX = "MOBIITI";
 	
 }

@@ -53,7 +53,7 @@ public class ValidationData {
 	private Map<String,DataLocation> dataLocations = new HashMap<>();
 	private Map<String,Set<String>> linesOfStopAreas = new HashMap<>();
 	private Set<Interchange> interchanges = new HashSet<>();
-	
+
 
 	public void clear() {
 		vehicleJourneys.clear();
@@ -62,7 +62,7 @@ public class ValidationData {
 		stopPoints.clear();
 		currentLine = null;
 	}
-	
+
 	public void dispose()
 	{
 		clear();

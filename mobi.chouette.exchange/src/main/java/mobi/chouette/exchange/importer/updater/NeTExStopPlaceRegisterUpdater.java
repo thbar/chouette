@@ -42,6 +42,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static mobi.chouette.common.Constant.IMPORTED_ID;
+import static mobi.chouette.common.Constant.QUAY_TO_STOPPLACE_MAP;
 import static mobi.chouette.common.PropertyNames.*;
 
 @Log4j
@@ -261,6 +262,7 @@ public class NeTExStopPlaceRegisterUpdater {
 
             // Do not add stop places with no transport mode as they belong to no route.
             stopPlaces.removeAll(stopPlacesToDelete);
+            checkQuayAttachment(context,stopPlaces);
 
             siteFrame.setStopPlaces(new StopPlacesInFrame_RelStructure().withStopPlace(stopPlaces));
 
@@ -416,6 +418,39 @@ public class NeTExStopPlaceRegisterUpdater {
             referential.getStopAreas().remove(sa.getObjectId());
         }
 
+    }
+
+    private void checkQuayAttachment(Context context, List<StopPlace> stopPlaceList){
+        stopPlaceList.forEach(stopPlace -> checkQuayAttachmentForStopPlace(context,stopPlace));
+    }
+
+    private void checkQuayAttachmentForStopPlace(Context context, StopPlace stopPlace){
+        Map<String,String> quayToStopPlaceMap =  (Map<String,String>) context.get(QUAY_TO_STOPPLACE_MAP);
+
+        if (quayToStopPlaceMap == null)
+            return;
+
+        for (Object quayObj : stopPlace.getQuays().getQuayRefOrQuay()) {
+            if (!(quayObj instanceof Quay))
+                continue;
+
+            Quay quay = (Quay)quayObj;
+            String quayId = quay.getId();
+            String stopPlaceId = stopPlace.getId();
+
+            if (!quayToStopPlaceMap.containsKey(quayId)){
+                quayToStopPlaceMap.put(quayId,stopPlaceId);
+                continue;
+            }
+
+            String existingParentId = quayToStopPlaceMap.get(quayId);
+            if (existingParentId != null && !existingParentId.equals(stopPlaceId)){
+                log.error("Quay avec un nouveau parent : "+quayId);
+                log.error("ancien parent : "+existingParentId);
+                log.error("nouveau parent : "+stopPlaceId);
+            }
+
+        }
     }
 
     private void updateCommercialStopPoints(Map<String, String> stopPlaceRegisterMap, Referential referential){
