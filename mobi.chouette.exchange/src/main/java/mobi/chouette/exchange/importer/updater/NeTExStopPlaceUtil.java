@@ -1,16 +1,26 @@
 package mobi.chouette.exchange.importer.updater;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.TransportModeNameEnum;
 
+import org.rutebanken.netex.model.KeyListStructure;
+import org.rutebanken.netex.model.KeyValueStructure;
+import org.rutebanken.netex.model.StopPlace;
 import org.rutebanken.netex.model.StopTypeEnumeration;
+import org.rutebanken.netex.model.Zone_VersionStructure;
 
+import static mobi.chouette.common.Constant.IMPORTED_ID;
+
+@Log4j
 public class NeTExStopPlaceUtil {
 
 	public static StopTypeEnumeration mapTransportMode(TransportModeNameEnum mode) {
@@ -62,6 +72,34 @@ public class NeTExStopPlaceUtil {
 		}
 
 		return transportModes;
+	}
+
+	public static Optional<String> getImportedId(Zone_VersionStructure stopPlace){
+
+		KeyListStructure keyList = stopPlace.getKeyList();
+		if (keyList != null && keyList.getKeyValue() != null) {
+			List<KeyValueStructure> keyValue = keyList.getKeyValue();
+			for (KeyValueStructure structure : keyValue) {
+				if (structure != null && IMPORTED_ID.equals(structure.getKey())) {
+
+					String rawIds = structure.getValue();
+					List<String> idList = Arrays.stream(rawIds.split(","))
+												.distinct()
+												.collect(Collectors.toList());
+
+					if (idList.size()>1){
+						log.warn("Multiple Ids found for object:"+stopPlace.getId());
+						idList.forEach(id->log.warn("found id:"+id));
+					}
+					return Optional.of(idList.get(0));
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static String extractIdPostfix(String netexId) {
+		return netexId.substring(netexId.lastIndexOf(':') + 1).trim();
 	}
 
 }

@@ -1,5 +1,6 @@
 package mobi.chouette.exchange.importer.updater.netex;
 
+import mobi.chouette.exchange.importer.updater.NeTExStopPlaceUtil;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.LongLatTypeEnum;
@@ -105,7 +106,7 @@ public class StopAreaMapper {
         mapQuayUrl(quay, boardingPosition);
         mapQuayRegistrationNumber(quay, boardingPosition);
         createCompassBearing(quay, boardingPosition);
-        mapOriginalStopId(stopPlace,boardingPosition);
+        mapOriginalStopId(quay,boardingPosition);
         return boardingPosition;
     }
 
@@ -153,25 +154,13 @@ public class StopAreaMapper {
         return stopArea;
     }
 
-    private void mapOriginalStopId(StopPlace srcStopPlace, StopArea createdStopArea){
-        Optional<String> importedId = getImportedId(srcStopPlace);
-        importedId.ifPresent(createdStopArea::setOriginalStopId);
+    private void mapOriginalStopId(Zone_VersionStructure srcZone, StopArea createdStopArea){
+        Optional<String> importedIdOpt = NeTExStopPlaceUtil.getImportedId(srcZone);
+        importedIdOpt.ifPresent(importedId->createdStopArea.setOriginalStopId(NeTExStopPlaceUtil.extractIdPostfix(importedId)));
     }
 
 
-    private Optional<String> getImportedId(StopPlace stopPlace){
 
-        KeyListStructure keyList = stopPlace.getKeyList();
-        if (keyList != null && keyList.getKeyValue() != null) {
-            List<KeyValueStructure> keyValue = keyList.getKeyValue();
-            for (KeyValueStructure structure : keyValue) {
-                if (structure != null && IMPORTED_ID.equals(structure.getKey())) {
-                    return Optional.of(structure.getValue());
-                }
-            }
-        }
-        return Optional.empty();
-    }
 
     private void createCompassBearing(Quay quay, StopArea boardingPosition) {
         if (quay.getCompassBearing() != null) {
