@@ -850,12 +850,12 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         journeyPattern.setDepartureStopPoint(stopPoints.get(0));
         journeyPattern.setArrivalStopPoint(stopPoints.get(stopPoints.size() - 1));
 
-        if(!StringUtils.isEmpty(gtfsTrip.getTripHeadSign())) {
-            journeyPattern.setName(gtfsTrip.getTripHeadSign());
-            journeyPattern.setPublishedName(gtfsTrip.getTripHeadSign());
-        } else {
+        if(StringUtils.isEmpty(gtfsTrip.getTripHeadSign())) {
             journeyPattern.setName(journeyPattern.getArrivalStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
             journeyPattern.setPublishedName(journeyPattern.getArrivalStopPoint().getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName());
+        } else {
+            journeyPattern.setName(gtfsTrip.getTripHeadSign());
+            journeyPattern.setPublishedName(gtfsTrip.getTripHeadSign());
         }
 
         journeyPattern.setFilled(true);
