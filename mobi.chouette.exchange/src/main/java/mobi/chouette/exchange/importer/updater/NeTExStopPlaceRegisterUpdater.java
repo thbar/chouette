@@ -41,9 +41,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static mobi.chouette.common.Constant.IMPORTED_ID;
-import static mobi.chouette.common.Constant.QUAY_TO_STOPPLACE_MAP;
+import static mobi.chouette.common.Constant.*;
 import static mobi.chouette.common.PropertyNames.*;
+
 
 @Log4j
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -125,6 +125,9 @@ public class NeTExStopPlaceRegisterUpdater {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String ref = (String) context.get("ref");
+
+        Map<String,String> fileToReferentialStopIdMap =  (Map<String,String>) context.get(FILE_TO_REFERENTIAL_STOP_ID_MAP);
+
         initializeClient(ref);
 
         if (client == null) {
@@ -326,10 +329,12 @@ public class NeTExStopPlaceRegisterUpdater {
                     + correlationId);
 
             AtomicInteger mappedStopPlacesCount = new AtomicInteger();
-            receivedStopPlaces.forEach(e -> {
-                stopAreaMapper.mapStopPlaceToStopArea(referential, e);
+            receivedStopPlaces.forEach(stopPlace -> {
+                stopAreaMapper.mapStopPlaceToStopArea(referential, stopPlace);
+                feedFileToReferentialMap(fileToReferentialStopIdMap,stopPlace);
                 mappedStopPlacesCount.incrementAndGet();
             });
+
 
             log.info("Mapped "
                     + mappedStopPlacesCount.get()
@@ -418,6 +423,17 @@ public class NeTExStopPlaceRegisterUpdater {
             referential.getStopAreas().remove(sa.getObjectId());
         }
 
+    }
+
+    private void feedFileToReferentialMap(Map<String,String> fileToReferentialMap, StopPlace stopPlace){
+
+        for (Object o : stopPlace.getQuays().getQuayRefOrQuay()) {
+            if (o instanceof Quay){
+                Quay quay = (Quay) o;
+                Optional<String> importedIdOp = NeTExStopPlaceUtil.getImportedId(quay);
+                importedIdOp.ifPresent(importedId-> fileToReferentialMap.put(importedId,quay.getId()));
+            }
+        }
     }
 
     private void checkQuayAttachment(Context context, List<StopPlace> stopPlaceList){

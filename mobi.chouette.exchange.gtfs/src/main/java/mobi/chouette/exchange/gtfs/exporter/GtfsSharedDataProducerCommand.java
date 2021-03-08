@@ -162,7 +162,7 @@ public class GtfsSharedDataProducerCommand implements Command, Constant {
 			} else if (!physicalStops.contains(link.getEndOfLink()) && !commercialStops.contains(link.getEndOfLink())) {
 				continue;
 			}
-			transferProducer.save(link, sharedPrefix, configuration.isKeepOriginalId());
+			transferProducer.save(link, sharedPrefix, configuration.isKeepOriginalId(),idParams);
 		}
 		
 		// produce interchanges

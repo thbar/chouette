@@ -3,6 +3,7 @@ package mobi.chouette.exchange.gtfs.importer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import javax.naming.InitialContext;
 
@@ -50,6 +51,7 @@ public class GtfsInitImportCommand implements Command, Constant {
 				parameters.setReferencesType("line");
 			}
 			context.put(VALIDATION_DATA, new ValidationData());
+			context.put(FILE_TO_REFERENTIAL_STOP_ID_MAP, new HashMap<String, String>());
 			result = SUCCESS;
 
 		} catch (Exception e) {

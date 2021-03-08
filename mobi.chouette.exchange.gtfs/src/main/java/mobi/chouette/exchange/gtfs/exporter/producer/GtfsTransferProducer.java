@@ -9,10 +9,14 @@
 package mobi.chouette.exchange.gtfs.exporter.producer;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.exchange.gtfs.exporter.GtfsStopUtils;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporterInterface;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.Interchange;
+import mobi.chouette.model.StopArea;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * convert Timetable to Gtfs Calendar and CalendarDate
@@ -27,14 +31,19 @@ public class GtfsTransferProducer extends AbstractProducer {
 
 	private GtfsTransfer transfer = new GtfsTransfer();
 
-   public boolean save(ConnectionLink neptuneObject, String prefix, boolean keepOriginalId){
-   transfer.clear();
-      transfer.setFromStopId(toGtfsId(neptuneObject.getStartOfLink()
-            .getObjectId(),prefix,keepOriginalId));
-      transfer
-            .setToStopId(toGtfsId(neptuneObject.getEndOfLink().getObjectId(),prefix, keepOriginalId));
-      if (neptuneObject.getDefaultDuration() != null
-            && neptuneObject.getDefaultDuration().getStandardSeconds() > 1) {
+   public boolean save(ConnectionLink neptuneObject, String prefix, boolean keepOriginalId, IdParameters idParams){
+   	  transfer.clear();
+
+	   StopArea startArea = neptuneObject.getStartOfLink();
+	   StopArea endArea = neptuneObject.getEndOfLink();
+	   String fromStopId = StringUtils.isEmpty(startArea.getOriginalStopId()) ? toGtfsId(startArea.getObjectId(), prefix, keepOriginalId) : GtfsStopUtils.getNewStopId(startArea, idParams);
+	   String endStopId = StringUtils.isEmpty(endArea.getOriginalStopId()) ? toGtfsId(endArea.getObjectId(), prefix, keepOriginalId) : GtfsStopUtils.getNewStopId(endArea, idParams);
+
+      transfer.setFromStopId(fromStopId);
+      transfer.setToStopId(endStopId);
+
+
+      if (neptuneObject.getDefaultDuration() != null && neptuneObject.getDefaultDuration().getStandardSeconds() > 1) {
          transfer.setMinTransferTime((int)neptuneObject.getDefaultDuration().getStandardSeconds());
          transfer.setTransferType(GtfsTransfer.TransferType.Minimal);
       } else

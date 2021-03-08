@@ -134,6 +134,8 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             }
             Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
+            commands.add(CommandFactory.create(initialContext, ConnectionLinkPersisterCommand.class.getName()));
+
         } catch (Exception e) {
             log.error(e, e);
             throw new RuntimeException("unable to call factories");
