@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 @NoArgsConstructor
 @ToString(callSuper=true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={"objectIdPrefix","timeZone","keepOriginalId","useTpegHvt"})
+@XmlType(propOrder={"objectIdPrefix","timeZone","keepOriginalId","useTpegHvt","mappingLinesIds"})
 
 public class GtfsExportParameters  extends AbstractExportParameter {
 		
@@ -36,6 +36,11 @@ public class GtfsExportParameters  extends AbstractExportParameter {
 	@Getter @Setter
 	@XmlElement(name = "use_tpeg_hvt",required = false)
 	private boolean useTpegHvt = false;
+
+	@Getter
+	@Setter
+	@XmlElement(name = "mapping_lines_ids")
+	private boolean mappingLinesIds = false;
 	
 	public boolean isValid(Logger log, String[] allowedTypes)
 	{
