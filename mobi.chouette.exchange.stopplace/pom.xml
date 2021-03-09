@@ -4,7 +4,7 @@
     <parent>
         <groupId>mobi.chouette</groupId>
         <artifactId>mobi.chouette</artifactId>
-        <version>5.0.0-mobi-iti-SNAPSHOT</version>
+        <version>5.0.1-mobi-iti-SNAPSHOT</version>
     </parent>
     <artifactId>mobi.chouette.exchange.stopplace</artifactId>
     <packaging>ejb</packaging>
@@ -34,7 +34,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.entur</groupId>
+            <groupId>com.okina</groupId>
             <artifactId>netex-java-model</artifactId>
         </dependency>
 

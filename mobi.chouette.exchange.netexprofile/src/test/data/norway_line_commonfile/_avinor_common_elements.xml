@@ -811,186 +811,370 @@
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:AES">
                             <Name>Ålesund Lufthavn</Name>
                             <ShortName>AES</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:ALF">
                             <Name>Alta Lufthavn</Name>
                             <ShortName>ALF</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:ANX">
                             <Name>Andøya Lufthavn</Name>
                             <ShortName>ANX</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BDU">
                             <Name>Bardufoss Lufthavn</Name>
                             <ShortName>BDU</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BGO">
                             <Name>Bergen Lufthavn</Name>
                             <ShortName>BGO</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BJF">
                             <Name>Båtsfjord Lufthavn</Name>
                             <ShortName>BJF</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BNN">
                             <Name>Brønnøysund Lufthavn</Name>
                             <ShortName>BNN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BOO">
                             <Name>Bodø Lufthavn</Name>
                             <ShortName>BOO</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BVG">
                             <Name>Berlevåg Lufthavn</Name>
                             <ShortName>BVG</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:EVE">
                             <Name>Harstad/Narvik Lufthavn</Name>
                             <ShortName>EVE</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:FDE">
                             <Name>Førde Lufthamn</Name>
                             <ShortName>FDE</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:FRO">
                             <Name>Florø Lufthamn</Name>
                             <ShortName>FRO</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:HAA">
                             <Name>Hasvik Lufthavn</Name>
                             <ShortName>HAA</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:HAU">
                             <Name>Haugesund Lufthavn</Name>
                             <ShortName>HAU</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:HFT">
                             <Name>Hammerfest Lufthavn</Name>
                             <ShortName>HFT</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:HOV">
                             <Name>Ørsta-Volda Lufthamn</Name>
                             <ShortName>HOV</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:HVG">
                             <Name>Honningsvåg Lufthavn</Name>
                             <ShortName>HVG</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:KKN">
                             <Name>Kirkenes Lufthavn</Name>
                             <ShortName>KKN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:KRS">
                             <Name>Kristiansand Lufthavn</Name>
                             <ShortName>KRS</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:KSU">
                             <Name>Kristiansund Lufthavn</Name>
                             <ShortName>KSU</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:LKL">
                             <Name>Lakselv Lufthavn</Name>
                             <ShortName>LKL</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:LKN">
                             <Name>Leknes Lufthavn</Name>
                             <ShortName>LKN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:LYR">
                             <Name>Svalbard Lufthavn</Name>
                             <ShortName>LYR</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:MEH">
                             <Name>Mehamn Lufthavn</Name>
                             <ShortName>MEH</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:MJF">
                             <Name>Mosjøen Lufthavn</Name>
                             <ShortName>MJF</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:MOL">
                             <Name>Molde Lufthavn</Name>
                             <ShortName>MOL</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:MQN">
                             <Name>Mo i Rana Lufthavn</Name>
                             <ShortName>MQN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:NVK">
                             <Name>Narvik Lufthavn</Name>
                             <ShortName>NVK</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:OSL">
                             <Name>Oslo Lufthavn</Name>
                             <ShortName>OSL</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:OSY">
                             <Name>Namsos Lufthavn</Name>
                             <ShortName>OSY</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:RET">
                             <Name>Røst Lufthavn</Name>
                             <ShortName>RET</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:RRS">
                             <Name>Røros Lufthavn</Name>
                             <ShortName>RRS</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:RVK">
                             <Name>Rørvik Lufthavn</Name>
                             <ShortName>RVK</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SDN">
                             <Name>Sandane Lufthamn</Name>
                             <ShortName>SDN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SKN">
                             <Name>Stokmarknes Lufthavn</Name>
                             <ShortName>SKN</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SOG">
                             <Name>Sogndal Lufthamn</Name>
                             <ShortName>SOG</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SOJ">
                             <Name>Sørkjosen Lufthavn</Name>
                             <ShortName>SOJ</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SSJ">
                             <Name>Sandnessjøen Lufthavn</Name>
                             <ShortName>SSJ</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SVG">
                             <Name>Stavanger Lufthavn</Name>
                             <ShortName>SVG</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:SVJ">
                             <Name>Svolvær Lufthavn</Name>
                             <ShortName>SVJ</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:TOS">
                             <Name>Tromsø Lufthavn</Name>
                             <ShortName>TOS</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:TRD">
                             <Name>Trondheim Lufthavn</Name>
                             <ShortName>TRD</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:VAW">
                             <Name>Vardø Lufthavn</Name>
                             <ShortName>VAW</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:VDB">
                             <Name>Fagernes Lufthamn</Name>
                             <ShortName>VDB</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:VDS">
                             <Name>Vadsø Lufthavn</Name>
                             <ShortName>VDS</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                         <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:VRY">
                             <Name>Værøy Helikopterhavn</Name>
                             <ShortName>VRY</ShortName>
+                            <Location>
+                                <Longitude>1.88674</Longitude>
+                                <Latitude>48.698231</Latitude>
+                            </Location>
                         </ScheduledStopPoint>
                     </scheduledStopPoints>
                     <stopAssignments>

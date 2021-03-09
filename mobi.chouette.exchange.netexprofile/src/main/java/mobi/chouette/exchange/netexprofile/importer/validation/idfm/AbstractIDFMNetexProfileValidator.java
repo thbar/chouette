@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 @Log4j
 public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexProfileValidator {
 
-    public static final String PROFILE_IDFM_FR1 = "1.04:FR1-NETEX-2.0-z";
+    public static final String PROFILE_IDFM_FR1 = "1.1:FR-NETEX-2.2-z";
 
     public static final String EXPORT_PROFILE_ID = PROFILE_IDFM_FR1; // Update when new profile version is implemented
 
     public static String NSR_XMLNSURL = "http://ratp.mosaic.pro/mosaic";
     public static String NSR_XMLNS = "MOSAIC";
 
-    public static final String PARTICIPANT_REF_CONTENT = "FR1";
+    public static final String PARTICIPANT_REF_CONTENT = "FR";
 
     protected static final String ID_STRUCTURE_REGEXP = "^([0-9A-Za-z]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*:LOC)$";
 

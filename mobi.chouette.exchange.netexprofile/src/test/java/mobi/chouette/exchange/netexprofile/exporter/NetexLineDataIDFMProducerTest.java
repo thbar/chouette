@@ -42,9 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static mobi.chouette.common.Constant.EXPORTABLE_DATA;
-import static mobi.chouette.common.Constant.JOB_DATA;
-import static mobi.chouette.common.Constant.REPORT;
+import static mobi.chouette.common.Constant.*;
 import static mobi.chouette.exchange.netexprofile.Constant.EXPORTABLE_NETEX_DATA;
 import static mobi.chouette.exchange.netexprofile.Constant.MARSHALLER;
 
@@ -55,6 +53,8 @@ public class NetexLineDataIDFMProducerTest {
 
         Context context = createContext();
 
+        context.put(CREATION_DATE,LocalDateTime.now());
+
         NetexLineDataIDFMProducer netexLineDataIDFMProducer = new NetexLineDataIDFMProducer();
         netexLineDataIDFMProducer.produce(context);
 
@@ -62,7 +62,7 @@ public class NetexLineDataIDFMProducerTest {
 
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getId(), "TEST:Route:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "FR1:Line:TestCodifligne:");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:l1");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getRef(), "TEST:Direction:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getVersion(), "any");
@@ -126,9 +126,9 @@ public class NetexLineDataIDFMProducerTest {
         Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
         Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getScheduledStopPointRef().getValue().getVersion(), "any");
 
-        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getQuayRef().getRef(), "FR::Quay:testzdep1:FR1");
-        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getQuayRef().getRef(), "FR::Quay:testzdep2:FR1");
-        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getQuayRef().getRef(), "FR::Quay:testzdep3:FR1");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp1:LOC").getQuayRef().getRef(), "TEST:Quay:quay1");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp2:LOC").getQuayRef().getRef(), "TEST:Quay:quay2");
+        Assert.assertEquals(exportableNetexDataResult.getStopAssignments().get("TEST:PassengerStopAssignment:ssp3:LOC").getQuayRef().getRef(), "TEST:Quay:quay3");
 
         Assert.assertEquals(exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getId(), "TEST:DestinationDisplay:dd1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getDestinationDisplays().get("TEST:DestinationDisplay:dd1:LOC").getVersion(), "any");
@@ -201,6 +201,11 @@ public class NetexLineDataIDFMProducerTest {
     }
 
     private Context createContext() throws JAXBException {
+
+        File file = new File("src/test/data/idfm/output/offre_TestCodifligne_.xml");
+        file.getParentFile().mkdirs();
+
+
         Line line = new Line();
         line.setObjectId("TEST:Line:l1");
         line.setRegistrationNumber("l1");

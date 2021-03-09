@@ -50,9 +50,9 @@ public final class NetexObjectIdTypes {
     public static final String MEMBERS = "members";
 
 
-    public static final String NETEX_STRUCTURE = "NETEX_STRUCTURE";
+    public static final String NETEX_LIGNE = "NETEX_LIGNE";
     public static final String NETEX_HORAIRE = "NETEX_HORAIRE";
-    public static final String NETEX_OFFRE_LIGNE = "NETEX_OFFRE_LIGNE";
+    public static final String NETEX_RESEAUX = "NETEX_RESEAUX";
     public static final String NETEX_CALENDRIER = "NETEX_CALENDRIER";
     public static final String NETEX_COMMUN = "NETEX_COMMUN";
 

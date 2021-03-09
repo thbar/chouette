@@ -212,7 +212,7 @@ public class NetexProducerUtils {
 
 	public static String createUniqueCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
-		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+idLine+OBJECT_ID_SPLIT_CHAR+LOC;
+		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+LOC;
 	}
 
 
@@ -327,7 +327,8 @@ public class NetexProducerUtils {
 
 	public static JAXBElement<? extends LineRefStructure> createLineIDFMRef(Line neptuneLine, ObjectFactory netexFactory) {
 		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
-		lineRefStruct.setRef("FR1:Line:" + neptuneLine.getCodifligne() + OBJECT_ID_SPLIT_CHAR);
+		//lineRefStruct.setRef("FR1:Line:" + neptuneLine.getCodifligne() + OBJECT_ID_SPLIT_CHAR);
+		lineRefStruct.setRef(neptuneLine.getObjectId());
 		lineRefStruct.setVersion(null);
 		lineRefStruct.setValue("version=\"any\"");
 		return netexFactory.createLineRef(lineRefStruct);

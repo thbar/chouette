@@ -98,8 +98,8 @@ public class NetexLineProducerCommand implements Command, Constant {
             reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.ACCESS_POINT, collection.getAccessPoints().size());
             reporter.setStatToObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, ActionReporter.OBJECT_TYPE.STOP_AREA, collection.getStopAreas().size());
 
-            // TODO enlever la vérification sur la présence du codifligne de PROFIL IDFM Norvégien
-            if (cont && StringUtils.isNotEmpty(line.getCodifligne())) {
+
+            if (cont) {
                 try {
                     // TODO changer d'un data producer à l'autre pour changer de PROFIL IDFM Norvégien
 //                    NetexLineDataProducer producer = new NetexLineDataProducer();

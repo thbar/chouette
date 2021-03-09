@@ -24,8 +24,8 @@ import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.FRAMES
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_CALENDRIER;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_COMMUN;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_HORAIRE;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_OFFRE_LIGNE;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_STRUCTURE;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_RESEAUX;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_LIGNE;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.PARTICIPANT_REF;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.PUBLICATION_DELIVERY;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.PUBLICATION_TIMESTAMP;
@@ -76,7 +76,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
     private static void writeGeneralFrameElement(Context context, XMLStreamWriter writer, ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
 
         if(fragmentMode.equals(NetexFragmentMode.LINE)){
-            GeneralFrameIDFMWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_STRUCTURE);
+            GeneralFrameIDFMWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_LIGNE);
             GeneralFrameIDFMWriter.write(writer, context, exportableNetexData, fragmentMode, marshaller, timestamp, NETEX_HORAIRE);
         }
 
@@ -92,7 +92,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
     private static void writeCompositeFrameElement(Context context, XMLStreamWriter writer, ExportableData exportableData,
                                                    ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
         mobi.chouette.model.Line line = exportableData.getLine();
-        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_OFFRE_LIGNE, line.getCodifligne());
+        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_RESEAUX, line.getCodifligne());
 
         try {
             writer.writeStartElement(COMPOSITE_FRAME);
@@ -103,8 +103,8 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
             writeElement(writer, NAME, line.getName());
 
             TypeOfFrameRefStructure typeOfFrameRefStructure = new TypeOfFrameRefStructure();
-            typeOfFrameRefStructure.withRef(PARTICIPANT_REF_CONTENT + ":TypeOfFrame:" + NETEX_OFFRE_LIGNE + ":");
-            typeOfFrameRefStructure.withValue("version=\"1.04:FR1-NETEX_OFFRE_LIGNE-2.1\"");
+            typeOfFrameRefStructure.withRef(PARTICIPANT_REF_CONTENT + ":TypeOfFrame:" + NETEX_RESEAUX + ":");
+            typeOfFrameRefStructure.withValue("version=\"1.1:FR-NETEX_RESEAUX-2.2\"");
             marshaller.marshal(netexFactory.createTypeOfFrameRef(typeOfFrameRefStructure), writer);
 
             writer.writeStartElement(FRAMES);

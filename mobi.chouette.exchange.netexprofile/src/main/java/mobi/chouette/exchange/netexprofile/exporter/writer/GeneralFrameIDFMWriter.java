@@ -13,7 +13,7 @@ import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProduce
 import static mobi.chouette.exchange.netexprofile.exporter.writer.AbstractNetexWriter.VERSION;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.GENERAL_FRAME;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_HORAIRE;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_STRUCTURE;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.NETEX_LIGNE;
 
 public class GeneralFrameIDFMWriter {
 
@@ -32,7 +32,7 @@ public class GeneralFrameIDFMWriter {
                         dtr.getValue().setVersion(null);
                     });
 
-            if (typeNetex.equals(NETEX_STRUCTURE)) {
+            if (typeNetex.equals(NETEX_LIGNE)) {
                 NetexStructureWriter.writer(writer, context, exportableNetexData, marshaller, timestamp, typeNetex);
             }
 

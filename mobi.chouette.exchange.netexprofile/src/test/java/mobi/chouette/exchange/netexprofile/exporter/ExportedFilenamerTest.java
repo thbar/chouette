@@ -22,7 +22,7 @@ public class ExportedFilenamerTest {
 		line.setObjectId("TST:Line:1");
 		String lineFilename = ExportedFilenamer.createLineFilename(context, line);
 
-		Assert.assertEquals(lineFilename, "offre_TST-Line-1_EOAeoa.xml");
+		Assert.assertEquals(lineFilename, "TST_TST-Line-1_EOAeoa.xml");
 
 	}
 }

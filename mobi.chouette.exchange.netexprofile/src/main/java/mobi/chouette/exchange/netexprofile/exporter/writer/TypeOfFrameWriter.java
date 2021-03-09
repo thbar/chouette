@@ -14,7 +14,7 @@ public class TypeOfFrameWriter {
     public static void typeOfFrameWriter(XMLStreamWriter writer, Marshaller marshaller, String typeOfFrame) throws JAXBException {
         TypeOfFrameRefStructure typeOfFrameRefStructure = new TypeOfFrameRefStructure();
         typeOfFrameRefStructure.withRef(PARTICIPANT_REF_CONTENT + ":TypeOfFrame:" + typeOfFrame + ":");
-        typeOfFrameRefStructure.withValue("version=\"1.04:FR1-" + typeOfFrame + "-2.1\"");
+        typeOfFrameRefStructure.withValue("version=\"1.1:FR-" + typeOfFrame + "-2.2\"");
         marshaller.marshal(netexFactory.createTypeOfFrameRef(typeOfFrameRefStructure), writer);
     }
 }

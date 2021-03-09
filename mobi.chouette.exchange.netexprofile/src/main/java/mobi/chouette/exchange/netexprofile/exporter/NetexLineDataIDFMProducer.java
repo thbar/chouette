@@ -21,22 +21,29 @@ import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import org.rutebanken.netex.model.DestinationDisplay;
+import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.PassengerStopAssignment;
 import org.rutebanken.netex.model.QuayRefStructure;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
+import org.rutebanken.netex.model.ValidBetween;
+import org.rutebanken.netex.model.ValidityConditions_RelStructure;
+import org.rutebanken.netex.model.ValidityTriggerRefStructure;
 
 import javax.xml.bind.Marshaller;
 import java.io.File;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.netexId;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.PASSENGER_STOP_ASSIGNMENT;
+import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.VALIDITY_CONDITIONS;
 
 public class NetexLineDataIDFMProducer extends NetexProducer implements Constant {
 
@@ -187,6 +194,14 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             if (isSet(chouetteScheduledStopPoint.getContainedInStopAreaRef().getObject())) {
                 ScheduledStopPoint scheduledStopPoint = netexFactory.createScheduledStopPoint();
                 NetexProducerUtils.populateIdAndVersionIDFM(chouetteScheduledStopPoint, scheduledStopPoint);
+
+
+                LocationStructure locationStructure = new LocationStructure();
+                locationStructure.setLatitude(chouetteScheduledStopPoint.getContainedInStopAreaRef().getObject().getLatitude());
+
+                locationStructure.setLongitude(chouetteScheduledStopPoint.getContainedInStopAreaRef().getObject().getLongitude());
+
+                scheduledStopPoint.setLocation(locationStructure);
                 exportableNetexData.getScheduledStopPoints().put(scheduledStopPoint.getId(), scheduledStopPoint);
             } else {
                 throw new RuntimeException(
