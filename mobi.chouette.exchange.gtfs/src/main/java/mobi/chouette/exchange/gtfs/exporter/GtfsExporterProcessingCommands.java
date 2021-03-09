@@ -36,9 +36,13 @@ public class GtfsExporterProcessingCommands implements ProcessingCommands, Const
 	@Override
 	public List<? extends Command> getPreProcessingCommands(Context context, boolean withDao) {
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+		GtfsExportParameters parameters = (GtfsExportParameters) context.get(CONFIGURATION);
 		List<Command> commands = new ArrayList<>();
 		try {
 			commands.add(CommandFactory.create(initialContext, GtfsInitExportCommand.class.getName()));
+			if (parameters.isMappingLinesIds()) {
+				commands.add(CommandFactory.create(initialContext, MappingLinesIdsCommand.class.getName()));
+			}
 		} catch (Exception e) {
 			log.error(e, e);
 			throw new RuntimeException("unable to call factories");

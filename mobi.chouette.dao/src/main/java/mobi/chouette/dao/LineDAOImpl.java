@@ -63,4 +63,13 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 				.setParameter("networkId", networkId)
 				.getResultList();
 	}
+
+	@Override
+	public List<String> findObjectIdLinesInFirstDataspace(List<Long> ids, String dataspace) {
+		return em.createNativeQuery("SELECT l.objectid " +
+				"                   FROM " + dataspace + ".lines l " +
+				"                  WHERE l.id IN :ids")
+				.setParameter("ids", ids)
+				.getResultList();
+	}
 }
