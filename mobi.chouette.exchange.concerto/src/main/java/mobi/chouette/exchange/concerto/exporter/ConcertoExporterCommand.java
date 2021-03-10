@@ -63,6 +63,8 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				return ERROR;
 			}
 
+			ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(CONFIGURATION);
+
 			// init
 			ProcessingCommands commands = ProcessingCommandsFactory
 					.create(ConcertoExporterProcessingCommands.class.getName());
@@ -106,7 +108,7 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				Optional<Provider> provider = providerDAO.findBySchema(schema);
 				provider.ifPresent(value -> context.put(OBJECT_TYPE_CONCERTO, value.getObjectTypeConcerto()));
 				provider.ifPresent(value -> context.put(PROVIDER, value.getSchemaName()));
-				provider.ifPresent(value -> context.put(PERIOD, value.getPeriodConcerto()));
+				provider.ifPresent(value -> parameters.setPeriod(value.getPeriodConcerto()));
 
 				log.info("Export Concerto, filiale : " + schema);
 

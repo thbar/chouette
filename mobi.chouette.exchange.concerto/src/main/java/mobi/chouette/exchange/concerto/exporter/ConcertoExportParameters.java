@@ -11,16 +11,21 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "concerto-export")
 @NoArgsConstructor
 @ToString(callSuper=true)
 @XmlAccessorType(XmlAccessType.FIELD)
-
+@XmlType(propOrder = {"period"})
 public class ConcertoExportParameters extends AbstractExportParameter {
+
+	@Getter
+	@Setter
+	@XmlElement(name = "period")
+	private Integer period;
 
 	public boolean isValid(Logger log) {
 		return true;
 	}
-
 }

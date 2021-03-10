@@ -31,10 +31,10 @@ import java.io.IOException;
  *
  */
 @Log4j
-@Stateless(name = DaoConcertoLineProducerCommand.COMMAND)
-public class DaoConcertoLineProducerCommand implements Command, Constant
+@Stateless(name = DaoConcertoLineCollectCommand.COMMAND)
+public class DaoConcertoLineCollectCommand implements Command, Constant
 {
-	public static final String COMMAND = "DaoConcertoLineProducerCommand";
+	public static final String COMMAND = "DaoConcertoLineCollectCommand";
 
 	@EJB
 	private LineDAO lineDAO;
@@ -50,7 +50,7 @@ public class DaoConcertoLineProducerCommand implements Command, Constant
 			Long lineId = (Long) context.get(LINE_ID);
 			Line line = lineDAO.find(lineId);
 			InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
-			Command export = CommandFactory.create(initialContext, ConcertoLineProducerCommand.class.getName());
+			Command export = CommandFactory.create(initialContext, ConcertoLineCollectCommand.class.getName());
 			
 			context.put(LINE, line);
 			result = export.execute(context);
@@ -88,7 +88,7 @@ public class DaoConcertoLineProducerCommand implements Command, Constant
 	}
 
 	static {
-		CommandFactory.factories.put(DaoConcertoLineProducerCommand.class.getName(),
+		CommandFactory.factories.put(DaoConcertoLineCollectCommand.class.getName(),
 				new DefaultCommandFactory());
 	}
 

@@ -8,6 +8,8 @@
 
 package mobi.chouette.exchange.concerto.exporter.producer;
 
+import mobi.chouette.common.Context;
+import mobi.chouette.exchange.concerto.exporter.MappingLineUUID;
 import mobi.chouette.exchange.concerto.model.ConcertoStopArea;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoExporterInterface;
 
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static mobi.chouette.common.Constant.MAPPING_LINE_UUID;
+
 /**
  * Data pour stop_area
  */
@@ -27,8 +31,10 @@ public class ConcertoStopProducer extends AbstractProducer {
 		super(exporter);
 	}
 
-	public void save(List<ConcertoStopArea> concertoStopAreas) {
+	public void save(Context context, List<ConcertoStopArea> concertoStopAreas) {
 		Map<UUID, UUID> concertoStopAreasToDelete = new HashMap<>();
+		List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>)context.get(MAPPING_LINE_UUID);
+
 		for (ConcertoStopArea concertoStopArea : concertoStopAreas) {
 			for (ConcertoStopArea concertoStopArea1 : concertoStopAreas) {
 
@@ -41,6 +47,9 @@ public class ConcertoStopProducer extends AbstractProducer {
 					List<UUID> uuids = new ArrayList<>(Arrays.asList(concertoStopArea.getLines()));
 					List<UUID> uuids1 = new ArrayList<>(Arrays.asList(concertoStopArea1.getLines()));
 					uuids.addAll(uuids1);
+
+					uuids.removeIf(uuid -> mappingLineUUIDList.stream().noneMatch(mappingLineUUID -> mappingLineUUID.getUuid().equals(uuid)));
+
 					lineIdArray = new UUID[uuids.size()];
 					lineIdArray = uuids.toArray(lineIdArray);
 					concertoStopArea.setLines(lineIdArray);

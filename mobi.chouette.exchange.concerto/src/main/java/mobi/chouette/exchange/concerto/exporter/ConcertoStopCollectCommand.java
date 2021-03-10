@@ -71,7 +71,7 @@ public class ConcertoStopCollectCommand implements Command, Constant {
 				return ERROR;
 			}
 
-			saveData(context);
+			collectStopAreas(context);
 			reporter.addObjectReport(context, "merged", OBJECT_TYPE.COMPANY, "companies", OBJECT_STATE.OK,
 					IO_TYPE.OUTPUT);
 			reporter.addObjectReport(context, "merged", OBJECT_TYPE.STOP_AREA, "stop areas", OBJECT_STATE.OK,
@@ -88,7 +88,7 @@ public class ConcertoStopCollectCommand implements Command, Constant {
 		return result;
 	}
 
-	private void saveData(Context context) throws JSONException, JAXBException {
+	private void collectStopAreas(Context context) throws JSONException, JAXBException {
 		ConcertoExporter exporter = (ConcertoExporter) context.get(CONCERTO_EXPORTER);
 		ConcertoExportParameters parameters = (ConcertoExportParameters) context.get(CONFIGURATION);
 		ConcertoStopProducer stopProducer = new ConcertoStopProducer(exporter);
@@ -98,21 +98,8 @@ public class ConcertoStopCollectCommand implements Command, Constant {
 		String objectTypeConcerto = (String) context.get(OBJECT_TYPE_CONCERTO);
 		String provider = (String) context.get(PROVIDER);
 
-		LocalDate startDate;
-		if (parameters.getStartDate() != null) {
-			startDate = LocalDate.fromDateFields(parameters.getStartDate());
-		} else {
-			startDate = new LocalDate();
-		}
-
-		LocalDate endDate;
-		if (parameters.getEndDate() != null) {
-			endDate = LocalDate.fromDateFields(parameters.getEndDate());
-		} else if (context.get(PERIOD) != null) {
-			endDate = startDate.plusDays((Integer) context.get(PERIOD) - 1);
-		} else {
-			endDate = startDate.plusDays(29);
-		}
+		LocalDate startDate = stopProducer.getStartDate(parameters);
+		LocalDate endDate = stopProducer.getEndDate(parameters, startDate);
 
 		Set<StopArea> physicalStops = collection.getPhysicalStops();
 		List<StopArea> zderStops = new ArrayList<>();
@@ -141,7 +128,7 @@ public class ConcertoStopCollectCommand implements Command, Constant {
 			ConcertoObjectId objectId = ConcertoStopAreaZdepObjectIdGenerator.getConcertoObjectId(stop);
 			String concertoObjectId = stopProducer.getObjectIdConcerto(objectId, objectTypeConcerto);
 			for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-				ConcertoStopArea concertoStopArea =  save(stop, null, stopZder, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDEP, date);
+				ConcertoStopArea concertoStopArea = save(stop, null, stopZder, concertoObjectId, lineIdArray, StopAreaTypeEnum.ZDEP, date);
 				concertoStopAreas.add(concertoStopArea);
 			}
 		}

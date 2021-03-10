@@ -8,6 +8,7 @@ import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
+import mobi.chouette.exchange.concerto.exporter.producer.ConcertoOperatorProducer;
 import mobi.chouette.exchange.exporter.MergeCommand;
 import mobi.chouette.exchange.importer.UpdateMappingZdepZderZdlrCommand;
 import mobi.chouette.persistence.hibernate.ContextHolder;
@@ -56,9 +57,9 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 		List<Command> commands = new ArrayList<>();
 		try {
 			if (withDao)
-				commands.add(CommandFactory.create(initialContext, DaoConcertoLineProducerCommand.class.getName()));
+				commands.add(CommandFactory.create(initialContext, DaoConcertoLineCollectCommand.class.getName()));
 			else
-				commands.add(CommandFactory.create(initialContext, ConcertoLineProducerCommand.class.getName()));
+				commands.add(CommandFactory.create(initialContext, ConcertoLineCollectCommand.class.getName()));
 		} catch (Exception e) {
 			log.error(e, e);
 			throw new RuntimeException("unable to call factories");
@@ -72,10 +73,13 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 		List<Command> commands = new ArrayList<>();
 		try {
-			commands.add(CommandFactory.create(initialContext, DaoConcertoOperatorProducerCommand.class.getName()));
+			commands.add(CommandFactory.create(initialContext, DaoConcertoOperatorCollectCommand.class.getName()));
 			commands.add(CommandFactory.create(initialContext, ConcertoStopCollectCommand.class.getName()));
 			if(allSchemas) {
+				commands.add(CommandFactory.create(initialContext, ConcertoOperatorProducerCommand.class.getName()));
+				commands.add(CommandFactory.create(initialContext, ConcertoLineProducerCommand.class.getName()));
 				commands.add(CommandFactory.create(initialContext, ConcertoStopProducerCommand.class.getName()));
+
 				commands.add(CommandFactory.create(initialContext, ConcertoTerminateExportCommand.class.getName()));
 				commands.add(CommandFactory.create(initialContext, MergeCommand.class.getName()));
 			}

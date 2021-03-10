@@ -9,13 +9,17 @@
 package mobi.chouette.exchange.concerto.exporter.producer;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.common.Context;
+import mobi.chouette.exchange.concerto.exporter.MappingLineUUID;
 import mobi.chouette.exchange.concerto.model.ConcertoLine;
-import mobi.chouette.exchange.concerto.model.ConcertoObjectId;
 import mobi.chouette.exchange.concerto.model.exporter.ConcertoExporterInterface;
-import mobi.chouette.model.Line;
-import org.joda.time.LocalDate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import static mobi.chouette.common.Constant.MAPPING_LINE_UUID;
 
 /**
  * convert line to concerto
@@ -23,51 +27,39 @@ import java.util.UUID;
 @Log4j
 public class ConcertoLineProducer extends AbstractProducer
 {
-    private final String TYPE = "line";
-
     public ConcertoLineProducer(ConcertoExporterInterface exporter)
     {
       super(exporter);
     }
 
-    private ConcertoLine line = new ConcertoLine();
 
-    public UUID save(Line neptuneObject, LocalDate startDate, LocalDate endDate, String objectId){
-        UUID uuid = UUID.randomUUID();
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1))
-        {
-            if(!save(neptuneObject, date, objectId, uuid)) ;
-        }
-        return uuid;
-    }
+    public void save(Context context, List<ConcertoLine> concertoLines) {
+        List<MappingLineUUID> mappingLineUUIDList = (List<MappingLineUUID>) context.get(MAPPING_LINE_UUID);
+        Map<UUID, UUID> concertoLinesToDelete = new HashMap<>();
+        for (ConcertoLine concertoLine : concertoLines) {
+            for (ConcertoLine concertoLine1 : concertoLines) {
 
-    public boolean save(Line neptuneObject, LocalDate date, String objectId, UUID uuid)
-    {
-        // On ne traite que les lignes IDFM
-        if(!neptuneObject.getCategoriesForLine().getName().equals("IDFM")){
-            return false;
-        }
-        line.setType(TYPE);
-        line.setUuid(uuid);
-        line.setDate(date);
-        line.setName(neptuneObject.getNumber());
-        line.setObjectId(objectId);
-        line.setAttributes("{}");
-        line.setReferences("{}");
-        line.setCollectedAlways(true);
-        line.setCollectChildren(true);
-        line.setCollectGeneralMessages(true);
+                if (!concertoLine.getUuid().equals(concertoLine1.getUuid()) &&
+                        concertoLine.getObjectId().equals(concertoLine1.getObjectId()) &&
+                        concertoLine.getDate().equals(concertoLine1.getDate()) &&
+                        !concertoLinesToDelete.containsKey(concertoLine1.getUuid())) {
 
-        try
-        {
-            getExporter().getLineExporter().export(line);
-        }
-        catch (Exception e)
-        {
-             log.warn("export failed for line "+neptuneObject.getObjectId(),e);
-             return false;
+                    concertoLinesToDelete.put(concertoLine.getUuid(), concertoLine1.getUuid());
+                }
+            }
         }
 
-        return true;
+        concertoLines.removeIf(concertoLine -> concertoLinesToDelete.containsValue(concertoLine.getUuid()));
+        mappingLineUUIDList.removeIf(mappingLineUUID -> concertoLinesToDelete.containsValue(mappingLineUUID.getUuid()));
+
+        context.put(MAPPING_LINE_UUID, mappingLineUUIDList);
+
+        for (ConcertoLine concertoLine : concertoLines) {
+            try {
+                getExporter().getLineExporter().export(concertoLine);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
