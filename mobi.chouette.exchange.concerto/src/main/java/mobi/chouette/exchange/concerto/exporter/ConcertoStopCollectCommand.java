@@ -67,17 +67,10 @@ public class ConcertoStopCollectCommand implements Command, Constant {
 		try {
 
 			ExportableData collection = (ExportableData) context.get(EXPORTABLE_DATA);
-			if (collection == null) {
-				return ERROR;
+			if (collection != null) {
+				collectStopAreas(context);
 			}
 
-			collectStopAreas(context);
-			reporter.addObjectReport(context, "merged", OBJECT_TYPE.COMPANY, "companies", OBJECT_STATE.OK,
-					IO_TYPE.OUTPUT);
-			reporter.addObjectReport(context, "merged", OBJECT_TYPE.STOP_AREA, "stop areas", OBJECT_STATE.OK,
-					IO_TYPE.OUTPUT);
-			reporter.setStatToObjectReport(context, "merged", OBJECT_TYPE.STOP_AREA, OBJECT_TYPE.STOP_AREA, collection
-					.getCommercialStops().size() + collection.getPhysicalStops().size());
 			result = SUCCESS;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
