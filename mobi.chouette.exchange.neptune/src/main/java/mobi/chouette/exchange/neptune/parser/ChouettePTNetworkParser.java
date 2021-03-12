@@ -17,6 +17,7 @@ import org.xmlpull.v1.XmlPullParser;
 import mobi.chouette.model.util.Referential;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,11 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 	public static final String AREA_CENTROID_CONTEXT = "AreaCentroid";
 	public static final String CONTAINED_IN = "containedIn";
 	public static final String STOP_AREA_CONTEXT = "StopArea";
+	public static final String ACCESS_POINT_CONTEXT = "AccessPoint";
+	public static final String ACCESS_LINK_CONTEXT = "AccessLink";
+	public static final String ITL_CONTEXT = "ITL";
+	public static final String END_OF_LINK_ID = "endOfLinkId";
+	public static final String START_OF_LINK_ID = "startOfLinkId";
 
 	public static final String CENTROID_OF_AREA = "centroidOfArea";
 	public static final String CONTAINS2 = "contains";
@@ -231,82 +237,114 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 
 	private void mapIdsInValidationContext(Context context){
 		Context validationContext = (Context) context.get(VALIDATION_CONTEXT);
-		Context stopPointContext = (Context) validationContext.get(STOP_POINT_CONTEXT);
 		Map<String,String> fileToReferentialStopIdMap =  (Map<String,String>) context.get(FILE_TO_REFERENTIAL_STOP_ID_MAP);
 
-		for (Map.Entry entry : stopPointContext.entrySet()){
-			Context pointContext = (Context) entry.getValue();
-			String containedIn = (String) pointContext.get(CONTAINED_ID);
-
-			if (containedIn != null && fileToReferentialStopIdMap.containsKey(containedIn)){
-				pointContext.put(CONTAINED_ID,fileToReferentialStopIdMap.get(containedIn));
-			}
-		}
-
+		Context stopPointContext = (Context) validationContext.get(STOP_POINT_CONTEXT);
+		updateContainedInContext(stopPointContext,fileToReferentialStopIdMap);
 
 		Context areaCentroidContext = (Context) validationContext.get(AREA_CENTROID_CONTEXT);
+		updateContainedInContext(areaCentroidContext,fileToReferentialStopIdMap);
 
+		Context accessPointContext = (Context) validationContext.get(ACCESS_POINT_CONTEXT);
+		updateContainedInContext(accessPointContext,fileToReferentialStopIdMap);
 
-		for (Object objectContext : areaCentroidContext.values()){
-				Context areaContext = (Context) objectContext;
-				String containedIn = (String) areaContext.get(CONTAINED_IN);
-				if (containedIn == null)
-					continue;
-
-				if (fileToReferentialStopIdMap.containsKey(containedIn)){
-					areaContext.put(CONTAINED_IN,fileToReferentialStopIdMap.get(containedIn));
-				}
-		}
-
+		Context ITLContext = (Context) validationContext.get(ITL_CONTEXT);
+		mapContextKeys(ITLContext,fileToReferentialStopIdMap);
 
 		Context stopAreaContext = (Context) validationContext.get(STOP_AREA_CONTEXT);
-		List<String> oldObjectsToDelete = new ArrayList<>();
+		mapContextKeys(stopAreaContext,fileToReferentialStopIdMap);
+		updatePropertiesInContext(stopAreaContext,fileToReferentialStopIdMap);
 
+		Context accessLinkContext = (Context) validationContext.get(ACCESS_LINK_CONTEXT);
+		updatePropertiesInContext(accessLinkContext,fileToReferentialStopIdMap);
+	}
+
+	private void updateContainedInContext(Context context, Map<String,String> fileToReferentialStopIdMap ){
+
+		if(context == null)
+			return;
+
+		for (Object objectContext : context.values()){
+			Context placeContext = (Context) objectContext;
+			String containedIn = (String) placeContext.get(CONTAINED_IN);
+			if (containedIn == null)
+				continue;
+
+			if (fileToReferentialStopIdMap.containsKey(containedIn)){
+				placeContext.put(CONTAINED_IN,fileToReferentialStopIdMap.get(containedIn));
+			}
+		}
+	}
+
+
+	
+	private void mapContextKeys(Context context, Map<String,String> fileToReferentialStopIdMap){
+		
+		if (context == null || fileToReferentialStopIdMap == null)
+			return;
+
+		List<String> oldObjectsToDelete = new ArrayList<>();
 		List<String> rawIdsFromfile = fileToReferentialStopIdMap.keySet().stream()
 																		 .collect(Collectors.toList());
 
-		List<Map.Entry<String, Object>> oldObjects = stopAreaContext.entrySet().stream()
-				.filter(entry -> rawIdsFromfile.contains(entry.getKey()))
-				.collect(Collectors.toList());
+		List<Map.Entry<String, Object>> oldObjects = generateOldObjectList(context,rawIdsFromfile);
 
 		oldObjects.forEach(entry -> {
-			oldObjectsToDelete.add(entry.getKey());
-			updateNewObject(context,entry);
-		});
+									oldObjectsToDelete.add(entry.getKey());
+									String newId = fileToReferentialStopIdMap.get(entry.getKey());
+									context.put(newId,entry.getValue());
+									});
 
-		oldObjectsToDelete.forEach(stopAreaContext::remove);
+		oldObjectsToDelete.forEach(context::remove);
+		
+	}
+	
 
-
+	private List<Map.Entry<String, Object>> generateOldObjectList(Context context, List<String> rawIdsFromfile){
+		return context.entrySet().stream()
+				.filter(entry -> rawIdsFromfile.contains(entry.getKey()))
+				.collect(Collectors.toList());
 	}
 
-	private void updateNewObject(Context globalContext, Map.Entry<String, Object> entry){
-		Map<String,String> fileToReferentialStopIdMap =  (Map<String,String>) globalContext.get(FILE_TO_REFERENTIAL_STOP_ID_MAP);
 
+	private void updatePropertiesInContext(Context context,Map<String,String> fileToReferentialStopIdMap){
 
-		//Gathering data from old object
-		Context oldObjectContext =(Context) entry.getValue();
-		List<String> oldContains = (List<String>) oldObjectContext.get(CONTAINS2);
-		String oldCentroid = (String) oldObjectContext.get(CENTROID_OF_AREA);
+		if (context == null)
+			return;
 
+		for (Map.Entry<String, Object> contextOjectEntry : context.entrySet()) {
+			Context objectContext = (Context) contextOjectEntry.getValue();
+			List<String> oldContains = (List<String>) objectContext.get(CONTAINS2);
+			if (oldContains != null)
+				objectContext.put(CONTAINS2,generateMappedIdsList(oldContains,fileToReferentialStopIdMap));
 
-		//And put it in the new object
-		String newObjectId = fileToReferentialStopIdMap.get(entry.getKey());
-		Context newObjectContext =getObjectContext(globalContext,STOP_AREA_CONTEXT,newObjectId);
+			String oldCentroid = (String) objectContext.get(CENTROID_OF_AREA);
 
-		List<String> newContains = (List<String>) newObjectContext.get(CONTAINS2);
-		if (newContains == null)
-		{
-			newContains = new ArrayList<>();
-			newObjectContext.put(CONTAINS2, newContains);
+			if (oldCentroid != null && fileToReferentialStopIdMap.containsKey(oldCentroid))
+				objectContext.put(CENTROID_OF_AREA,fileToReferentialStopIdMap.get(oldCentroid));
+
+			String startLinkId = (String) objectContext.get(START_OF_LINK_ID);
+			if (startLinkId != null && fileToReferentialStopIdMap.containsKey(startLinkId))
+				objectContext.put(START_OF_LINK_ID,fileToReferentialStopIdMap.get(startLinkId));
+
+			String endLinkId = (String) objectContext.get(END_OF_LINK_ID);
+			if (endLinkId != null && fileToReferentialStopIdMap.containsKey(endLinkId))
+				objectContext.put(END_OF_LINK_ID,fileToReferentialStopIdMap.get(endLinkId));
+
 		}
 
-		if (oldContains != null && !oldContains.isEmpty())
-			newContains.addAll(convertContainsToNewIds(fileToReferentialStopIdMap,oldContains));
-
-		if (oldCentroid != null)
-			newObjectContext.put(CENTROID_OF_AREA,fileToReferentialStopIdMap.containsKey(oldCentroid) ? fileToReferentialStopIdMap.get(oldCentroid) : oldCentroid);
 
 	}
+
+	private List<String> generateMappedIdsList(List<String> oldList, Map<String,String> fileToReferentialStopIdMap){
+		if (fileToReferentialStopIdMap == null || oldList == null || oldList.size() == 0)
+			return new ArrayList<>();
+
+		return oldList.stream()
+				.map(originalString -> fileToReferentialStopIdMap.containsKey(originalString) ? fileToReferentialStopIdMap.get(originalString) : originalString)
+				.collect(Collectors.toList());
+	}
+
 
 
 	private List<String> convertContainsToNewIds(Map<String,String> fileToReferentialStopIdMap, List<String> inputList){
