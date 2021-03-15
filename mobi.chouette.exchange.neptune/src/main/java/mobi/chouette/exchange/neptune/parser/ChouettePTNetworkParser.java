@@ -191,6 +191,10 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 			stopArea.setParent(newParentArea);
 		}
 
+		newStopAreas = referential.getSharedStopAreas().values().stream()
+												.filter(stopArea ->stopArea.getObjectId().startsWith(referentialName))
+												.collect(Collectors.toList());
+
 		newStopAreas.forEach(stopArea->mapIdsInContainedInStopAreas(context,stopArea));
 
 
@@ -214,6 +218,8 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 		Map<String,String> fileToReferentialStopIdMap =  (Map<String,String>) context.get(FILE_TO_REFERENTIAL_STOP_ID_MAP);
 		Referential referential = (Referential) context.get(REFERENTIAL);
 
+		if (fileToReferentialStopIdMap == null)
+			return;
 
 		List<StopArea> containedInStopAreas = new ArrayList<>(stopArea.getContainedStopAreas());
 		if (containedInStopAreas.size() == 0)
@@ -221,7 +227,7 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 
 		for (StopArea child : containedInStopAreas){
 
-			if (!fileToReferentialStopIdMap.containsKey(child.getObjectId()))
+			if (child == null || child.getObjectId() == null || !fileToReferentialStopIdMap.containsKey(child.getObjectId()))
 				continue;
 
 			childrenToDelete.add(child);
