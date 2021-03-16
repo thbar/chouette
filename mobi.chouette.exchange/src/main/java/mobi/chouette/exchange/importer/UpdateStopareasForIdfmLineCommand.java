@@ -110,9 +110,9 @@ public class UpdateStopareasForIdfmLineCommand implements Command {
 
 			return SUCCESS;
 		} catch (Exception e){
-			if(e.getMessage().contains("MOSAIC_SQL_ERROR:")){
-				String[] splitErrors = e.getMessage().split("MOSAIC_SQL_ERROR:");
-				context.put("MOSAIC_SQL_ERROR", splitErrors[1]);
+			if(e.getMessage().contains("MOBIITI_SQL_ERROR:")){
+				String[] splitErrors = e.getMessage().split("MOBIITI_SQL_ERROR:");
+				context.put("MOBIITI_SQL_ERROR", splitErrors[1]);
 			}
 			throw new Exception(e.getMessage());
 		}
