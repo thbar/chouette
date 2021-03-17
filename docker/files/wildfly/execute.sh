@@ -28,6 +28,8 @@ wait_for_server
 echo "=> Executing the commands"
 $JBOSS_CLI -c --file=$JBOSS_HOME/customization/wildfly_db.cli
 
+$JBOSS_CLI -c --command='/subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=25485760)'
+
 echo "=> Shutting down WildFly"
 if [ "$JBOSS_MODE" = "standalone" ]; then
   $JBOSS_CLI -c ":shutdown"
