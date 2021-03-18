@@ -1,6 +1,8 @@
 package mobi.chouette.exchange.gtfs.parser;
 
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.TimeZone;
 
 import mobi.chouette.common.Constant;
@@ -9,6 +11,8 @@ import mobi.chouette.exchange.gtfs.model.GtfsTime;
 
 import org.apache.log4j.Logger;
 import org.joda.time.LocalTime;
+
+import javax.xml.bind.DatatypeConverter;
 
 public abstract class AbstractConverter implements Constant{
 
@@ -78,6 +82,13 @@ public abstract class AbstractConverter implements Constant{
 		if (tz == null)
 			return null;
 		return tz.getID();
+	}
+
+	public static String computeEndId(String key) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(key.getBytes());
+		byte[] digest = md.digest();
+		return DatatypeConverter.printHexBinary(digest).toUpperCase();
 	}
 
 //	private static void populateFileError(FileInfo file, GtfsException ex) {

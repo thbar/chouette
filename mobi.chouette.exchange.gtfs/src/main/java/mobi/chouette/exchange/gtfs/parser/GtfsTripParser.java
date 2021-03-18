@@ -66,9 +66,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 
-import javax.xml.bind.DatatypeConverter;
 import java.math.BigDecimal;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -596,7 +594,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
             // Timetable
             String timetableId = AbstractConverter.composeObjectId(configuration,
-                    Timetable.TIMETABLE_KEY, gtfsTrip.getServiceId(), log);
+                    Timetable.TIMETABLE_KEY, AbstractConverter.computeEndId(gtfsTrip.getServiceId()), log);
 
             // Disable linking to after midnight-calendar as this causes day offsets to be compensated twice.
 //			if (afterMidnight) {
@@ -898,13 +896,6 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         return journeyPattern;
     }
 
-    private String computeEndId(String journeyKey) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(journeyKey.getBytes());
-        byte[] digest = md.digest();
-        return DatatypeConverter.printHexBinary(digest).toUpperCase();
-    }
-
     private RoutePoint createRoutePointFromStopPoint(Referential referential, StopPoint firstStopPoint) {
         RoutePoint firstRoutePoint = ObjectFactory.getRoutePoint(referential, firstStopPoint.objectIdPrefix() + ":RoutePoint:" + firstStopPoint.objectIdSuffix());
         firstRoutePoint.setScheduledStopPoint(firstStopPoint.getScheduledStopPoint());
@@ -1098,7 +1089,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         if (gtfsTrip.getShapeId() != null && !gtfsTrip.getShapeId().isEmpty())
             routeKey += "_" + gtfsTrip.getShapeId();
 
-        routeKey += "_" + computeEndId(journeyKey);
+        routeKey += "_" + AbstractConverter.computeEndId(journeyKey);
 
         for (VehicleJourneyAtStop vehicleJourneyAtStop : list) {
             VehicleJourneyAtStopWrapper wrapper = (VehicleJourneyAtStopWrapper) vehicleJourneyAtStop;
