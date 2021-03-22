@@ -65,7 +65,7 @@ public class UpdateLineInfosCommand implements Command, Constant {
 
     private void managePMR(List<VehicleJourney> vehicleJourneyList, long nbVehicleJourney, Line lineToUpdate) {
         // PMR
-        if(lineToUpdate.getWheelchairAccess().equals(WheelchairAccessEnum.FULL_ACCESS)){
+        if(lineToUpdate.getWheelchairAccess() != null && lineToUpdate.getWheelchairAccess().equals(WheelchairAccessEnum.FULL_ACCESS)){
             vehicleJourneyList.forEach(vehicleJourney -> {
                 vehicleJourney.setMobilityRestrictedSuitability(true);
                 vehicleJourneyDAO.update(vehicleJourney);
