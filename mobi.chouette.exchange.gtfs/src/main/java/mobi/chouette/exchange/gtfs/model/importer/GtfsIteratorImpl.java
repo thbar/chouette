@@ -12,11 +12,9 @@ public class GtfsIteratorImpl implements Iterator<Boolean>, GtfsIterator, Consta
 	
 	public static final char LF = '\n';
 	public static final char CR = '\r';
-	public static final char TAB = '\t';
 	public static final char DELIMITER = ',';
 	public static final char DQUOTE = '"';
 	public static final char NULL = 0;
-	public static final char SPACE = ' ';
 
 	private ByteBuffer _buffer;
 	private int _index;
@@ -56,14 +54,7 @@ public class GtfsIteratorImpl implements Iterator<Boolean>, GtfsIterator, Consta
 
 	@Override
 	public boolean hasNext() {
-		boolean checkRemainingRowsNotEmpty = false;
-		for(int i = _mark; i < _buffer.limit(); i++){
-			if(_buffer.get(i) != LF && _buffer.get(i) != CR && _buffer.get(i) != SPACE && _buffer.get(i) != TAB){
-				checkRemainingRowsNotEmpty = true;
-			}
-		}
-
-		return _buffer.hasRemaining() && (_mark < _buffer.limit()) && checkRemainingRowsNotEmpty;
+		return _buffer.hasRemaining() && (_mark < _buffer.limit());
 	}
 
 	@Override
