@@ -13,6 +13,7 @@ import mobi.chouette.exchange.neptune.Constant;
 import mobi.chouette.exchange.neptune.jaxb.JaxbNeptuneFileConverter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.trident.schema.trident.ChouettePTNetworkType.ChouetteLineDescription.ChouetteRoute;
 import mobi.chouette.model.util.Referential;
 import org.trident.schema.trident.ChouettePTNetworkType;
@@ -44,6 +45,7 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
     private Map<String, JourneyPatternType> journeyPatternTypeMap = new HashMap<>();
     private Map<String, ChouetteRoute> fixedRouteMap = new HashMap<>();
     private Map<String, List<String>> startingPtLinksMap = new HashMap<>();
+    private String currentFileName;
 
 
     @Override
@@ -90,7 +92,13 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
                 return ;
             }
 
+            File originalFile = new File(path.toAbsolutePath().toString());
+            File directory = originalFile.getParentFile();
+            String originalFileName = FilenameUtils.removeExtension(originalFile.getName());
+            currentFileName = originalFileName;
+
             ChouettePTNetworkType chouetteNetwork = chouetteNetworkOpt.get();
+            detectUnusedCentroid(chouetteNetwork);
 
             List<ChouetteRoute> brokenRoutes = getBrokenRoutes(chouetteNetwork);
 
@@ -102,9 +110,7 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
                 fixVehicleJourneyRouteIds(chouetteNetwork);
                 cleanWaybackRoutes(chouetteNetwork);
 
-                File originalFile = new File(path.toAbsolutePath().toString());
-                File directory = originalFile.getParentFile();
-                String originalFileName = FilenameUtils.removeExtension(originalFile.getName());
+
                 originalFile.delete();
                 File outPutFile = new File(directory,originalFile.getName());
                 converter.write(chouetteNetwork,outPutFile);
@@ -125,6 +131,25 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
             log.error(e);
         }
     }
+
+
+
+    private void detectUnusedCentroid(ChouettePTNetworkType chouetteNetwork){
+
+        ChouettePTNetworkType.ChouetteArea chouetteArea = chouetteNetwork.getChouetteArea();
+        List<String> usedCentroidList = chouetteArea.getStopArea().stream()
+                                                                  .map(ChouettePTNetworkType.ChouetteArea.StopArea::getCentroidOfArea)
+                                                                  .filter(StringUtils::isNotEmpty)
+                                                                  .collect(Collectors.toList());
+
+        chouetteArea.getAreaCentroid().stream()
+                                        .map(ChouettePTNetworkType.ChouetteArea.AreaCentroid :: getObjectId)
+                                        .filter(centroidId -> !usedCentroidList.contains(usedCentroidList))
+                                        .forEach(centroidId -> log.error("Unused centroid :"+centroidId+ ", in file:"+currentFileName));
+
+    }
+
+
 
     /***
      * Delete waybackRouteIds that refers to deleted routes
