@@ -28,4 +28,6 @@ public interface GtfsIterator {
 
 	public abstract void setByteBuffer(ByteBuffer buffer);
 
+	public abstract void cleanEndFile();
+
 }
