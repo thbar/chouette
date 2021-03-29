@@ -50,6 +50,11 @@ public class GtfsIterator2 implements Iterator<Boolean>, GtfsIterator, Constant 
 	}
 
 	@Override
+	public void dispose() {
+		_buffer.clear();
+	}
+
+	@Override
 	public boolean hasNext() {
 		return _buffer.hasRemaining();
 	}
