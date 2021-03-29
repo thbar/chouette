@@ -2841,10 +2841,11 @@ ALTER SEQUENCE chouette_gui.variations_id_seq OWNER TO chouette;
 
 
 CREATE TABLE chouette_gui.variations (
-    id bigint NOT NULL DEFAULT nextval('variations_id_seq'::regclass),
-    type character varying(255) NOT NULL,
-    description character varying(255) NOT NULL,
-    job bigint
+                            id bigint DEFAULT nextval('variations_id_seq'::regclass) NOT NULL,
+                            typev character varying(255) NOT NULL,
+                            descriptionv character varying(1024) NOT NULL,
+                            jobv bigint,
+                            objectid text
 );
 
 CREATE TABLE chouette_gui.mapping_hastus_zdep (
@@ -2925,6 +2926,128 @@ CREATE TABLE chouette_gui.access_points (
 );
 
 ALTER TABLE chouette_gui.access_points OWNER TO chouette;
+
+CREATE TABLE chouette_gui.connection_links (
+                                  id bigint NOT NULL,
+                                  departure_id bigint,
+                                  arrival_id bigint,
+                                  objectid character varying(255) NOT NULL,
+                                  object_version integer,
+                                  creation_time timestamp without time zone,
+                                  creator_id character varying(255),
+                                  name character varying(255),
+                                  comment character varying(255),
+                                  link_distance numeric(19,2),
+                                  link_type character varying(255),
+                                  default_duration time without time zone,
+                                  frequent_traveller_duration time without time zone,
+                                  occasional_traveller_duration time without time zone,
+                                  mobility_restricted_traveller_duration time without time zone,
+                                  mobility_restricted_suitability boolean,
+                                  stairs_availability boolean,
+                                  lift_availability boolean,
+                                  int_user_needs integer
+);
+
+ALTER TABLE chouette_gui.connection_links OWNER TO chouette;
+
+CREATE SEQUENCE categories_for_lines_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE chouette_gui.categories_for_lines_id_seq OWNER TO chouette;
+
+
+CREATE TABLE chouette_gui.categories_for_lines (
+                                      id bigint DEFAULT nextval('categories_for_lines_id_seq'::regclass) NOT NULL,
+                                      name character varying(1024) NOT NULL
+);
+
+ALTER TABLE chouette_gui.categories_for_lines OWNER TO chouette;
+
+CREATE SEQUENCE chouette_gui.access_links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE chouette_gui.access_links_id_seq OWNER TO chouette;
+
+CREATE SEQUENCE chouette_gui.access_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE chouette_gui.access_points_id_seq OWNER TO chouette;
+
+
+
+CREATE TABLE chouette_gui.access_links (
+                              id bigint NOT NULL,
+                              city_name character varying(255),
+                              comment character varying(255),
+                              country_code character varying(255),
+                              creation_time date,
+                              creator_id character varying(255),
+                              default_duration time without time zone,
+                              frequent_traveller_duration time without time zone,
+                              int_user_needs integer,
+                              latitude double precision,
+                              lift_availability boolean,
+                              link_distance numeric(38,0),
+                              link_orientation character varying(255),
+                              link_type character varying(255),
+                              long_lat_type character varying(255),
+                              longitude double precision,
+                              mobility_restricted_suitability boolean,
+                              mobility_restricted_traveller_duration time without time zone,
+                              name character varying(255),
+                              objectid character varying(255),
+                              object_version integer,
+                              occasional_traveller_duration time without time zone,
+                              stairs_availability boolean,
+                              street_name character varying(255),
+                              zip_code character varying(255),
+                              access_point_id bigint,
+                              stop_area_id bigint
+);
+
+ALTER TABLE chouette_gui.access_links OWNER TO chouette;
+
+
+
+CREATE TABLE chouette_gui.access_points (
+                               id bigint NOT NULL,
+                               city_name character varying(255),
+                               closing_time time without time zone,
+                               comment character varying(255),
+                               country_code character varying(255),
+                               creation_time date,
+                               creator_id character varying(255),
+                               latitude double precision,
+                               lift_availability boolean,
+                               long_lat_type character varying(255),
+                               longitude double precision,
+                               mobility_restricted_suitability boolean,
+                               name character varying(255),
+                               objectid character varying(255),
+                               object_version integer,
+                               openning_time time without time zone,
+                               stairs_availability boolean,
+                               street_name character varying(255),
+                               access_type character varying(255),
+                               zip_code character varying(255),
+                               stop_area_id bigint
+);
+
+ALTER TABLE chouette_gui.access_points OWNER TO chouette;
+
 
 CREATE TABLE chouette_gui.connection_links (
                                   id bigint NOT NULL,

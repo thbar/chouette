@@ -134,6 +134,9 @@ public class NeptuneTimeTablePeriodFixerCommand implements Command, Constant {
      */
     private void fixPeriodsOnTimetable(TimetableType timetable){
         List<PeriodType> originalPeriodList = timetable.getPeriod();
+        if (originalPeriodList.size() == 0)
+            return;
+
         List<PeriodType> wrongPeriods = originalPeriodList.stream()
                 .filter(period -> period.getStartOfPeriod().equals(period.getEndOfPeriod()))
                 .collect(Collectors.toList());

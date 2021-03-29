@@ -20,6 +20,7 @@ import mobi.chouette.exchange.gtfs.Constant;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsExtendedStopProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsTransferProducer;
 import mobi.chouette.exchange.gtfs.model.exporter.GtfsExporter;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
@@ -96,6 +97,7 @@ public class GtfsStopAreaProducerCommand implements Command, Constant {
 		GtfsExportParameters configuration = (GtfsExportParameters) context.get(CONFIGURATION);
 		String prefix = configuration.getObjectIdPrefix();
 		String sharedPrefix = prefix;
+		IdParameters idParams = new IdParameters(configuration.getStopIdPrefix(),configuration.getIdFormat(),null,configuration.getLineIdPrefix(),configuration.getCommercialPointIdPrefix());
 		// metadata.setDescription("limited to stops and transfers");
 		int stopCount = 0;
 		for (StopArea area : beans) {
@@ -145,7 +147,7 @@ public class GtfsStopAreaProducerCommand implements Command, Constant {
 			} else if (!physicalStops.contains(link.getEndOfLink()) && !commercialStops.contains(link.getEndOfLink())) {
 				continue;
 			}
-			transferProducer.save(link, sharedPrefix, configuration.isKeepOriginalId());
+			transferProducer.save(link, sharedPrefix, configuration.isKeepOriginalId(),idParams);
 			connectionLinkCount++;
 		}
 		reporter.addObjectReport(context, "merged", OBJECT_TYPE.CONNECTION_LINK, "connection links", OBJECT_STATE.OK,

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>5.0.1-mobi-iti-SNAPSHOT</version>
+    <version>5.0.2-mobi-iti-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -586,7 +586,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.okina</groupId>
+                <groupId>org.entur</groupId>
                 <artifactId>netex-java-model</artifactId>
                 <version>${netex-java-model.version}</version>
             </dependency>

@@ -6,6 +6,7 @@ import mobi.chouette.exchange.gtfs.model.GtfsTransfer;
 import mobi.chouette.exchange.gtfs.model.GtfsTransfer.TransferType;
 import mobi.chouette.exchange.gtfs.model.exporter.TransferExporter;
 import mobi.chouette.exchange.gtfs.model.importer.Context;
+import mobi.chouette.exchange.gtfs.parameters.IdParameters;
 import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.Interchange;
 import mobi.chouette.model.JourneyPattern;
@@ -47,7 +48,7 @@ public class GtfsExportTransferProducerTests
       neptuneObject.setEndOfLink(endOfLink);
       neptuneObject.setDefaultDuration(Duration.millis(60000));
 
-      producer.save(neptuneObject,  "GTFS",false);
+      producer.save(neptuneObject,  "GTFS",false, new IdParameters());
       GtfsTransfer gtfsObject = mock.getExportedTransfers().get(0);
       Reporter.log("verifyTransferProducer1");
       Reporter.log(TransferExporter.CONVERTER.to(context,gtfsObject));
@@ -76,7 +77,7 @@ public class GtfsExportTransferProducerTests
       neptuneObject.setEndOfLink(endOfLink);
       neptuneObject.setDefaultDuration(Duration.millis(500));
 
-      producer.save(neptuneObject, "GTFS",false);
+      producer.save(neptuneObject, "GTFS",false, new IdParameters());
       GtfsTransfer gtfsObject = mock.getExportedTransfers().get(0);
       Reporter.log("verifyTransferProducer2");
       Reporter.log(TransferExporter.CONVERTER.to(context,gtfsObject));

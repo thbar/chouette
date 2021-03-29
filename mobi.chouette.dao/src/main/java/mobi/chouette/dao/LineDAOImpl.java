@@ -28,9 +28,9 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 					.setParameter("lineId", lineId)
 					.getSingleResult();
 		} catch (PersistenceException e){
-			if(e.getCause().getCause().getMessage().contains("MOSAIC_SQL_ERROR:")){
-				String[] splitError = e.getCause().getCause().getMessage().split("MOSAIC_SQL_ERROR:");
-				throw new Exception("MOSAIC_SQL_ERROR:" + splitError[1]);
+			if(e.getCause().getCause().getMessage().contains("MOBIITI_SQL_ERROR:")){
+				String[] splitError = e.getCause().getCause().getMessage().split("MOBIITI_SQL_ERROR:");
+				throw new Exception("MOBIITI_SQL_ERROR:" + splitError[1]);
 			} else {
 				throw e;
 			}
@@ -61,6 +61,15 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 				"                   JOIN l.network n" +
 				"                  WHERE n.id = :networkId", Line.class)
 				.setParameter("networkId", networkId)
+				.getResultList();
+	}
+
+	@Override
+	public List<String> findObjectIdLinesInFirstDataspace(List<Long> ids, String dataspace) {
+		return em.createNativeQuery("SELECT l.objectid " +
+				"                   FROM " + dataspace + ".lines l " +
+				"                  WHERE l.id IN :ids")
+				.setParameter("ids", ids)
 				.getResultList();
 	}
 }

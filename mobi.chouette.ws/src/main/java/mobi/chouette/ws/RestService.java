@@ -183,8 +183,8 @@ public class RestService implements Constant {
 				command.execute(context);
 				return Response.ok().build();
 			} catch (Exception e) {
-				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOSAIC_SQL_ERROR") != null){
-					String message = (String) context.get("MOSAIC_SQL_ERROR");
+				if (context.containsKey("MOSAIC_SQL_ERROR") && context.get("MOBIITI_SQL_ERROR") != null){
+					String message = (String) context.get("MOBIITI_SQL_ERROR");
 					//@todo Okina revoir la manière de remonter les erreurs plus proprement
 					if(message.contains("Where:")){
 						String[] splitMessage = message.split("Where:");

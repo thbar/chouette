@@ -319,34 +319,9 @@ public class LineUpdater implements Updater<Line> {
 		}
 
 		updateFootnotes(context, oldValue,newValue,cache);
-		updateAreaCentroidOriginalStopIds(context,oldValue);
 //		monitor.stop();
 	}
 
-	private void updateAreaCentroidOriginalStopIds(Context context, Line line){
-
-		if (context.get(AREA_CENTROID_MAP) == null)
-			return ;
-
-		line.getRoutes().forEach(route->updateAreaCentroidOriginalIdsForRoute(context,route));
-	}
-
-	private void updateAreaCentroidOriginalIdsForRoute(Context context, Route route){
-		route.getJourneyPatterns().forEach(journeyPattern->updateAreaCentroidOriginalIdsForJourneyPattern(context,journeyPattern));
-	}
-
-	private void updateAreaCentroidOriginalIdsForJourneyPattern(Context context, JourneyPattern journeyPattern){
-		journeyPattern.getStopPoints().forEach(stopPoint->updateAreaCentroidOriginalIdsForStopPoint(context,stopPoint));
-	}
-
-	private void updateAreaCentroidOriginalIdsForStopPoint(Context context, StopPoint stopPoint){
-		Map<String,String> areaCentroidMap =  (Map<String,String>) context.get(AREA_CENTROID_MAP);
-		StopArea childArea = stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject();
-		childArea.getParent().setOriginalStopId(areaCentroidMap.get(childArea.getOriginalStopId()));
-	}
-
-
-	
 	private void updateFootnotes(Context context, Line oldValue, Line newValue, Referential cache) throws Exception {
 		Collection<Footnote> addedFootnote = CollectionUtil.substract(newValue.getFootnotes(),
 				oldValue.getFootnotes(), NeptuneIdentifiedObjectComparator.INSTANCE);
