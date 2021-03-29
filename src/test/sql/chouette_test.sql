@@ -2987,9 +2987,6 @@ CREATE SEQUENCE chouette_gui.access_points_id_seq
 ALTER TABLE chouette_gui.access_points_id_seq OWNER TO chouette;
 
 
-
-
--
 -- TOC entry 4251 (class 0 OID 0)
 -- Dependencies: 8
 -- Name: chouette_gui; Type: ACL; Schema: -; Owner: postgres
