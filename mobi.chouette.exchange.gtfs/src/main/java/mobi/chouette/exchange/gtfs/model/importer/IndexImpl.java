@@ -267,7 +267,7 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 		//Monitor monitor = MonitorFactory.start("INDEX IMPL");
 		boolean hasDefaultId = false;
 
-		_reader.cleanEndFile();
+		//_reader.cleanEndFile();
 		
 		while (_reader.hasNext()) {
 			_total++;
