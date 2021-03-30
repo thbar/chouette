@@ -26,6 +26,9 @@ import org.joda.time.LocalDateTime;
 @Log4j
 public class GtfsTransferParser implements Parser, Validator, Constant {
 
+	private String quayIdPrefixToRemove;
+	private String commercialPointIdPrefixToRemove;
+
 	@Override
 	public void validate(Context context) throws Exception {
 		GtfsImporter importer = (GtfsImporter) context.get(PARSER);
@@ -103,6 +106,8 @@ public class GtfsTransferParser implements Parser, Validator, Constant {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		GtfsImporter importer = (GtfsImporter) context.get(PARSER);
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+		quayIdPrefixToRemove = configuration.getQuayIdPrefixToRemove();
+		commercialPointIdPrefixToRemove = configuration.getCommercialPointIdPrefixToRemove();
 
 		for (GtfsTransfer gtfsTransfer : importer.getTransferByFromStop()) {
 
@@ -124,17 +129,23 @@ public class GtfsTransferParser implements Parser, Validator, Constant {
 		Referential referential = (Referential) context.get(REFERENTIAL);
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 
-		StopArea startOfLink = referential.getSharedStopAreas().get(AbstractConverter.composeObjectId(configuration, "StopPlace", gtfsTransfer.getFromStopId(), log));
+		String fromStopId = gtfsTransfer.getFromStopId();
+		String toStopId = gtfsTransfer.getToStopId();
+
+		String commercialFromId = StringUtils.isNotEmpty(commercialPointIdPrefixToRemove) ? fromStopId.replaceFirst("^"+commercialPointIdPrefixToRemove,"") : fromStopId;
+		String commercialToStopId = StringUtils.isNotEmpty(commercialPointIdPrefixToRemove) ? toStopId.replaceFirst("^"+commercialPointIdPrefixToRemove,"") : toStopId;
+
+		StopArea startOfLink = referential.getSharedStopAreas().get(AbstractConverter.composeObjectId(configuration, "StopPlace", commercialFromId, log));
 		if(startOfLink == null) {
 			// Create between quays by default
-			startOfLink = ObjectFactory.getStopArea(referential, AbstractConverter.toStopAreaId(
-						configuration, "Quay", gtfsTransfer.getFromStopId()));
+			String quayFromId = StringUtils.isNotEmpty(quayIdPrefixToRemove) ? fromStopId.replaceFirst("^"+quayIdPrefixToRemove,"") : fromStopId;
+			startOfLink = ObjectFactory.getStopArea(referential, AbstractConverter.toStopAreaId(configuration, "Quay", quayFromId));
 		}
 		
-		StopArea endOfLink = referential.getSharedStopAreas().get(AbstractConverter.composeObjectId(configuration, "StopPlace", gtfsTransfer.getToStopId(), log));
+		StopArea endOfLink = referential.getSharedStopAreas().get(AbstractConverter.composeObjectId(configuration, "StopPlace", commercialToStopId, log));
 		if(endOfLink == null) {
-			endOfLink = ObjectFactory.getStopArea(referential, AbstractConverter.toStopAreaId(
-					configuration, "Quay", gtfsTransfer.getToStopId()));
+			String quaytoId = StringUtils.isNotEmpty(quayIdPrefixToRemove) ? toStopId.replaceFirst("^"+quayIdPrefixToRemove,"") : toStopId;
+			endOfLink = ObjectFactory.getStopArea(referential, AbstractConverter.toStopAreaId(configuration, "Quay", quaytoId));
 		}
 
 		

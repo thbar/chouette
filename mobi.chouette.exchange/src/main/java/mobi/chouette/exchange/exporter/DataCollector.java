@@ -20,8 +20,9 @@ import org.joda.time.LocalDate;
 
 import javax.ejb.EJB;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Log4j
@@ -195,7 +196,10 @@ public class DataCollector {
 
 	protected void completeSharedData(ExportableData collection) {
 		// force lazy dependencies to be loaded
-		for (ConnectionLink link : collection.getConnectionLinks()) {
+
+		Set<ConnectionLink> connectionLinkSet = new HashSet<>(collection.getConnectionLinks());
+
+		for (ConnectionLink link : connectionLinkSet) {
 			collectStopAreas(collection, link.getStartOfLink(), false, false);
 			collectStopAreas(collection, link.getEndOfLink(), false, false);
 		}

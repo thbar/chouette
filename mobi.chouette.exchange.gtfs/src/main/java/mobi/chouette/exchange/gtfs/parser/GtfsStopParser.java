@@ -112,16 +112,30 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 		GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
 
 		for (GtfsStop gtfsStop : importer.getStopById()) {
-			if (gtfsStop.getLocationType() != GtfsStop.LocationType.Access) {
+			handlePrefixes(gtfsStop,configuration);
 
-				
+			if (gtfsStop.getLocationType() != GtfsStop.LocationType.Access) {
 				// Since we do not parse Access, only Station and Stop remains.
 				String objectId = AbstractConverter.toStopAreaId(configuration,
 						gtfsStop.getLocationType() == LocationType.Station ? "StopPlace" : "Quay", gtfsStop.getStopId());
 
 				StopArea stopArea = ObjectFactory.getStopArea(referential, objectId);
 				convert(context, gtfsStop, stopArea);
+			}
+		}
+	}
 
+
+	private void handlePrefixes(GtfsStop gtfsStop, GtfsImportParameters configuration){
+
+		if (gtfsStop.getLocationType() == LocationType.Station){
+			gtfsStop.setStopId(gtfsStop.getStopId().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
+		}else{
+			gtfsStop.setStopId(gtfsStop.getStopId().replaceFirst("^"+configuration.getQuayIdPrefixToRemove(),""));
+			gtfsStop.setParentStation(gtfsStop.getParentStation().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
+			if (gtfsStop.getStopId().equals(gtfsStop.getParentStation())){
+				log.error("Error on prefix removal. Duplicate id for parent and child on id :" + gtfsStop.getStopId());
+				throw new IllegalArgumentException("Can't remove prefixes chosen by user");
 			}
 		}
 	}
@@ -145,11 +159,12 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 		if (gtfsStop.getLocationType() == GtfsStop.LocationType.Station) {
 			stopArea.setAreaType(ChouetteAreaEnum.CommercialStopPoint);
 
-			stopArea.setOriginalStopId(stopArea.getOriginalStopId().replaceFirst("^"+configuration.idPrefixToRemove,""));
+			stopArea.setOriginalStopId(stopArea.getOriginalStopId().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
 			if (AbstractConverter.getNonEmptyTrimedString(gtfsStop.getParentStation()) != null) {
 				// TODO report
 			}
 		} else {
+			stopArea.setOriginalStopId(stopArea.getOriginalStopId().replaceFirst("^"+configuration.getQuayIdPrefixToRemove(),""));
 			if (!importer.getStopById().containsKey(gtfsStop.getParentStation())) {
 				// TODO report
 			}

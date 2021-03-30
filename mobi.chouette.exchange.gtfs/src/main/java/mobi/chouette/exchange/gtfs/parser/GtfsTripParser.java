@@ -56,7 +56,7 @@ import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.ObjectIdTypes;
 import mobi.chouette.model.util.Referential;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Duration;
 import org.joda.time.LocalTime;
 
@@ -79,6 +79,7 @@ import java.util.stream.Stream;
 public class GtfsTripParser implements Parser, Validator, Constant {
 
     private static final Comparator<OrderedCoordinate> COORDINATE_SORTER = new OrderedCoordinateComparator();
+    private String quayIdPrefixToRemove;
 
     @Getter
     @Setter
@@ -501,6 +502,8 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         Referential referential = (Referential) context.get(REFERENTIAL);
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
         GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+        quayIdPrefixToRemove = configuration.getQuayIdPrefixToRemove();
+
 
         Map<String, JourneyPattern> journeyPatternByStopSequence = new HashMap<String, JourneyPattern>();
 
@@ -535,8 +538,11 @@ public class GtfsTripParser implements Parser, Validator, Constant {
             boolean afterMidnight = true;
 
             for (GtfsStopTime gtfsStopTime : importer.getStopTimeByTrip().values(gtfsTrip.getTripId())) {
+
+                String stopId = StringUtils.isNotEmpty(quayIdPrefixToRemove) ?  gtfsStopTime.getStopId().replaceFirst("^"+quayIdPrefixToRemove,"") : gtfsStopTime.getStopId();
+
                 VehicleJourneyAtStopWrapper vehicleJourneyAtStop = new VehicleJourneyAtStopWrapper(
-                        gtfsStopTime.getStopId(), gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
+                        stopId, gtfsStopTime.getStopSequence(), gtfsStopTime.getShapeDistTraveled(), gtfsStopTime.getDropOffType(), gtfsStopTime.getPickupType(), gtfsStopTime.getStopHeadsign());
 
                 // TAD probalement à faire évoluer un jour pour les interruptions
                 // 2X
