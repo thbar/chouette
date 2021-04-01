@@ -48,36 +48,37 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 	private boolean _ignoreRowsWithMissingKey;
 
 	protected String _splitCharacter;
+	protected String _linePrefixToRemove;
 
 	public IndexImpl(String path, String key) throws IOException {
-		this(path, key, "");
+		this(path, key, "","");
 	}
 
-	public IndexImpl(String path, String key,String splitCharacter) throws IOException {
-		this(path, key, "", true,splitCharacter);
+	public IndexImpl(String path, String key,String splitCharacter,String linePrefixToRemove) throws IOException {
+		this(path, key, "", true,splitCharacter,linePrefixToRemove);
 	}
 
 	public IndexImpl(String path, String key, boolean unique) throws IOException {
-		this(path, key,unique,"");
+		this(path, key,unique,"","");
 	}
 
-	public IndexImpl(String path, String key, boolean unique, String splitCharacter) throws IOException {
-		this(path, key, "", unique,splitCharacter);
+	public IndexImpl(String path, String key, boolean unique, String splitCharacter,String linePrefixToRemove) throws IOException {
+		this(path, key, "", unique,splitCharacter,linePrefixToRemove);
 	}
 
 	public IndexImpl(String path, String key, String value, boolean unique) throws IOException {
-		this(path,key,value,unique,false,"");
+		this(path,key,value,unique,false,"","");
 	}
 
-	public IndexImpl(String path, String key, String value, boolean unique, String splitCharacter) throws IOException {
-		this(path,key,value,unique,false,splitCharacter);
+	public IndexImpl(String path, String key, String value, boolean unique, String splitCharacter,String linePrefixToRemove) throws IOException {
+		this(path,key,value,unique,false,splitCharacter,linePrefixToRemove);
 	}
 
 	public IndexImpl(String path, String key, String value, boolean unique, boolean ignoreRowsWithMissingKey) throws IOException {
-		this(path, key, value, unique, ignoreRowsWithMissingKey, "");
+		this(path, key, value, unique, ignoreRowsWithMissingKey, "","");
 	}
 
-	public IndexImpl(String path, String key, String value, boolean unique, boolean ignoreRowsWithMissingKey, String splitCharacter) throws IOException {
+	public IndexImpl(String path, String key, String value, boolean unique, boolean ignoreRowsWithMissingKey, String splitCharacter, String linePrefixToRemove) throws IOException {
 		_path = path;
 		_key = key;
 		_value = value;
@@ -85,6 +86,7 @@ public abstract class IndexImpl<T> extends AbstractIndex<T> {
 		_ignoreRowsWithMissingKey = ignoreRowsWithMissingKey;
 		_total = 0;
 		_splitCharacter = splitCharacter;
+		_linePrefixToRemove = linePrefixToRemove;
 
 		initialize();
 	}

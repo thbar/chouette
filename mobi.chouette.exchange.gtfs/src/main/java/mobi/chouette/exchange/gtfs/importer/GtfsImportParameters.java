@@ -28,7 +28,8 @@ import java.util.Arrays;
 		"routeMerge",
 		"splitCharacter",
 		"commercialPointIdPrefixToRemove",
-		"quayIdPrefixToRemove"
+		"quayIdPrefixToRemove",
+		"linePrefixToRemove"
 
 })
 public class GtfsImportParameters extends AbstractImportParameter {
@@ -84,6 +85,10 @@ public class GtfsImportParameters extends AbstractImportParameter {
 	@Getter@Setter
 	@XmlElement(name = "quay_id_prefix_to_remove")
 	public String quayIdPrefixToRemove = "";
+
+	@Getter@Setter
+	@XmlElement(name = "line_prefix_to_remove")
+	public String linePrefixToRemove = "";
 
 
 	public boolean isValid(Logger log, String[] allowedTypes)

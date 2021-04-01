@@ -1,5 +1,6 @@
 package mobi.chouette.exchange.neptune.parser;
 
+import mobi.chouette.exchange.neptune.importer.NeptuneImportParameters;
 import org.joda.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,8 @@ public class LineParser implements Parser, Constant, JsonExtension {
 
 		XmlPullParser xpp = (XmlPullParser) context.get(PARSER);
 		Referential referential = (Referential) context.get(REFERENTIAL);
+		NeptuneImportParameters parameters = (NeptuneImportParameters) context.get(CONFIGURATION);
+
 
 		xpp.require(XmlPullParser.START_TAG, null, CHILD_TAG);
 		int columnNumber = xpp.getColumnNumber();
@@ -48,6 +51,7 @@ public class LineParser implements Parser, Constant, JsonExtension {
 
 			if (xpp.getName().equals("objectId")) {
 				objectId = ParserUtils.getText(xpp.nextText());
+				objectId = objectId.replaceFirst("^"+parameters.getLinePrefixToRemove(),"");
 				line = ObjectFactory.getLine(referential, objectId);
 				line.setFilled(true);
 				line.setNetwork(getPtNetwork(referential));

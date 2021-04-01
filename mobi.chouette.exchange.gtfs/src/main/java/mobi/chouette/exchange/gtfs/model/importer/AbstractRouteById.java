@@ -1,8 +1,10 @@
 package mobi.chouette.exchange.gtfs.model.importer;
 
 import mobi.chouette.common.HTMLTagValidator;
+import mobi.chouette.exchange.gtfs.importer.GtfsImportParameters;
 import mobi.chouette.exchange.gtfs.model.GtfsAgency;
 import mobi.chouette.exchange.gtfs.model.GtfsRoute;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -20,14 +22,12 @@ public abstract class AbstractRouteById extends IndexImpl<GtfsRoute> implements 
 
     private GtfsRoute bean = new GtfsRoute();
     private String[] array = new String[RouteById.FIELDS.values().length];
+    private String linePrefixToRemove;
 
 
-    public AbstractRouteById(String name) throws IOException {
-        this(name, "");
-    }
 
-    public AbstractRouteById(String name,String splitCharacter) throws IOException {
-        super(name, KEY,splitCharacter);
+    public AbstractRouteById(String name,String splitCharacter, String linePrefixToRemove) throws IOException {
+        super(name, KEY,splitCharacter,linePrefixToRemove);
     }
 
     @Override
@@ -110,7 +110,9 @@ public abstract class AbstractRouteById extends IndexImpl<GtfsRoute> implements 
         value = array[i++];
         testExtraSpace(RouteById.FIELDS.route_id.name(), value, bean);
         if (value != null && !value.trim().isEmpty()) {
-            bean.setRouteId(handleRouteIdTransformation(STRING_CONVERTER.from(context, RouteById.FIELDS.route_id, value, "", true)));
+            String rawRouteId = handleRouteIdTransformation(STRING_CONVERTER.from(context, FIELDS.route_id, value, "", true));
+            String routeId = StringUtils.isNotEmpty(_linePrefixToRemove) ? rawRouteId.replaceFirst("^" + _linePrefixToRemove, "") : rawRouteId;
+            bean.setRouteId(routeId);
         }
 
         value = array[i++];

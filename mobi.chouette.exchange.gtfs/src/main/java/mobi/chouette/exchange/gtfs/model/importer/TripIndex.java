@@ -23,11 +23,11 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 
 
 	public TripIndex(String name, String id, boolean unique) throws IOException {
-		this(name,id,unique,"");
+		this(name,id,unique,"","");
 	}
 
-	public TripIndex(String name, String id, boolean unique,String splitCharacter) throws IOException {
-		super(name, id, unique,splitCharacter);
+	public TripIndex(String name, String id, boolean unique,String splitCharacter, String linePrefixToRemove) throws IOException {
+		super(name, id, unique,splitCharacter,linePrefixToRemove);
 	}
 
 	@Override
@@ -200,6 +200,10 @@ public abstract class TripIndex extends IndexImpl<GtfsTrip> implements GtfsConve
 	}
 
 	protected String handleRouteIdTransformation(String inputRouteId) {
+		if (StringUtils.isNotEmpty(_linePrefixToRemove)){
+			inputRouteId = inputRouteId.replaceFirst("^" + _linePrefixToRemove, "");
+		}
+
 		if (StringUtils.isEmpty(_splitCharacter))
 			return inputRouteId;
 		return inputRouteId.split(_splitCharacter)[0];

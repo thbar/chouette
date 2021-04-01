@@ -193,8 +193,7 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
         Index<GtfsRoute> routes = importer.getRouteById();
         GtfsRoute gtfsRoute = routes.getValue(gtfsRouteId);
 
-        String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY,
-                gtfsRouteId, log);
+        String lineId = AbstractConverter.composeObjectId(configuration, Line.LINE_KEY, gtfsRouteId, log);
         Line line = ObjectFactory.getLine(referential, lineId);
         line.setPosition(position);
         convert(context, gtfsRoute, line);

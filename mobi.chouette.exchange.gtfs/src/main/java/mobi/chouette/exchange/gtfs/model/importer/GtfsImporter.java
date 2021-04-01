@@ -146,7 +146,7 @@ public class GtfsImporter {
 	@SuppressWarnings("unchecked")
 	public Index<GtfsRoute> getRouteById() {
 		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
-			return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,RouteById.class);
+			return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,RouteById.class,_factoryParameters);
 		}else{
 			return getImporter(INDEX.ROUTE_BY_ID.name(), RouteById.FILENAME,RouteByIdWithMergedIndex.class,_factoryParameters);
 		}
@@ -190,7 +190,7 @@ public class GtfsImporter {
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsTrip> getTripById() {
-		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
+		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter()) && StringUtils.isEmpty(_factoryParameters.getLinePrefixToRemove())){
 			return getImporter(INDEX.TRIP_BY_ID.name(), TripById.FILENAME,TripById.class);
 		}else{
 			return getImporter(INDEX.TRIP_BY_ID.name(), TripById.FILENAME,TripById.class,_factoryParameters);
@@ -199,7 +199,7 @@ public class GtfsImporter {
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsTrip> getTripByRoute() {
-		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter())){
+		if (StringUtils.isEmpty(_factoryParameters.getSplitCharacter()) && StringUtils.isEmpty(_factoryParameters.getLinePrefixToRemove())){
 			return getImporter(INDEX.TRIP_BY_ROUTE.name(), TripById.FILENAME,TripByRoute.class);
 		}else{
 			return getImporter(INDEX.TRIP_BY_ROUTE.name(), TripById.FILENAME,TripByRoute.class,_factoryParameters);

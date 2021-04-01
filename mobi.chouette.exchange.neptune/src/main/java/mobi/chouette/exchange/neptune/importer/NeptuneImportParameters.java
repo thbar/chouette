@@ -18,7 +18,8 @@ import mobi.chouette.exchange.parameters.AbstractImportParameter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder={
         "stopAreaPrefixToRemove",
-        "areaCentroidPrefixToRemove"
+        "areaCentroidPrefixToRemove",
+        "linePrefixToRemove"
 })
 public class NeptuneImportParameters extends AbstractImportParameter {
 
@@ -31,5 +32,11 @@ public class NeptuneImportParameters extends AbstractImportParameter {
     @Setter
     @XmlElement(name = "areaCentroid_prefix_to_remove")
     public String areaCentroidPrefixToRemove = "";
+
+
+    @Getter
+    @Setter
+    @XmlElement(name = "line_prefix_to_remove")
+    public String linePrefixToRemove = "";
 
 }

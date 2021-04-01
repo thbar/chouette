@@ -26,6 +26,7 @@ import mobi.chouette.exchange.importer.UpdateLineInfosCommand;
 import mobi.chouette.exchange.validation.ImportedLineValidatorCommand;
 import mobi.chouette.exchange.validation.SharedDataValidatorCommand;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
@@ -98,20 +99,24 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
 
            ArrayList<String> savedLines = new ArrayList<String>();
            Integer cpt = 1;
-            for (GtfsRoute gtfsRoute : index) {
-                String newRouteId = gtfsRoute.getRouteId().split(parameters.getSplitCharacter())[0];
-                if(parameters.getRouteMerge() && savedLines.contains(newRouteId)) continue;
 
-                savedLines.add(newRouteId);
-                if(parameters.getRouteMerge())
-                    gtfsRoute.setRouteId(newRouteId);
+            String splitCharacter = parameters.getSplitCharacter();
+            for (GtfsRoute gtfsRoute : index) {
+
+                if (StringUtils.isNotEmpty(splitCharacter)){
+                    String newRouteId = gtfsRoute.getRouteId().split(parameters.getSplitCharacter())[0];
+                    if(parameters.getRouteMerge() && savedLines.contains(newRouteId)) continue;
+                    savedLines.add(newRouteId);
+                    gtfsRoute.setRouteId(newRouteId.replaceFirst("^"+parameters.getLinePrefixToRemove(),""));
+                }
+
 
 
                 Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
 
                 GtfsRouteParserCommand parser = (GtfsRouteParserCommand) CommandFactory.create(initialContext,
                         GtfsRouteParserCommand.class.getName());
-                parser.setGtfsRouteId(gtfsRoute.getRouteId());
+                parser.setGtfsRouteId(gtfsRoute.getRouteId().replaceFirst("^"+parameters.getLinePrefixToRemove(),""));
                 parser.setPosition(cpt);
                 cpt++;
                 chain.add(parser);

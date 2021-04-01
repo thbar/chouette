@@ -15,12 +15,16 @@ public class RouteByIdWithMergedIndex extends AbstractRouteById {
 
 
 
-	public RouteByIdWithMergedIndex(String name, String splitCharacter) throws IOException {
-		super(name,splitCharacter);
+	public RouteByIdWithMergedIndex(String name, String splitCharacter, String linePrefixToRemove) throws IOException {
+		super(name,splitCharacter,linePrefixToRemove);
 	}
 
 	@Override
 	protected String handleRouteIdTransformation(String inputRouteId) {
+		if (StringUtils.isNotEmpty(_linePrefixToRemove)){
+			inputRouteId = inputRouteId.replaceFirst("^"+_linePrefixToRemove,"");
+		}
+
 		if (StringUtils.isEmpty(_splitCharacter))
 			return inputRouteId;
 		return inputRouteId.split(_splitCharacter)[0];
@@ -39,12 +43,12 @@ public class RouteByIdWithMergedIndex extends AbstractRouteById {
 		@SuppressWarnings("rawtypes")
 		@Override
 		protected Index create(String name) throws IOException {
-			return new RouteByIdWithMergedIndex(name,"");
+			return new RouteByIdWithMergedIndex(name,"","");
 		}
 
 		@Override
 		protected Index create(String name, FactoryParameters  factoryParameters) throws IOException {
-			return new RouteByIdWithMergedIndex(name,factoryParameters.getSplitCharacter());
+			return new RouteByIdWithMergedIndex(name,factoryParameters.getSplitCharacter(),factoryParameters.getLinePrefixToRemove());
 		}
 	}
 

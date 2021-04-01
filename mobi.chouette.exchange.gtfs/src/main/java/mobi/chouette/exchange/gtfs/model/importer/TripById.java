@@ -13,7 +13,7 @@ public class TripById extends TripIndex {
 	}
 
 	public TripById(String name,FactoryParameters factoryParameters) throws IOException {
-		super(name, KEY, true,factoryParameters.getSplitCharacter());
+		super(name, KEY, true,factoryParameters.getSplitCharacter(), factoryParameters.getLinePrefixToRemove());
 	}
 
 	public static class DefaultImporterFactory extends IndexFactory {

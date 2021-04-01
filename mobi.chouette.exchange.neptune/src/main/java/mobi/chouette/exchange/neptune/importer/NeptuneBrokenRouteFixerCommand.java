@@ -144,7 +144,7 @@ public class NeptuneBrokenRouteFixerCommand implements Command, Constant {
 
         chouetteArea.getAreaCentroid().stream()
                                         .map(ChouettePTNetworkType.ChouetteArea.AreaCentroid :: getObjectId)
-                                        .filter(centroidId -> !usedCentroidList.contains(usedCentroidList))
+                                        .filter(centroidId -> !usedCentroidList.contains(centroidId))
                                         .forEach(centroidId -> log.error("Unused centroid :"+centroidId+ ", in file:"+currentFileName));
 
     }
