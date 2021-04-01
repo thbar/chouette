@@ -11,6 +11,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.GENERAL_FRAME;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.MEMBERS;
@@ -21,17 +23,40 @@ public class NetexCalendrierWriter extends AbstractNetexWriter {
         writer.writeAttribute(ID,  NetexProducerUtils.createUniqueGeneralFrameId(context, GENERAL_FRAME, typeNetex, timestamp));
 
         ValidBetween validBetween = new ValidBetween();
-        LocalDateTime fromDate = exportableNetexData.getSharedOperatingPeriods().values()
-                .stream()
-                .map(OperatingPeriod_VersionStructure::getFromDate)
-                .min(LocalDateTime::compareTo)
-                .get();
+        LocalDateTime fromDate;
+        LocalDateTime toDate;
 
-        LocalDateTime toDate = exportableNetexData.getSharedOperatingPeriods().values()
-                .stream()
-                .map(OperatingPeriod_VersionStructure::getToDate)
-                .max(LocalDateTime::compareTo)
-                .get();
+
+        if (exportableNetexData.getSharedOperatingPeriods().size() > 0){
+            //At least one calendar is existing.Valid periods are recovered from the calendar
+
+            fromDate = exportableNetexData.getSharedOperatingPeriods().values()
+                    .stream()
+                    .map(OperatingPeriod_VersionStructure::getFromDate)
+                    .min(LocalDateTime::compareTo)
+                    .get();
+
+            toDate = exportableNetexData.getSharedOperatingPeriods().values()
+                    .stream()
+                    .map(OperatingPeriod_VersionStructure::getToDate)
+                    .max(LocalDateTime::compareTo)
+                    .get();
+
+        }else{
+            //there is no calendar. Only inclusion dates. Valid periods are recovered from inclusion dates
+            List<LocalDateTime> inclusionDateList = exportableNetexData.getSharedDayTypeAssignments().stream()
+                                                                                                     .map(dayTypeAssignment -> dayTypeAssignment.getDate())
+                                                                                                     .collect(Collectors.toList());
+
+            fromDate = inclusionDateList.stream()
+                                        .min(LocalDateTime::compareTo)
+                                        .get();
+
+            toDate = inclusionDateList.stream()
+                                      .max(LocalDateTime::compareTo)
+                                      .get();
+        }
+
         validBetween.setFromDate(fromDate);
         validBetween.setToDate(toDate);
 
