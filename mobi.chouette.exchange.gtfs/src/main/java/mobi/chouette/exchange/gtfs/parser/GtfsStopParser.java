@@ -132,11 +132,17 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 			gtfsStop.setStopId(gtfsStop.getStopId().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
 		}else{
 			gtfsStop.setStopId(gtfsStop.getStopId().replaceFirst("^"+configuration.getQuayIdPrefixToRemove(),""));
-			gtfsStop.setParentStation(gtfsStop.getParentStation().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
-			if (gtfsStop.getStopId().equals(gtfsStop.getParentStation())){
-				log.error("Error on prefix removal. Duplicate id for parent and child on id :" + gtfsStop.getStopId());
-				throw new IllegalArgumentException("Can't remove prefixes chosen by user");
+			if (gtfsStop.getParentStation() != null){
+				gtfsStop.setParentStation(gtfsStop.getParentStation().replaceFirst("^"+configuration.getCommercialPointIdPrefixToRemove(),""));
+				checkUniqueIdWithParent(gtfsStop);
 			}
+		}
+	}
+
+	private void checkUniqueIdWithParent(GtfsStop gtfsStop){
+		if (gtfsStop.getStopId().equals(gtfsStop.getParentStation())){
+			log.error("Error on prefix removal. Duplicate id for parent and child on id :" + gtfsStop.getStopId());
+			throw new IllegalArgumentException("Can't remove prefixes chosen by user");
 		}
 	}
 	
