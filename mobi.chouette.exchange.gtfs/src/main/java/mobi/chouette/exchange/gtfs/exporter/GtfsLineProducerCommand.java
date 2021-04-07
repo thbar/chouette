@@ -15,6 +15,7 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.exchange.gtfs.Constant;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsRouteProducer;
 import mobi.chouette.exchange.gtfs.exporter.producer.GtfsServiceProducer;
@@ -50,6 +51,8 @@ import java.util.Set;
 @Log4j
 public class GtfsLineProducerCommand implements Command, Constant {
 	public static final String COMMAND = "GtfsLineProducerCommand";
+
+	private ConnectionLinkDAO connectionLinkDao;
 
 	@Override
 	public boolean execute(Context context) throws Exception {
@@ -89,6 +92,8 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			}
 
 			GtfsDataCollector collector = new GtfsDataCollector();
+			collector.setConnectionLinkDAO(connectionLinkDao);
+
 			boolean cont = collector.collect(collection, line, startDate, endDate);
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.LINE, 0);
 			reporter.setStatToObjectReport(context, line.getObjectId(), OBJECT_TYPE.LINE, OBJECT_TYPE.JOURNEY_PATTERN,
@@ -168,6 +173,10 @@ public class GtfsLineProducerCommand implements Command, Constant {
 			}
 		}
 		return hasLine;
+	}
+
+	public void setConnectionLinkDao(ConnectionLinkDAO connectionLinkDao) {
+		this.connectionLinkDao = connectionLinkDao;
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {

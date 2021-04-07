@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.exporter;
 
 import lombok.extern.log4j.Log4j;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.model.AccessLink;
 import mobi.chouette.model.AccessPoint;
@@ -29,6 +30,8 @@ import java.util.Set;
 public class DataCollector {
 
 	private ScheduledStopPointDAO scheduledStopPointDAO;
+
+	private ConnectionLinkDAO connectionLinkDAO;
 
 	protected boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate,
 							  boolean skipNoCoordinate, boolean followLinks) {
@@ -170,6 +173,10 @@ public class DataCollector {
 		this.scheduledStopPointDAO = scheduledStopPointDAO;
 	}
 
+	public void setConnectionLinkDAO(ConnectionLinkDAO connectionLinkDAO) {
+		this.connectionLinkDAO = connectionLinkDAO;
+	}
+
 	private void collectInterchanges(ExportableData collection, VehicleJourney vehicleJourney, boolean skipNoCoordinate, boolean followLinks, LocalDate startDate, LocalDate endDate) {
 		for (Interchange interchange : vehicleJourney.getConsumerInterchanges()) {
 			if (interchange.getFeederVehicleJourney() != null && !isVehicleJourneyValid(interchange.getFeederVehicleJourney(), collection, startDate, endDate)) {
@@ -200,8 +207,13 @@ public class DataCollector {
 		Set<ConnectionLink> connectionLinkSet = new HashSet<>(collection.getConnectionLinks());
 
 		for (ConnectionLink link : connectionLinkSet) {
-			collectStopAreas(collection, link.getStartOfLink(), false, false);
-			collectStopAreas(collection, link.getEndOfLink(), false, false);
+
+			// Due to connection reset between 2 line exports, there are problems if a connectionLink is between 2 different lines.
+			// So, we have te recover connection link from DB (using connection link ID) to avoid lazy exceptions
+			ConnectionLink connectionLink = connectionLinkDAO.findByObjectId(link.getObjectId());
+
+			collectStopAreas(collection, connectionLink.getStartOfLink(), false, false);
+			collectStopAreas(collection, connectionLink.getEndOfLink(), false, false);
 		}
 	}
 

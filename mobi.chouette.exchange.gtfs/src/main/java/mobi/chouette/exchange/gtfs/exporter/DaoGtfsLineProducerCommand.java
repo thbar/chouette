@@ -15,6 +15,7 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.exchange.gtfs.Constant;
 import mobi.chouette.model.Line;
@@ -46,6 +47,10 @@ public class DaoGtfsLineProducerCommand implements Command, Constant
 	@EJB 
 	private LineDAO lineDAO;
 
+	@EJB
+	private ConnectionLinkDAO connectionLinkDAO;
+
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean execute(Context context) throws Exception {
@@ -59,7 +64,7 @@ public class DaoGtfsLineProducerCommand implements Command, Constant
 			InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
 			initialContext.addToEnvironment(SCHEDULED_STOP_POINTS, context.get(SCHEDULED_STOP_POINTS));
 			Command export = CommandFactory.create(initialContext, GtfsLineProducerCommand.class.getName());
-			
+			((GtfsLineProducerCommand)export).setConnectionLinkDao(connectionLinkDAO);
 			context.put(LINE, line);
 			result = export.execute(context);
 			//daoContext.setRollbackOnly();
