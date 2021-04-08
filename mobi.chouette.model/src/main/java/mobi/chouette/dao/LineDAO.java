@@ -1,6 +1,7 @@
 package mobi.chouette.dao;
 
 import mobi.chouette.model.Line;
+import mobi.chouette.model.Operator;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface LineDAO extends GenericDAO<Line> {
     List<Line> findByNetworkId(Long networkId);
 
     List<String> findObjectIdLinesInFirstDataspace(List<Long> ids, String dataspace);
+
+    boolean hasLines(String schema);
 }

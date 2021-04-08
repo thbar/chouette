@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.OperatorDAO;
 import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.exchange.CommandCancelledException;
@@ -15,6 +16,7 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ProgressionReport;
 import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.exchange.report.StepProgression;
+import mobi.chouette.model.Line;
 import mobi.chouette.model.Operator;
 import mobi.chouette.model.Provider;
 import mobi.chouette.persistence.hibernate.ContextHolder;
@@ -41,6 +43,9 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 
 	@EJB
 	OperatorDAO operatorDAO;
+
+	@EJB
+	LineDAO lineDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -81,24 +86,25 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				}
 			});
 
-			List<String> schemasWithOperator = new ArrayList<>();
+			List<String> schemasWithOperatorAndLines = new ArrayList<>();
 
 			for(String schema : schemas){
-				List<Operator> operators = operatorDAO.findByReferential(schema);
-				if(operators != null && operators.size() > 0){
-					schemasWithOperator.add(schema);
+				boolean hasOperators = operatorDAO.hasOperators(schema);
+				boolean hasLines = lineDAO.hasLines(schema);
+				if(hasOperators && hasLines){
+					schemasWithOperatorAndLines.add(schema);
 				}
 			}
 
-			if(schemasWithOperator.size() == 0){
-				log.error("Erreur export Concerto : il n'y a aucun schema avec au moins un operateur");
+			if(schemasWithOperatorAndLines.size() == 0){
+				log.error("Erreur export Concerto : il n'y a aucun schema avec au moins un operateur et/ou des lignes");
 				reporter.setActionError(context, ActionReporter.ERROR_CODE.NO_DATA_PROCEEDED, "no data exported");
 				return ERROR;
 			}
 
 			log.info("Lancement de l'export Concerto");
 
-			for(String schema : schemasWithOperator){
+			for(String schema : schemasWithOperatorAndLines){
 				if(!schema.startsWith("mosaic_")) schema = "mosaic_" + schema;
 				if(context.containsKey(EXPORTABLE_DATA)){
                     context.put(EXPORTABLE_DATA, new ExportableData());
@@ -112,7 +118,7 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 
 				log.info("Export Concerto, filiale : " + schema);
 
-				if(schema.equals(schemasWithOperator.get(schemasWithOperator.size() - 1))){
+				if(schema.equals(schemasWithOperatorAndLines.get(schemasWithOperatorAndLines.size() - 1))){
 					allSchemas = true;
 				}
 				else{

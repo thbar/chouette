@@ -37,14 +37,14 @@ public class ConcertoOperatorProducer extends AbstractProducer
             if (!concertoOperator.getUuid().equals(concertoOperator1.getUuid()) &&
                     concertoOperator.getObjectId().equals(concertoOperator1.getObjectId()) &&
                     concertoOperator.getDate().equals(concertoOperator1.getDate()) &&
-                    !concertoOperatorsToDelete.containsKey(concertoOperator1.getUuid())) {
+                    !concertoOperatorsToDelete.containsValue(concertoOperator1.getUuid())) {
 
-               concertoOperatorsToDelete.put(concertoOperator.getUuid(), concertoOperator1.getUuid());
+               concertoOperatorsToDelete.put(concertoOperator1.getUuid(), concertoOperator.getUuid());
             }
          }
       }
 
-      concertoOperators.removeIf(concertoOperator -> concertoOperatorsToDelete.containsValue(concertoOperator.getUuid()));
+      concertoOperators.removeIf(concertoOperator -> concertoOperatorsToDelete.containsKey(concertoOperator.getUuid()));
 
       for (ConcertoOperator concertoOperator : concertoOperators) {
          try {

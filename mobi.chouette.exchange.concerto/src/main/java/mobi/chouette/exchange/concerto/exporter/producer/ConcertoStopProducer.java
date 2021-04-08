@@ -41,7 +41,7 @@ public class ConcertoStopProducer extends AbstractProducer {
 				if (!concertoStopArea.getUuid().equals(concertoStopArea1.getUuid()) &&
 						concertoStopArea.getObjectId().equals(concertoStopArea1.getObjectId()) &&
 							concertoStopArea.getDate().equals(concertoStopArea1.getDate()) &&
-									!concertoStopAreasToDelete.containsKey(concertoStopArea1.getUuid())) {
+									!concertoStopAreasToDelete.containsValue(concertoStopArea1.getUuid())) {
 
 					UUID[] lineIdArray;
 					List<UUID> uuids = new ArrayList<>(Arrays.asList(concertoStopArea.getLines()));
@@ -53,12 +53,12 @@ public class ConcertoStopProducer extends AbstractProducer {
 					lineIdArray = new UUID[uuids.size()];
 					lineIdArray = uuids.toArray(lineIdArray);
 					concertoStopArea.setLines(lineIdArray);
-					concertoStopAreasToDelete.put(concertoStopArea.getUuid(), concertoStopArea1.getUuid());
+					concertoStopAreasToDelete.put(concertoStopArea1.getUuid(), concertoStopArea.getUuid());
 				}
 			}
 		}
 
-		concertoStopAreas.removeIf(concertoStopArea -> concertoStopAreasToDelete.containsValue(concertoStopArea.getUuid()));
+		concertoStopAreas.removeIf(concertoStopArea -> concertoStopAreasToDelete.containsKey(concertoStopArea.getUuid()));
 
 		for (ConcertoStopArea concertoStopArea : concertoStopAreas) {
 			try {

@@ -42,15 +42,15 @@ public class ConcertoLineProducer extends AbstractProducer
                 if (!concertoLine.getUuid().equals(concertoLine1.getUuid()) &&
                         concertoLine.getObjectId().equals(concertoLine1.getObjectId()) &&
                         concertoLine.getDate().equals(concertoLine1.getDate()) &&
-                        !concertoLinesToDelete.containsKey(concertoLine1.getUuid())) {
+                        !concertoLinesToDelete.containsValue(concertoLine1.getUuid())) {
 
-                    concertoLinesToDelete.put(concertoLine.getUuid(), concertoLine1.getUuid());
+                    concertoLinesToDelete.put(concertoLine1.getUuid(), concertoLine.getUuid());
                 }
             }
         }
 
-        concertoLines.removeIf(concertoLine -> concertoLinesToDelete.containsValue(concertoLine.getUuid()));
-        mappingLineUUIDList.removeIf(mappingLineUUID -> concertoLinesToDelete.containsValue(mappingLineUUID.getUuid()));
+        concertoLines.removeIf(concertoLine -> concertoLinesToDelete.containsKey(concertoLine.getUuid()));
+        mappingLineUUIDList.removeIf(mappingLineUUID -> concertoLinesToDelete.containsKey(mappingLineUUID.getUuid()));
 
         context.put(MAPPING_LINE_UUID, mappingLineUUIDList);
 

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface OperatorDAO extends GenericDAO<Operator> {
 
-    List<Operator> findByReferential(String schema);
+    boolean hasOperators(String schema);
 }

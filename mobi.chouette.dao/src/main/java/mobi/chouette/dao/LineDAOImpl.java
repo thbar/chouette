@@ -1,11 +1,13 @@
 package mobi.chouette.dao;
 
 import mobi.chouette.model.Line;
+import mobi.chouette.model.Operator;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import java.math.BigInteger;
 import java.util.List;
 
 @Stateless (name="LineDAO")
@@ -71,5 +73,12 @@ public class LineDAOImpl extends GenericDAOImpl<Line> implements LineDAO {
 				"                  WHERE l.id IN :ids")
 				.setParameter("ids", ids)
 				.getResultList();
+	}
+
+	@Override
+	public boolean hasLines(String schema) {
+		long count =  ((BigInteger) em.createNativeQuery("select COUNT(*) from " + schema + ".lines")
+				.getSingleResult()).longValue();
+		return count > 0;
 	}
 }
