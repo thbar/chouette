@@ -594,7 +594,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
 
             // Timetable
             String timetableId = AbstractConverter.composeObjectId(configuration,
-                    Timetable.TIMETABLE_KEY, AbstractConverter.computeEndId(gtfsTrip.getServiceId()), log);
+                    Timetable.TIMETABLE_KEY, gtfsTrip.getServiceId(), log);
 
             // Disable linking to after midnight-calendar as this causes day offsets to be compensated twice.
 //			if (afterMidnight) {

@@ -188,7 +188,7 @@ public class GtfsCalendarParser implements Parser, Validator, Constant {
 			for (GtfsCalendar gtfsCalendar : importer.getCalendarByService()) {
 
 				String objectId = AbstractConverter.composeObjectId(configuration,
-						Timetable.TIMETABLE_KEY, AbstractConverter.computeEndId(gtfsCalendar.getServiceId()), log);
+						Timetable.TIMETABLE_KEY, gtfsCalendar.getServiceId(), log);
 				Timetable timetable = ObjectFactory.getTimetable(referential, objectId);
 				convert(context, gtfsCalendar, timetable);
 			}
@@ -199,7 +199,7 @@ public class GtfsCalendarParser implements Parser, Validator, Constant {
 			for (String serviceId : importer.getCalendarDateByService().keys()) {
 
 				String objectId = AbstractConverter.composeObjectId(configuration,
-						Timetable.TIMETABLE_KEY, AbstractConverter.computeEndId(serviceId), log);
+						Timetable.TIMETABLE_KEY, serviceId, log);
 
 				Timetable timetable = referential.getTimetables().get(objectId);
 				for (GtfsCalendarDate gtfsCalendarDate : importer.getCalendarDateByService().values(serviceId)) {
