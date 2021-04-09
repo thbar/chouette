@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 
 @Log4j
 @Stateless(name = UpdateStopareaFromOkinaCommand.COMMAND)
@@ -45,19 +44,16 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 	private StopAreaDAO stopAreaDAO;
 
 	@EJB
-	private ProviderDAO providerDAO;
-
-	@EJB
-	MappingHastusZdepDAO mappingHastusZdepDAO;
-
-	@EJB
-	ScheduledStopPointDAO scheduledStopPointDAO;
+	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	@EJB(beanName = NeTExIdfmStopPlaceRegisterUpdater.BEAN_NAME)
 	private NeTExIdfmStopPlaceRegisterUpdater neTExIdfmStopPlaceRegisterUpdater;
 
 	@Resource(lookup = "java:comp/DefaultManagedExecutorService")
 	ManagedExecutorService executor;
+
+	@EJB
+	private ProviderDAO providerDAO;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -80,40 +76,10 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 
 		neTExIdfmStopPlaceRegisterUpdater.update(context, areas);
 
-		UpdateStopareaFromOkinaCommand.CommandCallableToUpdateZDLr callableZDLr = new UpdateStopareaFromOkinaCommand.CommandCallableToUpdateZDLr();
-		Optional<Provider> provider = providerDAO.findBySchema(ContextHolder.getContext());
-		callableZDLr.codeIdfm = provider.orElseThrow(() -> new RuntimeException("Aucun provider trouvé avec pour schema " + ContextHolder.getContext())).getCodeIdfm();
-		callableZDLr.context = ContextHolder.getContext();
-		executor.submit(callableZDLr);
-
+		Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrAsynchronousCommand.class.getName());
+		command.execute(context);
 
 		return SUCCESS;
-	}
-
-	private class CommandCallableToUpdateZDLr implements Callable<Void> {
-		private String codeIdfm;
-		private String context;
-
-		@Override
-		@TransactionAttribute(TransactionAttributeType.REQUIRED)
-		public Void call() throws Exception {
-			ContextHolder.setContext(this.context);
-			String requestHttpTarget = String.format(System.getProperty("iev.stop.place.zdep.zder.zdlr.mapping.by.ref"), this.codeIdfm);
-			InputStream input = new ByteArrayInputStream(PublicationDeliveryReflexService.getAll(requestHttpTarget));
-			HashMap<String, Pair<String, String>> stringPairHashMap = IdfmReflexParser.parseReflexResult(input);
-
-			stringPairHashMap.forEach((zdep, zderZdlrPair) -> {
-				Optional<MappingHastusZdep> byZdep = mappingHastusZdepDAO.findByZdep(zdep);
-				if (byZdep.isPresent()) {
-					MappingHastusZdep mappingHastusZdep = byZdep.get();
-					mappingHastusZdep.setZder(zderZdlrPair.getLeft());
-					mappingHastusZdep.setZdlr(zderZdlrPair.getRight());
-					mappingHastusZdepDAO.update(mappingHastusZdep);
-				}
-			});
-
-			return null;
-		}
 	}
 
 	public static class DefaultCommandFactory extends CommandFactory {

@@ -13,8 +13,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.ByteArrayInputStream;
@@ -37,7 +35,6 @@ public class UpdateMappingZdepZderZdlrCommand implements Command {
 	private ProviderDAO providerDAO;
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public boolean execute(Context context) throws Exception {
 		Boolean swallow = (Boolean) context.get("swallow");
 		try {

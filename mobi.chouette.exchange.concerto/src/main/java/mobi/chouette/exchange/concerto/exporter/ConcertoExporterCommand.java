@@ -12,6 +12,7 @@ import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.ProgressionCommand;
 import mobi.chouette.exchange.exporter.AbstractExporterCommand;
+import mobi.chouette.exchange.importer.UpdateMappingZdepZderZdlrCommand;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ProgressionReport;
 import mobi.chouette.exchange.report.ReportConstant;
@@ -102,7 +103,18 @@ public class ConcertoExporterCommand extends AbstractExporterCommand implements 
 				return ERROR;
 			}
 
-			log.info("Lancement de l'export Concerto");
+			log.info("Valorisation des zdlr zder dans les espaces de niveau 1");
+
+			for(String schema : schemasWithOperatorAndLines) {
+				schema = schema.replace("mosaic_", "");
+				ContextHolder.setContext(schema);
+				Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrCommand.class.getName());
+				mobi.chouette.common.Context contextMappingZdlrZder = new mobi.chouette.common.Context();
+				contextMappingZdlrZder.put("ref", schema);
+				command.execute(new mobi.chouette.common.Context(contextMappingZdlrZder));
+			}
+
+				log.info("Lancement de l'export Concerto");
 
 			for(String schema : schemasWithOperatorAndLines){
 				if(!schema.startsWith("mosaic_")) schema = "mosaic_" + schema;

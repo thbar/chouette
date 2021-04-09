@@ -8,6 +8,7 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.common.file.FileStoreFactory;
 import mobi.chouette.exchange.importer.*;
 import mobi.chouette.model.Company;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.iev.Job;
 import mobi.chouette.model.iev.Job.STATUS;
 import mobi.chouette.model.iev.Link;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -151,7 +153,7 @@ public class RestService implements Constant {
 	public Response updateMappingZdepZderZdlr(@PathParam("ref") String referential) {
 		try {
 			ContextHolder.setContext(referential);
-			Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrCommand.class.getName());
+			Command command = CommandFactory.create(new InitialContext(), UpdateMappingZdepZderZdlrAsynchronousCommand.class.getName());
 			mobi.chouette.common.Context context = new mobi.chouette.common.Context();
 			context.put("ref", referential);
 			command.execute(new mobi.chouette.common.Context(context));
