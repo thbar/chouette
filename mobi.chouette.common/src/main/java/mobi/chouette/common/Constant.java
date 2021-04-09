@@ -79,5 +79,8 @@ public interface Constant {
 	public static final String IMPORTED_ID = "imported-id";
 
 	public static final String MOBIITI_PREFIX = "MOBIITI";
+
+	public static final String STOP_PLACE_MODIFICATION_ORIGIN = "StopPlaceModificationOrigin";
+	public static final String MOBIITI_APPLICATION_ORIGIN = "MobiitiApplicationOrigin";
 	
 }

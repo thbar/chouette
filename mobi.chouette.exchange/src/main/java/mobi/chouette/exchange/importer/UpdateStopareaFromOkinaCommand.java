@@ -67,6 +67,8 @@ public class UpdateStopareaFromOkinaCommand implements Command {
 
 
 		Referential referential = (Referential) context.get(REFERENTIAL);
+		context.put(STOP_PLACE_MODIFICATION_ORIGIN,MOBIITI_APPLICATION_ORIGIN);
+
 
 		neTExIdfmStopPlaceRegisterUpdater.update(context, referential, areas);
 		return SUCCESS;

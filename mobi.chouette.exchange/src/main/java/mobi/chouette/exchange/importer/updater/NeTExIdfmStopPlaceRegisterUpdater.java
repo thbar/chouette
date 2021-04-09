@@ -11,7 +11,7 @@ import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.rutebanken.netex.client.PublicationDeliveryClient;
 import org.rutebanken.netex.client.TokenService;
 import org.rutebanken.netex.model.MultilingualString;
@@ -40,6 +40,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static mobi.chouette.common.Constant.MOBIITI_APPLICATION_ORIGIN;
+import static mobi.chouette.common.Constant.STOP_PLACE_MODIFICATION_ORIGIN;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_AUTH_URL;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_ID;
 import static mobi.chouette.common.PropertyNames.KC_CLIENT_REALM;
@@ -84,16 +86,22 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
     }
 
     private void initializeClient(){
-        initializeClient(null);
+        initializeClient(null,false);
     }
 
-    private void initializeClient(String ref){
+    private void initializeClient(String ref, boolean updateCentroid){
         String url = getAndValidateProperty(PropertyNames.STOP_PLACE_REGISTER_URL);
         if(!StringUtils.isEmpty(ref)) {
             if(url.contains("?"))
                 url = url + "&providerCode=" + ref;
             else
                 url = url + "?providerCode=" + ref;
+        }
+        if(updateCentroid) {
+            if(url.contains("?"))
+                url = url + "&updateCentroid=true";
+            else
+                url = url + "?updateCentroid=true";
         }
         String clientId = getAndValidateProperty(KC_CLIENT_ID);
         String clientSecret = getAndValidateProperty(KC_CLIENT_SECRET);
@@ -120,7 +128,11 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String ref = (String) context.get("ref");
-        initializeClient(ref);
+        String stopPlaceModificationOrigin = (String) context.get(STOP_PLACE_MODIFICATION_ORIGIN);
+        boolean updateCentroid = MOBIITI_APPLICATION_ORIGIN.equals(stopPlaceModificationOrigin);
+        initializeClient(ref,updateCentroid);
+
+
 
         if (client == null) {
             throw new RuntimeException("Looks like PublicationDeliveryClient is not set up correctly. Aborting.");
