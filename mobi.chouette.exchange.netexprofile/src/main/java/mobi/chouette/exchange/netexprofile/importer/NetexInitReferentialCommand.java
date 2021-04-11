@@ -90,9 +90,9 @@ public class NetexInitReferentialCommand implements Command, Constant {
 			Map<String, NetexProfileValidator> availableProfileValidators = (Map<String, NetexProfileValidator>) context.get(NETEX_PROFILE_VALIDATORS);
 
 			String profileVersion = netexJava.getVersion();
-			if (!lineFile) {
-				profileVersion += "-common";
-			}
+//			if (!lineFile) {
+//				profileVersion += "-common";
+//			}
 
 			NetexProfileValidator profileValidator = availableProfileValidators.get(profileVersion);
 			if (profileValidator != null) {

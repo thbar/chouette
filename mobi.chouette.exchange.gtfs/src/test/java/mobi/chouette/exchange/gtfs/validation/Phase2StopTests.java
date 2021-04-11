@@ -151,9 +151,9 @@ public class Phase2StopTests extends AbstractPhase2Tests {
     public void verifyTest_2_7() throws Exception {
         log.info(Color.GREEN + "Stop_7 : coordinates stops 0 0" + Color.NORMAL);
         Context context = new Context();
-        CheckPointReport result = verifyValidation( log, context, "stop_7", GTFS_2_GTFS_Stop_5,SEVERITY.ERROR, RESULT.NOK,true);
+        CheckPointReport result = verifyValidation( log, context, "stop_7", GTFS_2_GTFS_Stop_5,SEVERITY.ERROR, RESULT.UNCHECK,true);
 
-        Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+        Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
         for (CheckPointErrorReport detail : getDetails(context, result))
         {
             Assert.assertNotNull(detail.getSource(), "detail must refer a source");

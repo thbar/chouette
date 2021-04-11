@@ -1,52 +1,51 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.07:NO-NeTEx-networktimetable:1.0">
+<?xml version="1.0" encoding="UTF-8"?><PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.1:FR-NETEX_RESEAU-2.2">
     <PublicationTimestamp>2016-12-19T14:06:25.103Z</PublicationTimestamp>
     <ParticipantRef>Avinor</ParticipantRef>
     <Description>Flight SK264 : Bergen-Oslo</Description>
     <dataObjects>
-        <CompositeFrame created="2016-12-19T14:06:25.103Z" version="1" id="AVI:CompositeFrame:SK264">
+        <CompositeFrame created="2016-12-19T14:06:25.103Z" id="AVI:CompositeFrame:SK264" version="1">
             <frames>
-                <ServiceFrame version="1" id="AVI:ServiceFrame:SK264">
+                <ServiceFrame id="AVI:ServiceFrame:SK264:LOC" version="any">
                   
                     <routePoints>
-                        <RoutePoint version="1" id="AVI:RoutePoint:BGO">
-                            <projections>
-                                <PointProjection version="1" id="AVI:PointProjection:BGO">
-                                    <ProjectedPointRef ref="AVI:ScheduledStopPoint:BGO" version="1"/>
+                        <RoutePoint id="AVI:RoutePoint:BGO:LOC" version="any">
+                            <Location srsName="WGS84"><Longitude>16.687364</Longitude><Latitude>68.490412</Latitude></Location><projections>
+                                <PointProjection id="AVI:PointProjection:BGO:LOC" version="any">
+                                    <ProjectedPointRef ref="AVI:ScheduledStopPoint:BGO:LOC" version="any"/>
                                 </PointProjection>
                             </projections>
                         </RoutePoint>
-                        <RoutePoint version="1" id="AVI:RoutePoint:OSL">
-                            <projections>
-                                <PointProjection version="1" id="AVI:PointProjection:OSL">
-                                    <ProjectedPointRef ref="AVI:ScheduledStopPoint:OSL" version="1"/>
+                        <RoutePoint id="AVI:RoutePoint:OSL:LOC" version="any">
+                            <Location srsName="WGS84"><Longitude>16.687364</Longitude><Latitude>68.490412</Latitude></Location><projections>
+                                <PointProjection id="AVI:PointProjection:OSL:LOC" version="any">
+                                    <ProjectedPointRef ref="AVI:ScheduledStopPoint:OSL:LOC" version="any"/>
                                 </PointProjection>
                             </projections>
                         </RoutePoint>
                     </routePoints>
                     <routes>
-                        <Route version="1" id="AVI:Route:SK264">
+                        <Route id="AVI:Route:SK264:LOC" version="any">
                             <Name>Bergen-Oslo</Name>
                            
                             <pointsInSequence>
-                                <PointOnRoute version="1" id="AVI:PointOnRoute:26779581" order="1">
-                                    <RoutePointRef ref="AVI:RoutePoint:BGO" version="1"/>
+                                <PointOnRoute id="AVI:PointOnRoute:26779581:LOC" order="1" version="any">
+                                    <RoutePointRef ref="AVI:RoutePoint:BGO:LOC" version="any"/>
                                 </PointOnRoute>
-                                <PointOnRoute version="1" id="AVI:PointOnRoute:26779582" order="2">
-                                    <RoutePointRef ref="AVI:RoutePoint:OSL" version="1"/>
+                                <PointOnRoute id="AVI:PointOnRoute:26779582:LOC" order="2" version="any">
+                                    <RoutePointRef ref="AVI:RoutePoint:OSL:LOC" version="any"/>
                                 </PointOnRoute>
                             </pointsInSequence>
                         </Route>
                     </routes>
 
                     <scheduledStopPoints>
-                        <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:BGO">
+                        <ScheduledStopPoint id="AVI:ScheduledStopPoint:BGO:LOC" version="any">
                             <Name>Bergen Lufthavn</Name>
-                            <ShortName>BGO</ShortName>
+                            <Location srsName="WGS84"><Longitude>16.687364</Longitude><Latitude>68.490412</Latitude></Location><ShortName>BGO</ShortName>
                         </ScheduledStopPoint>
-                        <ScheduledStopPoint version="1" id="AVI:ScheduledStopPoint:OSL">
+                        <ScheduledStopPoint id="AVI:ScheduledStopPoint:OSL:LOC" version="any">
                             <Name>Oslo Lufthavn</Name>
-                            <ShortName>OSL</ShortName>
+                            <Location srsName="WGS84"><Longitude>16.687364</Longitude><Latitude>68.490412</Latitude></Location><ShortName>OSL</ShortName>
                         </ScheduledStopPoint>
                     </scheduledStopPoints>
 

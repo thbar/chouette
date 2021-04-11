@@ -68,11 +68,7 @@ public class GtfsExporterInputValidatorTests
 		parameters.setTimeZone("Europe/Paris");
 		parameters.setObjectIdPrefix(null);
 		result = validator.checkParameters(parameters,null);
-		Assert.assertFalse(result, "check for no object_id_prefix");
-
-		parameters.setObjectIdPrefix("");
-		result = validator.checkParameters(parameters,null);
-		Assert.assertFalse(result, "check for empty object_id_prefix");
+		Assert.assertTrue(result, "check for no object_id_prefix");
 
 		parameters.setObjectIdPrefix("GTFS");
 		result = validator.checkFilename("data.zip");

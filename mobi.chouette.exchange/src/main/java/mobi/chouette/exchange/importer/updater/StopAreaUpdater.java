@@ -132,6 +132,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 				oldValue.setComment(newValue.getComment());
 				oldValue.setLongLatType(newValue.getLongLatType());
 				oldValue.setUrl(newValue.getUrl());
+				oldValue.setOriginalStopId(newValue.getOriginalStopId());
 			}
 			oldValue.setLongitude(newValue.getLongitude());
 			oldValue.setLatitude(newValue.getLatitude());

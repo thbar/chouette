@@ -187,7 +187,7 @@ public class ValidationStopAreas extends AbstractTestValidation {
 
 		log.info(Color.BLUE + "enveloppe" + Color.NORMAL);
 		
-		importLines("model.zip", 7, 7, true);
+		importLines("model_nominal.zip", 7, 7, true);
 		
 		Assert.assertNotNull(fullparameters, "no parameters for test");
 

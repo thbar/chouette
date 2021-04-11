@@ -69,9 +69,10 @@ public class TransitDataStatisticsServiceTest {
 		Assert.assertEquals("EXPIRING",getCategory(lineStats, 0).getName());
 		Assert.assertEquals("OK",getCategory(lineStats, 5).getName());
 		Assert.assertEquals("GOOD",getCategory(lineStats, 10).getName());
-		Assert.assertTrue(getCategory(lineStats, -1).getLineNumbers().contains("invalidNowWithHistoricPeriod"));
+		//Assert.assertTrue(getCategory(lineStats, -1).getLineNumbers().contains("invalidNowWithHistoricPeriod"));
 		Assert.assertTrue(getCategory(lineStats, 0).getLineNumbers().contains("validNowAndForSomeDays"));
 		Assert.assertTrue(getCategory(lineStats, 10).getLineNumbers().contains("validNowAndInTheFuture"));
+		Assert.assertTrue(getCategory(lineStats, 10).getLineNumbers().contains("invalidNowWithHistoricPeriod"));
 	}
 
 

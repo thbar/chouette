@@ -8,6 +8,7 @@ import mobi.chouette.exchange.importer.Parser;
 import mobi.chouette.exchange.importer.ParserFactory;
 
 import mobi.chouette.exchange.neptune.importer.NeptuneImportParameters;
+import mobi.chouette.model.ConnectionLink;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.SimpleObjectReference;
 import mobi.chouette.model.StopArea;
@@ -210,6 +211,29 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 			StopArea newStopArea = referential.getSharedStopAreas().get(newStopAreaId);
 			scheduleStopPoint.setContainedInStopAreaRef(new SimpleObjectReference(newStopArea));
 		}
+
+		List<ConnectionLink> connectionLinksList = referential.getSharedConnectionLinks().values().stream().collect(Collectors.toList());
+
+		for (ConnectionLink connectionLink: connectionLinksList){
+			String oldStartId = connectionLink.getStartOfLink().getObjectId();
+			String newStartStopAreaId = fileToReferentialStopIdMap.get(oldStartId);
+
+			if (newStartStopAreaId == null) continue;
+
+			StopArea newStartStopArea = referential.getSharedStopAreas().get(newStartStopAreaId);
+			connectionLink.setStartOfLink(newStartStopArea);
+
+			String oldEndId = connectionLink.getEndOfLink().getObjectId();
+			String newEndStopAreaId = fileToReferentialStopIdMap.get(oldEndId);
+			if (newEndStopAreaId == null) continue;
+			StopArea newEndStopArea = referential.getSharedStopAreas().get(newEndStopAreaId);
+			connectionLink.setEndOfLink(newEndStopArea);
+		}
+
+
+
+
+
 
 	}
 

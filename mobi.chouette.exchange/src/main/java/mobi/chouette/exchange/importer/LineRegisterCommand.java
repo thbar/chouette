@@ -270,7 +270,7 @@ public class LineRegisterCommand implements Command {
 			for (JourneyPattern journeyPattern : route.getJourneyPatterns()) {
 				for (StopPoint stopPoint : journeyPattern.getStopPoints()) {
 					StopArea stopArea = stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject();
-					if (StringUtils.isEmpty(stopArea.getOriginalStopId())){
+					if (stopArea != null && StringUtils.isEmpty(stopArea.getOriginalStopId())){
 						StopArea sharedStopArea = referential.getSharedStopAreas().get(stopArea.getObjectId());
 						stopArea.setOriginalStopId(sharedStopArea != null ? sharedStopArea.getOriginalStopId() : null);
 					}

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -97,12 +98,17 @@ public class StopAreaServiceTest extends Arquillian {
 					jars.add(file);
 			}
 		}
+
+		List<File> jarsWithoutAntLR = jars.stream().filter(f -> !f.getName().contains("antlr"))
+				.collect(Collectors.toList());
+
+
 		final WebArchive testWar = ShrinkWrap.create(WebArchive.class, "test.war")
 				.addAsResource("test-persistence.xml", "META-INF/persistence.xml")
 				.addAsWebInfResource("postgres-ds.xml").addClass(DummyChecker.class)
 				.addClass(StopAreaServiceTest.class);
 
-		result = ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addAsLibraries(jars.toArray(new File[0]))
+		result = ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addAsLibraries(jarsWithoutAntLR.toArray(new File[0]))
 				.addAsModules(modules.toArray(new JavaArchive[0])).addAsModule(testWar)
 				.addAsResource(EmptyAsset.INSTANCE, "beans.xml");
 		return result;
@@ -111,6 +117,8 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@Test
 	public void testUpdateQuaysOnChildStop() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		stopAreaDAO.truncate();
 		utx.begin();
 		em.joinTransaction();
 
@@ -145,6 +153,8 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@Test
 	public void testStopAreaUpdate() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		stopAreaDAO.truncate();
 		utx.begin();
 		em.joinTransaction();
 
@@ -236,6 +246,8 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@Test
 	public void testStopAreaUpdateForMultiModalStop() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		stopAreaDAO.truncate();
 		utx.begin();
 		em.joinTransaction();
 
@@ -266,6 +278,10 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@Test
 	public void deleteExistingBoardingPositionsNoLongerValidForStopOnlyIfInSameCodeSpaceAsStop() throws Exception {
+
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		ContextHolder.setDefaultSchema("chouette_gui");
+		stopAreaDAO.truncate();
 
 		StopArea bpInStopCodeSpace = new StopArea();
 		bpInStopCodeSpace.setAreaType(ChouetteAreaEnum.BoardingPosition);
@@ -298,6 +314,10 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@Test
 	public void testDeleteStopAreaWithQuays() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		ContextHolder.setDefaultSchema("chouette_gui");
+		stopAreaDAO.truncate();
+
 		String stopAreaId = "NSR:StopPlace:1";
 		utx.begin();
 		em.joinTransaction();

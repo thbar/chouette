@@ -260,263 +260,271 @@ public class NetexExportTests extends Arquillian implements Constant, ReportCons
 
     @Test(enabled = true, groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportFlexibleLine() throws Exception {
-        importLines("C_NETEX_FLEXIBLE_LINE_1.xml", 1, 1, Arrays.asList(
-                createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
-
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("C_NETEX_FLEXIBLE_LINE_1.xml", 1, 1, Arrays.asList(
+//                createCodespace(null, "NSR", "http://www.rutebanken.org/ns/nsr"),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
     }
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportAvinorLine() throws Exception {
-        importLines("C_NETEX_1.xml", 1, 1, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-		NetexTestUtils.verifyValidationReport(context);
-
-        
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("C_NETEX_1.xml", 1, 1, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//		NetexTestUtils.verifyValidationReport(context);
+//
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
     }
 
     @Test(enabled = true, groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportAvinorMultipleLines() throws Exception {
-        importLines("avinor_multiple_lines_with_commondata.zip", 4, 3, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setValidateAfterExport(true);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 4, "files reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 3, "lines reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("avinor_multiple_lines_with_commondata.zip", 4, 3, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setValidateAfterExport(true);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 4, "files reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 3, "lines reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
 
     }
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportAvinorLineWithMixedDayTypes() throws Exception {
-        importLines("C_NETEX_7.xml", 1, 1, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("C_NETEX_7.xml", 1, 1, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
     }
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportAvinorLineWithMultipleStops() throws Exception {
-        importLines("C_NETEX_5.xml", 1, 1, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
+        // Deactivated test : relative to norway profile. useless because only french profile is used
 
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
+//        importLines("C_NETEX_5.xml", 1, 1, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
     }
 
     @Test(enabled = true, groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void exportLinesInGroups() throws Exception {
-        importLines("avinor_multiple_groups_of_lines.zip", 13, 12, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setValidateAfterExport(true);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        NetexTestUtils.verifyActionReport(context);
-        NetexTestUtils.verifyValidationReport(context);
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 13, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 12, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("avinor_multiple_groups_of_lines.zip", 13, 12, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setValidateAfterExport(true);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        NetexTestUtils.verifyActionReport(context);
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 13, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 12, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
 
     }
 
     @Test(enabled = false, groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void verifyExportRuterLine() throws Exception {
+
         importLines("ruter_single_line_210_with_commondata.zip", 2, 1, Arrays.asList(
                 createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
                 createCodespace(null, "RUT", "http://www.rutebanken.org/ns/ruter"))
@@ -558,137 +566,143 @@ public class NetexExportTests extends Arquillian implements Constant, ReportCons
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void exportLineWithNotices() throws Exception {
-        importLines("avinor_single_line_with_notices.zip", 2, 1, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-        
-        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
 
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setValidateAfterExport(true);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-        NetexTestUtils.verifyValidationReport(context);
-
-        NetexTestUtils.verifyValidationReport(context);
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("avinor_single_line_with_notices.zip", 2, 1, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setValidateAfterExport(true);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        NetexTestUtils.verifyValidationReport(context);
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
 
     }
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void exportLineWithSameLineInterchanges() throws Exception {
-        importLines("avinor_single_line_with_interchanges.zip", 2, 1, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-        
-        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
 
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setValidateAfterExport(true);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
+        // Deactivated test : relative to norway profile. useless because only french profile is used
 
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-        NetexTestUtils.verifyValidationReport(context);
-
-        NetexTestUtils.verifyValidationReport(context);
-        
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
+//        importLines("avinor_single_line_with_interchanges.zip", 2, 1, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setValidateAfterExport(true);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 2, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 1, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
 
     }
 
     @Test(groups = {"ExportLine"}, description = "Export Plugin should export file")
     public void exportLinesWithInterchanges() throws Exception {
-        importLines("avinor_multiple_line_with_interchanges.zip", 3, 2, Arrays.asList(
-                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
-                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
-        );
-        
-        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
-
-        Context context = initExportContext();
-        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
-        configuration.setValidateAfterExport(true);
-        configuration.setAddMetadata(false);
-        configuration.setReferencesType("line");
-        configuration.setExportStops(true);
-        configuration.setDefaultCodespacePrefix("AVI");
-
-        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
-
-        try {
-            command.execute(context);
-        } catch (Exception ex) {
-            log.error("test failed", ex);
-            throw ex;
-        }
-
-        NetexTestUtils.verifyValidationReport(context);
-
-        ActionReport report = (ActionReport) context.get(REPORT);
-        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
-        Assert.assertEquals(report.getFiles().size(), 3, "file reported");
-
-        for (FileReport info : report.getFiles()) {
-            Reporter.log(info.toString(),true);
-        }
-
-        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 2, "line reported");
-
-        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
-            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
-            Reporter.log(info.toString(), true);
-        }
+        // Deactivated test : relative to norway profile. useless because only french profile is used
+//        importLines("avinor_multiple_line_with_interchanges.zip", 3, 2, Arrays.asList(
+//                createCodespace(null, AbstractNorwayNetexProfileValidator.NSR_XMLNS, AbstractNorwayNetexProfileValidator.NSR_XMLNSURL),
+//                createCodespace(null, "AVI", "http://www.rutebanken.org/ns/avi"))
+//        );
+//
+//        log.info("*********IMPORT COMPLETE, STARTING EXPORT**********@");
+//
+//        Context context = initExportContext();
+//        NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+//        configuration.setValidateAfterExport(true);
+//        configuration.setAddMetadata(false);
+//        configuration.setReferencesType("line");
+//        configuration.setExportStops(true);
+//        configuration.setDefaultCodespacePrefix("AVI");
+//
+//        Command command = CommandFactory.create(initialContext, NetexprofileExporterCommand.class.getName());
+//
+//        try {
+//            command.execute(context);
+//        } catch (Exception ex) {
+//            log.error("test failed", ex);
+//            throw ex;
+//        }
+//
+//        NetexTestUtils.verifyValidationReport(context);
+//
+//        ActionReport report = (ActionReport) context.get(REPORT);
+//        Assert.assertEquals(report.getResult(), STATUS_OK, "result");
+//        Assert.assertEquals(report.getFiles().size(), 3, "file reported");
+//
+//        for (FileReport info : report.getFiles()) {
+//            Reporter.log(info.toString(),true);
+//        }
+//
+//        Assert.assertEquals(report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports().size(), 2, "line reported");
+//
+//        for (ObjectReport info : report.getCollections().get(ActionReporter.OBJECT_TYPE.LINE).getObjectReports()) {
+//            Assert.assertEquals(info.getStatus(), ActionReporter.OBJECT_STATE.OK, "line status");
+//            Reporter.log(info.toString(), true);
+//        }
 
     }
 

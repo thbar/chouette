@@ -40,7 +40,7 @@ public class GtfsExportTokenizerTests
       test.add("test\"autre");
 
       String result = Tokenizer.untokenize(test);
-      Assert.assertEquals(result, "123,456,toto,tutu,\"test\"\"autre\"" , "string should be correctly built");
+      Assert.assertEquals(result, "123,456,toto,tutu,test\"autre" , "string should be correctly built");
 
    }
 

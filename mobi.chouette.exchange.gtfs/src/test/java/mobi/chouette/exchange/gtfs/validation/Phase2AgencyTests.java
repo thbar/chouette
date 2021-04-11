@@ -66,9 +66,9 @@ public class Phase2AgencyTests extends AbstractPhase2Tests {
 	public void verifyTest_2_2_2() throws Exception {
 		log.info(Color.GREEN + "Agency_2_2 : missing agency_id column with one agency" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "agency_2_2", GTFS_1_GTFS_Common_10,SEVERITY.WARNING, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "agency_2_2", GTFS_1_GTFS_Common_10,SEVERITY.WARNING, RESULT.UNCHECK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");

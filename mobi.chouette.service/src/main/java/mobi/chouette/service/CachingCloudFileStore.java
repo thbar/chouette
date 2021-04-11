@@ -48,7 +48,7 @@ public class CachingCloudFileStore implements FileStore {
 
     public static final String BEAN_NAME = "cachingCloudFileStore";
 
-    @EJB(beanName = AwsFileStore.BEAN_NAME)
+    @EJB(beanName = DummyCloudFileStore.BEAN_NAME)
     FileStore cloudFileStore;
 
 

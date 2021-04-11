@@ -121,7 +121,7 @@ public class NetexFranceProfileTest {
         }
         lineDeliveryStructure.getDataObjects().getCompositeFrameOrCommonFrame().get(0).getValue();
 
-        Assert.assertEquals(lineDeliveryStructure.getVersion(), "1.1:FR-NETEX-2.2-z", "wrong version");
+        Assert.assertEquals(lineDeliveryStructure.getVersion(), "1.1:FR-NETEX_RESEAU-2.2", "wrong version");
 
         Assert.assertEquals(lineDeliveryStructure.getParticipantRef(), "TEST", "wrong participant REF");
 
@@ -133,7 +133,7 @@ public class NetexFranceProfileTest {
 
 
             Assert.assertEquals(compositeFrame.getVersion(), "any", "wrong version");
-            Assert.assertEquals(compositeFrame.getId(), "TEST:CompositeFrame:NETEX_RESEAUX-TestNetexFranceProfile:LOC", "wrong ID");
+            Assert.assertEquals(compositeFrame.getId(), "TEST:CompositeFrame:NETEX_RESEAUX-LOC", "wrong ID");
             Assert.assertEquals(compositeFrame.getName().getValue(), "TestLineName", "wrong line name");
 
             TypeOfFrameRefStructure compositeTypeOfFrame = compositeFrame.getTypeOfFrameRef();
@@ -153,7 +153,7 @@ public class NetexFranceProfileTest {
             Assert.assertTrue(firstFrame.getId().startsWith("TEST:NETEX_LIGNE-"), "wrong id");
             Assert.assertTrue(firstFrame.getId().endsWith(":LOC"), "wrong id");
             TypeOfFrameRefStructure firstTypeOfFrameRef = firstFrame.getTypeOfFrameRef();
-            Assert.assertEquals(firstTypeOfFrameRef.getRef(), "FR1:TypeOfFrame:NETEX_LIGNE:", "wrong ref");
+            Assert.assertEquals(firstTypeOfFrameRef.getRef(), "FR:TypeOfFrame:NETEX_LIGNE:", "wrong ref");
             Assert.assertEquals(firstTypeOfFrameRef.getValue(), "version=\"1.1:FR-NETEX_LIGNE-2.2\"", "wrong value");
 
             General_VersionFrameStructure.Members members = firstFrame.getMembers();
@@ -199,7 +199,7 @@ public class NetexFranceProfileTest {
             Assert.assertTrue(secondFrame.getId().endsWith(":LOC"), "wrong id");
 
             TypeOfFrameRefStructure secondTypeOfFrameRef = secondFrame.getTypeOfFrameRef();
-            Assert.assertEquals(secondTypeOfFrameRef.getRef(), "FR1:TypeOfFrame:NETEX_HORAIRE:", "wrong ref");
+            Assert.assertEquals(secondTypeOfFrameRef.getRef(), "FR:TypeOfFrame:NETEX_HORAIRE:", "wrong ref");
             Assert.assertEquals(secondTypeOfFrameRef.getValue(), "version=\"1.1:FR-NETEX_HORAIRE-2.2\"", "wrong value");
 
             ServiceJourney serviceJourney = (ServiceJourney) secondFrame.getMembers().getGeneralFrameMemberOrDataManagedObjectOrEntity_Entity().get(0).getValue();
@@ -210,7 +210,8 @@ public class NetexFranceProfileTest {
             NoticeAssignment noticeAssignment = (NoticeAssignment) serviceJourney.getNoticeAssignments().getNoticeAssignment_OrNoticeAssignmentView().get(0).getValue();
             Assert.assertEquals(noticeAssignment.getVersion(), "any", "wrong version");
             Assert.assertEquals(noticeAssignment.getOrder(), new BigInteger("0"), "wrong order");
-            Assert.assertEquals(noticeAssignment.getId(), "TEST:NoticeAssignment:1:LOC", "wrong id");
+            Assert.assertTrue(noticeAssignment.getId().startsWith("TEST:NoticeAssignment:"), "wrong id");
+            Assert.assertTrue(noticeAssignment.getId().endsWith(":LOC"), "wrong id");
 
             NoticeRefStructure noticeRef = noticeAssignment.getNoticeRef();
             Assert.assertEquals(noticeRef.getRef(), "TEST:Notice:f1:LOC", "wrong ref");

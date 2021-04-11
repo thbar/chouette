@@ -19,12 +19,16 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileValidator implements NetexProfileValidator {
+
+    public static final String NETEX_FRANCE_CALENDAR_PROFILE = "1.1:FR-NETEX_CALENDRIER-2.2";
+
     @Override
     public void validate(Context context) throws Exception {
         XPathCompiler xpath = (XPathCompiler) context.get(NETEX_XPATH_COMPILER);
@@ -61,11 +65,11 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
     public static class DefaultValidatorFactory extends NetexProfileValidatorFactory {
         @Override
         protected NetexProfileValidator create(Context context) throws ClassNotFoundException {
-            NetexProfileValidator instance = (NetexProfileValidator) context.get(NAME);
+            NetexProfileValidator instance = (NetexProfileValidator) context.get(IDFMCalendarNetexProfileValidator.class.getName());
             if (instance == null) {
                 instance = new IDFMCalendarNetexProfileValidator();
 
-                context.put(NAME, instance);
+                context.put(IDFMCalendarNetexProfileValidator.class.getName(), instance);
             }
             return instance;
         }
@@ -79,5 +83,10 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
     @Override
     public boolean isCommonFileValidator() {
         return false;
+    }
+
+    @Override
+    public Collection<String> getSupportedProfiles() {
+        return Arrays.asList(new String[] {NETEX_FRANCE_CALENDAR_PROFILE});
     }
 }

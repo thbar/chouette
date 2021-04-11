@@ -167,7 +167,7 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
     protected void verifyUseOfVersionOnLocalElements(Context context, Set<IdVersion> localIds) {
         ValidationReporter validationReporter = ValidationReporter.Factory.getInstance();
 
-        Set<IdVersion> nonVersionedAnyLocalIds = localIds.stream().filter(e -> !e.getVersion().equals("any")).collect(Collectors.toSet());
+        Set<IdVersion> nonVersionedAnyLocalIds = localIds.stream().filter(e -> e.getVersion() != null && !e.getVersion().equals("any")).collect(Collectors.toSet());
         if (nonVersionedAnyLocalIds.size() > 0) {
             for (IdVersion id : nonVersionedAnyLocalIds) {
                 validationReporter.addCheckPointReportError(context, _1_NETEX_IDFM_VERSION_NOT_ANY_ON_LOCAL_ELEMENTS, null, DataLocationHelper.findDataLocation(id),

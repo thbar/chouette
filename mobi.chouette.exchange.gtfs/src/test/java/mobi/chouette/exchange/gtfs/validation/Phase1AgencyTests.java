@@ -93,9 +93,9 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 	public void verifyTest_2_4_2() throws Exception {
 		log.info(Color.GREEN + "Agency_4_2 : missing column agency_name" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "agency_4_2", GTFS_1_GTFS_Common_9,SEVERITY.ERROR, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "agency_4_2", GTFS_1_GTFS_Common_9,SEVERITY.ERROR, RESULT.OK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
@@ -141,9 +141,9 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 	public void verifyTest_2_5_1() throws Exception {
 		log.info(Color.GREEN + "Agency_5_1 : empty column agency_name" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "agency_5_1", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "agency_5_1", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.OK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
@@ -173,9 +173,9 @@ public class Phase1AgencyTests extends AbstractPhase1Tests {
 	public void verifyTest_2_5_3() throws Exception {
 		log.info(Color.GREEN + "Agency_5_3 : empty column agency_timezone" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "agency_5_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "agency_5_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.OK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");

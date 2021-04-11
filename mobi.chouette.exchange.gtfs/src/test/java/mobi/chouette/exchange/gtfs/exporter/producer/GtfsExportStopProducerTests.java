@@ -45,9 +45,11 @@ public class GtfsExportStopProducerTests
       neptuneObject.setUrl("http://mystop.com");
       neptuneObject.setMobilityRestrictedSuitable(true);
       neptuneObject.setTransportModeName(TransportModeNameEnum.Funicular);
+      neptuneObject.setOriginalStopId("4321");
 
       StopArea parent = new StopArea();
       parent.setObjectId("GTFS:StopArea:5678");
+      parent.setOriginalStopId("5678");
       List<StopArea> parents = new ArrayList<>();
       parents.add(parent);
       neptuneObject.setParent(parent);
@@ -59,7 +61,7 @@ public class GtfsExportStopProducerTests
 
       Assert.assertEquals(gtfsObject.getStopId(), "4321", "StopId must be third part of objectid");
 //    Assert.assertEquals(gtfsObject.getStopCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set");
-    Assert.assertEquals(gtfsObject.getPlatformCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set"); //TODO should have separate neptune field for platform_code
+    Assert.assertEquals(gtfsObject.getStopCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set"); //TODO should have separate neptune field for platform_code
       Assert.assertEquals(gtfsObject.getStopName(), neptuneObject.getName(), "StopName must be correctly set");
       Assert.assertEquals(gtfsObject.getStopDesc(), neptuneObject.getComment(), "StopDesc must be correctly set");
       Assert.assertEquals(gtfsObject.getLocationType(), LocationType.Stop, "LocationType must be correctly set");
@@ -89,6 +91,7 @@ public class GtfsExportStopProducerTests
       neptuneObject.setLongitude(BigDecimal.valueOf(3));
       neptuneObject.setLongLatType(LongLatTypeEnum.WGS84);
       neptuneObject.setMobilityRestrictedSuitable(null);
+      neptuneObject.setOriginalStopId("4321");
 
       StopArea parent = new StopArea();
       parent.setObjectId("GTFS:StopArea:5678");
@@ -109,7 +112,7 @@ public class GtfsExportStopProducerTests
       Assert.assertEquals(gtfsObject.getStopLon(), neptuneObject.getLongitude(), "StopLon must be correctly set");
       Assert.assertNull(gtfsObject.getParentStation(),  "ParentStation must  must not be set");
       Assert.assertNull(gtfsObject.getStopUrl(), "StopUrl must not be set");
-      Assert.assertNull(gtfsObject.getWheelchairBoarding(),  "WheelchairBoarding must not be set");
+      Assert.assertEquals(gtfsObject.getWheelchairBoarding(),WheelchairBoardingType.NoInformation,  "WheelchairBoarding must not be set");
       Assert.assertNull(gtfsObject.getAddressLine(), "AddressLine must not be set");
       Assert.assertNull(gtfsObject.getLocality(), "Locality must not be set");
       Assert.assertNull(gtfsObject.getPostalCode(), "PostalCode must not be set");
@@ -134,6 +137,7 @@ public class GtfsExportStopProducerTests
       neptuneObject.setUrl("http://mystop.com");
       neptuneObject.setMobilityRestrictedSuitable(true);
       neptuneObject.setTimeZone("Europe/Paris");
+      neptuneObject.setOriginalStopId("4321");
 
       StopArea parent = new StopArea();
       parent.setObjectId("GTFS:StopArea:5678");
@@ -147,7 +151,7 @@ public class GtfsExportStopProducerTests
       Reporter.log(StopExporter.CONVERTER.to(context, gtfsObject));
 
       Assert.assertEquals(gtfsObject.getStopId(), "4321", "StopId must be third part of objectid");
-      Assert.assertEquals(gtfsObject.getPlatformCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set");
+      Assert.assertEquals(gtfsObject.getStopCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set");
 //      Assert.assertEquals(gtfsObject.getStopCode(), neptuneObject.getRegistrationNumber(), "StopCode must be correctly set");
       Assert.assertEquals(gtfsObject.getStopName(), neptuneObject.getName(), "StopName must be correctly set");
       Assert.assertEquals(gtfsObject.getStopDesc(), neptuneObject.getComment(), "StopDesc must be correctly set");

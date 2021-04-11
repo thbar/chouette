@@ -840,20 +840,27 @@ CREATE INDEX interchanges_to_vehicle_journey_key
 -- Name: journey_patterns; Type: TABLE; Schema: chouette_gui; Owner: chouette; Tablespace:
 --
 
-CREATE TABLE journey_patterns (
-    id bigint NOT NULL,
-    route_id bigint,
-    objectid character varying(255) NOT NULL,
-    object_version integer,
-    creation_time timestamp without time zone,
-    creator_id character varying(255),
-    name character varying(255),
-    comment character varying(255),
-    registration_number character varying(255),
-    published_name character varying(255),
-    departure_stop_point_id bigint,
-    arrival_stop_point_id bigint,
-    section_status integer DEFAULT 0 NOT NULL
+CREATE TABLE chouette_gui.journey_patterns (
+                                  id bigint NOT NULL,
+                                  comment character varying(255),
+                                  creation_time date,
+                                  creator_id character varying(255),
+                                  etat integer,
+                                  name character varying(255),
+                                  objectid character varying(255),
+                                  object_version integer,
+                                  published_name character varying(255),
+                                  registration_number character varying(255),
+                                  supprime boolean DEFAULT false,
+                                  arrival_stop_point_id bigint,
+                                  departure_stop_point_id bigint,
+                                  route_id bigint,
+                                  dtype character varying(31),
+                                  section_status integer DEFAULT 0 NOT NULL,
+                                  geojson character varying,
+                                  is_duplicated boolean DEFAULT false,
+                                  original_journey_pattern_id bigint,
+                                  edition_status character varying(100)
 );
 
 
@@ -1352,22 +1359,22 @@ ALTER TABLE chouette_gui.scheduled_stop_points_id_seq OWNER TO chouette;
 -- TOC entry 219 (class 1259 OID 939028)
 -- Name: stop_points; Type: TABLE; Schema: chouette_gui; Owner: chouette; Tablespace:
 --
-
-CREATE TABLE stop_points (
-    id bigint NOT NULL,
-    route_id bigint,
-    destination_display_id bigint,
-    objectid character varying(255) NOT NULL,
-    object_version integer,
-    creation_time timestamp without time zone,
-    creator_id character varying(255),
-    "position" integer,
-    for_boarding character varying(255),
-    for_alighting character varying(255),
-    scheduled_stop_point_id bigint,
-    booking_arrangement_id bigint
+CREATE TABLE chouette_gui.stop_points (
+                             dtype character varying(31),
+                             id bigint NOT NULL,
+                             creation_time timestamp without time zone,
+                             creator_id character varying(255),
+                             objectid character varying(255) NOT NULL,
+                             object_version integer,
+                             for_alighting character varying(255),
+                             for_boarding character varying(255),
+                             "position" integer,
+                             stop_area_id bigint,
+                             route_id bigint,
+                             destination_display_id bigint,
+                             scheduled_stop_point_id bigint,
+                             booking_arrangement_id bigint
 );
-
 
 ALTER TABLE chouette_gui.stop_points OWNER TO chouette;
 
@@ -1743,31 +1750,34 @@ ALTER SEQUENCE flexible_service_properties_id_seq OWNED BY flexible_service_prop
 -- Name: vehicle_journeys; Type: TABLE; Schema: chouette_gui; Owner: chouette; Tablespace:
 --
 
-CREATE TABLE vehicle_journeys (
-    id bigint NOT NULL,
-    route_id bigint,
-    journey_pattern_id bigint,
-    company_id bigint,
-    objectid character varying(255) NOT NULL,
-    object_version integer,
-    creation_time timestamp without time zone,
-    creator_id character varying(255),
-    comment character varying(255),
-    status_value character varying(255),
-    transport_mode character varying(255),
-    transport_submode_name character varying(255),
-    published_journey_name character varying(255),
-    published_journey_identifier character varying(255),
-    facility character varying(255),
-    vehicle_type_identifier character varying(255),
-    number bigint,
-    mobility_restricted_suitability boolean,
-    flexible_service boolean,
-    journey_category integer DEFAULT 0 NOT NULL,
-    private_code character varying(255),
-    service_alteration character varying(255),
-    flexible_service_properties_id bigint,
-    bikes_allowed boolean
+
+CREATE TABLE chouette_gui.vehicle_journeys (
+                                  id bigint NOT NULL,
+                                  comment character varying(255),
+                                  creation_time date,
+                                  creator_id character varying(255),
+                                  etat integer,
+                                  facility character varying(255),
+                                  flexible_service boolean,
+                                  mobility_restricted_suitability boolean,
+                                  number bigint,
+                                  objectid character varying(255),
+                                  object_version integer,
+                                  published_journey_identifier character varying(255),
+                                  published_journey_name character varying(255),
+                                  supprime boolean DEFAULT false,
+                                  transport_mode character varying(255),
+                                  vehicle_type_identifier character varying(255),
+                                  company_id bigint,
+                                  journey_pattern_id bigint,
+                                  route_id bigint,
+                                  dtype character varying(31),
+                                  journey_category integer DEFAULT 0 NOT NULL,
+                                  transport_submode_name character varying(255),
+                                  private_code character varying(255),
+                                  service_alteration character varying(255),
+                                  flexible_service_properties_id bigint,
+                                  bikes_allowed boolean
 );
 
 
@@ -2985,6 +2995,271 @@ CREATE SEQUENCE chouette_gui.access_points_id_seq
     CACHE 1;
 
 ALTER TABLE chouette_gui.access_points_id_seq OWNER TO chouette;
+
+CREATE TABLE chouette_gui.feed_info (
+                           id bigint NOT NULL,
+                           publisher_name character varying(255) DEFAULT 'MOBIITI'::character varying NOT NULL,
+                           publisher_url character varying(255) DEFAULT 'https://www.ratpdev.com'::character varying NOT NULL,
+                           lang character varying(255) DEFAULT 'FR'::character varying NOT NULL,
+                           start_date date,
+                           end_date date,
+                           version integer,
+                           contact_email character varying(255),
+                           contact_url character varying(255)
+);
+
+ALTER TABLE chouette_gui.feed_info OWNER TO chouette;
+
+
+CREATE SEQUENCE chouette_gui.connection_links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE chouette_gui.connection_links_id_seq OWNER To chouette;
+
+ALTER TABLE ONLY chouette_gui.connection_links ALTER COLUMN id SET DEFAULT nextval('connection_links_id_seq'::regclass);
+
+
+
+
+CREATE FUNCTION chouette_gui.merge_identicals_journey_patterns_for_line(lineid bigint, linename text) RETURNS integer
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    current_jp    RECORD;
+    other_jp      RECORD;
+    current_vj    RECORD;
+    ligne_seq     RECORD;
+    saidd         BIGINT;
+    saida         BIGINT;
+    nbSPinJP      INTEGER;
+    nbSPinJP2     INTEGER;
+    nbSPinJP3     INTEGER;
+    nbSPinVJ      INTEGER;
+    doContinue    BOOLEAN;
+    jpDoneIds     BIGINT ARRAY;
+BEGIN
+    -- pour chaque itinéraire de la ligne
+    FOR current_jp IN (SELECT jp.id id, jp.name jpname, r.id rid, spd.stop_area_id saidd, spa.stop_area_id saida
+                       FROM journey_patterns jp
+                                JOIN routes r ON r.id = jp.route_id
+                                JOIN stop_points spd ON spd.id = jp.departure_stop_point_id
+                                JOIN stop_points spa ON spa.id = jp.arrival_stop_point_id
+                       WHERE r.line_id = lineid
+                         AND COALESCE(jp.supprime, FALSE) = FALSE
+                       ORDER BY jp.name DESC, jp.id)
+        LOOP
+            -- On s'assure ne pas avoir déjà été traité
+            IF ( ARRAY[current_jp.id] <@ jpDoneIds) THEN CONTINUE; END IF;
+            jpDoneIds:= array_append( jpDoneIds, current_jp.id);
+
+            doContinue := FALSE;
+            SELECT COUNT(*) INTO nbSPinJP FROM journey_patterns_stop_points WHERE ( journey_pattern_id = current_jp.id);
+
+            -- Check if courses OK niveau nb stop_points
+            FOR current_vj IN (SELECT *
+                               FROM vehicle_journeys
+                               WHERE journey_pattern_id = current_jp.id
+                                 AND COALESCE(supprime, FALSE) = FALSE)
+                LOOP
+                    SELECT COUNT(*) INTO nbSPinVJ FROM vehicle_journey_at_stops WHERE vehicle_journey_id = current_vj.id;
+                    IF (nbSPinVJ <> nbSPinJP) THEN
+                        INSERT
+                        INTO merge_identicals_journey_patterns_logs( ignorejpid, lid, lname, log)
+                        VALUES (current_jp.id, lineid, linename, FORMAT( 'IGNORE VJ COUNT SP (doMhiii) %s : %I - %s', current_date, current_jp.id, current_jp.jpname));
+                        doContinue := TRUE;
+                    END IF;
+                END LOOP;
+            IF doContinue THEN CONTINUE; END IF;
+            -- Traitement
+            FOR other_jp IN (SELECT jp.id id, jp.name jpname, spd.stop_area_id saidd, spa.stop_area_id saida
+                             FROM journey_patterns jp
+                                      JOIN routes r ON r.id = jp.route_id
+                                      JOIN stop_points spd ON spd.id = jp.departure_stop_point_id
+                                      JOIN stop_points spa ON spa.id = jp.arrival_stop_point_id
+                             WHERE r.line_id = lineid
+                               AND jp.id <> current_jp.id
+                               AND COALESCE(jp.supprime, FALSE) = FALSE)
+                LOOP
+                    -- On s'assure que other n'a pas déjà été traité
+                    IF ( ARRAY[other_jp.id] <@ jpDoneIds) THEN CONTINUE; END IF;
+
+                    -- Pas les mêmes départs et arrivées
+                    IF (other_jp.saida <> current_jp.saida) THEN CONTINUE; END IF;
+                    IF (other_jp.saida <> current_jp.saida) THEN CONTINUE; END IF;
+
+                    -- Pas les mêmes nb de SP
+                    SELECT COUNT(*) INTO nbSPinJP2 FROM journey_patterns_stop_points WHERE ( journey_pattern_id = other_jp.id);
+                    IF (nbSPinJP2 <> nbSPinJP) THEN CONTINUE; END IF;
+                    -- check if même séquence
+                    SELECT COUNT(*) INTO nbSPinJP3
+                    FROM ( SELECT sa.id FROM stop_areas sa
+                                                 JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                 JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                           WHERE jpsp.journey_pattern_id = current_jp.id
+                           UNION
+                           SELECT sa.id FROM stop_areas sa
+                                                 JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                 JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                           WHERE jpsp.journey_pattern_id = other_jp.id) t;
+                    IF(nbSPinJP3 <> nbSPinJP)  THEN CONTINUE; END IF;
+                    IF(nbSPinJP3 <> nbSPinJP2) THEN CONTINUE; END IF;
+                    -- check séquences de chacun
+                    doContinue := FALSE;
+                    FOR ligne_seq IN ( SELECT *
+                                       FROM ( SELECT ROW_NUMBER() OVER (ORDER BY sp.position) pos,
+                                                     sp.id spid1, sa.id said1, sp.position pos1
+                                              FROM stop_areas sa
+                                                       JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                       JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                                              WHERE jpsp.journey_pattern_id = current_jp.id) t1
+                                                JOIN ( SELECT ROW_NUMBER() OVER (ORDER BY sp.position) pos,
+                                                              sp.id spid2, sa.id said2, sp.position pos2
+                                                       FROM stop_areas sa
+                                                                JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                                JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                                                       WHERE jpsp.journey_pattern_id = other_jp.id) t2 ON t2.pos = t1.pos)
+                        LOOP
+                            IF ( ligne_seq.said1 <> ligne_seq.said2) THEN doContinue := TRUE; END IF;
+                        END LOOP;
+                    IF doContinue THEN
+                        CONTINUE;
+                    END IF;
+                    -- MAJ des horaires des courses
+                    FOR ligne_seq IN ( SELECT *
+                                       FROM ( SELECT ROW_NUMBER() OVER (ORDER BY sp.position) pos,
+                                                     sp.id spid1, sa.id said1, sp.position pos1
+                                              FROM stop_areas sa
+                                                       JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                       JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                                              WHERE jpsp.journey_pattern_id = current_jp.id) t1
+                                                JOIN ( SELECT ROW_NUMBER() OVER (ORDER BY sp.position) pos,
+                                                              sp.id spid2, sa.id said2, sp.position pos2
+                                                       FROM stop_areas sa
+                                                                JOIN stop_points sp ON sp.stop_area_id = sa.id
+                                                                JOIN journey_patterns_stop_points jpsp ON jpsp.stop_point_id = sp.id
+                                                       WHERE jpsp.journey_pattern_id = other_jp.id) t2 ON t2.pos = t1.pos)
+                        LOOP
+                            FOR current_vj IN (SELECT *
+                                               FROM vehicle_journeys
+                                               WHERE journey_pattern_id = other_jp.id
+                                                 AND COALESCE(supprime, FALSE) = FALSE)
+                                LOOP
+                                    UPDATE vehicle_journey_at_stops
+                                    SET stop_point_id = ligne_seq.spid1
+                                    WHERE stop_point_id      = ligne_seq.spid2
+                                      AND vehicle_journey_id = current_vj.id;
+                                END LOOP;
+                        END LOOP;
+
+                    -- MAJ des infos de chaque course
+                    FOR current_vj IN (SELECT *
+                                       FROM vehicle_journeys
+                                       WHERE journey_pattern_id = other_jp.id
+                                         AND COALESCE(supprime, FALSE) = FALSE)
+                        LOOP
+                            UPDATE vehicle_journeys
+                            SET published_journey_identifier = FORMAT('%s - %s', linename, current_jp.jpname),
+                                published_journey_name       = FORMAT('%s - %s', linename, current_jp.jpname),
+                                journey_pattern_id           = current_jp.id,
+                                route_id                     = current_jp.rid
+                            WHERE id = current_vj.id;
+                        END LOOP;
+
+                    -- suppression de l'itinéraire
+                    UPDATE journey_patterns
+                    SET supprime = TRUE
+                    WHERE id = other_jp.id;
+
+                    -- AJout de l'iti aux iti traités
+                    jpDoneIds:= array_append( jpDoneIds, other_jp.id);
+                    -- logs
+                    INSERT
+                    INTO merge_identicals_journey_patterns_logs( jpid, log, lid, lname)
+                    VALUES (current_jp.id, FORMAT( '%s : MERGE %I - %s INTO %I - %s', current_date, other_jp.id, other_jp.jpname, current_jp.id, current_jp.jpname), lineid, linename);
+
+                END LOOP;
+        END LOOP;
+    RETURN 1;
+END;
+$$;
+
+
+CREATE FUNCTION chouette_gui.rename_identicals_journey_patterns_for_line(lineid bigint) RETURNS integer
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    current_jp    RECORD;
+    other_jp      RECORD;
+    jpDoneIds     BIGINT ARRAY;
+    B             BOOLEAN;
+BEGIN
+    -- pour chaque itinéraire de la ligne
+    FOR current_jp IN (SELECT jp.id id, jp.name jpname
+                       FROM journey_patterns jp
+                                JOIN routes r ON r.id = jp.route_id
+                       WHERE r.line_id = lineid
+                         AND COALESCE(jp.supprime, FALSE) = FALSE
+                       ORDER BY jp.name, jp.id)
+        LOOP
+            -- On s'assure ne pas avoir déjà été traité
+            IF ( ARRAY[current_jp.id] <@ jpDoneIds) THEN CONTINUE; END IF;
+            jpDoneIds:= array_append( jpDoneIds, current_jp.id);
+            B := FALSE;
+            FOR other_jp IN (SELECT jp.id id, jp.name jpname, r.id rid
+                             FROM journey_patterns jp
+                                      JOIN routes r ON r.id = jp.route_id
+                             WHERE r.line_id = lineid
+                               AND COALESCE(jp.supprime, FALSE) = FALSE
+                               AND jp.name LIKE current_jp.jpname
+                               AND jp.id <> current_jp.id
+                             ORDER BY jp.name, jp.id)
+                LOOP
+                    B := TRUE;
+                    UPDATE journey_patterns SET name = get_suffixed_name(lineid, other_jp.jpname) WHERE id = other_jp.id;
+                    jpDoneIds:= array_append( jpDoneIds, other_jp.id);
+                END LOOP;
+            UPDATE journey_patterns SET name = get_suffixed_name(lineid, current_jp.jpname) WHERE id = current_jp.id;
+        END LOOP;
+    RETURN 1;
+END;
+$$;
+
+CREATE FUNCTION chouette_gui.get_suffixed_name(lineid bigint, jp_name text) RETURNS text
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    cpt       INTEGER;
+    I         INTEGER;
+    L         RECORD;
+    found_cpt BOOLEAN;
+
+BEGIN
+    -- déjà renommé
+    IF TRIM(jp_name) SIMILAR TO '% -- [0-9]*' THEN
+        RETURN jp_name;
+    END IF;
+
+    cpt := 0;
+    found_cpt := FALSE;
+    WHILE(NOT found_cpt)
+        LOOP
+            cpt := cpt + 1;
+            SELECT COUNT(*) INTO I
+            FROM journey_patterns jp
+                     JOIN routes r ON jp.route_id = r.id
+            WHERE jp.name LIKE jp_name || ' -- ' || cpt
+              AND r.line_id = lineid;
+            found_cpt := (I = 0);
+        END LOOP;
+    RETURN jp_name || ' -- ' || cpt;
+END;
+$$;
+
 
 
 -- TOC entry 4251 (class 0 OID 0)

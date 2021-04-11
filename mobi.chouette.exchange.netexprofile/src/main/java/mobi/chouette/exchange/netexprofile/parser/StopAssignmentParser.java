@@ -43,7 +43,7 @@ public class StopAssignmentParser extends NetexParser implements Parser, Constan
 					quay.setAreaType(ChouetteAreaEnum.BoardingPosition);
 				}
 
-				ScheduledStopPoint scheduledStopPoint = ObjectFactory.getScheduledStopPoint(referential, scheduledStopPointRef.toString());
+				ScheduledStopPoint scheduledStopPoint = ObjectFactory.getScheduledStopPoint(referential, scheduledStopPointRef.getValue().getRef());
 
 				// TODO à revoir pour changement de profil
 //				ScheduledStopPoint scheduledStopPoint = ObjectFactory.getScheduledStopPoint(referential, scheduledStopPointRef.getRef());
@@ -54,6 +54,8 @@ public class StopAssignmentParser extends NetexParser implements Parser, Constan
 			}
 		}
 	}
+
+	//private String getObjectIdFromRef()
 
 	static {
 		ParserFactory.register(StopAssignmentParser.class.getName(), new ParserFactory() {

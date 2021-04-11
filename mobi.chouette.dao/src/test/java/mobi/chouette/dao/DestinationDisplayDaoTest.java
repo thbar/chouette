@@ -2,6 +2,7 @@ package mobi.chouette.dao;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -35,6 +36,8 @@ public class DestinationDisplayDaoTest extends Arquillian {
 			WebArchive result;
 			File[] files = Maven.resolver().loadPomFromFile("pom.xml").resolve("mobi.chouette:mobi.chouette.dao")
 					.withTransitivity().asFile();
+
+			Arrays.stream(files).forEach(f->System.out.println(f.getName()));
 
 			result = ShrinkWrap.create(WebArchive.class, "test.war").addAsWebInfResource("postgres-ds.xml")
 					.addAsLibraries(files).addAsResource(EmptyAsset.INSTANCE, "beans.xml");

@@ -23,8 +23,11 @@ public class StopPlaceMapperTest {
         StopArea stopPlace = createStopPlace("Moensletta");
 
         StopArea firstBoardingPosition = createBoardingPosition(stopPlace.getName());
+        firstBoardingPosition.setObjectId("1");
         StopArea secondBoardingPosition = createBoardingPosition(stopPlace.getName());
+        secondBoardingPosition.setObjectId("2");
         StopArea thirdBoardingPosition = createBoardingPosition(stopPlace.getName());
+        thirdBoardingPosition.setObjectId("3");
         stopPlace.setContainedStopAreas(Arrays.asList(firstBoardingPosition, secondBoardingPosition, thirdBoardingPosition));
 
         StopPlace netexStopPlace = stopPlaceMapper.mapStopAreaToStopPlace(stopPlace);

@@ -97,7 +97,7 @@ public class ValidationNominal extends AbstractTestValidation {
 		}
 		Assert.assertNotNull(parameters, "no parameters for test");
 
-		importLines("model.zip", 7, 7, true);
+		importLines("model_nominal.zip", 7, 7, true);
 		List<Line> beans = lineDao.findAll();
 		Assert.assertFalse(beans.isEmpty(), "No data for test");
 

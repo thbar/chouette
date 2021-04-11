@@ -422,7 +422,7 @@ public class GtfsExportTests extends Arquillian implements Constant, ReportConst
 
  			// Interchange only expected for consumer side = LineB
 			int exptectedInterchanges;
-			if ("LineA".equals(report.getCollections().get(OBJECT_TYPE.LINE).getObjectReports().get(i).getDescription())) {
+			if ("longOne".equals(report.getCollections().get(OBJECT_TYPE.LINE).getObjectReports().get(i).getDescription())) {
 				exptectedInterchanges = 0;
 			} else {
 				exptectedInterchanges = 1;

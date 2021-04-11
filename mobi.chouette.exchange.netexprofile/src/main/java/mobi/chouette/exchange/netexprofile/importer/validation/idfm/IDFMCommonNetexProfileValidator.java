@@ -19,12 +19,17 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileValidator implements NetexProfileValidator {
+
+    public static final String NETEX_FRANCE_COMMON_PROFILE = "1.1:FR-NETEX_COMMUN-2.2";
+
+
     @Override
     public void validate(Context context) throws Exception {
 
@@ -34,11 +39,11 @@ public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileVal
     public static class DefaultValidatorFactory extends NetexProfileValidatorFactory {
         @Override
         protected NetexProfileValidator create(Context context) throws ClassNotFoundException {
-            NetexProfileValidator instance = (NetexProfileValidator) context.get(NAME);
+            NetexProfileValidator instance = (NetexProfileValidator) context.get(IDFMCommonNetexProfileValidator.class.getName());
             if (instance == null) {
                 instance = new IDFMCommonNetexProfileValidator();
 
-                context.put(NAME, instance);
+                context.put(IDFMCommonNetexProfileValidator.class.getName(), instance);
             }
             return instance;
         }
@@ -52,5 +57,10 @@ public class IDFMCommonNetexProfileValidator extends AbstractIDFMNetexProfileVal
     @Override
     public boolean isCommonFileValidator() {
         return false;
+    }
+
+    @Override
+    public Collection<String> getSupportedProfiles() {
+        return Arrays.asList(new String[] {NETEX_FRANCE_COMMON_PROFILE});
     }
 }

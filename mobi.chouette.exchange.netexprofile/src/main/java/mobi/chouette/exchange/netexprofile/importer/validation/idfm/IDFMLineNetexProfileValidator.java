@@ -31,6 +31,7 @@ import org.rutebanken.netex.model.PurchaseWhenEnumeration;
 import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValidator implements NetexProfileValidator {
 
     public static final String NAME = "IDFMLineNetexProfileValidator";
+    public static final String NETEX_FRANCE_RESEAU_PROFILE = "1.1:FR-NETEX_RESEAU-2.2";
+
 
     public IDFMLineNetexProfileValidator() {
     }
@@ -67,7 +70,7 @@ public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValid
         verifyAcceptedCodespaces(context, xpath, dom, validCodespaces);
         verifyIdStructure(context, localIds, ID_STRUCTURE_REGEXP, validCodespaces);
 
-        verifyNoDuplicatesAcrossLineFiles(context, localIdList, null);
+        verifyNoDuplicatesAcrossLineFiles(context, localIdList, new HashSet<>());
 
         verifyUseOfVersionOnLocalElements(context, localIds);
         verifyUseOfVersionOnRefsToLocalElements(context, localIds, localRefs);
@@ -93,10 +96,10 @@ public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValid
     public static class DefaultValidatorFactory extends NetexProfileValidatorFactory {
         @Override
         protected NetexProfileValidator create(Context context) throws ClassNotFoundException {
-            NetexProfileValidator instance = (NetexProfileValidator) context.get(NAME);
+            NetexProfileValidator instance = (NetexProfileValidator) context.get(IDFMLineNetexProfileValidator.class.getName());
             if (instance == null) {
                 instance = new IDFMLineNetexProfileValidator();
-                context.put(NAME, instance);
+                context.put(IDFMLineNetexProfileValidator.class.getName(), instance);
             }
             return instance;
         }
@@ -110,5 +113,10 @@ public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValid
     @Override
     public boolean isCommonFileValidator() {
         return false;
+    }
+
+    @Override
+    public Collection<String> getSupportedProfiles() {
+        return Arrays.asList(new String[] {NETEX_FRANCE_RESEAU_PROFILE});
     }
 }

@@ -2,7 +2,16 @@ package mobi.chouette.dao;
 
 import java.io.File;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 import mobi.chouette.model.Line;
 import mobi.chouette.persistence.hibernate.ContextHolder;
@@ -21,6 +30,12 @@ public class LineDaoTest extends Arquillian
 {
 	@EJB 
 	LineDAO lineDao;
+
+	@PersistenceContext(unitName = "referential")
+	EntityManager em;
+
+	@Resource
+	private UserTransaction trx;
 
 
 	@Deployment
@@ -45,9 +60,16 @@ public class LineDaoTest extends Arquillian
 	}
 	
 	@Test
-	public void checkSequence()
-	{
+	public void checkSequence() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		lineDao.truncate();
+
+		trx.begin();
+
+		em.createNativeQuery("ALTER SEQUENCE chouette_gui.lines_id_seq RESTART WITH 1").executeUpdate();
+
+		trx.commit();
+
 		for (int i = 0; i < 300; i++)
 		{
 			Line l = createLine();

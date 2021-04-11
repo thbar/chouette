@@ -56,7 +56,7 @@ public class GtfsRouteProducer extends AbstractProducer
            agencyId = c.getObjectId();
        }
        route.setAgencyId(toGtfsId(agencyId, prefix, keepOriginalId));
-       if(OrganisationTypeEnum.Operator.equals(c.getOrganisationType()) && agencyId.endsWith("o")){
+       if(c != null && OrganisationTypeEnum.Operator.equals(c.getOrganisationType()) && agencyId.endsWith("o")){
            route.setAgencyId(StringUtils.chop(route.getAgencyId()));
        }
        route.setRouteShortName(null);

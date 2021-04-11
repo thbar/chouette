@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<ChouettePTNetwork>
+<ChouettePTNetwork xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.trident.org/schema/trident">
     <PTNetwork>
         <objectId>NINOXE:GroupOfLine:15563881</objectId>
         <objectVersion>2</objectVersion>
@@ -475,7 +475,7 @@
             <objectId>NINOXE:Line:15627097</objectId>
             <objectVersion>1</objectVersion>
             <creationTime>2008-10-31T11:01:58.000Z</creationTime>
-            <name>Ligne 7 orange</name>
+            <name>Ligne 7 orange2</name>
             <number>7</number>
             <publishedName>Ligne 7 orange</publishedName>
             <transportModeName>Bus</transportModeName>

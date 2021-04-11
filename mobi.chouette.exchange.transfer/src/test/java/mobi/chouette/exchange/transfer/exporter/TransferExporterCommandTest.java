@@ -2,8 +2,10 @@ package mobi.chouette.exchange.transfer.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
@@ -47,6 +49,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.joda.time.LocalDate;
@@ -95,6 +98,7 @@ public class TransferExporterCommandTest extends Arquillian implements mobi.chou
 		File[] files = Maven.resolver().loadPomFromFile("pom.xml")
 				.resolve("mobi.chouette:mobi.chouette.exchange.transfer", "mobi.chouette:mobi.chouette.dao","mobi.chouette:mobi.chouette.service").withTransitivity()
 				.asFile();
+
 
 		return ShrinkWrap.create(WebArchive.class, "test.war").addAsWebInfResource("postgres-ds.xml")
 				.addAsLibraries(files).addClass(DummyChecker.class).addClass(JobDataTest.class);

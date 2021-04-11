@@ -191,6 +191,37 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		codespaceDao.clear();
 	}
 
+
+
+	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
+	public void verifyImportLineWithStopAreaImportModeCreateNew() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		stopAreaDAO.truncate();
+		StopArea existingStopArea=createExistingStopArea();
+
+		importLine(StopAreaImportModeEnum.CREATE_NEW);
+
+		utx.begin();
+		em.joinTransaction();
+
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
+		assertNotNull(line, "Line not found");
+
+		for (Route route : line.getRoutes()) {
+			for (StopPoint stopPoint : route.getStopPoints()) {
+				if (stopPoint.getObjectId().equals("AVI:StopPointInJourneyPattern:1263628002")) {
+					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), existingStopArea.getObjectId());
+					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName(), existingStopArea.getName(), "Expected name of existing stop area to be unchanged by import");
+				} else {
+					assertNotNull(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject(), "Expected not existing stop area to have been created by import");
+				}
+			}
+		}
+
+		utx.rollback();
+	}
+
+
 	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
 	public void codespaceReadTest() throws Exception {
 		Context context = initImportContext();
@@ -219,7 +250,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:FlexibleLine:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:FlexibleLine:WF_TRD-MOL:LOC");
 		assertNotNull(line, "Line not found");
 		assertNotNull(line.getFlexibleLineProperties());
 		assertNotNull(line.getFlexibleLineProperties().getBookingArrangement());
@@ -273,67 +304,11 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		NetexTestUtils.verifyValidationReport(context);
 	}
 
-	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
-	public void verifyImportLine() throws Exception {
-		stopAreaDAO.truncate();
-		StopArea existingStopArea=createExistingStopArea();
 
-		importLine(StopAreaImportModeEnum.CREATE_OR_UPDATE);
-
-		utx.begin();
-		em.joinTransaction();
-
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
-		assertNotNull(line, "Line not found");
-
-		for (Route route : line.getRoutes()) {
-			for (StopPoint stopPoint : route.getStopPoints()) {
-				if (stopPoint.getObjectId().equals("AVI:StopPointInJourneyPattern:1263628002")) {
-					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), existingStopArea.getObjectId());
-					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName(), "Molde Lufthavn", "Expected name of existing stop area to be updated by import data");
-
-					StopArea stopAreaParent = stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject().getParent();
-					Assert.assertEquals(stopAreaParent.getStopAreaType(), StopAreaTypeEnum.Airport);
-					Assert.assertEquals(stopAreaParent.getTransportModeName(), TransportModeNameEnum.Air);
-					Assert.assertEquals(stopAreaParent.getTransportSubMode(), TransportSubModeNameEnum.InternationalFlight);
-				} else {
-					assertNotNull(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject(), "Expected not existing stop area to have been created by import");
-				}
-			}
-		}
-
-		utx.rollback();
-	}
-
-	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
-	public void verifyImportLineWithStopAreaImportModeCreateNew() throws Exception {
-		stopAreaDAO.truncate();
-		StopArea existingStopArea=createExistingStopArea();
-
-		importLine(StopAreaImportModeEnum.CREATE_NEW);
-
-		utx.begin();
-		em.joinTransaction();
-
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
-		assertNotNull(line, "Line not found");
-
-		for (Route route : line.getRoutes()) {
-			for (StopPoint stopPoint : route.getStopPoints()) {
-				if (stopPoint.getObjectId().equals("AVI:StopPointInJourneyPattern:1263628002")) {
-					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObjectId(), existingStopArea.getObjectId());
-					assertEquals(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject().getName(), existingStopArea.getName(), "Expected name of existing stop area to be unchanged by import");
-				} else {
-					assertNotNull(stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObject(), "Expected not existing stop area to have been created by import");
-				}
-			}
-		}
-
-		utx.rollback();
-	}
 
 	@Test(groups = { "ImportLine" }, description = "Import Plugin should import file")
 	public void verifyImportLineWithStopAreaImportModeReadOnly() throws Exception {
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
 		stopAreaDAO.truncate();
 		StopArea existingStopArea=createExistingStopArea();
 
@@ -342,7 +317,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
 		assertNotNull(line, "Line not found");
 
 		for (Route route : line.getRoutes()) {
@@ -364,7 +339,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 	private StopArea createExistingStopArea(){
 		StopArea stopArea=new StopArea();
 		stopArea.setAreaType(ChouetteAreaEnum.BoardingPosition);
-		stopArea.setObjectId("AVI:Quay:MOL");
+		stopArea.setObjectId("AVI:Quay:MOL:LOC");
 		stopArea.setName("Name for stop area referenced in C_NETEX_1.xml");
 		stopAreaDAO.create(stopArea);
 		return stopArea;
@@ -417,7 +392,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 
 
 		utx.begin();
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
 		Assert.assertNotNull(line);
 
 		Set<Timetable> timetables = new HashSet<Timetable>();
@@ -480,12 +455,12 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
 		
 		Assert.assertEquals(line.getTransportModeName(), TransportModeNameEnum.Air);
 		Assert.assertEquals(line.getTransportSubModeName(), TransportSubModeNameEnum.DomesticFlight);
 
-		VehicleJourney j = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:WF538-01-18696881");
+		VehicleJourney j = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:WF538-01-18696881:LOC");
 		Assert.assertNotNull(j);
 		Assert.assertEquals(j.getTransportMode(), TransportModeNameEnum.Air);
 		Assert.assertEquals(j.getTransportSubMode(), TransportSubModeNameEnum.HelicopterService);
@@ -580,7 +555,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:Line:DY_OSL-BGO");
+		Line line = lineDao.findByObjectId("AVI:Line:DY_OSL-BGO:LOC");
 		assertNotNull(line, "Line not found");
 
 		utx.rollback();
@@ -637,7 +612,7 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
 
 		assertNotNull(line, "Line not found");
 		assertNotNull(line.getNetwork(), "line must have a network");
@@ -876,65 +851,65 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		em.joinTransaction();
 
 		// check FlyViking line
-		Line vfLine = lineDao.findByObjectId("AVI:Line:VF_BOO-HFT");
+		Line vfLine = lineDao.findByObjectId("AVI:Line:VF_BOO-HFT:LOC");
 		assertNotNull(vfLine, "Line not found");
 		assertNotNull(vfLine.getNetwork(), "line must have a network");
-		assertEquals(vfLine.getNetwork().getObjectId(),"AVI:Network:VF", "Network objectId is not correct");
+		assertEquals(vfLine.getNetwork().getObjectId(),"AVI:Network:VF:LOC", "Network objectId is not correct");
 		assertTrue(vfLine.getGroupOfLines().isEmpty(), "line must not have group of lines");
 
 		// check SAS lines
-		Collection<String> sasObjectIds = Arrays.asList("AVI:Line:SK_BGO-AES", "AVI:Line:SK_SVG-AES", "AVI:Line:SK_SVG-BGO");
+		Collection<String> sasObjectIds = Arrays.asList("AVI:Line:SK_BGO-AES:LOC", "AVI:Line:SK_SVG-AES:LOC", "AVI:Line:SK_SVG-BGO:LOC");
 		List<Line> sasLines = lineDao.findByObjectId(sasObjectIds);
 
 		for (Line line : sasLines) {
 			assertNotNull(line, "Line not found");
 			assertNotNull(line.getNetwork(), "line must have a network");
-			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:SK", "Network objectId is not correct");
+			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:SK:LOC", "Network objectId is not correct");
 			assertTrue(!line.getGroupOfLines().isEmpty(), "line must have group of lines");
 			assertTrue(line.getGroupOfLines().size() == 1, "line must belong to 1 group");
-			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:SK-VEST", "Line group objectId is not correct");
+			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:SK-VEST:LOC", "Line group objectId is not correct");
 			assertEquals(line.getGroupOfLines().get(0).getName(), "SAS Vestlandet", "Line group name is not correct");
 		}
 
 		// check Wideroe lines in group north
-		Collection<String> wfNorthObjectIds = Arrays.asList("AVI:Line:WF_TOS-ALF", "AVI:Line:WF_TOS-HFT", "AVI:Line:WF_TRD-EVE");
+		Collection<String> wfNorthObjectIds = Arrays.asList("AVI:Line:WF_TOS-ALF:LOC", "AVI:Line:WF_TOS-HFT:LOC", "AVI:Line:WF_TRD-EVE:LOC");
 		List<Line> wfNorthLines = lineDao.findByObjectId(wfNorthObjectIds);
 
 		for (Line line : wfNorthLines) {
 			assertNotNull(line, "Line not found");
 			assertNotNull(line.getNetwork(), "line must have a network");
-			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF", "Network objectId is not correct");
+			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF:LOC", "Network objectId is not correct");
 			assertTrue(!line.getGroupOfLines().isEmpty(), "line must have group of lines");
 			assertTrue(line.getGroupOfLines().size() == 1, "line must belong to 1 group");
-			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-NORD", "Line group objectId is not correct");
+			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-NORD:LOC", "Line group objectId is not correct");
 			assertEquals(line.getGroupOfLines().get(0).getName(), "Widerøe Nord-Norge", "Line group name is not correct");
 		}
 
 		// check Wideroe lines in group middle
-		Collection<String> wfMiddleObjectIds = Arrays.asList("AVI:Line:WF_OSL-SDN", "AVI:Line:WF_TRD-MOL");
+		Collection<String> wfMiddleObjectIds = Arrays.asList("AVI:Line:WF_OSL-SDN:LOC", "AVI:Line:WF_TRD-MOL:LOC");
 		List<Line> wfMiddleLines = lineDao.findByObjectId(wfMiddleObjectIds);
 
 		for (Line line : wfMiddleLines) {
 			assertNotNull(line, "Line not found");
 			assertNotNull(line.getNetwork(), "line must have a network");
-			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF", "Network objectId is not correct");
+			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF:LOC", "Network objectId is not correct");
 			assertTrue(!line.getGroupOfLines().isEmpty(), "line must have group of lines");
 			assertTrue(line.getGroupOfLines().size() == 1, "line must belong to 1 group");
-			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-MIDT", "Line group objectId is not correct");
+			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-MIDT:LOC", "Line group objectId is not correct");
 			assertEquals(line.getGroupOfLines().get(0).getName(), "Widerøe Midt-Norge", "Line group name is not correct");
 		}
 
 		// check Wideroe lines in group west
-		Collection<String> wfWestObjectIds = Arrays.asList("AVI:Line:WF_BGO-AES", "AVI:Line:WF_BGO-HAU", "AVI:Line:WF_BGO-SVG");
+		Collection<String> wfWestObjectIds = Arrays.asList("AVI:Line:WF_BGO-AES:LOC", "AVI:Line:WF_BGO-HAU:LOC", "AVI:Line:WF_BGO-SVG:LOC");
 		List<Line> wfWestLines = lineDao.findByObjectId(wfWestObjectIds);
 
 		for (Line line : wfWestLines) {
 			assertNotNull(line, "Line not found");
 			assertNotNull(line.getNetwork(), "line must have a network");
-			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF", "Network objectId is not correct");
+			assertEquals(line.getNetwork().getObjectId(), "AVI:Network:WF:LOC", "Network objectId is not correct");
 			assertTrue(!line.getGroupOfLines().isEmpty(), "line must have group of lines");
 			assertTrue(line.getGroupOfLines().size() == 1, "line must belong to 1 group");
-			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-VEST", "Line group objectId is not correct");
+			assertEquals(line.getGroupOfLines().get(0).getObjectId(), "AVI:GroupOfLines:WF-VEST:LOC", "Line group objectId is not correct");
 			assertEquals(line.getGroupOfLines().get(0).getName(), "Widerøe Vestlandet", "Line group name is not correct");
 		}
 
@@ -991,34 +966,34 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL");
+		Line line = lineDao.findByObjectId("AVI:Line:WF_TRD-MOL:LOC");
 		assertNotNull(line, "Line not found");
 
 		Assert.assertEquals(line.getFootnotes().size(), 1,"Missing notice on Line");
 		Assert.assertEquals(line.getFootnotes().get(0).getLabel(), "LineNotice");
-		
-		
+
+
 		for (Route route : line.getRoutes()) {
 			for (JourneyPattern journeyPattern : route.getJourneyPatterns()) {
 				Assert.assertEquals(journeyPattern.getFootnotes().size(), 1,"Missing notice on journeyPattern");
 				Assert.assertEquals(journeyPattern.getFootnotes().get(0).getLabel(), "JourneyPatternNotice");
-				
+
 				StopPoint departureStopPoint = journeyPattern.getStopPoints().get(0);
 				Assert.assertEquals(departureStopPoint.getFootnotes().size(), 1,"Missing notice on departureStopPoint");
 				Assert.assertEquals(departureStopPoint.getFootnotes().get(0).getLabel(), "StopPointInJourneyPatternNotice");
-				
+
 				for (VehicleJourney vehicleJourney : journeyPattern.getVehicleJourneys()) {
 					Assert.assertEquals(vehicleJourney.getFootnotes().size(), 1,"Missing notice on vehicleJourney");
 					Assert.assertEquals(vehicleJourney.getFootnotes().get(0).getLabel(), "ServiceJourneyNotice");
-					
+
 					for(VehicleJourneyAtStop vjas : vehicleJourney.getVehicleJourneyAtStops()) {
-						if(vjas.getObjectId().equals("AVI:TimetabledPassingTime:1")) {
+						if(vjas.getObjectId().equals("AVI:TimetabledPassingTime:1:LOC")) {
 							Assert.assertEquals(vjas.getFootnotes().size(), 1,"Missing notice on vehicleJourneyAtStop");
 							Assert.assertEquals(vjas.getFootnotes().get(0).getLabel(), "TimetabledPassingTimeNotice");
 						}
 					}
-					
-					
+
+
 				}
 			}
 		}
@@ -1076,33 +1051,33 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		VehicleJourney feederJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:3273336");
+		VehicleJourney feederJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:3273336:LOC");
 		assertNotNull(feederJourney, "Feeder journey not found");
-		VehicleJourney consumerJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:4598614");
+		VehicleJourney consumerJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:4598614:LOC");
 		assertNotNull(consumerJourney, "Consumer journey not found");
 
-		
-		
+
+
 		assertEquals(feederJourney.getFeederInterchanges().size(), 1, " feederjourney should have feeder interchange");
 		assertEquals(consumerJourney.getConsumerInterchanges().size(), 1, " consumerjourney should have consumer interchange");
 
 		Interchange i = consumerJourney.getConsumerInterchanges().get(0);
-		
+
 		assertNotNull(i.getConsumerVehicleJourney());
 		assertNotNull(i.getFeederVehicleJourney());
 		assertNotNull(i.getConsumerStopPoint());
 		assertNotNull(i.getFeederStopPoint());
-		
+
 		assertEquals(i.getStaySeated(),Boolean.FALSE);
 		assertEquals(i.getPlanned(), Boolean.TRUE);
 		assertEquals(i.getGuaranteed(),Boolean.FALSE);
 		assertEquals(i.getAdvertised(),Boolean.TRUE);
-		
+
 		assertEquals(i.getMaximumWaitTime(), Duration.standardMinutes(30));
 		assertNotNull(i.getName());
 		Assert.assertNull(i.getMinimumTransferTime());
-		
-	
+
+
 
 		utx.rollback();
 		assertTrue(result, "Importer command execution failed: " + report.getFailure());
@@ -1158,23 +1133,23 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		utx.begin();
 		em.joinTransaction();
 
-		VehicleJourney feederJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:Feeder");
+		VehicleJourney feederJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:Feeder:LOC");
 		assertNotNull(feederJourney, "Feeder journey not found");
-		VehicleJourney consumerJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:Consumer");
+		VehicleJourney consumerJourney = vehicleJourneyDao.findByObjectId("AVI:ServiceJourney:Consumer:LOC");
 		assertNotNull(consumerJourney, "Consumer journey not found");
 
-		
-		
+
+
 		assertEquals(feederJourney.getFeederInterchanges().size(), 1, " feederjourney should have feeder interchange");
 		assertEquals(consumerJourney.getConsumerInterchanges().size(), 1, " consumerjourney should have consumer interchange");
 
 		Interchange i = consumerJourney.getConsumerInterchanges().get(0);
-		
+
 		assertNotNull(i.getConsumerVehicleJourney());
 		assertNotNull(i.getFeederVehicleJourney());
 		assertNotNull(i.getConsumerStopPoint());
 		assertNotNull(i.getFeederStopPoint());
-		
+
 		assertEquals(i.getStaySeated(),Boolean.FALSE);
 		assertEquals(i.getPlanned(), Boolean.TRUE);
 		assertEquals(i.getGuaranteed(),Boolean.FALSE);
@@ -1183,8 +1158,8 @@ public class NetexImporterCommandTest extends Arquillian implements Constant, Re
 		assertEquals(i.getMaximumWaitTime(), Duration.standardMinutes(30));
 		assertNotNull(i.getName());
 		Assert.assertNull(i.getMinimumTransferTime());
-		
-	
+
+
 
 		utx.rollback();
 		assertTrue(result, "Importer command execution failed: " + report.getFailure());

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JobServiceManagerTest extends Arquillian {
 
@@ -58,17 +59,22 @@ public class JobServiceManagerTest extends Arquillian {
 				modules.add(archive);
 				if (!modules.contains(archive))
 					modules.add(archive);
-			} else {
+			} else if(!file.getName().contains("antlr")) {
 				if (!jars.contains(file))
 					jars.add(file);
 			}
 		}
+
+
+		List<File> jarsWithoutAntLR = jars.stream().filter(f -> !f.getName().contains("antlr"))
+																	.collect(Collectors.toList());
+
 		final WebArchive testWar = ShrinkWrap.create(WebArchive.class, "test.war")
 				.addAsResource("test-persistence.xml", "META-INF/persistence.xml")
 				.addAsWebInfResource("postgres-ds.xml").addClass(DummyChecker.class)
 				.addClass(JobServiceManagerTest.class);
 
-		result = ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addAsLibraries(jars.toArray(new File[0]))
+		result = ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addAsLibraries(jarsWithoutAntLR.toArray(new File[0]))
 				.addAsModules(modules.toArray(new JavaArchive[0])).addAsModule(testWar)
 				.addAsResource(EmptyAsset.INSTANCE, "beans.xml");
 		return result;

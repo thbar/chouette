@@ -7,6 +7,9 @@ import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.exporter.NetexFragmentMode;
 import mobi.chouette.exchange.netexprofile.exporter.NetexprofileExportParameters;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCalendarNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMCommonNetexProfileValidator;
+import mobi.chouette.exchange.netexprofile.importer.validation.idfm.IDFMLineNetexProfileValidator;
 import org.rutebanken.netex.model.TypeOfFrameRefStructure;
 
 import javax.xml.bind.JAXBException;
@@ -43,7 +46,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
             writer.writeDefaultNamespace(Constant.NETEX_NAMESPACE);
             writer.writeNamespace("gis", Constant.OPENGIS_NAMESPACE);
             writer.writeNamespace("siri", Constant.SIRI_NAMESPACE);
-            writer.writeAttribute(VERSION, NETEX_PROFILE_VERSION);
+            writer.writeAttribute(VERSION, getProfileVersion(fragmentMode));
 
             writeElement(writer, PUBLICATION_TIMESTAMP, timestampFormatted);
 
@@ -71,6 +74,19 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getProfileVersion(NetexFragmentMode fragmentMode){
+        if(fragmentMode.equals(NetexFragmentMode.LINE)){
+            return IDFMLineNetexProfileValidator.NETEX_FRANCE_RESEAU_PROFILE;
+        }else if(fragmentMode.equals(NetexFragmentMode.CALENDAR)){
+            return IDFMCalendarNetexProfileValidator.NETEX_FRANCE_CALENDAR_PROFILE;
+        }else if(fragmentMode.equals(NetexFragmentMode.COMMON)){
+            return IDFMCommonNetexProfileValidator.NETEX_FRANCE_COMMON_PROFILE;
+        }else {
+            return NETEX_PROFILE_VERSION;
+        }
+
     }
 
     private static void writeGeneralFrameElement(Context context, XMLStreamWriter writer, ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {

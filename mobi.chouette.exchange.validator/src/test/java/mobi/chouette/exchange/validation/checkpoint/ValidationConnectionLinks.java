@@ -163,7 +163,7 @@ public class ValidationConnectionLinks extends AbstractTestValidation {
 		List<ConnectionLink> beans = connectionLinkDao.findAll();
 		Assert.assertFalse(beans.isEmpty(), "No data for test");
 
-		fullparameters.setInterConnectionLinkDistanceMax(600);
+		fullparameters.setInterConnectionLinkDistanceMax(10);
 
 		ValidationData data = new ValidationData();
 		data.getConnectionLinks().addAll(beans);
@@ -253,16 +253,16 @@ public class ValidationConnectionLinks extends AbstractTestValidation {
 
 		ConnectionLink link = null;
 		for (ConnectionLink connectionLink : beans) {
-			if (connectionLink.getObjectId().equals("NINOXE:ConnectionLink:15627089")) {
+			if (connectionLink.getObjectId().equals("NINOXE:ConnectionLink:15625448")) {
 				link = connectionLink;
 				break;
 			}
 		}
 
-		link.setDefaultDuration(link.getDefaultDuration().minus(600000));
-		link.setOccasionalTravellerDuration(link.getOccasionalTravellerDuration().minus(800000));
-		link.setFrequentTravellerDuration(link.getFrequentTravellerDuration().minus(600000));
-		link.setMobilityRestrictedTravellerDuration(link.getMobilityRestrictedTravellerDuration().minus(900000));
+		link.setDefaultDuration(link.getDefaultDuration().minus(500000));
+		link.setOccasionalTravellerDuration(link.getOccasionalTravellerDuration().minus(400000));
+		link.setFrequentTravellerDuration(link.getFrequentTravellerDuration().minus(250000));
+		link.setMobilityRestrictedTravellerDuration(link.getMobilityRestrictedTravellerDuration().minus(850000));
 
 		ValidationData data = new ValidationData();
 		data.getConnectionLinks().addAll(beans);
