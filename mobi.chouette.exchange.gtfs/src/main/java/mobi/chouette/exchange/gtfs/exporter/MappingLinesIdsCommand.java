@@ -45,7 +45,7 @@ public class MappingLinesIdsCommand implements Command, Constant {
 
             if (parameters.getIds() != null) {
                 String currentShema = ContextHolder.getContext();
-                List<String> objectIds = lineDAO.findObjectIdLinesInFirstDataspace(parameters.getIds(), currentShema.replace("mosaic_", ""));
+                List<String> objectIds = lineDAO.findObjectIdLinesInFirstDataspace(parameters.getIds(), currentShema.replace("mobiiti_", ""));
 
                 List<Line> superSpaceLines = lineDAO.findAll();
 
