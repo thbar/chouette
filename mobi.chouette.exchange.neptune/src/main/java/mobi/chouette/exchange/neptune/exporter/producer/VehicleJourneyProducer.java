@@ -36,15 +36,21 @@ public class VehicleJourneyProducer extends AbstractJaxbNeptuneProducer<VehicleJ
 	};
 	
 	// @Override
-	public VehicleJourneyType produce(VehicleJourney vehicleJourney, boolean addExtension) {
-		return produce(vehicleJourney, addExtension, 0);
+	public VehicleJourneyType produce(VehicleJourney vehicleJourney, boolean addExtension, String timetableObjectId) {
+		return produce(vehicleJourney, addExtension, 0, timetableObjectId);
 	}
 
-	public VehicleJourneyType produce(VehicleJourney vehicleJourney, boolean addExtension, int count) {
+	public VehicleJourneyType produce(VehicleJourney vehicleJourney, boolean addExtension, int count, String timetableObjectId) {
 		VehicleJourneyType jaxbVehicleJourney = tridentFactory.createVehicleJourneyType();
 
 		//
 		populateFromModel(jaxbVehicleJourney, vehicleJourney);
+
+		if(timetableObjectId != null){
+			String[] timetableObjectIdSplit = timetableObjectId.split(":");
+			jaxbVehicleJourney.setObjectId(jaxbVehicleJourney.getObjectId() + "-" + timetableObjectIdSplit[2]);
+		}
+
 		if (count > 0)
 			jaxbVehicleJourney.setObjectId(jaxbVehicleJourney.getObjectId()+"-"+count);
 
