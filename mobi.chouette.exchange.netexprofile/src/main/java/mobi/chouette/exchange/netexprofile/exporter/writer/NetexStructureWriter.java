@@ -4,9 +4,13 @@ import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 import org.rutebanken.netex.model.DestinationDisplay;
+import org.rutebanken.netex.model.FlexibleLine;
+import org.rutebanken.netex.model.Line;
+import org.rutebanken.netex.model.Line_VersionStructure;
 import org.rutebanken.netex.model.PassengerStopAssignment;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
@@ -24,6 +28,7 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
         writer.writeStartElement(MEMBERS);
 
+        writeLinesElement(writer, exportableNetexData, marshaller);
         writeRoutesElement(writer, exportableNetexData, marshaller);
         writeDirectionsElement(writer, exportableNetexData, marshaller);
         writeServiceJourneyPatternsElement(writer, exportableNetexData, marshaller);
@@ -32,6 +37,21 @@ public class NetexStructureWriter extends AbstractNetexWriter {
         writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
 
         writer.writeEndElement();
+    }
+
+    static void writeLinesElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
+        try {
+            Line_VersionStructure line = exportableNetexData.getLine();
+            JAXBElement<? extends Line_VersionStructure> jaxbElement = null;
+            if (line instanceof Line) {
+                jaxbElement = netexFactory.createLine((Line) exportableNetexData.getLine());
+            } else if (line instanceof FlexibleLine) {
+                jaxbElement = netexFactory.createFlexibleLine((FlexibleLine) exportableNetexData.getLine());
+            }
+            marshaller.marshal(jaxbElement, writer);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static void writeRoutesElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {

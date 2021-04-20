@@ -16,7 +16,10 @@ import org.joda.time.LocalTime;
 import org.rutebanken.netex.model.DayTypeRefStructure;
 import org.rutebanken.netex.model.DayTypeRefs_RelStructure;
 import org.rutebanken.netex.model.JourneyPatternRefStructure;
+import org.rutebanken.netex.model.LuggageCarriageEnumeration;
 import org.rutebanken.netex.model.OperatorRefStructure;
+import org.rutebanken.netex.model.ServiceFacilitySet;
+import org.rutebanken.netex.model.ServiceFacilitySets_RelStructure;
 import org.rutebanken.netex.model.ServiceJourney;
 import org.rutebanken.netex.model.TimetabledPassingTime;
 import org.rutebanken.netex.model.TimetabledPassingTimes_RelStructure;
@@ -104,6 +107,15 @@ public class ServiceJourneyIDFMProducer {
 
             serviceJourney.setPassingTimes(passingTimesStruct);
         }
+
+        // TODO futur bike allowed
+//        if(vehicleJourney.getBikesAllowed() != null && vehicleJourney.getBikesAllowed().equals(true)){
+//            ServiceFacilitySet serviceFacilitySet = new ServiceFacilitySet();
+//            serviceFacilitySet.withLuggageCarriageFacilityList(LuggageCarriageEnumeration.CYCLES_ALLOWED);
+//            ServiceFacilitySets_RelStructure serviceFacilitySets_relStructure = new ServiceFacilitySets_RelStructure();
+//            serviceFacilitySets_relStructure.withServiceFacilitySetRefOrServiceFacilitySet(serviceFacilitySet);
+//            serviceJourney.setFacilities(serviceFacilitySets_relStructure);
+//        }
 
         serviceJourney.setKeyList(keyListStructureProducer.produce(vehicleJourney.getKeyValues()));
         serviceJourney.setServiceAlteration(ConversionUtil.toServiceAlterationEnumeration(vehicleJourney.getServiceAlteration()));

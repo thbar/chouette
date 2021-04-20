@@ -133,7 +133,7 @@ public class NetexFranceProfileTest {
 
 
             Assert.assertEquals(compositeFrame.getVersion(), "any", "wrong version");
-            Assert.assertEquals(compositeFrame.getId(), "TEST:CompositeFrame:NETEX_RESEAUX-TestNetexFranceProfile:LOC", "wrong ID");
+            Assert.assertEquals(compositeFrame.getId(), "TEST:CompositeFrame:NETEX_RESEAUX-LOC", "wrong ID");
             Assert.assertEquals(compositeFrame.getName().getValue(), "TestLineName", "wrong line name");
 
             TypeOfFrameRefStructure compositeTypeOfFrame = compositeFrame.getTypeOfFrameRef();
