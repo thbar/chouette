@@ -34,7 +34,7 @@ public class RouteIDFMProducer extends NetexProducer implements NetexEntityProdu
         ExportableData exportableData = (ExportableData) context.get(Constant.EXPORTABLE_DATA);
         if (isSet(neptuneRoute.getOppositeRoute()) && exportableData.getRoutes().contains(neptuneRoute.getOppositeRoute())) {
             RouteRefStructure routeRefStruct = netexFactory.createRouteRefStructure();
-            NetexProducerUtils.populateReference(neptuneRoute.getOppositeRoute(), routeRefStruct, true);
+            NetexProducerUtils.populateReferenceIDFM(neptuneRoute.getOppositeRoute(), routeRefStruct);
             netexRoute.setInverseRouteRef(routeRefStruct);
         }
 
