@@ -51,14 +51,12 @@ public class IDFMLineNetexProfileValidator extends AbstractIDFMNetexProfileValid
 
         XdmNode dom = (XdmNode) context.get(NETEX_DATA_DOM);
 
-        @SuppressWarnings("unchecked")
         Set<Codespace> validCodespaces = (Set<Codespace>) context.get(NETEX_VALID_CODESPACES);
         ValidationData data = (ValidationData) context.get(VALIDATION_DATA);
 
-        @SuppressWarnings("unchecked")
         List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
         Set<IdVersion> localIds = new HashSet<>(localIdList);
-        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("QuayRef", "TypeOfFrameRef", "LineRef")));
+        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("QuayRef", "TypeOfFrameRef")));
 
         for (IdVersion id : localIds) {
             data.getDataLocations().put(id.getId(), DataLocationHelper.findDataLocation(id));

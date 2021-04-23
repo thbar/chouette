@@ -62,8 +62,8 @@ public class NetexLineDataIDFMProducerTest {
 
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getId(), "TEST:Route:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:l1");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:l1:LOC");
+//        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getRef(), "TEST:Direction:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getVersion(), "any");
 

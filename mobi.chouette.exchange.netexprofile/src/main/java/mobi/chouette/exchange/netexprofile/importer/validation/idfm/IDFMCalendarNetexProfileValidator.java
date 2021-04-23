@@ -39,7 +39,7 @@ public class IDFMCalendarNetexProfileValidator extends AbstractIDFMNetexProfileV
 
         List<IdVersion> localIdList = NetexIdExtractorHelper.collectEntityIdentificators(context, xpath, dom, new HashSet<>(Arrays.asList("CompositeFrame", "GeneralFrame")));
         Set<IdVersion> localIds = new HashSet<>(localIdList);
-        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("TypeOfFrameRef", "QuayRef", "TypeOfFrameRef", "LineRef")));
+        List<IdVersion> localRefs = NetexIdExtractorHelper.collectEntityReferences(context, xpath, dom, new HashSet<>(Arrays.asList("TypeOfFrameRef", "QuayRef")));
 
         verifyAcceptedCodespaces(context, xpath, dom, validCodespaces);
         verifyIdStructure(context, localIds, ID_STRUCTURE_REGEXP, validCodespaces);
