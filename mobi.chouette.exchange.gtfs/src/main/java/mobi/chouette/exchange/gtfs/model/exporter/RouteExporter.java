@@ -84,10 +84,8 @@ public class RouteExporter extends ExporterImpl<GtfsRoute> implements
 					input.getRouteColor(), false));
 			values.add(COLOR_CONVERTER.to(context, FIELDS.route_text_color,
 					input.getRouteTextColor(), false));
-			if (input.getPosition() != null){
-				values.add(STRING_CONVERTER.to(context, FIELDS.route_sort_order,
-						input.getPosition().toString(), false));
-			}
+			values.add(STRING_CONVERTER.to(context, FIELDS.route_sort_order,
+					input.getPosition() != null ? input.getPosition().toString() : "", false));
 
 
 			result = Tokenizer.untokenize(values);
