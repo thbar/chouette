@@ -125,7 +125,7 @@ public class StopTimeByTrip extends IndexImpl<GtfsStopTime> implements GtfsConve
 		
 		boolean noArrivalTime = false;
 		boolean noDepartureTime = false;
-		String regexTime = "((^2[0-9])|(^[0-1][0-9])|(^[0-9])):[0-5]+[0-9]+:[0-5]+[0-9]"; //hh:mm:ss | h:mm:ss
+		String regexTime = "((^[0-3][0-9])|(^[0-9])):[0-5]+[0-9]+:[0-5]+[0-9]"; //hh:mm:ss | h:mm:ss
 						
 		value = _array[i++]; testExtraSpace(FIELDS.arrival_time.name(), value, _bean);
 		if (value == null || value.trim().isEmpty()) {
