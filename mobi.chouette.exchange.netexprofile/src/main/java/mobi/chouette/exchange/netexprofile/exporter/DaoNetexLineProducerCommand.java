@@ -7,6 +7,7 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.dao.LineDAO;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.model.Line;
@@ -30,6 +31,9 @@ public class DaoNetexLineProducerCommand implements Command, Constant {
     @EJB
     private LineDAO lineDAO;
 
+    @EJB
+    private ConnectionLinkDAO connectionLinkDAO;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @TransactionTimeout(value = 30, unit = TimeUnit.MINUTES)
@@ -44,6 +48,7 @@ public class DaoNetexLineProducerCommand implements Command, Constant {
 
             InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
             Command export = CommandFactory.create(initialContext, NetexLineProducerCommand.class.getName());
+            ((NetexLineProducerCommand)export).setConnectionLinkDao(connectionLinkDAO);
 
             context.put(LINE, line);
             result = export.execute(context);
