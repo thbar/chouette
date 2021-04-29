@@ -7,11 +7,13 @@ import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.netexprofile.JobDataTest;
 import mobi.chouette.exchange.netexprofile.jaxb.NetexXMLProcessingHelperFactory;
 import mobi.chouette.exchange.report.ActionReport;
+import mobi.chouette.model.Company;
 import mobi.chouette.model.DestinationDisplay;
 import mobi.chouette.model.Footnote;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.MappingHastusZdep;
+import mobi.chouette.model.Network;
 import mobi.chouette.model.Period;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.ScheduledStopPoint;
@@ -62,7 +64,7 @@ public class NetexLineDataIDFMProducerTest {
 
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getId(), "TEST:Route:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getVersion(), "any");
-        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:Line:l1:LOC");
+        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getRef(), "TEST:FlexibleLine:l1:LOC");
 //        Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getLineRef().getValue().getValue(), "version=\"any\"");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getRef(), "TEST:Direction:r1:LOC");
         Assert.assertEquals(exportableNetexDataResult.getRoutes().get(0).getDirectionRef().getVersion(), "any");
@@ -205,11 +207,23 @@ public class NetexLineDataIDFMProducerTest {
         File file = new File("src/test/data/idfm/output/offre_TestCodifligne_.xml");
         file.getParentFile().mkdirs();
 
+        Network network = new Network();
+        Company company = new Company();
+        company.setCode("myComp");
+        company.setEmail("email@okinatest.com");
+        company.setFareUrl("www.okinatest.com");
+        company.setName("Okina test");
+        company.setObjectId("Test:Company:1");
+
+        network.setCompany(company);
+        network.setObjectId("Test:Network:1");
+
 
         Line line = new Line();
         line.setObjectId("TEST:Line:l1");
         line.setRegistrationNumber("l1");
         line.setCodifligne("TestCodifligne");
+        line.setNetwork(network);
 
         Route route  = new Route();
         route.setObjectId("TEST:Route:r1");
