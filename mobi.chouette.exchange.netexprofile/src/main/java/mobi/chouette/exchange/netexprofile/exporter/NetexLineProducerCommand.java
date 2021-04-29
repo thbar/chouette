@@ -7,6 +7,7 @@ import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.ConnectionLinkDAO;
 import mobi.chouette.exchange.exporter.SharedDataKeys;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -25,6 +26,8 @@ import java.io.IOException;
 public class NetexLineProducerCommand implements Command, Constant {
 
     public static final String COMMAND = "NetexLineProducerCommand";
+
+    private ConnectionLinkDAO connectionLinkDao;
 
     @Override
     public boolean execute(Context context) throws Exception {
@@ -86,6 +89,7 @@ public class NetexLineProducerCommand implements Command, Constant {
             }
 
             NetexDataCollector collector = new NetexDataCollector();
+            collector.setConnectionLinkDAO(connectionLinkDao);
             boolean cont = (collector.collect(collection, line, startDate, endDate));
 
             reporter.addObjectReport(context, line.getObjectId(), ActionReporter.OBJECT_TYPE.LINE, NamingUtil.getName(line), ActionReporter.OBJECT_STATE.OK, IO_TYPE.OUTPUT);
@@ -141,6 +145,10 @@ public class NetexLineProducerCommand implements Command, Constant {
         }
 
         return result;
+    }
+
+    public void setConnectionLinkDao(ConnectionLinkDAO connectionLinkDao) {
+        this.connectionLinkDao = connectionLinkDao;
     }
 
     public static class DefaultCommandFactory extends CommandFactory {

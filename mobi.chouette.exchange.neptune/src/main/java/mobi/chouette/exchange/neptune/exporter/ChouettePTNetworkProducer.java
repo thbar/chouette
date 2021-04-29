@@ -177,7 +177,13 @@ public class ChouettePTNetworkProducer implements Constant {
 			for (VehicleJourney vehicleJourney : collection.getVehicleJourneys()) {
 				if (vehicleJourney.getTimetables().contains(timetable))
 				{
-					jaxbObj.getVehicleJourneyId().add(vehicleJourney.getObjectId());					
+					if(vehicleJourney.getTimetables().size() > 1){
+						String[] timetableObjectIdSplit = timetable.getObjectId().split(":");
+						jaxbObj.getVehicleJourneyId().add(vehicleJourney.getObjectId() + "-" + timetableObjectIdSplit[2]);
+					}
+					else{
+						jaxbObj.getVehicleJourneyId().add(vehicleJourney.getObjectId());
+					}
 				}
 			}
 			if (metadata != null)
@@ -253,7 +259,7 @@ public class ChouettePTNetworkProducer implements Constant {
 					timeSlot.setFirstDepartureTimeInSlot(journeyFrequency.getFirstDepartureTime());
 					timeSlot.setLastDepartureTimeInSlot(journeyFrequency.getLastDepartureTime());
 					
-						VehicleJourneyType jaxbObj = vehicleJourneyProducer.produce(vehicleJourney, addExtension, count);
+						VehicleJourneyType jaxbObj = vehicleJourneyProducer.produce(vehicleJourney, addExtension, count, null);
 						timeSlot.setObjectId(jaxbObj.getObjectId().replaceAll("VehicleJourney", "TimeSlot"));
 						jaxbObj.setTimeSlotId(timeSlot.getObjectId());
 						chouetteLineDescription.getVehicleJourney().add(jaxbObj);
@@ -263,8 +269,16 @@ public class ChouettePTNetworkProducer implements Constant {
 					count++;
 				}
 			} else {
-				VehicleJourneyType jaxbObj = vehicleJourneyProducer.produce(vehicleJourney, addExtension);
-				chouetteLineDescription.getVehicleJourney().add(jaxbObj);
+				if(vehicleJourney.getTimetables().size() > 1){
+					for(Timetable timetable : vehicleJourney.getTimetables()){
+						VehicleJourneyType jaxbObj = vehicleJourneyProducer.produce(vehicleJourney, addExtension, timetable.getObjectId());
+						chouetteLineDescription.getVehicleJourney().add(jaxbObj);
+					}
+				}
+				else{
+					VehicleJourneyType jaxbObj = vehicleJourneyProducer.produce(vehicleJourney, addExtension, null);
+					chouetteLineDescription.getVehicleJourney().add(jaxbObj);
+				}
 			}
 		}
 

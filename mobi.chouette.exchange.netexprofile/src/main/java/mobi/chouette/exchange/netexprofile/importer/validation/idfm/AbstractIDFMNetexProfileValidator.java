@@ -34,7 +34,7 @@ public abstract class AbstractIDFMNetexProfileValidator extends AbstractNetexPro
 
     public static final String PARTICIPANT_REF_CONTENT = "FR";
 
-    protected static final String ID_STRUCTURE_REGEXP = "^([0-9A-Za-z]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*:LOC)$";
+    protected static final String ID_STRUCTURE_REGEXP = "^([0-9A-Za-z_]*):([A-Za-z]*):([0-9A-Za-zÀ-ÿ_\\-]*:LOC)$";
 
     public static final String _1_NETEX_REFERENCE_TO_ILLEGAL_ELEMENT = "1-NETEXPROFILE-ReferenceToIllegalElement";
 

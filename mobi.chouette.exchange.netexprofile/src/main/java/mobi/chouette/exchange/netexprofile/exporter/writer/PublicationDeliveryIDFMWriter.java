@@ -108,7 +108,7 @@ public class PublicationDeliveryIDFMWriter extends AbstractNetexWriter {
     private static void writeCompositeFrameElement(Context context, XMLStreamWriter writer, ExportableData exportableData,
                                                    ExportableNetexData exportableNetexData, String timestamp, NetexFragmentMode fragmentMode, Marshaller marshaller) {
         mobi.chouette.model.Line line = exportableData.getLine();
-        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_RESEAUX, line.getCodifligne());
+        String compositeFrameId = NetexProducerUtils.createUniqueCompositeFrameInLineId(context, COMPOSITE_FRAME, NETEX_RESEAUX);
 
         try {
             writer.writeStartElement(COMPOSITE_FRAME);

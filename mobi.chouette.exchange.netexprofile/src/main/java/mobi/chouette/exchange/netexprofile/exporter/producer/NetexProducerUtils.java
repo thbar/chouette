@@ -210,7 +210,7 @@ public class NetexProducerUtils {
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+time+OBJECT_ID_SPLIT_CHAR+LOC;
 	}
 
-	public static String createUniqueCompositeFrameInLineId(Context context, String type, String typeFile, String idLine) {
+	public static String createUniqueCompositeFrameInLineId(Context context, String type, String typeFile) {
 		NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(Constant.CONFIGURATION);
 		return configuration.getDefaultCodespacePrefix()+OBJECT_ID_SPLIT_CHAR+type+OBJECT_ID_SPLIT_CHAR+typeFile+OBJECT_ID_SPLIT_DASH+LOC;
 	}
@@ -326,11 +326,17 @@ public class NetexProducerUtils {
 	}
 
 	public static JAXBElement<? extends LineRefStructure> createLineIDFMRef(Line neptuneLine, ObjectFactory netexFactory) {
+		if (Boolean.TRUE.equals(neptuneLine.getFlexibleService())) {
+			FlexibleLineRefStructure lineRefStruct = netexFactory.createFlexibleLineRefStructure();
+			lineRefStruct.setRef(neptuneLine.getObjectId() + OBJECT_ID_SPLIT_CHAR + LOC);
+			lineRefStruct.setVersion("any");
+			return netexFactory.createFlexibleLineRef(lineRefStruct);
+		}
 		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
 		//lineRefStruct.setRef("FR1:Line:" + neptuneLine.getCodifligne() + OBJECT_ID_SPLIT_CHAR);
-		lineRefStruct.setRef(neptuneLine.getObjectId());
-		lineRefStruct.setVersion(null);
-		lineRefStruct.setValue("version=\"any\"");
+		lineRefStruct.setRef(neptuneLine.getObjectId() + OBJECT_ID_SPLIT_CHAR + LOC);
+		lineRefStruct.setVersion("any");
+//		lineRefStruct.setValue("version=\"any\"");
 		return netexFactory.createLineRef(lineRefStruct);
 	}
 
