@@ -432,7 +432,7 @@ public class NetexFranceProfileTest {
         Assert.assertEquals(firstRoute.getName().getValue(), "Test Route", "wrong name in generated route");
 
         LineRefStructure lineRef = firstRoute.getLineRef().getValue();
-        Assert.assertEquals(lineRef.getRef(), "TEST:Line:l1", "wrong lineRef in generated route");
+        Assert.assertEquals(lineRef.getRef(), "TEST:Line:l1:LOC", "wrong lineRef in generated route");
 
         Assert.assertEquals( firstRoute.getDirectionRef().getRef(),"TEST:Direction:r1:LOC", "wrong direction ref");
         Assert.assertEquals( firstRoute.getDirectionType().value(),"outbound", "wrong direction type");
@@ -507,8 +507,10 @@ public class NetexFranceProfileTest {
         company.setEmail("email@okinatest.com");
         company.setFareUrl("www.okinatest.com");
         company.setName("Okina test");
+        company.setObjectId("Test:Company:1");
 
         network.setCompany(company);
+        network.setObjectId("Test:Network:1");
         line.setNetwork(network);
 
         Route route  = new Route();
