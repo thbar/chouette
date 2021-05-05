@@ -108,14 +108,23 @@ public class ServiceJourneyIDFMProducer {
             serviceJourney.setPassingTimes(passingTimesStruct);
         }
 
-        // TODO futur bike allowed
-//        if(vehicleJourney.getBikesAllowed() != null && vehicleJourney.getBikesAllowed().equals(true)){
-//            ServiceFacilitySet serviceFacilitySet = new ServiceFacilitySet();
-//            serviceFacilitySet.withLuggageCarriageFacilityList(LuggageCarriageEnumeration.CYCLES_ALLOWED);
-//            ServiceFacilitySets_RelStructure serviceFacilitySets_relStructure = new ServiceFacilitySets_RelStructure();
-//            serviceFacilitySets_relStructure.withServiceFacilitySetRefOrServiceFacilitySet(serviceFacilitySet);
-//            serviceJourney.setFacilities(serviceFacilitySets_relStructure);
-//        }
+        ServiceFacilitySet serviceFacilitySet = new ServiceFacilitySet();
+        NetexProducerUtils.populateIdAndVersionIDFM(vehicleJourney, serviceFacilitySet);
+        serviceFacilitySet.setId(serviceFacilitySet.getId().replace("ServiceJourney", "ServiceFacilitySet"));
+        serviceFacilitySet.setVersion("any");
+        if (vehicleJourney.getBikesAllowed() != null && vehicleJourney.getBikesAllowed().equals(true)) {
+            serviceFacilitySet.withLuggageCarriageFacilityList(LuggageCarriageEnumeration.CYCLES_ALLOWED);
+        }
+        else if(vehicleJourney.getBikesAllowed() != null && vehicleJourney.getBikesAllowed().equals(false)){
+            serviceFacilitySet.withLuggageCarriageFacilityList(LuggageCarriageEnumeration.NO_CYCLES);
+        }
+        else{
+            serviceFacilitySet.withLuggageCarriageFacilityList(LuggageCarriageEnumeration.UNKNOWN);
+        }
+
+        ServiceFacilitySets_RelStructure serviceFacilitySets_relStructure = new ServiceFacilitySets_RelStructure();
+        serviceFacilitySets_relStructure.withServiceFacilitySetRefOrServiceFacilitySet(serviceFacilitySet);
+        serviceJourney.setFacilities(serviceFacilitySets_relStructure);
 
         serviceJourney.setKeyList(keyListStructureProducer.produce(vehicleJourney.getKeyValues()));
         serviceJourney.setServiceAlteration(ConversionUtil.toServiceAlterationEnumeration(vehicleJourney.getServiceAlteration()));
