@@ -3,12 +3,9 @@ package mobi.chouette.exchange.stopplace;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,8 +21,6 @@ import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.importer.ParserFactory;
 import mobi.chouette.exchange.netexprofile.parser.StopPlaceParser;
-import mobi.chouette.model.StopArea;
-import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.util.Referential;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -46,6 +41,7 @@ public class PublicationDeliveryStopPlaceParser {
     private static final String ID_VALUE_SEPARATOR = ",";
     private InputStream inputStream;
     private Instant now;
+    private Set<String> importedIds = new HashSet<>();
 
     @Getter
     private StopAreaUpdateContext updateContext;
@@ -55,6 +51,19 @@ public class PublicationDeliveryStopPlaceParser {
         now = Instant.now();
         updateContext = new StopAreaUpdateContext();
         parseStopPlaces();
+        extractImpactedSchemas();
+    }
+
+
+    /**
+     * Read importedId set (with values like "PROVIDER1:StopPlace:123")
+     * to extract the schema name (PROVIDER1)
+     */
+    private void extractImpactedSchemas(){
+        updateContext.getImpactedSchemas().addAll(importedIds.stream()
+                                                             .filter(id->id.contains(":") && id.split(":").length == 3)
+                                                             .map(id-> id.split(":")[0].toLowerCase())
+                                                             .collect(Collectors.toList()));
     }
 
 
@@ -93,6 +102,7 @@ public class PublicationDeliveryStopPlaceParser {
 
 
                     for (StopPlace stopPlace : siteFrame.getStopPlaces().getStopPlace()) {
+                        feedImportedIds(stopPlace);
 
                         if (!isActive(stopPlace, now)) {
                             updateContext.getInactiveStopAreaIds().add(stopPlace.getId());
@@ -109,12 +119,39 @@ public class PublicationDeliveryStopPlaceParser {
         updateContext.getActiveStopAreas().addAll(referential.getStopAreas().values().stream().filter(sa -> sa.getParent() == null).collect(Collectors.toSet()));
     }
 
+
+    /**
+     * Read all imported-id values to feed importedId set
+     * (used later to know on which schemas update must be applied
+     *
+     * @param stopPlace
+     *  Stop place That contain imported-ids
+     */
+    private void feedImportedIds(StopPlace stopPlace){
+        stopPlace.getKeyList().getKeyValue().stream()
+                                            .filter(kv -> IMPORT_ID_KEY.equals(kv.getKey()))
+                                            .forEach(kv ->splitAndCollectIds(kv.getValue()));
+    }
+
+
+    /**
+     * Split concatained ids and collect them
+     * (because imported-id key contains all ids in a string(e.g:"provider1:StopPlace:123,provider2:StopPlace:415")
+     * @param rawId
+     */
+    private void splitAndCollectIds(String rawId){
+        importedIds.addAll(Arrays.asList(rawId.split(",")));
+    }
+
     private void collectMergedIdForQuay(Object quayObj) {
         if (quayObj instanceof Quay) {
             Quay quay = (Quay) quayObj;
             if (quay.getKeyList() != null && quay.getKeyList().getKeyValue() != null) {
                 quay.getKeyList().getKeyValue().stream().filter(kv -> MERGED_ID_KEY.equals(kv.getKey())).forEach(kv -> addMergedIds(quay.getId(), kv.getValue()));
-                quay.getKeyList().getKeyValue().stream().filter(kv -> IMPORT_ID_KEY.equals(kv.getKey())).forEach(kv -> addMergedIds(quay.getId(), kv.getValue()));
+                quay.getKeyList().getKeyValue().stream().filter(kv -> IMPORT_ID_KEY.equals(kv.getKey())).forEach(kv -> {
+                                                                                                                addMergedIds(quay.getId(), kv.getValue());
+                                                                                                                splitAndCollectIds(kv.getValue());
+                                                                                                                });
             }
         }
     }

@@ -18,7 +18,7 @@ import javax.ejb.TransactionAttributeType;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
-import mobi.chouette.dao.ReferentialDAO;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.importer.updater.StopAreaUpdater;
@@ -45,7 +45,7 @@ public class StopAreaUpdateService {
 	private Updater<StopArea> stopAreaUpdater;
 
 	@EJB
-	private ReferentialDAO referentialDAO;
+	private ProviderDAO providerDAO;
 
 	@EJB
 	private ScheduledStopPointDAO scheduledStopPointDAO;
@@ -53,7 +53,7 @@ public class StopAreaUpdateService {
 	@EJB
 	private StopPlaceRegistryIdFetcher stopPlaceRegistryIdFetcher;
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createOrUpdateStopAreas(Context context, StopAreaUpdateContext updateContext) {
 		new StopAreaUpdateTask(stopAreaDAO, stopAreaUpdater, context, updateContext).update();
 	}
@@ -70,7 +70,7 @@ public class StopAreaUpdateService {
 
 	@TransactionAttribute
 	public void deleteUnusedStopAreas() {
-		List<String> referentials = referentialDAO.getReferentials();
+
 		Set<String> boardingPositionObjectIds = new HashSet<>(stopAreaDAO.getBoardingPositionObjectIds());
 
 		log.debug("Total no of boarding positions: " + boardingPositionObjectIds.size());
@@ -79,7 +79,8 @@ public class StopAreaUpdateService {
 
 		log.debug("No of boarding positions not in Stop Place Registry: " + boardingPositionObjectIds.size());
 
-		for (String referential : referentials) {
+		List<String> schemaList = providerDAO.getAllWorkingSchemas();
+		for (String referential : schemaList) {
 			ContextHolder.setContext(referential);
 			List<String> inUseBoardingPositionsForReferential = scheduledStopPointDAO.getAllStopAreaObjectIds();
 			boardingPositionObjectIds.removeAll(inUseBoardingPositionsForReferential);
@@ -100,6 +101,8 @@ public class StopAreaUpdateService {
 		}
 		log.info("Finished deleting unused stop areas. Cnt: " + deletedStopAreasCnt.get());
 	}
+
+
 
 	/**
 	 * Update stop area references in seperate transaction in order to iterate over all referentials

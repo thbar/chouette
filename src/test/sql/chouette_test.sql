@@ -26,6 +26,9 @@ CREATE SCHEMA chouette_gui ;
 DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public ;
 
+DROP SCHEMA IF EXISTS tro CASCADE;
+CREATE SCHEMA tro ;
+
 DROP EXTENSION IF EXISTS postgis CASCADE;
 CREATE SCHEMA IF NOT EXISTS shared_extensions;
 CREATE EXTENSION postgis SCHEMA shared_extensions;
@@ -3260,6 +3263,473 @@ BEGIN
 END;
 $$;
 
+
+
+CREATE TABLE tro.stop_areas (
+    id bigint NOT NULL,
+    area_type character varying(255),
+    bearing double precision DEFAULT 0,
+    city_name character varying(255),
+    comment character varying(255),
+    country_code character varying(255),
+    creation_time date,
+    creator_id character varying(255),
+    fare_code integer,
+    int_user_needs integer,
+    latitude double precision,
+    lift_availability boolean,
+    long_lat_type character varying(255),
+    longitude double precision,
+    mobility_restricted_suitability boolean,
+    name character varying(255),
+    nearest_topic_name character varying(255),
+    objectid character varying(255),
+    object_version integer,
+    registration_number character varying(255),
+    stairs_availability boolean,
+    street_name character varying(255),
+    time_zone character varying(255),
+    url character varying(255),
+    way character varying(255),
+    zip_code character varying(255),
+    company_id bigint,
+    parent_id bigint,
+    dtype character varying(31),
+    city_code character varying,
+    is_unique boolean,
+    is_validated boolean,
+    is_duplicated boolean,
+    external_ref character varying(255),
+    mapping_hastus_zdep_id bigint,
+    compass_bearing integer,
+    stop_place_type character varying(255),
+    transport_mode character varying(255),
+    transport_sub_mode character varying(255),
+    original_stop_id character varying(255),
+    is_external boolean DEFAULT false,
+    platform_code character varying(255)
+);
+
+
+CREATE SEQUENCE tro.stop_areas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tro.stop_areas_id_seq OWNER TO chouette;
+
+CREATE TABLE tro.stop_areas_stop_areas (
+    child_id bigint,
+    parent_id bigint
+);
+
+
+ALTER TABLE tro.stop_areas_stop_areas OWNER TO chouette;
+
+CREATE TABLE tro.access_points (
+                               id bigint NOT NULL,
+                               city_name character varying(255),
+                               closing_time time without time zone,
+                               comment character varying(255),
+                               country_code character varying(255),
+                               creation_time date,
+                               creator_id character varying(255),
+                               latitude double precision,
+                               lift_availability boolean,
+                               long_lat_type character varying(255),
+                               longitude double precision,
+                               mobility_restricted_suitability boolean,
+                               name character varying(255),
+                               objectid character varying(255),
+                               object_version integer,
+                               openning_time time without time zone,
+                               stairs_availability boolean,
+                               street_name character varying(255),
+                               access_type character varying(255),
+                               zip_code character varying(255),
+                               stop_area_id bigint
+);
+
+ALTER TABLE tro.access_points OWNER TO chouette;
+
+
+CREATE TABLE tro.access_links (
+                              id bigint NOT NULL,
+                              city_name character varying(255),
+                              comment character varying(255),
+                              country_code character varying(255),
+                              creation_time date,
+                              creator_id character varying(255),
+                              default_duration time without time zone,
+                              frequent_traveller_duration time without time zone,
+                              int_user_needs integer,
+                              latitude double precision,
+                              lift_availability boolean,
+                              link_distance numeric(38,0),
+                              link_orientation character varying(255),
+                              link_type character varying(255),
+                              long_lat_type character varying(255),
+                              longitude double precision,
+                              mobility_restricted_suitability boolean,
+                              mobility_restricted_traveller_duration time without time zone,
+                              name character varying(255),
+                              objectid character varying(255),
+                              object_version integer,
+                              occasional_traveller_duration time without time zone,
+                              stairs_availability boolean,
+                              street_name character varying(255),
+                              zip_code character varying(255),
+                              access_point_id bigint,
+                              stop_area_id bigint
+);
+
+ALTER TABLE tro.access_links OWNER TO chouette;
+
+
+CREATE TABLE tro.connection_links (
+                                  id bigint NOT NULL,
+                                  departure_id bigint,
+                                  arrival_id bigint,
+                                  objectid character varying(255) NOT NULL,
+                                  object_version integer,
+                                  creation_time timestamp without time zone,
+                                  creator_id character varying(255),
+                                  name character varying(255),
+                                  comment character varying(255),
+                                  link_distance numeric(19,2),
+                                  link_type character varying(255),
+                                  default_duration time without time zone,
+                                  frequent_traveller_duration time without time zone,
+                                  occasional_traveller_duration time without time zone,
+                                  mobility_restricted_traveller_duration time without time zone,
+                                  mobility_restricted_suitability boolean,
+                                  stairs_availability boolean,
+                                  lift_availability boolean,
+                                  int_user_needs integer
+);
+
+ALTER TABLE tro.connection_links OWNER TO chouette;
+
+
+
+GRANT ALL ON SCHEMA tro TO chouette;
+GRANT ALL ON SCHEMA tro TO PUBLIC;
+
+
+
+CREATE TABLE sky.stop_areas (
+    id bigint NOT NULL,
+    area_type character varying(255),
+    bearing double precision DEFAULT 0,
+    city_name character varying(255),
+    comment character varying(255),
+    country_code character varying(255),
+    creation_time date,
+    creator_id character varying(255),
+    fare_code integer,
+    int_user_needs integer,
+    latitude double precision,
+    lift_availability boolean,
+    long_lat_type character varying(255),
+    longitude double precision,
+    mobility_restricted_suitability boolean,
+    name character varying(255),
+    nearest_topic_name character varying(255),
+    objectid character varying(255),
+    object_version integer,
+    registration_number character varying(255),
+    stairs_availability boolean,
+    street_name character varying(255),
+    time_zone character varying(255),
+    url character varying(255),
+    way character varying(255),
+    zip_code character varying(255),
+    company_id bigint,
+    parent_id bigint,
+    dtype character varying(31),
+    city_code character varying,
+    is_unique boolean,
+    is_validated boolean,
+    is_duplicated boolean,
+    external_ref character varying(255),
+    mapping_hastus_zdep_id bigint,
+    compass_bearing integer,
+    stop_place_type character varying(255),
+    transport_mode character varying(255),
+    transport_sub_mode character varying(255),
+    original_stop_id character varying(255),
+    is_external boolean DEFAULT false,
+    platform_code character varying(255)
+);
+
+
+CREATE SEQUENCE sky.stop_areas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE sky.stop_areas_id_seq OWNER TO chouette;
+
+CREATE TABLE sky.stop_areas_stop_areas (
+    child_id bigint,
+    parent_id bigint
+);
+
+
+ALTER TABLE sky.stop_areas_stop_areas OWNER TO chouette;
+
+CREATE TABLE sky.access_points (
+                               id bigint NOT NULL,
+                               city_name character varying(255),
+                               closing_time time without time zone,
+                               comment character varying(255),
+                               country_code character varying(255),
+                               creation_time date,
+                               creator_id character varying(255),
+                               latitude double precision,
+                               lift_availability boolean,
+                               long_lat_type character varying(255),
+                               longitude double precision,
+                               mobility_restricted_suitability boolean,
+                               name character varying(255),
+                               objectid character varying(255),
+                               object_version integer,
+                               openning_time time without time zone,
+                               stairs_availability boolean,
+                               street_name character varying(255),
+                               access_type character varying(255),
+                               zip_code character varying(255),
+                               stop_area_id bigint
+);
+
+ALTER TABLE sky.access_points OWNER TO chouette;
+
+
+CREATE TABLE sky.access_links (
+                              id bigint NOT NULL,
+                              city_name character varying(255),
+                              comment character varying(255),
+                              country_code character varying(255),
+                              creation_time date,
+                              creator_id character varying(255),
+                              default_duration time without time zone,
+                              frequent_traveller_duration time without time zone,
+                              int_user_needs integer,
+                              latitude double precision,
+                              lift_availability boolean,
+                              link_distance numeric(38,0),
+                              link_orientation character varying(255),
+                              link_type character varying(255),
+                              long_lat_type character varying(255),
+                              longitude double precision,
+                              mobility_restricted_suitability boolean,
+                              mobility_restricted_traveller_duration time without time zone,
+                              name character varying(255),
+                              objectid character varying(255),
+                              object_version integer,
+                              occasional_traveller_duration time without time zone,
+                              stairs_availability boolean,
+                              street_name character varying(255),
+                              zip_code character varying(255),
+                              access_point_id bigint,
+                              stop_area_id bigint
+);
+
+ALTER TABLE sky.access_links OWNER TO chouette;
+
+
+CREATE TABLE sky.connection_links (
+                                  id bigint NOT NULL,
+                                  departure_id bigint,
+                                  arrival_id bigint,
+                                  objectid character varying(255) NOT NULL,
+                                  object_version integer,
+                                  creation_time timestamp without time zone,
+                                  creator_id character varying(255),
+                                  name character varying(255),
+                                  comment character varying(255),
+                                  link_distance numeric(19,2),
+                                  link_type character varying(255),
+                                  default_duration time without time zone,
+                                  frequent_traveller_duration time without time zone,
+                                  occasional_traveller_duration time without time zone,
+                                  mobility_restricted_traveller_duration time without time zone,
+                                  mobility_restricted_suitability boolean,
+                                  stairs_availability boolean,
+                                  lift_availability boolean,
+                                  int_user_needs integer
+);
+
+ALTER TABLE sky.connection_links OWNER TO chouette;
+
+
+
+CREATE TABLE rut.stop_areas (
+    id bigint NOT NULL,
+    area_type character varying(255),
+    bearing double precision DEFAULT 0,
+    city_name character varying(255),
+    comment character varying(255),
+    country_code character varying(255),
+    creation_time date,
+    creator_id character varying(255),
+    fare_code integer,
+    int_user_needs integer,
+    latitude double precision,
+    lift_availability boolean,
+    long_lat_type character varying(255),
+    longitude double precision,
+    mobility_restricted_suitability boolean,
+    name character varying(255),
+    nearest_topic_name character varying(255),
+    objectid character varying(255),
+    object_version integer,
+    registration_number character varying(255),
+    stairs_availability boolean,
+    street_name character varying(255),
+    time_zone character varying(255),
+    url character varying(255),
+    way character varying(255),
+    zip_code character varying(255),
+    company_id bigint,
+    parent_id bigint,
+    dtype character varying(31),
+    city_code character varying,
+    is_unique boolean,
+    is_validated boolean,
+    is_duplicated boolean,
+    external_ref character varying(255),
+    mapping_hastus_zdep_id bigint,
+    compass_bearing integer,
+    stop_place_type character varying(255),
+    transport_mode character varying(255),
+    transport_sub_mode character varying(255),
+    original_stop_id character varying(255),
+    is_external boolean DEFAULT false,
+    platform_code character varying(255)
+);
+
+
+CREATE SEQUENCE rut.stop_areas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE rut.stop_areas_id_seq OWNER TO chouette;
+
+CREATE TABLE rut.stop_areas_stop_areas (
+    child_id bigint,
+    parent_id bigint
+);
+
+
+ALTER TABLE rut.stop_areas_stop_areas OWNER TO chouette;
+
+CREATE TABLE rut.access_points (
+                               id bigint NOT NULL,
+                               city_name character varying(255),
+                               closing_time time without time zone,
+                               comment character varying(255),
+                               country_code character varying(255),
+                               creation_time date,
+                               creator_id character varying(255),
+                               latitude double precision,
+                               lift_availability boolean,
+                               long_lat_type character varying(255),
+                               longitude double precision,
+                               mobility_restricted_suitability boolean,
+                               name character varying(255),
+                               objectid character varying(255),
+                               object_version integer,
+                               openning_time time without time zone,
+                               stairs_availability boolean,
+                               street_name character varying(255),
+                               access_type character varying(255),
+                               zip_code character varying(255),
+                               stop_area_id bigint
+);
+
+ALTER TABLE rut.access_points OWNER TO chouette;
+
+
+CREATE TABLE rut.access_links (
+                              id bigint NOT NULL,
+                              city_name character varying(255),
+                              comment character varying(255),
+                              country_code character varying(255),
+                              creation_time date,
+                              creator_id character varying(255),
+                              default_duration time without time zone,
+                              frequent_traveller_duration time without time zone,
+                              int_user_needs integer,
+                              latitude double precision,
+                              lift_availability boolean,
+                              link_distance numeric(38,0),
+                              link_orientation character varying(255),
+                              link_type character varying(255),
+                              long_lat_type character varying(255),
+                              longitude double precision,
+                              mobility_restricted_suitability boolean,
+                              mobility_restricted_traveller_duration time without time zone,
+                              name character varying(255),
+                              objectid character varying(255),
+                              object_version integer,
+                              occasional_traveller_duration time without time zone,
+                              stairs_availability boolean,
+                              street_name character varying(255),
+                              zip_code character varying(255),
+                              access_point_id bigint,
+                              stop_area_id bigint
+);
+
+ALTER TABLE rut.access_links OWNER TO chouette;
+
+
+CREATE TABLE rut.connection_links (
+                                  id bigint NOT NULL,
+                                  departure_id bigint,
+                                  arrival_id bigint,
+                                  objectid character varying(255) NOT NULL,
+                                  object_version integer,
+                                  creation_time timestamp without time zone,
+                                  creator_id character varying(255),
+                                  name character varying(255),
+                                  comment character varying(255),
+                                  link_distance numeric(19,2),
+                                  link_type character varying(255),
+                                  default_duration time without time zone,
+                                  frequent_traveller_duration time without time zone,
+                                  occasional_traveller_duration time without time zone,
+                                  mobility_restricted_traveller_duration time without time zone,
+                                  mobility_restricted_suitability boolean,
+                                  stairs_availability boolean,
+                                  lift_availability boolean,
+                                  int_user_needs integer
+);
+
+ALTER TABLE rut.connection_links OWNER TO chouette;
+
+
+
+GRANT ALL ON SCHEMA sky TO chouette;
+GRANT ALL ON SCHEMA sky TO PUBLIC;
+
+
+
+GRANT ALL ON SCHEMA rut TO chouette;
+GRANT ALL ON SCHEMA rut TO PUBLIC;
+
+GRANT ALL ON SCHEMA tro TO chouette;
+GRANT ALL ON SCHEMA tro TO PUBLIC;
 
 
 -- TOC entry 4251 (class 0 OID 0)

@@ -306,7 +306,11 @@ public class StopPlaceParser implements Parser, Constant {
         PostalAddress postalAddress = quay.getPostalAddress();
         if (postalAddress != null) {
             boardingPosition.setCountryCode(postalAddress.getPostCode());
-            boardingPosition.setStreetName(postalAddress.getAddressLine1().getValue());
+
+            if (postalAddress.getAddressLine1() != null){
+                boardingPosition.setStreetName(postalAddress.getAddressLine1().getValue());
+            }
+
         }
 
         TariffZoneRefs_RelStructure tariffZonesStruct = quay.getTariffZones();
