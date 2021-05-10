@@ -218,7 +218,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
     }
 
     @Override
-    public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+    public List<? extends Command> getMobiitiCommands(Context context, boolean b) {
         InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
         GtfsImportParameters parameters = (GtfsImportParameters) context.get(CONFIGURATION);
 
