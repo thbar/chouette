@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>4.0.22_MOSAIC-SNAPSHOT</version>
+    <version>4.0.23_MOSAIC-SNAPSHOT</version>
   </parent>
   <artifactId>mobi.chouette.dao.iev</artifactId>
   <packaging>ejb</packaging>
