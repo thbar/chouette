@@ -139,9 +139,9 @@ public class Phase1StopTests extends AbstractPhase1Tests {
 	public void verifyTest_2_3_3() throws Exception {
 		log.info(Color.GREEN + "Stop_3_3 : empty column stop_lat" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "stop_3_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "stop_3_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.OK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
@@ -155,9 +155,9 @@ public class Phase1StopTests extends AbstractPhase1Tests {
 	public void verifyTest_2_3_4() throws Exception {
 		log.info(Color.GREEN + "Stop_3_4 : empty column stop_lon" + Color.NORMAL);
 		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "stop_3_4", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
+		CheckPointReport result = verifyValidation( log, context, "stop_3_4", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.OK,true);
 
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+		Assert.assertEquals(result.getCheckPointErrorCount(), 0, "detail count");
 		for (CheckPointErrorReport detail : getDetails(context, result)) 
 		{
 			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
