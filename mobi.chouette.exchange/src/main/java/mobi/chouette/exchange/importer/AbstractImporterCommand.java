@@ -114,7 +114,7 @@ public class AbstractImporterCommand implements Constant {
 			}
 
 			// Mosaic Commands after import before validation
-			List<? extends Command> mosaicPostCommands = commands.getMosaicCommands(context, true);
+			List<? extends Command> mosaicPostCommands = commands.getMobiitiCommands(context, true);
 			if (mosaicPostCommands.isEmpty()) {
 				progression.terminate(context, 1);
 				progression.execute(context);

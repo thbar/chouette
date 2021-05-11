@@ -115,7 +115,9 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 		value = array[i++]; testExtraSpace(FIELDS.stop_lat.name(), value, bean);
 		if (value == null || value.trim().isEmpty()) {
 			if (withValidation)
-				bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.stop_lat.name()), FIELDS.stop_lat.name(), GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
+				if (array[8] == null || array[8].trim().isEmpty() || Integer.parseInt(array[8]) != 1) {
+					bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.stop_lat.name()), FIELDS.stop_lat.name(), GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
+				}
 		} else {
 			bean.getOkTests().add(GtfsException.ERROR.MISSING_REQUIRED_VALUES);
 			boolean validLat = true;
@@ -138,7 +140,9 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 		value = array[i++]; testExtraSpace(FIELDS.stop_lon.name(), value, bean);
 		if (value == null || value.trim().isEmpty()) {
 			if (withValidation)
-				bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.stop_lon.name()), FIELDS.stop_lon.name(), GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
+				if (array[8] == null || array[8].trim().isEmpty() || Integer.parseInt(array[8]) != 1) {
+					bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.stop_lon.name()), FIELDS.stop_lon.name(), GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
+				}
 		} else {
 			bean.getOkTests().add(GtfsException.ERROR.MISSING_REQUIRED_VALUES);
 			boolean validLon = true;

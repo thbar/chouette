@@ -107,7 +107,7 @@ public class ConcertoExporterProcessingCommands implements ProcessingCommands, C
 	}
 
 	@Override
-	public List<? extends Command> getMosaicCommands(Context context, boolean b) {
+	public List<? extends Command> getMobiitiCommands(Context context, boolean b) {
 		return new ArrayList<>();
 	}
 
