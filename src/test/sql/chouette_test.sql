@@ -35,6 +35,9 @@ CREATE SCHEMA sky ;
 DROP SCHEMA IF EXISTS rut CASCADE;
 CREATE SCHEMA rut ;
 
+DROP SCHEMA IF EXISTS admin CASCADE;
+CREATE SCHEMA admin ;
+
 
 DROP EXTENSION IF EXISTS postgis CASCADE;
 CREATE SCHEMA IF NOT EXISTS shared_extensions;
@@ -3737,6 +3740,30 @@ GRANT ALL ON SCHEMA rut TO PUBLIC;
 
 GRANT ALL ON SCHEMA tro TO chouette;
 GRANT ALL ON SCHEMA tro TO PUBLIC;
+
+
+CREATE TABLE admin.client (
+    id bigint NOT NULL,
+    code character varying(255),
+    name character varying(255),
+    type character varying(255),
+    nb_networks_allowed integer,
+    schema_name character varying(255),
+    option_geoloc boolean,
+    option_driver_authentication boolean,
+    defaultcompany_id bigint,
+    option_payment_agency boolean,
+    option_payment_web boolean,
+    address character varying(255),
+    city character varying(255),
+    email character varying(255),
+    phone character varying(255),
+    url character varying(255),
+    zip_code character varying(255),
+    client_parent_id bigint,
+    option_traveler_information boolean DEFAULT false,
+    option_indiscipline boolean DEFAULT false
+);
 
 
 -- TOC entry 4251 (class 0 OID 0)
