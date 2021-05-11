@@ -400,6 +400,12 @@
                     <ValidBetween>
                         <FromDate>2017-05-02T13:07:03.765+02:00</FromDate>
                     </ValidBetween>
+                              <keyList>
+                                <KeyValue>
+                                    <Key>imported-id</Key>
+                                    <Value>SKY:StopPlace:47589</Value>
+                                </KeyValue>
+                            </keyList>
                     <Name lang="nb"></Name>
                     <Centroid>
                         <Location>
@@ -411,6 +417,12 @@
                     <StopPlaceType>busStation</StopPlaceType>
                     <quays>
                         <Quay modification="new" version="2" id="NSR:Quay:7">
+                                  <keyList>
+                                <KeyValue>
+                                    <Key>imported-id</Key>
+                                    <Value>SKY:Quay:14756</Value>
+                                </KeyValue>
+                            </keyList>
                             <Centroid>
                                 <Location>
                                     <Longitude>6.699334</Longitude>

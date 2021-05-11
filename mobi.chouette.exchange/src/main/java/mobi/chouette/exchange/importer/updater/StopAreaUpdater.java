@@ -35,7 +35,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	public static final String BEAN_NAME = "StopAreaUpdater";
 
-	private boolean dataStopIdfm;
+
 
 	@EJB
 	private StopAreaDAO stopAreaDAO;
@@ -66,9 +66,6 @@ public class StopAreaUpdater implements Updater<StopArea> {
 
 	@Override
 	public void update(Context context, StopArea oldValue, StopArea newValue) throws Exception {
-
-		String dataStopIdfmProperty = "iev.data.stop.idfm";
-		dataStopIdfm = Boolean.parseBoolean(System.getProperty(dataStopIdfmProperty));
 
 		if (newValue.isSaved()) {
 			return;
@@ -153,23 +150,23 @@ public class StopAreaUpdater implements Updater<StopArea> {
 				if (newValue.getCreatorId() != null && !newValue.getCreatorId().equals(oldValue.getCreatorId())) {
 					oldValue.setCreatorId(newValue.getCreatorId());
 				}
-				if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName()) && !dataStopIdfm) {
+				if (newValue.getName() != null && !newValue.getName().equals(oldValue.getName())) {
 					oldValue.setName(newValue.getName());
 				}
-				if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment()) && !dataStopIdfm) {
+				if (newValue.getComment() != null && !newValue.getComment().equals(oldValue.getComment()) ) {
 					oldValue.setComment(newValue.getComment());
 				}
 				if (newValue.getAreaType() != null && !newValue.getAreaType().equals(oldValue.getAreaType())) {
 					oldValue.setAreaType(newValue.getAreaType());
 				}
-				if (!Objects.equals(newValue.getRegistrationNumber(), oldValue.getRegistrationNumber()) && !dataStopIdfm) {
+				if (!Objects.equals(newValue.getRegistrationNumber(), oldValue.getRegistrationNumber())) {
 					oldValue.setRegistrationNumber(newValue.getRegistrationNumber());
 				}
 				if (newValue.getNearestTopicName() != null
 						&& !newValue.getNearestTopicName().equals(oldValue.getNearestTopicName())) {
 					oldValue.setNearestTopicName(newValue.getNearestTopicName());
 				}
-				if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl()) && !dataStopIdfm) {
+				if (newValue.getUrl() != null && !newValue.getUrl().equals(oldValue.getUrl())) {
 					oldValue.setUrl(newValue.getUrl());
 				}
 				if (newValue.getTimeZone() != null && !newValue.getTimeZone().equals(oldValue.getTimeZone())) {
@@ -182,7 +179,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 					oldValue.setLiftAvailable(newValue.getLiftAvailable());
 				}
 				if (newValue.getMobilityRestrictedSuitable() != null
-						&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable()) && !dataStopIdfm) {
+						&& !newValue.getMobilityRestrictedSuitable().equals(oldValue.getMobilityRestrictedSuitable())) {
 					oldValue.setMobilityRestrictedSuitable(newValue.getMobilityRestrictedSuitable());
 				}
 				if (newValue.getStairsAvailable() != null

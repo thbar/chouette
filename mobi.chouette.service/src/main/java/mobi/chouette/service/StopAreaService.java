@@ -21,12 +21,14 @@ import javax.ejb.Singleton;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ReferentialDAO;
 import mobi.chouette.exchange.report.ActionReport;
 import mobi.chouette.exchange.stopplace.PublicationDeliveryStopPlaceParser;
 import mobi.chouette.exchange.stopplace.StopAreaUpdateContext;
 import mobi.chouette.exchange.stopplace.StopAreaUpdateService;
 import mobi.chouette.exchange.validation.report.ValidationReport;
+import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 
@@ -41,7 +43,7 @@ public class StopAreaService {
 	private StopAreaUpdateService stopAreaUpdateService;
 
 	@EJB
-	private ReferentialDAO referentialDAO;
+	private ProviderDAO providerDAO;
 
 	private ExecutorService executor;
 
@@ -63,17 +65,56 @@ public class StopAreaService {
 		PublicationDeliveryStopPlaceParser parser = new PublicationDeliveryStopPlaceParser(inputStream);
 
 		StopAreaUpdateContext updateContext = parser.getUpdateContext();
-		int changedStopCnt = updateContext.getChangedStopCount();
 
+		int changedStopCnt = updateContext.getChangedStopCount();
 		if (changedStopCnt > 0) {
 			log.info("Updating " + changedStopCnt + " stop areas");
-			Context context = createContext();
-			ContextHolder.clear();
-			stopAreaUpdateService.createOrUpdateStopAreas(context, updateContext);
+			updateSchemas(updateContext);
 			log.info("Updated " + changedStopCnt + " stop areas");
-			updateStopAreaReferencesPerReferential(updateContext.getMergedQuays());
 		} else {
 			log.debug("Received update without any stop areas. Doing nothing");
+		}
+	}
+
+
+
+
+	/**
+	 * Applies stop place modifications on all schemas impacted by modifications
+	 *
+	 * @param updateContext
+	 * 		Context with all modifications to apply
+	 */
+	private void updateSchemas(StopAreaUpdateContext updateContext ){
+
+		for (String impactedSchema : updateContext.getImpactedSchemas()) {
+			log.info("Starting update on schema: " + impactedSchema);
+			Context chouetteDbContext = createContext();
+			ContextHolder.clear();
+			ContextHolder.setContext(impactedSchema);
+			stopAreaUpdateService.createOrUpdateStopAreas(chouetteDbContext, updateContext);
+			resetSavedStatusToFalse(updateContext);
+			log.info("Update completed on schema: " + impactedSchema);
+		}
+
+		log.info("Update references started");
+		updateStopAreaReferencesPerReferential(updateContext.getMergedQuays());
+		log.info("Update references completed");
+	}
+
+
+	/**
+	 * Reset all "saved" status to false.
+	 * (when all modifications are applied to schema 1, all stopAreas are marked as "saved".
+	 * We need to reset this status in order to allow modifications for other schemas)
+	 * @param updateContext
+	 * 		Context with all modifications that need to be applied.
+	 */
+	private void resetSavedStatusToFalse(StopAreaUpdateContext updateContext ){
+
+		for (StopArea activeStopArea : updateContext.getActiveStopAreas()) {
+			activeStopArea.setSaved(false);
+			activeStopArea.getContainedStopAreas().forEach(containedStopArea -> containedStopArea.setSaved(false));
 		}
 	}
 
@@ -83,7 +124,10 @@ public class StopAreaService {
 		if (!replacementMap.isEmpty()) {
 			List<Future<Integer>> futures = new ArrayList();
 
-			for (String referential : referentialDAO.getReferentials()) {
+
+			List<String> schemaList = providerDAO.getAllWorkingSchemas();
+
+			for (String referential : schemaList) {
 				StopAreaUpdateTask updateTask = new StopAreaUpdateTask(referential, replacementMap);
 				futures.add(executor.submit(updateTask));
 			}
