@@ -57,6 +57,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         List<Command> commands = new ArrayList<>();
         try {
             if (withDao && parameters.isCleanRepository()) {
+                context.put(CLEAR_FOR_IMPORT, Boolean.TRUE);
                 commands.add(CommandFactory.create(initialContext, CleanRepositoryCommand.class.getName()));
             }
             commands.add(CommandFactory.create(initialContext, UncompressCommand.class.getName()));
