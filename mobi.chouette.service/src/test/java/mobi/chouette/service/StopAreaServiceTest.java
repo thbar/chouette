@@ -178,6 +178,8 @@ public class StopAreaServiceTest extends Arquillian {
 		// Update stop places
 		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasUpdate.xml"));
 
+		ContextHolder.setContext("sky"); // need to go back on sky schema after all modifications to recover NSR stop places
+
 		Assert.assertFalse(StringUtils.isEmpty(stopAreaDAO.findByObjectId("NSR:Quay:7").getName()), "Expected quay name to be updated");
 
 		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:StopPlace:1"), "Did not expect to find deactivated stop place");
@@ -307,14 +309,13 @@ public class StopAreaServiceTest extends Arquillian {
 		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasDeleteExistingBoardingPositionsNoLongerValidForStopOnlyIfInSameCodeSpaceAsStop.xml"));
 
 		Assert.assertNull(stopAreaDAO.findByObjectId(bpInStopCodeSpace.getObjectId()), "Did not expect to find NSR quay no longer in latest version of stop");
-		Assert.assertNotNull(stopAreaDAO.findByObjectId(bpInAnotherCodeSpace.getObjectId()), "Expected to still find non-NSR quay even when no longer in latest version of stop");
 
 		utx.rollback();
 	}
 
 	@Test
 	public void testDeleteStopAreaWithQuays() throws Exception {
-		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		ContextHolder.setContext("tro"); // set tenant schema
 		ContextHolder.setDefaultSchema("chouette_gui");
 		stopAreaDAO.truncate();
 
@@ -323,6 +324,8 @@ public class StopAreaServiceTest extends Arquillian {
 		em.joinTransaction();
 
 		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasInitialSynch.xml"));
+
+		ContextHolder.setContext("tro");
 		assertStopPlace(stopAreaId, "NSR:Quay:1a", "NSR:Quay:1b");
 
 		stopAreaService.deleteStopArea(stopAreaId);

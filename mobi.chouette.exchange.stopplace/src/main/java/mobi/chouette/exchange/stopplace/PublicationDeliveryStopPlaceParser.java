@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -130,7 +132,8 @@ public class PublicationDeliveryStopPlaceParser {
     private void feedImportedIds(StopPlace stopPlace){
         stopPlace.getKeyList().getKeyValue().stream()
                                             .filter(kv -> IMPORT_ID_KEY.equals(kv.getKey()))
-                                            .forEach(kv ->splitAndCollectIds(kv.getValue()));
+                                            .forEach(kv ->splitAndCollectIds(kv.getValue(),stopPlace.getId()));
+
     }
 
 
@@ -138,9 +141,33 @@ public class PublicationDeliveryStopPlaceParser {
      * Split concatained ids and collect them
      * (because imported-id key contains all ids in a string(e.g:"provider1:StopPlace:123,provider2:StopPlace:415")
      * @param rawId
+     * @param netexId
      */
-    private void splitAndCollectIds(String rawId){
-        importedIds.addAll(Arrays.asList(rawId.split(",")));
+    private void splitAndCollectIds(String rawId, String netexId){
+
+        List<String> importedIdsList = Arrays.asList(rawId.split(","));
+        importedIds.addAll(importedIdsList);
+
+        for (String stopPlaceImportedId : importedIdsList) {
+
+            if (!stopPlaceImportedId.contains(":") || stopPlaceImportedId.split(":").length != 3)
+                continue;
+
+            String schemaName = stopPlaceImportedId.split(":")[0].toLowerCase();
+
+            List<String> impactedStopAreasForSchema;
+
+            if (updateContext.getImpactedStopAreasBySchema().containsKey(schemaName)){
+                impactedStopAreasForSchema = updateContext.getImpactedStopAreasBySchema().get(schemaName);
+            }else{
+                impactedStopAreasForSchema = new ArrayList<>();
+                updateContext.getImpactedStopAreasBySchema().put(schemaName,impactedStopAreasForSchema);
+            }
+            impactedStopAreasForSchema.add(netexId);
+
+        }
+
+
     }
 
     private void collectMergedIdForQuay(Object quayObj) {
@@ -150,7 +177,7 @@ public class PublicationDeliveryStopPlaceParser {
                 quay.getKeyList().getKeyValue().stream().filter(kv -> MERGED_ID_KEY.equals(kv.getKey())).forEach(kv -> addMergedIds(quay.getId(), kv.getValue()));
                 quay.getKeyList().getKeyValue().stream().filter(kv -> IMPORT_ID_KEY.equals(kv.getKey())).forEach(kv -> {
                                                                                                                 addMergedIds(quay.getId(), kv.getValue());
-                                                                                                                splitAndCollectIds(kv.getValue());
+                                                                                                                splitAndCollectIds(kv.getValue(),quay.getId());
                                                                                                                 });
             }
         }

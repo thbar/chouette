@@ -22,6 +22,9 @@ public class StopAreaUpdateContext {
 	@Getter
 	private Set<String> impactedSchemas = new HashSet<>();
 
+	@Getter
+	private Map<String, List<String>> impactedStopAreasBySchema = new HashMap<>();
+
 
 
 	public int getChangedStopCount() {
