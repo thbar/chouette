@@ -28,6 +28,7 @@ import mobi.chouette.exchange.stopplace.PublicationDeliveryStopPlaceParser;
 import mobi.chouette.exchange.stopplace.StopAreaUpdateContext;
 import mobi.chouette.exchange.stopplace.StopAreaUpdateService;
 import mobi.chouette.exchange.validation.report.ValidationReport;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
@@ -88,6 +89,10 @@ public class StopAreaService {
 	private void updateSchemas(StopAreaUpdateContext updateContext ){
 
 		for (String impactedSchema : updateContext.getImpactedSchemas()) {
+			//deleted schemas are ignored
+			if (!isSchemaExisting(impactedSchema))
+				continue;
+
 			log.info("Starting update on schema: " + impactedSchema);
 			Context chouetteDbContext = createContext();
 			ContextHolder.clear();
@@ -98,8 +103,23 @@ public class StopAreaService {
 		}
 
 		log.info("Update references started");
-		updateStopAreaReferencesPerReferential(updateContext.getMergedQuays());
+		updateStopAreaReferencesPerReferential(updateContext);
 		log.info("Update references completed");
+	}
+
+	/**
+	 * Tells if the schema exists or not
+	 * @param schemaName
+	 * @return
+	 * 	True : schema is still existing
+	 * 	False : schema no longer exists
+	 */
+	private boolean isSchemaExisting(String schemaName){
+		ContextHolder.setContext("admin");
+		List<Provider> providers = providerDAO.getAllProviders();
+		return providers.stream()
+				         .anyMatch(provider->provider.getCode().equals(schemaName));
+
 	}
 
 
@@ -118,30 +138,26 @@ public class StopAreaService {
 		}
 	}
 
-	private void updateStopAreaReferencesPerReferential(Map<String, Set<String>> replacementMap) {
+	private void updateStopAreaReferencesPerReferential(StopAreaUpdateContext updateContext) {
 		int updatedStopPointCnt = 0;
 
+
+		Map<String, Set<String>> replacementMap = updateContext.getMergedQuays();
 		if (!replacementMap.isEmpty()) {
-			List<Future<Integer>> futures = new ArrayList();
 
-
-			List<String> schemaList = providerDAO.getAllWorkingSchemas();
+			List<String> schemaList = new ArrayList<>(updateContext.getImpactedSchemas());
 
 			for (String referential : schemaList) {
-				StopAreaUpdateTask updateTask = new StopAreaUpdateTask(referential, replacementMap);
-				futures.add(executor.submit(updateTask));
-			}
-			try {
-				for (Future<Integer> future : futures) {
-					updatedStopPointCnt += future.get();
-				}
-			} catch (ExecutionException e) {
-				throw new RuntimeException("Exception while updating StopArea references: " + e.getMessage(), e);
-			} catch (InterruptedException ie) {
-				throw new RuntimeException("Interrupted while waiting for StopArea reference update", ie);
+
+				if (!isSchemaExisting(referential))
+					continue;
+
+				ContextHolder.setContext(referential);
+				log.info("Updating stop area references for stop points for referential " + referential);
+				int updatedCnt = stopAreaUpdateService.updateStopAreaReferences(replacementMap);
+				log.info("Updated stop area references for " + updatedCnt + " stop points for referential " + referential);
 			}
 		}
-
 
 		log.info("Updated stop area references for " + updatedStopPointCnt + " stop points");
 	}
@@ -167,24 +183,4 @@ public class StopAreaService {
 		return context;
 	}
 
-
-	class StopAreaUpdateTask implements Callable<Integer> {
-
-		private final String referential;
-		private final Map<String, Set<String>> replacementMap;
-
-		public StopAreaUpdateTask(String referential, Map<String, Set<String>> replacementMap) {
-			this.referential = referential;
-			this.replacementMap = replacementMap;
-		}
-
-		@Override
-		public Integer call() throws Exception {
-			ContextHolder.setContext(referential);
-			log.debug("Updating stop area references for stop points for referential " + referential);
-			int updatedCnt = stopAreaUpdateService.updateStopAreaReferences(replacementMap);
-			log.debug("Updated stop area references for " + updatedCnt + " stop points for referential " + referential);
-			return updatedCnt;
-		}
-	}
 }

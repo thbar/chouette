@@ -13,9 +13,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
+import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.dao.StopPointDAO;
+import mobi.chouette.model.Provider;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.SimpleObjectReference;
 import mobi.chouette.model.StopArea;
@@ -53,6 +55,9 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@EJB
 	ScheduledStopPointDAO scheduledStopPointDAO;
+
+	@EJB
+	private ProviderDAO providerDAO;
 
 	@PersistenceContext(unitName = "public")
 	private EntityManager em;
@@ -150,18 +155,61 @@ public class StopAreaServiceTest extends Arquillian {
 
 	}
 
+	private void cleanAllschemas(){
+		ContextHolder.setContext("chouette_gui");
+		stopAreaDAO.truncate();
+		ContextHolder.setContext("sky");
+		stopAreaDAO.truncate();
+		ContextHolder.setContext("rut");
+		stopAreaDAO.truncate();
+		ContextHolder.setContext("nri");
+		stopAreaDAO.truncate();
+		ContextHolder.setContext("tro");
+		stopAreaDAO.truncate();
+		ContextHolder.setContext("akt");
+		stopAreaDAO.truncate();
+	}
+
+	private void initProducers(){
+		ContextHolder.setContext("admin");
+		providerDAO.truncate();
+		Provider prov1 = new Provider();
+		prov1.setCode("tro");
+		providerDAO.create(prov1);
+
+		Provider prov2 = new Provider();
+		prov2.setCode("rut");
+		providerDAO.create(prov2);
+
+		Provider prov3 = new Provider();
+		prov3.setCode("sky");
+		providerDAO.create(prov3);
+
+		Provider prov4 = new Provider();
+		prov4.setCode("nri");
+		providerDAO.create(prov4);
+
+		Provider prov5 = new Provider();
+		prov5.setCode("akt");
+		providerDAO.create(prov5);
+	}
+
 
 	@Test
 	public void testStopAreaUpdate() throws Exception {
+		initProducers();
+		cleanAllschemas();
 		ContextHolder.setContext("chouette_gui"); // set tenant schema
-		stopAreaDAO.truncate();
 		utx.begin();
 		em.joinTransaction();
 
+
 		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasInitialSynch.xml"));
 
+		ContextHolder.setContext("sky");
 		Assert.assertTrue(StringUtils.isEmpty(stopAreaDAO.findByObjectId("NSR:Quay:7").getName()));
 
+		ContextHolder.setContext("tro");
 		assertStopPlace("NSR:StopPlace:1", "NSR:Quay:1a", "NSR:Quay:1b");
 		assertStopPlace("NSR:StopPlace:2", "NSR:Quay:2a");
 		assertStopPlace("NSR:StopPlace:3", "NSR:Quay:3a");
@@ -281,7 +329,8 @@ public class StopAreaServiceTest extends Arquillian {
 	@Test
 	public void deleteExistingBoardingPositionsNoLongerValidForStopOnlyIfInSameCodeSpaceAsStop() throws Exception {
 
-		ContextHolder.setContext("chouette_gui"); // set tenant schema
+		initProducers();
+		ContextHolder.setContext("tro"); // set tenant schema
 		ContextHolder.setDefaultSchema("chouette_gui");
 		stopAreaDAO.truncate();
 

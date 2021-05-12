@@ -1362,6 +1362,8 @@ CREATE TABLE scheduled_stop_points (
 );
 
 
+
+
 ALTER TABLE chouette_gui.scheduled_stop_points OWNER TO chouette;
 
 CREATE SEQUENCE scheduled_stop_points_id_seq
@@ -4034,6 +4036,95 @@ CREATE TABLE akt.connection_links (
 
 ALTER TABLE akt.connection_links OWNER TO chouette;
 
+CREATE SEQUENCE tro.scheduled_stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE tro.scheduled_stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE tro.scheduled_stop_points (
+                                       id bigint DEFAULT nextval('scheduled_stop_points_id_seq'::regclass) NOT NULL,
+                                       objectid character varying NOT NULL,
+                                       stop_area_objectid_key character varying,
+                                       object_version integer,
+                                       creation_time timestamp without time zone,
+                                       creator_id character varying(255),
+                                       name character varying
+);
+
+ALTER TABLE tro.scheduled_stop_points OWNER TO chouette;
+
+CREATE SEQUENCE sky.scheduled_stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE sky.scheduled_stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE sky.scheduled_stop_points (
+                                       id bigint DEFAULT nextval('scheduled_stop_points_id_seq'::regclass) NOT NULL,
+                                       objectid character varying NOT NULL,
+                                       stop_area_objectid_key character varying,
+                                       object_version integer,
+                                       creation_time timestamp without time zone,
+                                       creator_id character varying(255),
+                                       name character varying
+);
+
+ALTER TABLE sky.scheduled_stop_points OWNER TO chouette;
+
+CREATE SEQUENCE rut.scheduled_stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE rut.scheduled_stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE rut.scheduled_stop_points (
+                                       id bigint DEFAULT nextval('scheduled_stop_points_id_seq'::regclass) NOT NULL,
+                                       objectid character varying NOT NULL,
+                                       stop_area_objectid_key character varying,
+                                       object_version integer,
+                                       creation_time timestamp without time zone,
+                                       creator_id character varying(255),
+                                       name character varying
+);
+
+ALTER TABLE rut.scheduled_stop_points OWNER TO chouette;
+
+CREATE SEQUENCE nri.scheduled_stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE nri.scheduled_stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE nri.scheduled_stop_points (
+                                       id bigint DEFAULT nextval('scheduled_stop_points_id_seq'::regclass) NOT NULL,
+                                       objectid character varying NOT NULL,
+                                       stop_area_objectid_key character varying,
+                                       object_version integer,
+                                       creation_time timestamp without time zone,
+                                       creator_id character varying(255),
+                                       name character varying
+);
+
+ALTER TABLE nri.scheduled_stop_points OWNER TO chouette;
+
+
 
 GRANT ALL ON SCHEMA akt TO chouette;
 GRANT ALL ON SCHEMA akt TO PUBLIC;
@@ -4058,6 +4149,7 @@ CREATE TABLE admin.client (
     code character varying(255),
     name character varying(255),
     type character varying(255),
+    code_idfm character varying(255),
     nb_networks_allowed integer,
     schema_name character varying(255),
     option_geoloc boolean,
@@ -4072,9 +4164,18 @@ CREATE TABLE admin.client (
     url character varying(255),
     zip_code character varying(255),
     client_parent_id bigint,
+    is_idfm boolean DEFAULT false,
     option_traveler_information boolean DEFAULT false,
     option_indiscipline boolean DEFAULT false
+
 );
+
+CREATE SEQUENCE admin.client_id_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 -- TOC entry 4251 (class 0 OID 0)
