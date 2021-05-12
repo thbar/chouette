@@ -14,6 +14,7 @@ import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.importer.updater.Updater;
 import mobi.chouette.model.StopArea;
 
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.collections.CollectionUtils;
 
 @Log4j
@@ -40,10 +41,47 @@ public class StopAreaUpdateTask {
 	public void update() {
 		updateContext.getInactiveStopAreaIds().stream().forEach(stopAreaId -> removeStopArea(stopAreaId));
 
-		updateContext.getActiveStopAreas().forEach(sa -> createOrUpdate(sa));
+		String currentSchema = ContextHolder.getContext();
+		List<String> impactedStopAreasIds = updateContext.getImpactedStopAreasBySchema().get(currentSchema);
+
+		if (impactedStopAreasIds != null){
+			//Filtering to apply modification only on points used by the current schema
+			List<StopArea> impactedStopAreas = updateContext.getActiveStopAreas().stream()
+															 	                .filter(stopArea -> isStopAreaImpacted(stopArea,impactedStopAreasIds))
+																 				.collect(Collectors.toList());
+
+			impactedStopAreas.forEach(stopArea -> createOrUpdate(stopArea));
+		}
 
 		removedContainedStopAreas.values().forEach(containedStopArea -> removeContainedStopArea(containedStopArea));
+
+
 	}
+
+	/**
+	 * Tells if a stop area's modifications should be applied on the specified schema
+	 * @param stopArea
+	 * 			stop area that must be checked
+	 * @param impactedIds
+	 * 			List of impactedIds for the current schema
+	 * @return
+	 * 	True : stop area's modifications should be applied on the schema
+	 * 	False : this stop area is not concerned by this schema
+	 */
+	private boolean isStopAreaImpacted(StopArea stopArea,  List<String> impactedIds){
+
+		if (impactedIds.isEmpty())
+			return false;
+
+		if (impactedIds.contains(stopArea.getObjectId()))
+			return true;
+
+		return stopArea.getContainedStopAreas().stream()
+				 						       .anyMatch(containedStopArea -> isStopAreaImpacted(containedStopArea,impactedIds));
+
+	}
+
+
 
 
 	private void createOrUpdate(StopArea stopArea) {
@@ -56,7 +94,7 @@ public class StopAreaUpdateTask {
 				updateExistingStopArea(stopArea, existing);
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to update stop place: " + e.getMessage(), e);
+			throw new RuntimeException("Failed to update stop place: "+ stopArea.getObjectId()+e.getMessage(), e);
 		}
 
 	}
@@ -121,7 +159,6 @@ public class StopAreaUpdateTask {
 			containedStopAreas.addAll(stopArea.getContainedStopAreas());
 			stopArea.getContainedStopAreas().clear();
 		}
-
 		stopAreaDAO.create(stopArea);
 
 		for (StopArea containedStopArea : containedStopAreas) {
