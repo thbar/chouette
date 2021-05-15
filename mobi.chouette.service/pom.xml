@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>3.5.0_MOBIITI</version>
+    <version>3.5.1_MOBIITI</version>
   </parent>
   <artifactId>mobi.chouette.service</artifactId>
   <packaging>ejb</packaging>
