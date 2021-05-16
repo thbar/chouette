@@ -14,6 +14,7 @@ import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.importer.updater.Updater;
 import mobi.chouette.model.StopArea;
 
+import mobi.chouette.model.type.Utils;
 import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -48,12 +49,19 @@ public class StopAreaUpdateTask {
 			//Filtering to apply modification only on points used by the current schema
 			List<StopArea> impactedStopAreas = updateContext.getActiveStopAreas().stream()
 															 	                .filter(stopArea -> isStopAreaImpacted(stopArea,impactedStopAreasIds))
+																				.distinct()
 																 				.collect(Collectors.toList());
 
-			impactedStopAreas.forEach(stopArea -> createOrUpdate(stopArea));
+
+			impactedStopAreas.stream()
+					         .map(this::createCopy)
+					         .forEach(stopArea -> createOrUpdate(stopArea));
 		}
 
 		removedContainedStopAreas.values().forEach(containedStopArea -> removeContainedStopArea(containedStopArea));
+
+		stopAreaDAO.flush();
+		stopAreaDAO.clear();
 
 
 	}
@@ -167,6 +175,21 @@ public class StopAreaUpdateTask {
 
 			createOrMoveStopArea(stopArea, containedStopArea);
 		}
+	}
+
+	private StopArea createCopy(StopArea stopArea){
+		StopArea newStopArea = new StopArea();
+		Utils.copyStopArea(stopArea,newStopArea);
+		newStopArea.setObjectId(stopArea.getObjectId());
+		if (!stopArea.getContainedStopAreas().isEmpty()){
+
+			ArrayList<StopArea> oldContainedList = new ArrayList<>(stopArea.getContainedStopAreas());
+			List<StopArea> containedCopies = oldContainedList.stream()
+					.map(this::createCopy)
+					.collect(Collectors.toList());
+			newStopArea.setContainedStopAreas(containedCopies);
+		}
+		return newStopArea;
 	}
 
 	private void removeStopArea(String objectId) {

@@ -3328,6 +3328,8 @@ CREATE TABLE tro.stop_areas (
     platform_code character varying(255)
 );
 
+ALTER TABLE tro.stop_areas OWNER TO chouette;
+
 
 CREATE SEQUENCE tro.stop_areas_id_seq
     START WITH 1
@@ -4123,6 +4125,107 @@ CREATE TABLE nri.scheduled_stop_points (
 );
 
 ALTER TABLE nri.scheduled_stop_points OWNER TO chouette;
+
+CREATE SEQUENCE akt.scheduled_stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE akt.scheduled_stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE akt.scheduled_stop_points (
+                                       id bigint DEFAULT nextval('scheduled_stop_points_id_seq'::regclass) NOT NULL,
+                                       objectid character varying NOT NULL,
+                                       stop_area_objectid_key character varying,
+                                       object_version integer,
+                                       creation_time timestamp without time zone,
+                                       creator_id character varying(255),
+                                       name character varying
+);
+
+ALTER TABLE akt.scheduled_stop_points OWNER TO chouette;
+
+--
+CREATE TABLE sky.stop_points (
+                             dtype character varying(31),
+                             id bigint NOT NULL,
+                             creation_time timestamp without time zone,
+                             creator_id character varying(255),
+                             objectid character varying(255) NOT NULL,
+                             object_version integer,
+                             for_alighting character varying(255),
+                             for_boarding character varying(255),
+                             "position" integer,
+                             stop_area_id bigint,
+                             route_id bigint,
+                             destination_display_id bigint,
+                             scheduled_stop_point_id bigint,
+                             booking_arrangement_id bigint
+);
+
+ALTER TABLE sky.stop_points OWNER TO chouette;
+
+CREATE SEQUENCE sky.stop_points_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE sky.stop_points_id_seq OWNER TO chouette;
+
+
+CREATE TABLE sky.booking_arrangements (
+    id bigint NOT NULL,
+    booking_contact_id bigint,
+    booking_note character varying,
+    booking_access character varying(255),
+    book_when character varying(255),
+    latest_booking_time  time without time zone,
+    minimum_booking_period  time without time zone
+);
+
+
+ALTER TABLE sky.booking_arrangements OWNER TO chouette;
+
+CREATE SEQUENCE sky.booking_arrangements_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE sky.booking_arrangements_id_seq OWNER TO chouette;
+
+
+CREATE TABLE sky.contact_structures (
+    id bigint NOT NULL,
+    contact_person CHARACTER VARYING,
+    email CHARACTER VARYING,
+    phone CHARACTER VARYING,
+    fax CHARACTER VARYING,
+    url CHARACTER VARYING,
+    further_details CHARACTER VARYING
+);
+
+ALTER TABLE sky.contact_structures OWNER TO chouette;
+
+
+CREATE SEQUENCE sky.contact_structures_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE sky.contact_structures_id_seq OWNER TO chouette;
+
 
 
 

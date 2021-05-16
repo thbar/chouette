@@ -15,6 +15,10 @@
                             <Key>IS_PARENT_STOP_PLACE</Key>
                             <Value>true</Value>
                         </KeyValue>
+                           <KeyValue>
+                                    <Key>imported-id</Key>
+                                      <Value>TRO:StopPlace:11111</Value>
+                          </KeyValue>
                     </keyList>
                     <Name>Super stop place name</Name>
                     <AccessModes></AccessModes>

@@ -13,6 +13,7 @@ import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.SimpleObjectReference;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.type.ChouetteAreaEnum;
+import mobi.chouette.model.type.Utils;
 import mobi.chouette.model.util.ObjectFactory;
 import org.xmlpull.v1.XmlPullParser;
 import mobi.chouette.model.util.Referential;
@@ -114,47 +115,7 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 		return referentialName + ":" + type + ":" + tmpStopArea.getOriginalStopId();
 	}
 
-	private void copyStopArea(StopArea src, StopArea dest){
-		dest.setOriginalStopId(src.getOriginalStopId());
-		dest.setAreaType(src.getAreaType());
-		dest.setFareCode(src.getFareCode());
-		dest.setContainedScheduledStopPoints(src.getContainedScheduledStopPoints());
-		dest.setAccessLinks(src.getAccessLinks());
-		dest.setAccessPoints(src.getAccessPoints());
-		dest.setComment(src.getComment());
-		dest.setCompassBearing(src.getCompassBearing());
-		dest.setFilled(src.isFilled());
-		dest.setObjectVersion(src.getObjectVersion());
-		dest.setCreationTime(src.getCreationTime());
-		dest.setCreatorId(src.getCreatorId());
-		dest.setName(src.getName());
-		dest.setComment(src.getComment());
-		dest.setAreaType(src.getAreaType());
-		dest.setNearestTopicName(src.getNearestTopicName());
-		dest.setRegistrationNumber(src.getRegistrationNumber());
-		dest.setMobilityRestrictedSuitable(src.getMobilityRestrictedSuitable());
-		dest.setUserNeeds(src.getUserNeeds());
-		dest.setStairsAvailable(src.getStairsAvailable());
-		dest.setLiftAvailable(src.getLiftAvailable());
-		dest.setConnectionEndLinks(src.getConnectionEndLinks());
-		dest.setConnectionStartLinks(src.getConnectionStartLinks());
-		dest.setImportMode(src.getImportMode());
-		dest.setIntUserNeeds(src.getIntUserNeeds());
-		dest.setContainedStopAreas(src.getContainedStopAreas());
-		dest.setParent(src.getParent());
-		dest.setIsExternal(src.getIsExternal());
-		dest.setPlatformCode(src.getPlatformCode());
-		dest.setRoutingConstraintAreas(src.getRoutingConstraintAreas());
-		dest.setStopAreaType(src.getStopAreaType());
-		dest.setTimeZone(src.getTimeZone());
-		dest.setUrl(src.getUrl());
-		dest.setX(src.getX());
-		dest.setY(src.getY());
-		dest.setLatitude(src.getLatitude());
-		dest.setLongitude(src.getLongitude());
-		dest.setLongLatType(src.getLongLatType());
 
-	}
 
 	private void mapFileIdsToReferentialIds(Context context){
 
@@ -171,7 +132,7 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 		for (StopArea stopArea : oldStopArea){
 			String newId = buildTridentId(referentialName,stopArea);
 			StopArea newStopArea = ObjectFactory.getStopArea(referential, newId);
-			copyStopArea(stopArea,newStopArea);
+			Utils.copyStopArea(stopArea,newStopArea);
 			fileToReferentialStopIdMap.put(stopArea.getObjectId(),newId);
 		}
 
