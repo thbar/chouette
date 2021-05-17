@@ -182,7 +182,8 @@ public class NetexLineDataIDFMProducerTest {
         NoticeAssignment noticeAssignment =
                 (NoticeAssignment) exportableNetexDataResult.getServiceJourneys().get(0).getNoticeAssignments().getNoticeAssignment_OrNoticeAssignmentView().get(0).getValue();
 
-        Assert.assertEquals(noticeAssignment.getId(), "TEST:NoticeAssignment:1:LOC");
+        Assert.assertTrue(noticeAssignment.getId().startsWith("TEST:NoticeAssignment:"));
+        Assert.assertTrue(noticeAssignment.getId().endsWith(":LOC"));
         Assert.assertEquals(noticeAssignment.getVersion(), "any");
         Assert.assertEquals(noticeAssignment.getOrder(), BigInteger.valueOf(0));
         Assert.assertEquals(noticeAssignment.getNoticeRef().getRef(), "TEST:Notice:f1:LOC");
