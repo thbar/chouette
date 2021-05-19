@@ -92,10 +92,10 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             }
 
             {
-                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
-                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
-                chain.add(productionPeriods);
-                commands.add(chain);
+//                Chain chain = (Chain) CommandFactory.create(initialContext, ChainCommand.class.getName());
+//                Command productionPeriods = CommandFactory.create(initialContext, ProductionPeriodCommand.class.getName());
+//                chain.add(productionPeriods);
+//                commands.add(chain);
             }
 
            ArrayList<String> savedLines = new ArrayList<String>();
