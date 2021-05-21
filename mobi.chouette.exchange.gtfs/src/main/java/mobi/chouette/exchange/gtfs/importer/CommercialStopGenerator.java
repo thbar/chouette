@@ -138,7 +138,7 @@ public class CommercialStopGenerator extends AbstractGenerator {
 		LocalDateTime now = LocalDateTime.now();
 		String[] token = stop.getObjectId().split(":");
 		if (objectId == null)
-			objectId = token[0] + ":" + token[1] + ":COM_" + token[2];
+			objectId = token[0] + ":StopPlace:COM_" + token[2];
 		StopArea area = ObjectFactory.getStopArea(referential, objectId);
 		area.setName(stop.getName());
 		area.setObjectId(objectId);
