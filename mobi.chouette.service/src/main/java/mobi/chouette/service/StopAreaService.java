@@ -97,8 +97,8 @@ public class StopAreaService {
 			Context chouetteDbContext = createContext();
 			ContextHolder.clear();
 			ContextHolder.setContext(impactedSchema);
+			resetSavedStatusToFalse(updateContext,impactedSchema);
 			stopAreaUpdateService.createOrUpdateStopAreas(chouetteDbContext, updateContext);
-			resetSavedStatusToFalse(updateContext);
 			log.info("Update completed on schema: " + impactedSchema);
 		}
 
@@ -129,13 +129,40 @@ public class StopAreaService {
 	 * We need to reset this status in order to allow modifications for other schemas)
 	 * @param updateContext
 	 * 		Context with all modifications that need to be applied.
+	 * @param currentSchemaName
+	 * 		Current schema on which modifications will be applied
 	 */
-	private void resetSavedStatusToFalse(StopAreaUpdateContext updateContext ){
+	private void resetSavedStatusToFalse(StopAreaUpdateContext updateContext, String currentSchemaName){
 
 		for (StopArea activeStopArea : updateContext.getActiveStopAreas()) {
 			activeStopArea.setSaved(false);
-			activeStopArea.getContainedStopAreas().forEach(containedStopArea -> containedStopArea.setSaved(false));
+			setOriginalStopId(activeStopArea,updateContext,currentSchemaName);
+			activeStopArea.getContainedStopAreas().forEach(containedStopArea -> {
+															setOriginalStopId(containedStopArea,updateContext,currentSchemaName);
+															containedStopArea.setSaved(false);
+			});
 		}
+	}
+
+	/**
+	 * Read the NetexId of the stop area and recover the associated importedId to set it as "originalStopId" in the StopArea
+	 *
+	 * @param stopAreaToFeed
+	 * @param updateContext
+	 * @param currentSchemaName
+	 */
+	private void setOriginalStopId(StopArea stopAreaToFeed, StopAreaUpdateContext updateContext, String currentSchemaName){
+		List<String> importedIds = updateContext.getImportedIdsByNetexId().get(stopAreaToFeed.getObjectId());
+
+
+		if (importedIds == null || importedIds.isEmpty())
+			return;
+
+		importedIds.stream()
+					.filter(id->id.contains(":") && id.split(":").length == 3 && id.split(":")[0].toLowerCase().equals(currentSchemaName))
+					.map(id->id.split(":")[2])
+					.findFirst()
+					.ifPresent(stopAreaToFeed::setOriginalStopId);
 	}
 
 	private void updateStopAreaReferencesPerReferential(StopAreaUpdateContext updateContext) {

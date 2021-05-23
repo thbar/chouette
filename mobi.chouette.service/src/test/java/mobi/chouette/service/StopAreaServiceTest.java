@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
+import javax.validation.constraints.AssertTrue;
 
 import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
@@ -511,6 +512,46 @@ public class StopAreaServiceTest extends Arquillian {
 		sp.setScheduledStopPoint(scheduledStopPoint);
 		stopPointDAO.create(sp);
 		return sp;
+	}
+
+	@Test
+	public void testFeedOriginalStopIdAfterRestore() throws Exception {
+		cleanAllschemas();
+		ContextHolder.setContext("tro"); // set tenant schema
+		stopAreaDAO.truncate();
+		utx.begin();
+		em.joinTransaction();
+
+
+
+		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasOriginalStopIdTest.xml"));
+
+		utx.commit();
+		utx.begin();
+
+		ContextHolder.setContext("tro");
+		StopArea createdParent = assertStopPlace("NSR:StopPlace:1000","NSR:Quay:1000");
+
+		Assert.assertTrue(createdParent.getOriginalStopId() != null, "Original stop id should have been feeded during restoration with imported-id from xml");
+		Assert.assertEquals(createdParent.getOriginalStopId(),"14758","Original stop id should be equal to imported id from the xml file");
+
+		StopArea createdQuay = createdParent.getContainedStopAreas().get(0);
+		Assert.assertTrue(createdQuay.getOriginalStopId() != null, "Original stop id should have been feeded during restoration with imported-id from xml");
+		Assert.assertEquals(createdQuay.getOriginalStopId(),"12345","Original stop id should be equal to imported id from the xml file");
+
+		utx.commit();
+		utx.begin();
+
+		ContextHolder.setContext("sky");
+		StopArea createdParentOnSecondSchema = assertStopPlace("NSR:StopPlace:1000","NSR:Quay:1000");
+
+		Assert.assertTrue(createdParentOnSecondSchema.getOriginalStopId() != null, "Original stop id should have been feeded during restoration with imported-id from xml");
+		Assert.assertEquals(createdParentOnSecondSchema.getOriginalStopId(),"89632","Original stop id should be equal to imported id from the xml file");
+
+		StopArea createdQuayOnSecondSchema = createdParentOnSecondSchema.getContainedStopAreas().get(0);
+		Assert.assertTrue(createdQuayOnSecondSchema.getOriginalStopId() != null, "Original stop id should have been feeded during restoration with imported-id from xml");
+		Assert.assertEquals(createdQuayOnSecondSchema.getOriginalStopId(),"56374","Original stop id should be equal to imported id from the xml file");
+
 	}
 
 

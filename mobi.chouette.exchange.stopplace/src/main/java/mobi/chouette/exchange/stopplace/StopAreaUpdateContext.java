@@ -21,9 +21,10 @@ public class StopAreaUpdateContext {
 	private Map<String, Set<String>> mergedQuays = new HashMap<>();
 	@Getter
 	private Set<String> impactedSchemas = new HashSet<>();
-
 	@Getter
 	private Map<String, List<String>> impactedStopAreasBySchema = new HashMap<>();
+	@Getter
+	private Map<String, List<String>> importedIdsByNetexId = new HashMap<>();
 
 
 

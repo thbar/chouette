@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -153,6 +154,8 @@ public class PublicationDeliveryStopPlaceParser {
             if (!stopPlaceImportedId.contains(":") || stopPlaceImportedId.split(":").length != 3)
                 continue;
 
+            collectImportedIds(netexId,stopPlaceImportedId);
+
             String schemaName = stopPlaceImportedId.split(":")[0].toLowerCase();
 
             List<String> impactedStopAreasForSchema;
@@ -167,6 +170,19 @@ public class PublicationDeliveryStopPlaceParser {
 
         }
 
+
+    }
+
+    private void collectImportedIds(String netexId, String importedId){
+        Map<String, List<String>> importedIdByNetex = updateContext.getImportedIdsByNetexId();
+        List<String> importedIds;
+        if ( importedIdByNetex.containsKey(netexId)){
+            importedIds = importedIdByNetex.get(netexId);
+        }else {
+            importedIds = new ArrayList<String>();
+            importedIdByNetex.put(netexId,importedIds);
+        }
+        importedIds.add(importedId);
 
     }
 
