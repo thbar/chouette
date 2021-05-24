@@ -11,6 +11,7 @@ import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.ChouetteAreaEnum;
 import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.util.Referential;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.apache.commons.lang.StringUtils;
 import org.rutebanken.netex.client.PublicationDeliveryClient;
 import org.rutebanken.netex.client.TokenService;
@@ -131,11 +132,15 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
         // Find and convert valid StopAreas
         List<StopPlace> stopPlaces = null;
         for(StopArea area : stopAreas){
+            feedStopAreaMapping(area,referential);
             StopArea finalStopArea;
-            if(area.getParent() != null)
+            if(area.getParent() != null){
                 finalStopArea = area.getParent();
-            else
+                feedStopAreaMapping(finalStopArea,referential);
+            } else{
                 finalStopArea = area;
+            }
+
 
             if(finalStopArea.getObjectId() == null) continue;
             if(finalStopArea.getAreaType() != ChouetteAreaEnum.CommercialStopPoint) continue;
@@ -143,7 +148,7 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
             List<StopPlace> stopPlaceList =  Arrays.asList(finalStopArea).stream()
                     .peek(stopArea -> log.info(stopArea.getObjectId() + " name: " + stopArea.getName() + " correlationId: " + correlationId))
                     .map(stopPlaceMapper::mapStopAreaToStopPlace)
-                    //.map(stopArea -> stopPlaceMapper.addImportedIdfmInfo(stopArea, referential, stopAreas))
+                    .map(stopPlace -> stopPlaceMapper.addImportedIdInfo(stopPlace, referential))
                     .collect(Collectors.toList());
             /*
             SCH
@@ -232,6 +237,20 @@ public class NeTExIdfmStopPlaceRegisterUpdater {
                 throw new RuntimeException("Composite frame or common frame is null for received publication delivery. " + correlationId);
             }
         }
+    }
+
+
+    /**
+     * Feed mapping between Netex Id and original stop id
+     * @param stopArea
+     *  Stop area for which an association must be done between Netex Id and original stop id
+     * @param referential
+     *  Referential that stores all data
+     */
+    private void feedStopAreaMapping(StopArea stopArea, Referential referential){
+        String currentSchema = ContextHolder.getContext();
+        String stopType = ChouetteAreaEnum.CommercialStopPoint.equals(stopArea.getAreaType()) ? "StopPlace" : "Quay";
+        referential.getStopAreaMapping().put(currentSchema + ":" + stopType + ":" + stopArea.getOriginalStopId(), stopArea.getObjectId());
     }
 
     private String getAndValidateProperty(String propertyName) {
