@@ -146,10 +146,7 @@ public class TransferIndex extends IndexImpl<GtfsTransfer> implements
 		
 		
 		value = array[i++]; testExtraSpace(FIELDS.transfer_type.name(), value, bean);
-		if (value == null || value.trim().isEmpty()) {
-			if (withValidation)
-				bean.getErrors().add(new GtfsException(_path, id, getIndex(FIELDS.transfer_type.name()), FIELDS.transfer_type.name(), GtfsException.ERROR.MISSING_REQUIRED_VALUES, null, null));
-		} else {
+		if (value != null && !value.trim().isEmpty()) {
 			try {
 				bean.setTransferType(TRANSFERTYPE_CONVERTER.from(context, FIELDS.transfer_type, value, true));
 			} catch(GtfsException ex) {

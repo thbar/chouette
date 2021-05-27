@@ -156,7 +156,7 @@ public class GtfsTransferParser implements Parser, Validator, Constant {
 		if (gtfsTransfer.getMinTransferTime() != null) {
 			connectionLink.setDefaultDuration(Duration.standardSeconds(gtfsTransfer.getMinTransferTime()));
 		}
-		if (gtfsTransfer.getTransferType().equals(TransferType.NoAllowed)) {
+		if (gtfsTransfer.getTransferType() != null && gtfsTransfer.getTransferType().equals(TransferType.NoAllowed)) {
 			connectionLink.setName("FORBIDDEN");
 		} else {
 			connectionLink.setName("from " + connectionLink.getStartOfLink().getName() + " to "
