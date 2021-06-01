@@ -108,6 +108,48 @@ public class ChouettePTNetworkParser implements Parser, Constant {
 		}
 		mapFileIdsToReferentialIds(context);
 		mapIdsInValidationContext(context);
+		handleCommercialPoints(context);
+
+	}
+
+	/**
+	 * If user selected "ignoreCommercialPoints" => all commercial points are removed
+	 * If user did not select "ignoreCommercialPoints" => nothing is done
+	 * @param context
+	 */
+	private void handleCommercialPoints(Context context){
+		NeptuneImportParameters parameters = (NeptuneImportParameters) context.get(CONFIGURATION);
+
+		// "ignoreCommercialPoints" option is not selected. Nothing is done
+		if (!parameters.ignoreCommercialPoints)
+			return;
+
+		Referential referential = (Referential) context.get(REFERENTIAL);
+
+		List<String> removedCommercialPoints = referential.getSharedStopAreas().values().stream()
+				.filter(stopArea -> ChouetteAreaEnum.CommercialStopPoint.equals(stopArea.getAreaType()))
+				.map(StopArea::getObjectId)
+				.collect(Collectors.toList());
+
+
+		removeStopAreasFromMap(removedCommercialPoints,referential.getSharedStopAreas());
+		removeStopAreasFromMap(removedCommercialPoints,referential.getStopAreas());
+
+		Context validationContext = (Context) context.get(VALIDATION_CONTEXT);
+		Context stopAreaContext = (Context) validationContext.get(STOP_AREA_CONTEXT);
+
+		removedCommercialPoints.forEach(stopAreaToRemove -> stopAreaContext.remove(stopAreaToRemove));
+
+	}
+
+	private void removeStopAreasFromMap(List<String> stopAreasToRemove, Map<String, StopArea> stopAreaMap){
+		stopAreasToRemove.forEach(stopAreaMap::remove);
+
+		stopAreaMap.values().stream()
+				.forEach(stopArea -> {
+					if (stopArea.getParent() != null && stopAreasToRemove.contains(stopArea.getParent().getObjectId()))
+						stopArea.setParent(null);
+				});
 	}
 
 	private String buildTridentId(String referentialName, StopArea tmpStopArea){
