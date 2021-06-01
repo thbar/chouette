@@ -103,21 +103,21 @@ public class Phase1TransferTests extends AbstractPhase1Tests {
 		}
 	}
 	
-	@Test(groups = { "Phase 1 Transfer" }, description = "empty column transfer_type" ,priority=215 )
-	public void verifyTest_2_2_3() throws Exception {
-		log.info(Color.GREEN + "Transfer_2_3 : empty column transfer_type" + Color.NORMAL);
-		Context context = new Context();
-		CheckPointReport result = verifyValidation( log, context, "transfer_2_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
-
-		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
-		for (CheckPointErrorReport detail : getDetails(context, result)) 
-		{
-			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
-			Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
-			Assert.assertEquals(detail.getSource().getFile().getFilename(), "transfers.txt", "detail must refer bad file");
-			Assert.assertEquals(detail.getSource().getFile().getLineNumber(), Integer.valueOf(3), "detail must refer bad line");
-		}
-	}
+//	@Test(groups = { "Phase 1 Transfer" }, description = "empty column transfer_type" ,priority=215 )
+//	public void verifyTest_2_2_3() throws Exception {
+//		log.info(Color.GREEN + "Transfer_2_3 : empty column transfer_type" + Color.NORMAL);
+//		Context context = new Context();
+//		CheckPointReport result = verifyValidation( log, context, "transfer_2_3", GTFS_1_GTFS_Common_12,SEVERITY.ERROR, RESULT.NOK,true);
+//
+//		Assert.assertEquals(result.getCheckPointErrorCount(), 1, "detail count");
+//		for (CheckPointErrorReport detail : getDetails(context, result))
+//		{
+//			Assert.assertNotNull(detail.getSource(), "detail must refer a source");
+//			Assert.assertNotNull(detail.getSource().getFile(), "detail must refer a file source");
+//			Assert.assertEquals(detail.getSource().getFile().getFilename(), "transfers.txt", "detail must refer bad file");
+//			Assert.assertEquals(detail.getSource().getFile().getLineNumber(), Integer.valueOf(3), "detail must refer bad line");
+//		}
+//	}
 		
 	@Test(groups = { "Phase 1 Transfer" }, description = "invalid column transfer_type" ,priority=216 )
 	public void verifyTest_2_3() throws Exception {
