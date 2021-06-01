@@ -80,6 +80,9 @@ public class NeTExStopPlaceUtil {
 
 		String currentSchema = ContextHolder.getContext();
 
+		if (stopPlace.getKeyList() == null)
+			return Optional.empty();
+
 		List<String> importedIds = stopPlace.getKeyList().getKeyValue().stream()
 				.filter(kv -> IMPORTED_ID.equals(kv.getKey()))
 				.map(kv -> kv.getValue().split(","))
