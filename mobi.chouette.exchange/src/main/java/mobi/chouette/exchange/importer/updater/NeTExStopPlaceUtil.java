@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.model.ScheduledStopPoint;
@@ -12,6 +13,7 @@ import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.type.TransportModeNameEnum;
 
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import org.rutebanken.netex.model.KeyListStructure;
 import org.rutebanken.netex.model.KeyValueStructure;
 import org.rutebanken.netex.model.StopPlace;
@@ -76,26 +78,27 @@ public class NeTExStopPlaceUtil {
 
 	public static Optional<String> getImportedId(Zone_VersionStructure stopPlace){
 
-		KeyListStructure keyList = stopPlace.getKeyList();
-		if (keyList != null && keyList.getKeyValue() != null) {
-			List<KeyValueStructure> keyValue = keyList.getKeyValue();
-			for (KeyValueStructure structure : keyValue) {
-				if (structure != null && IMPORTED_ID.equals(structure.getKey())) {
+		String currentSchema = ContextHolder.getContext();
 
-					String rawIds = structure.getValue();
-					List<String> idList = Arrays.stream(rawIds.split(","))
-												.distinct()
-												.collect(Collectors.toList());
+		if (stopPlace.getKeyList() == null)
+			return Optional.empty();
 
-					if (idList.size()>1){
-						log.warn("Multiple Ids found for object:"+stopPlace.getId());
-						idList.forEach(id->log.warn("found id:"+id));
-					}
-					return Optional.of(idList.get(0));
-				}
-			}
-		}
-		return Optional.empty();
+		List<String> importedIds = stopPlace.getKeyList().getKeyValue().stream()
+				.filter(kv -> IMPORTED_ID.equals(kv.getKey()))
+				.map(kv -> kv.getValue().split(","))
+				.flatMap(Stream::of)
+				.filter(importedId -> importedId != null && importedId.toLowerCase().startsWith(currentSchema))
+				.collect(Collectors.toList());
+						
+		
+		if (importedIds.size() == 0)
+			return Optional.empty();
+
+		if (importedIds.size() > 1)
+			log.warn("Multiple Ids found for object:"+stopPlace.getId());
+
+		return Optional.of(importedIds.get(0));
+
 	}
 
 	public static String extractIdPostfix(String netexId) {
