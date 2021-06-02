@@ -16,6 +16,7 @@ import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import com.google.common.collect.Lists;
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.dao.ProviderDAO;
@@ -25,9 +26,7 @@ import mobi.chouette.exchange.importer.updater.StopAreaUpdater;
 import mobi.chouette.exchange.importer.updater.Updater;
 import mobi.chouette.exchange.netexprofile.importer.util.StopPlaceRegistryIdFetcher;
 import mobi.chouette.model.StopArea;
-import mobi.chouette.persistence.hibernate.ContextHolder;
-
-import com.google.common.collect.Lists;
+import org.hibernate.Hibernate;
 
 @Singleton(name = StopAreaUpdateService.BEAN_NAME)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -44,14 +43,14 @@ public class StopAreaUpdateService {
 	@EJB(beanName = StopAreaUpdater.BEAN_NAME)
 	private Updater<StopArea> stopAreaUpdater;
 
-	@EJB
-	private ProviderDAO providerDAO;
 
 	@EJB
 	private ScheduledStopPointDAO scheduledStopPointDAO;
 
 	@EJB
-	private StopPlaceRegistryIdFetcher stopPlaceRegistryIdFetcher;
+	StopPlaceRegistryIdFetcher stopPlaceRegistryIdFetcher;
+
+
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void createOrUpdateStopAreas(Context context, StopAreaUpdateContext updateContext) {
@@ -68,42 +67,6 @@ public class StopAreaUpdateService {
 		}
 	}
 
-	@TransactionAttribute
-	public void deleteUnusedStopAreas() {
-
-		Set<String> boardingPositionObjectIds = new HashSet<>(stopAreaDAO.getBoardingPositionObjectIds());
-
-		log.debug("Total no of boarding positions: " + boardingPositionObjectIds.size());
-
-		boardingPositionObjectIds.removeAll(stopPlaceRegistryIdFetcher.getQuayIds());
-
-		log.debug("No of boarding positions not in Stop Place Registry: " + boardingPositionObjectIds.size());
-
-		List<String> schemaList = providerDAO.getAllWorkingSchemas();
-		for (String referential : schemaList) {
-			ContextHolder.setContext(referential);
-			List<String> inUseBoardingPositionsForReferential = scheduledStopPointDAO.getAllStopAreaObjectIds();
-			boardingPositionObjectIds.removeAll(inUseBoardingPositionsForReferential);
-			log.debug("Removed: " + inUseBoardingPositionsForReferential.size() + " in use boarding positions for referential: " +
-					referential + ". Potentially not used boarding positions left: " + boardingPositionObjectIds.size());
-		}
-
-		final AtomicInteger deletedStopAreasCnt = new AtomicInteger();
-
-		if (boardingPositionObjectIds.size() > 0) {
-			log.info("Found " + boardingPositionObjectIds.size() + " unused boarding positions. Deleting boarding positions and commercial stops where all boarding positions are unused");
-			if (boardingPositionObjectIds.size() > DELETE_UNUSED_BATCH_SIZE) {
-				Lists.partition(new ArrayList<>(boardingPositionObjectIds), DELETE_UNUSED_BATCH_SIZE).forEach(batch -> deletedStopAreasCnt.addAndGet(deleteBatchOfUnusedStopAreas(batch, boardingPositionObjectIds)));
-			} else {
-				deletedStopAreasCnt.addAndGet(deleteBatchOfUnusedStopAreas(boardingPositionObjectIds, boardingPositionObjectIds));
-			}
-
-		}
-		log.info("Finished deleting unused stop areas. Cnt: " + deletedStopAreasCnt.get());
-	}
-
-
-
 	/**
 	 * Update stop area references in seperate transaction in order to iterate over all referentials
 	 */
@@ -114,6 +77,47 @@ public class StopAreaUpdateService {
 		return updatedStopPoints.get();
 	}
 
+
+	private void cascadeDeleteStopArea(StopArea stopArea) {
+		stopArea.getContainedStopAreas().forEach(child -> cascadeDeleteStopArea(child));
+		stopAreaDAO.delete(stopArea);
+		log.info("Deleted stop area: " + stopArea.getObjectId());
+	}
+
+	public void setStopPlaceRegistryIdFetcher(StopPlaceRegistryIdFetcher stopPlaceRegistryIdFetcher) {
+		this.stopPlaceRegistryIdFetcher = stopPlaceRegistryIdFetcher;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Integer delete() {
+
+		Set<String> boardingPositionObjectIds = new HashSet<>(stopAreaDAO.getBoardingPositionObjectIds());
+
+		log.debug("Total no of boarding positions: " + boardingPositionObjectIds.size());
+
+		boardingPositionObjectIds.removeAll(stopPlaceRegistryIdFetcher.getQuayIds());
+
+		log.debug("No of boarding positions not in Stop Place Registry: " + boardingPositionObjectIds.size());
+
+
+		List<String> inUseBoardingPositionsForReferential = scheduledStopPointDAO.getAllStopAreaObjectIds();
+		boardingPositionObjectIds.removeAll(inUseBoardingPositionsForReferential);
+		log.debug("Removed: " + inUseBoardingPositionsForReferential.size() + " in use boarding positions.Potentially not used boarding positions left: " + boardingPositionObjectIds.size());
+
+
+		final AtomicInteger deletedStopAreasCnt = new AtomicInteger();
+
+		if (boardingPositionObjectIds.size() > 0) {
+			log.info("Found " + boardingPositionObjectIds.size() + " unused boarding positions. Deleting boarding positions and commercial stops where all boarding positions are unused");
+			if (boardingPositionObjectIds.size() > DELETE_UNUSED_BATCH_SIZE) {
+				Lists.partition(new ArrayList<>(boardingPositionObjectIds), DELETE_UNUSED_BATCH_SIZE).forEach(batch -> deletedStopAreasCnt.addAndGet(deleteBatchOfUnusedStopAreas(batch, boardingPositionObjectIds)));
+			} else {
+				deletedStopAreasCnt.addAndGet(deleteBatchOfUnusedStopAreas(boardingPositionObjectIds, boardingPositionObjectIds));
+			}
+		}
+		log.info("Finished deleting unused stop areas. Cnt: " + deletedStopAreasCnt.get());
+		return deletedStopAreasCnt.get();
+	}
 
 	private int deleteBatchOfUnusedStopAreas(Collection<String> unusedBoardingPositionObjectIdBatch, Set<String> allUnusedBoardingPositionObjectIds) {
 		Set<StopArea> unusedBoardingPositions = new HashSet<>(stopAreaDAO.findByObjectId(unusedBoardingPositionObjectIdBatch));
@@ -130,13 +134,4 @@ public class StopAreaUpdateService {
 
 		return unusedStopAreas.size() + unusedBoardingPositions.size();
 	}
-
-
-	private void cascadeDeleteStopArea(StopArea stopArea) {
-		stopArea.getContainedStopAreas().forEach(child -> cascadeDeleteStopArea(child));
-		stopAreaDAO.delete(stopArea);
-		log.info("Deleted stop area: " + stopArea.getObjectId());
-	}
-
-
 }

@@ -22,7 +22,6 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.dao.ProviderDAO;
-import mobi.chouette.dao.ReferentialDAO;
 import mobi.chouette.exchange.report.ActionReport;
 import mobi.chouette.exchange.stopplace.PublicationDeliveryStopPlaceParser;
 import mobi.chouette.exchange.stopplace.StopAreaUpdateContext;
@@ -41,7 +40,7 @@ public class StopAreaService {
 	public static final String BEAN_NAME = "StopAreaService";
 
 	@EJB(beanName = StopAreaUpdateService.BEAN_NAME)
-	private StopAreaUpdateService stopAreaUpdateService;
+	StopAreaUpdateService stopAreaUpdateService;
 
 	@EJB
 	private ProviderDAO providerDAO;
@@ -196,7 +195,28 @@ public class StopAreaService {
 
 	public void deleteUnusedStopAreas() {
 		ContextHolder.clear();
-		stopAreaUpdateService.deleteUnusedStopAreas();
+		int deletedStopPointCnt = 0;
+		List<Future<Integer>> futures = new ArrayList();
+
+		ContextHolder.setContext("admin");
+		List<String> schemaList = providerDAO.getAllWorkingSchemas();
+		for (String referential : schemaList) {
+			//need to use a future, in order to force hibernate to reset the transaction to switch between 2 tenants. do not remove
+			StopAreaDeleteTask deleteTask = new StopAreaDeleteTask(referential);
+			futures.add(executor.submit(deleteTask));
+
+		}
+		try {
+			for (Future<Integer> future : futures) {
+				deletedStopPointCnt += future.get();
+			}
+		} catch (ExecutionException e) {
+			throw new RuntimeException("Exception while updating StopArea references: " + e.getMessage(), e);
+		} catch (InterruptedException ie) {
+			throw new RuntimeException("Interrupted while waiting for StopArea reference update", ie);
+		}
+
+		log.info("Deleted " + deletedStopPointCnt + " stop points");
 	}
 
 
@@ -208,6 +228,28 @@ public class StopAreaService {
 		context.put(Constant.REPORT, new ActionReport());
 		context.put(Constant.VALIDATION_REPORT, new ValidationReport());
 		return context;
+	}
+
+	public void setStopAreaUpdateService(StopAreaUpdateService stopAreaUpdateService) {
+		this.stopAreaUpdateService = stopAreaUpdateService;
+	}
+
+	class StopAreaDeleteTask implements Callable<Integer> {
+
+		private final String referential;
+
+		public StopAreaDeleteTask(String referential) {
+			this.referential = referential;
+		}
+
+		@Override
+		public Integer call() throws Exception {
+			ContextHolder.setContext(referential);
+			log.info("Starting delete for referential:" + referential);
+			Integer count = stopAreaUpdateService.delete();
+			log.info("Delete completed for referential:" + referential);
+			return count;
+		}
 	}
 
 }

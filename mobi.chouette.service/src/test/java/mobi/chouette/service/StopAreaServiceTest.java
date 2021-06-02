@@ -3,8 +3,9 @@ package mobi.chouette.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -12,12 +13,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
-import javax.validation.constraints.AssertTrue;
 
 import mobi.chouette.dao.ProviderDAO;
 import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.dao.StopPointDAO;
+import mobi.chouette.exchange.stopplace.StopAreaUpdateService;
 import mobi.chouette.model.Provider;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.SimpleObjectReference;
@@ -56,6 +57,9 @@ public class StopAreaServiceTest extends Arquillian {
 
 	@EJB
 	ScheduledStopPointDAO scheduledStopPointDAO;
+
+	@EJB(beanName = StopAreaUpdateService.BEAN_NAME)
+	StopAreaUpdateService stopAreaUpdateService;
 
 	@EJB
 	private ProviderDAO providerDAO;
@@ -112,6 +116,7 @@ public class StopAreaServiceTest extends Arquillian {
 		final WebArchive testWar = ShrinkWrap.create(WebArchive.class, "test.war")
 				.addAsResource("test-persistence.xml", "META-INF/persistence.xml")
 				.addAsWebInfResource("postgres-ds.xml").addClass(DummyChecker.class)
+				.addClass(StopPlaceRegistryIdFetcherMock.class)
 				.addClass(StopAreaServiceTest.class);
 
 		result = ShrinkWrap.create(EnterpriseArchive.class, "test.ear").addAsLibraries(jarsWithoutAntLR.toArray(new File[0]))
@@ -176,22 +181,27 @@ public class StopAreaServiceTest extends Arquillian {
 		providerDAO.truncate();
 		Provider prov1 = new Provider();
 		prov1.setCode("tro");
+		prov1.setSchemaName("tro");
 		providerDAO.create(prov1);
 
 		Provider prov2 = new Provider();
 		prov2.setCode("rut");
+		prov2.setSchemaName("rut");
 		providerDAO.create(prov2);
 
 		Provider prov3 = new Provider();
 		prov3.setCode("sky");
+		prov3.setSchemaName("sky");
 		providerDAO.create(prov3);
 
 		Provider prov4 = new Provider();
 		prov4.setCode("nri");
+		prov4.setSchemaName("nri");
 		providerDAO.create(prov4);
 
 		Provider prov5 = new Provider();
 		prov5.setCode("akt");
+		prov5.setSchemaName("akt");
 		providerDAO.create(prov5);
 	}
 
@@ -433,30 +443,48 @@ public class StopAreaServiceTest extends Arquillian {
 		utx.rollback();
 	}
 
-	// Disabled as this service not calls out to Stop place registry. Test with mock? or disabled NSR check?
-	@Test(enabled = false)
+
+	@Test
 	public void testDeleteUnusedStopAreas() throws Exception {
+
+		cleanAllschemas();
+		ContextHolder.setContext("chouette_gui"); // set tenant schema
 		utx.begin();
 		em.joinTransaction();
-		StopArea inUseStop = commercialStopWithTwoBoardingPositions("1");
-		StopArea unusedStop = commercialStopWithTwoBoardingPositions("2");
 
-		ContextHolder.setContext("chouette_gui");
-		cleanStopPoints();
-		StopPoint stopPoint = createStopPoint("2", inUseStop.getContainedStopAreas().get(0));
 
-		utx.commit();
+		stopAreaService.createOrUpdateStopPlacesFromNetexStopPlaces(new FileInputStream("src/test/data/StopAreasInitialSynch.xml"));
+
+		StopPlaceRegistryIdFetcherMock idfetcher = new StopPlaceRegistryIdFetcherMock();
+		System.setProperty("iev.superspace.prefix", "mobiiti");
+		Set<String> quayIds = new HashSet<>();
+		quayIds.add("MOBIITI:Quay:12345");
+		idfetcher.setQuayIds(quayIds);
+		stopAreaUpdateService.setStopPlaceRegistryIdFetcher(idfetcher);
+		stopAreaService.setStopAreaUpdateService(stopAreaUpdateService);
+
 
 		stopAreaService.deleteUnusedStopAreas();
 
-		utx.begin();
-		em.joinTransaction();
-		Assert.assertNull(stopAreaDAO.findByObjectId(unusedStop.getObjectId()), "Expected unused stop area to be deleted");
 
-		StopArea inUseStopAfterDelete = stopAreaDAO.findByObjectId(inUseStop.getObjectId());
-		Assert.assertNotNull(inUseStopAfterDelete, "Expected stop area referred to by stop point not to be deleted");
-		Assert.assertEquals(inUseStopAfterDelete.getContainedStopAreas().size(), 2);
-		utx.rollback();
+		utx.commit();
+		utx.begin();
+		ContextHolder.setContext("tro");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:Quay:1a"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:Quay:1b"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:Quay:2a"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:Quay:3a"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:StopPlace:1"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:StopPlace:2"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:StopPlace:3"), "Expected unused stop area to be deleted");
+
+
+
+		utx.commit();
+		utx.begin();
+		ContextHolder.setContext("sky");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:Quay:5"), "Expected unused stop area to be deleted");
+		Assert.assertNull(stopAreaDAO.findByObjectId("NSR:StopPlace:5"), "Expected unused stop area to be deleted");
 	}
 
 	private void cleanStopPoints() {
@@ -553,6 +581,7 @@ public class StopAreaServiceTest extends Arquillian {
 		Assert.assertEquals(createdQuayOnSecondSchema.getOriginalStopId(),"56374","Original stop id should be equal to imported id from the xml file");
 
 	}
+
 
 
 }
