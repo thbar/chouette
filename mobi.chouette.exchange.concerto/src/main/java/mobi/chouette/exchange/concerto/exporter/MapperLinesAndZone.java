@@ -16,7 +16,9 @@ public class MapperLinesAndZone {
     private void addMappingZoneLine(String zder, UUID lineUUID){
         if(zder == null) return;
         MappingZoneLine mappingLineZder = new MappingZoneLine(zder, lineUUID);
-        mappingLineZderList.add(mappingLineZder);
+        if(!mappingLineZderList.contains(mappingLineZder)) {
+            mappingLineZderList.add(mappingLineZder);
+        }
     }
 
     public void addMappingZoneLines(String zder, UUID[] lineUUIDs){
