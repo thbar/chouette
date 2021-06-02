@@ -37,10 +37,6 @@ public class GtfsIterator2 implements Iterator<Boolean>, GtfsIterator, Constant 
 	public void cleanEndFile(){
 		for(int i = _buffer.limit() - 1; i > 0; i--){
 			if(_buffer.get(i - 1) != LF && _buffer.get(i - 1) != CR && _buffer.get(i - 1) != SPACE && _buffer.get(i - 1) != TAB){
-				if(_buffer.get(i - 1) != DELIMITER && _buffer.get(i) == LF){
-					_buffer.limit(i + 1);
-					break;
-				}
 				if( _buffer.get(i) == CR && _buffer.get(i + 1) == LF){
 					_buffer.limit(i + 2);
 					break;
