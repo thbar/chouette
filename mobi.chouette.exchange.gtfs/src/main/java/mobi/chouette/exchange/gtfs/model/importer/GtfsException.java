@@ -58,7 +58,8 @@ public class GtfsException extends RuntimeException {
 		START_DATE_AFTER_END_DATE, 
 		EMPTY_SERVICE,
         COORDINATES_STOP_0_0,
-		MISSING_ROUTE_SHORT_NAME
+		MISSING_ROUTE_SHORT_NAME,
+		UNUSED_AGENCY_ID
 	}
 
 	@Getter
@@ -148,6 +149,7 @@ public class GtfsException extends RuntimeException {
 		case DUPLICATE_DOUBLE_KEY :
 		case BAD_REFERENCED_ID:
         case COORDINATES_STOP_0_0:
+		case UNUSED_AGENCY_ID:
 			return true;
 		default:
 			return false;
