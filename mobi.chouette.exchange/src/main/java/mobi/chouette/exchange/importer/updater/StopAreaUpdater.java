@@ -317,33 +317,8 @@ public class StopAreaUpdater implements Updater<StopArea> {
 					oldValue.getConnectionStartLinks(), NeptuneIdentifiedObjectComparator.INSTANCE);
 
 			for (ConnectionLink item : addedStartOfLink) {
-
-				ConnectionLink startOfLink = cache.getConnectionLinks().get(item.getObjectId());
-				if (startOfLink == null) {
-					startOfLink = ObjectFactory.getConnectionLink(cache, item.getObjectId());
-				}
-				StopArea endOfLinkArea = cache.getStopAreas().get(item.getEndOfLink().getObjectId());
-				if (endOfLinkArea == null) {
-					log.info(Color.LIGHT_CYAN + "search end stopArea for ConnectionLink" + Color.NORMAL);
-					endOfLinkArea = stopAreaDAO.findByObjectId(item.getEndOfLink().getObjectId());
-				} else {
-					StopArea localArea = referential.getSharedStopAreas().get(endOfLinkArea.getObjectId());
-					if (!localArea.isSaved())
-						endOfLinkArea = null; // ignored if not already saved
-				}
-				if (endOfLinkArea != null) {
-
-					startOfLink.setStartOfLink(oldValue);
-					startOfLink.setEndOfLink(endOfLinkArea);
-				}
-
-			}
-
-			Collection<Pair<ConnectionLink, ConnectionLink>> modifiedStartOfLink = CollectionUtil.intersection(
-					oldValue.getConnectionStartLinks(), newValue.getConnectionStartLinks(),
-					NeptuneIdentifiedObjectComparator.INSTANCE);
-			for (Pair<ConnectionLink, ConnectionLink> pair : modifiedStartOfLink) {
-				connectionLinkUpdater.update(context, pair.getLeft(), pair.getRight());
+				//Connection Links are update by a specific command after all lines are persisted to avoid transient exception
+				referential.getSharedConnectionLinks().put(item.getObjectId(),item);
 			}
 
 			// EndOfLink
@@ -351,31 +326,7 @@ public class StopAreaUpdater implements Updater<StopArea> {
 					oldValue.getConnectionEndLinks(), NeptuneIdentifiedObjectComparator.INSTANCE);
 
 			for (ConnectionLink item : addedEndOfLink) {
-				ConnectionLink endOfLink = cache.getConnectionLinks().get(item.getObjectId());
-				if (endOfLink == null) {
-					endOfLink = ObjectFactory.getConnectionLink(cache, item.getObjectId());
-				}
-				StopArea startOfLinkArea = cache.getStopAreas().get(item.getStartOfLink().getObjectId());
-				if (startOfLinkArea == null) {
-					log.info(Color.LIGHT_CYAN + "search start stopArea for ConnectionLink" + Color.NORMAL);
-					startOfLinkArea = stopAreaDAO.findByObjectId(item.getStartOfLink().getObjectId());
-				} else {
-					StopArea localArea = referential.getSharedStopAreas().get(startOfLinkArea.getObjectId());
-					if (!localArea.isSaved())
-						startOfLinkArea = null; // ignored if not already saved
-				}
-
-				if (startOfLinkArea != null) {
-					endOfLink.setStartOfLink(startOfLinkArea);
-					endOfLink.setEndOfLink(oldValue);
-				}
-			}
-
-			Collection<Pair<ConnectionLink, ConnectionLink>> modifiedEndOfLink = CollectionUtil.intersection(
-					oldValue.getConnectionEndLinks(), newValue.getConnectionEndLinks(),
-					NeptuneIdentifiedObjectComparator.INSTANCE);
-			for (Pair<ConnectionLink, ConnectionLink> pair : modifiedEndOfLink) {
-				connectionLinkUpdater.update(context, pair.getLeft(), pair.getRight());
+				referential.getSharedConnectionLinks().put(item.getObjectId(),item);
 			}
 		}
 
