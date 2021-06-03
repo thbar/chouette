@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>5.0.7-mobi-iti-SNAPSHOT</version>
+		<version>5.0.8-mobi-iti-SNAPSHOT</version>
 
 	</parent>
 	<artifactId>mobi.chouette.dao</artifactId>
