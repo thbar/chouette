@@ -19,7 +19,8 @@ import mobi.chouette.exchange.parameters.AbstractImportParameter;
 @XmlType(propOrder={
         "stopAreaPrefixToRemove",
         "areaCentroidPrefixToRemove",
-        "linePrefixToRemove"
+        "linePrefixToRemove",
+        "ignoreCommercialPoints"
 })
 public class NeptuneImportParameters extends AbstractImportParameter {
 
@@ -38,5 +39,10 @@ public class NeptuneImportParameters extends AbstractImportParameter {
     @Setter
     @XmlElement(name = "line_prefix_to_remove")
     public String linePrefixToRemove = "";
+
+    @Getter
+    @Setter
+    @XmlElement(name = "ignore_commercial_points")
+    public boolean ignoreCommercialPoints = false;
 
 }
