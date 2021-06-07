@@ -33,8 +33,10 @@ public class DeleteLineWithoutOfferCommand implements Command, Constant {
     public boolean execute(Context context) throws Exception {
         // suppression des lignes sans offre
         for(Line line : lineDAO.findAll()){
-            if(line.getRoutes().size()==0)
-                lineDAO.delete(line);
+            if(line.getRoutes().size() == 0)
+                line.setSupprime(true);
+            else
+                line.setSupprime(false);
         }
         lineDAO.flush(); // to prevent SQL error outside method
 
