@@ -108,14 +108,14 @@ public class LineRegisterCommand implements Command {
 
 		// Use property based enabling of stop place updater, but allow disabling if property exist in context
 		Line newValue  = referential.getLines().values().iterator().next();
-		Line oldValue1 = lineDAO.findByObjectId(newValue.getObjectId());
-
-		Long jobid = (Long) context.get(JOB_ID);
-		if(oldValue1 == null) {
-			variationsDAO.makeVariationsInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
-		} else if(!oldValue1.equals(newValue)) {
-			variationsDAO.makeVariationsUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
-		}
+//		Line oldValue1 = lineDAO.findByObjectId(newValue.getObjectId());
+//
+//		Long jobid = (Long) context.get(JOB_ID);
+//		if(oldValue1 == null) {
+//			variationsDAO.makeVariationsInsert("Nouvelle ligne " + newValue.getName(), "", jobid);
+//		} else if(!oldValue1.equals(newValue)) {
+//			variationsDAO.makeVariationsUpdate("Mise à jour ligne " + newValue.getName(), oldValue1.getVariations(newValue), jobid);
+//		}
 
 		AbstractImportParameter importParameter = (AbstractImportParameter) context.get(CONFIGURATION);
 		context.put(StopArea.IMPORT_MODE, importParameter.getStopAreaImportMode());
