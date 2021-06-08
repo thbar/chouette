@@ -30,6 +30,7 @@ import org.rutebanken.netex.model.OperatingPeriod;
 import org.rutebanken.netex.model.Organisation_VersionStructure;
 import org.rutebanken.netex.model.PassengerStopAssignment;
 import org.rutebanken.netex.model.Route;
+import org.rutebanken.netex.model.RouteLink;
 import org.rutebanken.netex.model.RoutePoint;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.rutebanken.netex.model.ServiceJourney;
@@ -98,6 +99,10 @@ public class ExportableNetexData {
 
     @Getter
     @Setter
+    private List<RouteLink> routeLinks = new ArrayList<>();
+
+    @Getter
+    @Setter
     private List<JourneyPattern> journeyPatterns = new ArrayList<>();
 
     @Getter
@@ -161,6 +166,7 @@ public class ExportableNetexData {
         lineCondition = null;
         line = null;
         routes.clear();
+        routeLinks.clear();
         journeyPatterns.clear();
         serviceJourneys.clear();
         noticeAssignmentsServiceFrame.clear();

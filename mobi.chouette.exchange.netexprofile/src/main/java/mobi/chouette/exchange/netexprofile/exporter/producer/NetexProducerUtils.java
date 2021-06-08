@@ -408,7 +408,7 @@ public class NetexProducerUtils {
 		} else if(v instanceof Network) {
 			return "Network";
 		} else if (v instanceof RouteSection) {
-			return "ServiceLink";
+			return "RouteLink";
 		}
 
 		return null;
