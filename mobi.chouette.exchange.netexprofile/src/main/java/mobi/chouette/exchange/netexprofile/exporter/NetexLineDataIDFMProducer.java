@@ -16,6 +16,7 @@ import mobi.chouette.exchange.netexprofile.exporter.producer.NetworkFranceProduc
 import mobi.chouette.exchange.netexprofile.exporter.producer.OrganisationFranceProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.OrganisationProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.RouteIDFMProducer;
+import mobi.chouette.exchange.netexprofile.exporter.producer.RouteLinkProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.ServiceJourneyIDFMProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.ServiceJourneyPatternIDFMProducer;
 import mobi.chouette.exchange.report.ActionReporter;
@@ -24,6 +25,7 @@ import mobi.chouette.model.Branding;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Route;
+import mobi.chouette.model.RouteSection;
 import mobi.chouette.model.StopPoint;
 import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
@@ -62,6 +64,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
     private static NetworkFranceProducer networkFranceProducer = new NetworkFranceProducer();
     private static LineFranceProducer lineFranceProducer = new LineFranceProducer();
     private static RouteIDFMProducer routeIDFMProducer = new RouteIDFMProducer();
+    private static RouteLinkProducer routeLinkProducer = new RouteLinkProducer();
     private static CalendarIDFMProducer calendarIDFMProducer = new CalendarIDFMProducer();
     private static ServiceJourneyIDFMProducer serviceJourneyIDFMProducer = new ServiceJourneyIDFMProducer();
     private static DirectionProducer directionProducer = new DirectionProducer();
@@ -132,6 +135,10 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
                     stopPoint.getDestinationDisplay().setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(stopPoint.getDestinationDisplay().getObjectId(), defaultCodespacePrefix));
                 }
             }
+
+            for (RouteSection routeSection : journeyPattern.getRouteSections()){
+                routeSection.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(routeSection.getObjectId(),defaultCodespacePrefix));
+            }
         }
         for (Timetable timetable : exportableData.getTimetables()) {
             timetable.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(timetable.getObjectId(), defaultCodespacePrefix));
@@ -187,6 +194,11 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
 
         for (JourneyPattern neptuneJourneyPattern : exportableData.getJourneyPatterns()) {
             exportableNetexData.getServiceJourneyPatterns().add(serviceJourneyPatternIDFMProducer.produce(neptuneJourneyPattern));
+
+            for (RouteSection routeSection : neptuneJourneyPattern.getRouteSections()) {
+                org.rutebanken.netex.model.RouteLink routeLink = routeLinkProducer.produce(context, routeSection);
+                exportableNetexData.getRouteLinks().add(routeLink);
+            }
         }
 
         produceAndCollectScheduledStopPoints(exportableData.getRoutes(), exportableNetexData);
