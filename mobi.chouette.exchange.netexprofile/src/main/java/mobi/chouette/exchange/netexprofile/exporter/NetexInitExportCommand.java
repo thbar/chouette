@@ -76,7 +76,14 @@ public class NetexInitExportCommand implements Command, Constant {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			Date currentDate = new Date();
 
-			jobData.setOutputFilename("OFFRE_" + idSite + "_" + sdf.format(currentDate) + "Z.zip");
+			NetexprofileExportParameters configuration = (NetexprofileExportParameters) context.get(CONFIGURATION);
+			String exportedFileName = configuration.getExportedFileName();
+			if (exportedFileName != null && !"".equals(exportedFileName)){
+				jobData.setOutputFilename(exportedFileName);
+			}else{
+				jobData.setOutputFilename("OFFRE_" + idSite + "_" + sdf.format(currentDate) + "Z.zip");
+			}
+
 			context.put(REFERENTIAL, new Referential());
 			context.put(NETEX_REFERENTIAL, new NetexReferential());
 
