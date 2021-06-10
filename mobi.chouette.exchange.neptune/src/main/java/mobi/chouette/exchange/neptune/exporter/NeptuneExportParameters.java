@@ -16,7 +16,7 @@ import mobi.chouette.exchange.parameters.AbstractExportParameter;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={"projectionType","addExtension"})
+@XmlType(propOrder={"projectionType","addExtension", "exportedFileName"})
 public class NeptuneExportParameters  extends AbstractExportParameter {
 	
 	@Getter @Setter
@@ -26,6 +26,10 @@ public class NeptuneExportParameters  extends AbstractExportParameter {
 	@Getter @Setter
 	@XmlElement(name = "add_extension")
 	private boolean addExtension = false;
+
+	@Getter @Setter
+	@XmlElement(name = "exported_filename",required = false)
+	private String exportedFileName;
 	
 
 }

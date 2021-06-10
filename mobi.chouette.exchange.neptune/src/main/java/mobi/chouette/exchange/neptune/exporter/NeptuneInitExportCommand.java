@@ -36,7 +36,16 @@ public class NeptuneInitExportCommand implements Command, Constant {
 
 		try {
 			JobData jobData = (JobData) context.get(JOB_DATA);
-			jobData.setOutputFilename("export_" + jobData.getType() + "_" + jobData.getId() + ".zip");
+			NeptuneExportParameters configuration = (NeptuneExportParameters) context.get(CONFIGURATION);
+			String exportedFileName = configuration.getExportedFileName();
+			if (exportedFileName != null && !"".equals(exportedFileName)){
+				jobData.setOutputFilename(exportedFileName);
+			}else{
+				jobData.setOutputFilename("export_" + jobData.getType() + "_" + jobData.getId() + ".zip");
+			}
+
+
+
 
 			context.put(REFERENTIAL, new Referential());
 			Metadata metadata = new Metadata(); // if not asked, will be used as
