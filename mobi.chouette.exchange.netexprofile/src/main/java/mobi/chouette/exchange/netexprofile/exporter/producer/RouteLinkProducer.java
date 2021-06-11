@@ -15,7 +15,7 @@ public class RouteLinkProducer extends NetexProducer implements NetexEntityProdu
     @Override
     public org.rutebanken.netex.model.RouteLink produce(Context context, mobi.chouette.model.RouteSection neptuneRouteSection) {
         org.rutebanken.netex.model.RouteLink netexLink = netexFactory.createRouteLink();
-
+        cleanObjectId(neptuneRouteSection);
         NetexProducerUtils.populateIdAndVersionIDFM(neptuneRouteSection, netexLink);
         netexLink.setDistance(neptuneRouteSection.getDistance());
         netexLink.setLineString(getLineStringFromRouteSection(neptuneRouteSection));
@@ -43,6 +43,15 @@ public class RouteLinkProducer extends NetexProducer implements NetexEntityProdu
 
     private LineStringType convertLineString(LineString lineString, String routeSectionId){
         return JtsGmlConverter.fromJtsToGml(lineString,"LS"+routeSectionId);
+    }
+
+    private void cleanObjectId(mobi.chouette.model.RouteSection neptuneRouteSection){
+        String objectId = neptuneRouteSection.getObjectId();
+        if (objectId.split(":").length > 3){
+            String[] idComponents = objectId.split(":RouteSection:");
+            String newId = idComponents[0] + ":RouteSection:" + idComponents[1].replaceAll(":","_");
+            neptuneRouteSection.setObjectId(newId);
+        }
     }
 
 }
