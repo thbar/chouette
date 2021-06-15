@@ -50,12 +50,6 @@ public class ServiceJourneyIDFMProducer {
 
         NoticeIDFMProducer.addNoticeAndNoticeAssignments(context, exportableNetexData, serviceJourney, vehicleJourney.getFootnotes());
 
-        if (vehicleJourney.getCompany() != null) {
-            OperatorRefStructure operatorRefStruct = netexFactory.createOperatorRefStructure();
-            NetexProducerUtils.populateReferenceIDFM(vehicleJourney.getCompany(), operatorRefStruct);
-            serviceJourney.setOperatorRef(operatorRefStruct);
-        }
-
 
         if (vehicleJourney.getTimetables().size() > 0) {
             DayTypeRefs_RelStructure dayTypeStruct = netexFactory.createDayTypeRefs_RelStructure();
