@@ -5,6 +5,7 @@ import mobi.chouette.common.Constant;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.LineDAO;
 import mobi.chouette.exchange.report.ActionReport;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
@@ -28,6 +29,10 @@ public class MainCommand implements Command, Constant {
 	public static final String COMMAND = "MainCommand";
 
 	@EJB
+	LineDAO lineDAO;
+
+
+	@EJB
 	JobServiceManager jobManager;
 
 	@Override
@@ -47,6 +52,7 @@ public class MainCommand implements Command, Constant {
 			   context.put(VALIDATION, validationParameters);
 			context.put(REPORT, new ActionReport());
 			context.put(VALIDATION_REPORT, new ValidationReport());
+			context.put(IS_LINE_EXISTING, lineDAO.findAll().size() > 0);
 
 			String name = jobService.getCommandName();
 

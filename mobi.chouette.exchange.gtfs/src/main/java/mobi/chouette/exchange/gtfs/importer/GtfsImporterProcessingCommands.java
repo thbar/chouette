@@ -81,6 +81,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         List<Command> commands = new ArrayList<>();
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
         Index<GtfsRoute> index = importer.getRouteById();
+        boolean isLineExisting = (boolean) context.get(IS_LINE_EXISTING);
 
         try {
             {
@@ -114,7 +115,14 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
                 GtfsRouteParserCommand parser = (GtfsRouteParserCommand) CommandFactory.create(initialContext,
                         GtfsRouteParserCommand.class.getName());
                 parser.setGtfsRouteId(gtfsRoute.getRouteId());
-                parser.setPosition(cpt);
+
+                if (isLineExisting){
+                    // If a line is already existing in db, all new lines will have a position set to 0
+                    parser.setPosition(0);
+                }else {
+                    // If there is no line in the DB, lines will be numbered with arrival order
+                    parser.setPosition(cpt);
+                }
                 cpt++;
                 chain.add(parser);
                 if (withDao && !parameters.isNoSave()) {
