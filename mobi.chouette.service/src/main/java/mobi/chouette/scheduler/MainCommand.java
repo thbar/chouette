@@ -11,6 +11,7 @@ import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.ReportConstant;
 import mobi.chouette.exchange.validation.parameters.ValidationParameters;
 import mobi.chouette.exchange.validation.report.ValidationReport;
+import mobi.chouette.persistence.hibernate.ContextHolder;
 import mobi.chouette.service.JobService;
 import mobi.chouette.service.JobServiceManager;
 
@@ -27,9 +28,6 @@ import java.io.IOException;
 public class MainCommand implements Command, Constant {
 
 	public static final String COMMAND = "MainCommand";
-
-	@EJB
-	LineDAO lineDAO;
 
 
 	@EJB
@@ -52,7 +50,7 @@ public class MainCommand implements Command, Constant {
 			   context.put(VALIDATION, validationParameters);
 			context.put(REPORT, new ActionReport());
 			context.put(VALIDATION_REPORT, new ValidationReport());
-			context.put(IS_LINE_EXISTING, lineDAO.findAll().size() > 0);
+
 
 			String name = jobService.getCommandName();
 
