@@ -66,6 +66,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
             commands.add(CommandFactory.create(initialContext, GtfsValidationRulesCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, GtfsInitImportCommand.class.getName()));
             commands.add(CommandFactory.create(initialContext, GtfsValidationCommand.class.getName()));
+            commands.add(CommandFactory.create(initialContext, GtfsInitImportVariablesCommand.class.getName()));
         } catch (Exception e) {
             log.error(e, e);
             throw new RuntimeException("unable to call factories");
@@ -81,7 +82,7 @@ public class GtfsImporterProcessingCommands implements ProcessingCommands, Const
         List<Command> commands = new ArrayList<>();
         GtfsImporter importer = (GtfsImporter) context.get(PARSER);
         Index<GtfsRoute> index = importer.getRouteById();
-        boolean isLineExisting = (boolean) context.get(IS_LINE_EXISTING);
+        boolean isLineExisting = context.get(IS_LINE_EXISTING) == null ? true : (boolean)  context.get(IS_LINE_EXISTING) ;
 
         try {
             {

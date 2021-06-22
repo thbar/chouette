@@ -26,13 +26,9 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 @Log4j
-@Stateless(name = GtfsImporterCommand.COMMAND)
 public class GtfsImporterCommand extends AbstractImporterCommand implements Command, Constant {
 
 	public static final String COMMAND = "GtfsImporterCommand";
-
-	@EJB
-	LineDAO lineDAO;
 
 	@Override
 	public boolean execute(Context context) throws Exception {
@@ -54,7 +50,7 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 				return ERROR;
 			}
 
-			context.put(IS_LINE_EXISTING, lineDAO.findAll().size() > 0);
+
 
 			GtfsImportParameters parameters = (GtfsImportParameters) configuration;
 			// import total par défaut
@@ -84,21 +80,7 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 
 		@Override
 		protected Command create(InitialContext context) throws IOException {
-			Command result = null;
-			try {
-				String name = "java:app/mobi.chouette.exchange.gtfs/" + COMMAND;
-				result = (Command) context.lookup(name);
-			} catch (NamingException e) {
-				// try another way on test context
-				String name = "java:module/" + COMMAND;
-				try {
-					result = (Command) context.lookup(name);
-				} catch (NamingException e1) {
-					log.error(e);
-				}
-			} catch (Exception e) {
-				log.error(e);
-			}
+			Command result = new GtfsImporterCommand();
 			return result;
 		}
 	}
