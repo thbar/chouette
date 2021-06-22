@@ -54,7 +54,8 @@ public class TransferExportDataLoader implements Command, Constant {
 		context.put(STOP_AREAS, stopAreaToTransfer);
 		List<FeedInfo> feedInfosToTransfer = prepareFeedInfos();
 		context.put(FEED_INFOS, feedInfosToTransfer);
-		return true;
+
+		return SUCCESS;
 	}
 
 	protected List<Line> prepareLines(Context context) throws IllegalArgumentException, SecurityException {

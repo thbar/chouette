@@ -2,7 +2,6 @@ package mobi.chouette.exchange.transfer.exporter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -65,6 +64,10 @@ public class TransferExporterCommand extends AbstractExporterCommand implements 
 			progression.execute(context);
 
 			// TODO : Progression
+
+			Command stopAreasSendToTiamat = CommandFactory.create(initialContext, ImportAllStopareasInTiamatCommand.class.getName());
+			stopAreasSendToTiamat.execute(context);
+			progression.execute(context);
 
 			Command dataLoader = CommandFactory.create(initialContext, TransferExportDataLoader.class.getName());
 			dataLoader.execute(context);
