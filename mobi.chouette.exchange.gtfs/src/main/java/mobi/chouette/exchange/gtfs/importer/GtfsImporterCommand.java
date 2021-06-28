@@ -2,13 +2,17 @@ package mobi.chouette.exchange.gtfs.importer;
 
 import java.io.IOException;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Color;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
+import mobi.chouette.dao.LineDAO;
 import mobi.chouette.exchange.CommandCancelledException;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
@@ -46,6 +50,8 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 				return ERROR;
 			}
 
+
+
 			GtfsImportParameters parameters = (GtfsImportParameters) configuration;
 			// import total par défaut
 			if (parameters.getReferencesType() == null) parameters.setReferencesType("line");
@@ -69,6 +75,7 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 		return result;
 	}
 
+
 	public static class DefaultCommandFactory extends CommandFactory {
 
 		@Override
@@ -77,6 +84,7 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 			return result;
 		}
 	}
+
 
 	static {
 		CommandFactory.factories.put(GtfsImporterCommand.class.getName(), new DefaultCommandFactory());
