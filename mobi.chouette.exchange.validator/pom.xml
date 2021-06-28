@@ -3,7 +3,7 @@
   <parent>
     <groupId>mobi.chouette</groupId>
     <artifactId>mobi.chouette</artifactId>
-    <version>4.0.24_MOSAIC-SNAPSHOT</version>
+    <version>4.0.25_MOSAIC-SNAPSHOT</version>
 
   </parent>
   <artifactId>mobi.chouette.exchange.validator</artifactId>
