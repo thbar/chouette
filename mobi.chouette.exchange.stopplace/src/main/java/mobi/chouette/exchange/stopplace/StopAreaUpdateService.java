@@ -134,4 +134,8 @@ public class StopAreaUpdateService {
 
 		return unusedStopAreas.size() + unusedBoardingPositions.size();
 	}
+
+	public void setModifiedFalseForAllStopAreas(String schema, List<String> stopAreas) {
+		stopAreaDAO.setModifiedFalseForAllStopAreas(schema, stopAreas);
+	}
 }

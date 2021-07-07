@@ -9,4 +9,6 @@ public interface StopAreaDAO extends GenericDAO<StopArea> {
 
     List<String> getBoardingPositionObjectIds();
     void mergeStopArea30m(Long from, Long into) throws CoreException;
+
+    void setModifiedFalseForAllStopAreas(String schema, List<String> stopAreas);
 }

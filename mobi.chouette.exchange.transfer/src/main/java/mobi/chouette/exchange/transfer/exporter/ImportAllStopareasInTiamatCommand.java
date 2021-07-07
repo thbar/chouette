@@ -5,14 +5,11 @@ import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
-import mobi.chouette.dao.ScheduledStopPointDAO;
 import mobi.chouette.dao.StopAreaDAO;
 import mobi.chouette.exchange.importer.updater.NeTExIdfmStopPlaceRegisterUpdater;
-import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 import mobi.chouette.persistence.hibernate.ContextHolder;
-import org.hibernate.Hibernate;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -20,9 +17,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j
 @Stateless(name = ImportAllStopareasInTiamatCommand.COMMAND)
@@ -50,6 +46,7 @@ public class ImportAllStopareasInTiamatCommand implements Command {
 
         Referential referential = new Referential();
 
+        stopAreas = stopAreas.stream().filter(StopArea::isModified).collect(Collectors.toList());
         List<List<StopArea>> stopAreasList = Lists.partition(stopAreas, 50);
 
         for(List<StopArea> stopAreas1 : stopAreasList){
@@ -62,7 +59,7 @@ public class ImportAllStopareasInTiamatCommand implements Command {
     public static class DefaultCommandFactory extends CommandFactory {
 
         @Override
-        protected Command create(InitialContext context) throws IOException {
+        protected Command create(InitialContext context) {
             Command result = null;
             try {
                 String name = "java:app/mobi.chouette.exchange/" + COMMAND;

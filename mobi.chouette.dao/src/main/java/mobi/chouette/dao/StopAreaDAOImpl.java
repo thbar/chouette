@@ -45,8 +45,14 @@ public class StopAreaDAOImpl extends GenericDAOImpl<StopArea> implements StopAre
                     .getSingleResult();
         } catch (Exception e) {
             throw new CoreException(CoreExceptionCode.DELETE_IMPOSSIBLE,"Error while trying to merge point:" + from + " to point:" + into);
-
         }
 
+    }
+
+    @Override
+    public void setModifiedFalseForAllStopAreas(String schema, List<String> stopAreas){
+        em.createNativeQuery("UPDATE " + schema + ".stop_areas SET modified = FALSE WHERE objectid IN :objectIds")
+                .setParameter("objectIds", stopAreas)
+                .executeUpdate();
     }
 }

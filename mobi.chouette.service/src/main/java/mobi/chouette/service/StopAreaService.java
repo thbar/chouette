@@ -104,6 +104,10 @@ public class StopAreaService {
 		log.info("Update references started");
 		updateStopAreaReferencesPerReferential(updateContext);
 		log.info("Update references completed");
+
+		for(String schema : updateContext.getImpactedStopAreasBySchema().keySet()){
+			stopAreaUpdateService.setModifiedFalseForAllStopAreas(schema, updateContext.getImpactedStopAreasBySchema().get(schema));
+		}
 	}
 
 	/**

@@ -11,6 +11,8 @@ import mobi.chouette.model.type.TransportModeNameEnum;
 import mobi.chouette.model.type.TransportSubModeNameEnum;
 import mobi.chouette.model.type.UserNeedEnum;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -27,7 +29,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -48,8 +50,8 @@ import java.util.UUID;
  * </ul>
  * theses objects have internal dependency rules :
  * <ol>
- * <li>only boarding positions and quays can have {@link StopPoint} children</li>
- * <li>boarding positions and quays cannot have {@link StopArea} children</li>
+ * <li>only boarding positions and quays can have {@link mobi.chouette.model.StopPoint} children</li>
+ * <li>boarding positions and quays cannot have {@link mobi.chouette.model.StopArea} children</li>
  * <li>commercial stop points can have only boarding position and quay children</li>
  * <li>stop places can have only stop place and commercial stop point children</li>
  * <li>routing constraint stops can't have routing constraint stops children</li>
@@ -62,16 +64,18 @@ import java.util.UUID;
 
 /**
  * @author dsuru
- * 
+ *
  */
 @Entity
 @Table(name = "stop_areas")
 @Cacheable
 @NoArgsConstructor
-@ToString(callSuper = true, exclude = { "accessLinks", "accessPoints",
+@ToString(callSuper = true, exclude = {"accessLinks", "accessPoints",
 		"connectionEndLinks", "connectionStartLinks", "containedStopAreas",
-		"containedScheduledStopPoints", "routingConstraintAreas", "routingConstraintLines" })
+		"containedScheduledStopPoints", "routingConstraintAreas", "routingConstraintLines"})
 public class StopArea extends NeptuneLocalizedObject {
+	private static Log log = LogFactory.getLog(StopArea.class);
+
 	private static final long serialVersionUID = 4548672479038099240L;
 
 	public static final String IMPORT_MODE = "STOP_AREA_IMPORT_MODE";
@@ -550,15 +554,26 @@ public class StopArea extends NeptuneLocalizedObject {
 	@Column(name = "is_external")
 	private Boolean isExternal;
 
-    @Getter
+	@Getter
 	@Setter
 	@Transient
 	private UUID uuid;
 
-    @Getter
+	@Getter
 	@Setter
 	@Column(name = "platform_code")
 	private String platformCode;
+
+	@Getter
+	@Setter
+	@Column(name = "modified")
+	private boolean modified;
+
+	@PreUpdate
+	private void updateStopAreaModified() {
+		log.info("Updated stop: " + objectId + " => TRUE");
+		modified = true;
+	}
 
 	// /**
 	// * add a child StopArea if not already present
