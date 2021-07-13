@@ -17,6 +17,7 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.VehicleJourneyAtStop;
 import mobi.chouette.model.util.NeptuneUtil;
+import org.hibernate.Hibernate;
 import org.joda.time.LocalDate;
 
 import javax.ejb.EJB;
@@ -55,6 +56,8 @@ public class DataCollector {
 					NeptuneUtil.refreshDepartureArrivals(jp);
 				}
 				for (VehicleJourney vehicleJourney : jp.getVehicleJourneys()) {
+					Hibernate.initialize(vehicleJourney.getKeyValues());
+
 					if (vehicleJourney.getVehicleJourneyAtStops().isEmpty()) {
 						continue;
 					}
