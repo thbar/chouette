@@ -35,13 +35,7 @@ public class NetworkProducer extends NetexProducer implements NetexEntityProduce
         netexNetwork.setName(ConversionUtil.getMultiLingualString(neptuneNetwork.getName()));
         netexNetwork.setDescription(ConversionUtil.getMultiLingualString(neptuneNetwork.getDescription()));
 
-        if(neptuneNetwork.getCompany() != null) {
-            AuthorityRefStructure authorityRefStruct = netexFactory.createAuthorityRefStructure();
-        	NetexProducerUtils.populateReference(neptuneNetwork.getCompany(), authorityRefStruct, true);
-            netexNetwork.setTransportOrganisationRef(netexFactory.createAuthorityRef(authorityRefStruct));
-        }
-
-        if (isSet(neptuneNetwork.getRegistrationNumber())) {
+       if (isSet(neptuneNetwork.getRegistrationNumber())) {
             PrivateCodeStructure privateCodeStruct = netexFactory.createPrivateCodeStructure();
             privateCodeStruct.setValue(neptuneNetwork.getRegistrationNumber());
             netexNetwork.setPrivateCode(privateCodeStruct);

@@ -413,4 +413,13 @@ public class Company extends NeptuneIdentifiedObject {
 	@Column(name = "fare_url")
 	private String fareUrl;
 
+	/**
+	 * is this company the default company
+	 *
+	 */
+	@Getter
+	@Setter
+	@Column(name = "default_company")
+	private boolean defaultCompany;
+
 }

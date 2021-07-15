@@ -196,9 +196,7 @@ public class LineUpdater implements Updater<Line> {
 
 		// Company
 
-		if (newValue.getCompany() == null) {
-			oldValue.setCompany(null);
-		} else {
+		if (newValue.getCompany() != null) {
 			String objectId = newValue.getCompany().getObjectId();
 			Company company = cache.getCompanies().get(objectId);
 			if (company == null) {

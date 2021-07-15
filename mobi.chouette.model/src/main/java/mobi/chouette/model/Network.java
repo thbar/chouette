@@ -215,19 +215,6 @@ public class Network extends NeptuneIdentifiedObject {
 	}
 
 	/**
-	 * company reference
-	 *
-	 * @param company
-	 *            New value
-	 * @return The actual value
-	 */
-	@Getter
-	@Setter
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
-	@JoinColumn(name = "company_id")
-	private Company company;
-
-	/**
 	 * lines
 	 * 
 	 * @param lines

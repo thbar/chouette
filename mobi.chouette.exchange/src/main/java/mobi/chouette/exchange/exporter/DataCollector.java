@@ -136,9 +136,6 @@ public class DataCollector {
 			Network network = line.getNetwork();
 			if(network != null) {
 				collection.getNetworks().add(network);
-				if(network.getCompany() != null) { // Authority
-					collection.getCompanies().add(network.getCompany());
-				}
 			}
 			if (line.getCompany() != null) { // Operator
 				collection.getCompanies().add(line.getCompany());

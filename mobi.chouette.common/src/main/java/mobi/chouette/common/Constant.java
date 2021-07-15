@@ -78,4 +78,6 @@ public interface Constant {
 	public static final String PERIOD = "period";
 	public static final String IS_LINE_EXISTING = "isLineExisting";
 
+	public static final String DEFAULT_AGENCY = "DEFAULT_AGENCY";
+
 }

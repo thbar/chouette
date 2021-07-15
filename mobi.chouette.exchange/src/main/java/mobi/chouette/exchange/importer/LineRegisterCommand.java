@@ -10,7 +10,9 @@ import mobi.chouette.common.PropertyNames;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.CategoriesForLinesDAO;
+import mobi.chouette.dao.CompanyDAO;
 import mobi.chouette.dao.LineDAO;
+import mobi.chouette.dao.NetworkDAO;
 import mobi.chouette.dao.VariationsDAO;
 import mobi.chouette.dao.VehicleJourneyDAO;
 import mobi.chouette.exchange.importer.updater.LineOptimiser;
@@ -24,8 +26,10 @@ import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
+import mobi.chouette.model.Company;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
+import mobi.chouette.model.Network;
 import mobi.chouette.model.Route;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.StopPoint;
@@ -50,6 +54,7 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @Stateless(name = LineRegisterCommand.COMMAND)
@@ -75,6 +80,12 @@ public class LineRegisterCommand implements Command {
 	@EJB
 	private CategoriesForLinesDAO categoriesForLinesDAO;
 
+	@EJB
+	private CompanyDAO companyDAO;
+
+	@EJB
+	private NetworkDAO networkDAO;
+
 	@EJB(beanName = LineUpdater.BEAN_NAME)
 	private Updater<Line> lineUpdater;
 
@@ -83,6 +94,8 @@ public class LineRegisterCommand implements Command {
 
     @EJB(beanName = NeTExStopPlaceRegisterUpdater.BEAN_NAME)
     private NeTExStopPlaceRegisterUpdater stopPlaceRegisterUpdater;
+
+    private String objectPrefix;
 
     @Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -102,6 +115,12 @@ public class LineRegisterCommand implements Command {
 		context.put("ref", ref);
 
 		Referential referential = (Referential) context.get(REFERENTIAL);
+
+		Company defaultAgency = companyDAO.findAll().stream()
+													.filter(Company::isDefaultCompany)
+													.findFirst()
+													.get();
+
 
 		// Use property based enabling of stop place updater, but allow disabling if property exist in context
 		Line newValue  = referential.getLines().values().iterator().next();
@@ -169,6 +188,15 @@ public class LineRegisterCommand implements Command {
 				if(oldValue.getPosition() == null){
 					oldValue.setPosition(newValue.getPosition());
 				}
+
+				if (oldValue.getCompany() == null){
+					oldValue.setCompany(defaultAgency);
+				}
+
+				if (oldValue.getNetwork() == null){
+					feedNetwork(oldValue);
+				}
+
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
 
@@ -260,6 +288,30 @@ public class LineRegisterCommand implements Command {
 			log.info(Color.MAGENTA + monitor.stop() + Color.NORMAL);
 		}
 		return result;
+	}
+
+	private void feedNetwork(Line oldValue){
+
+    	Company agency = oldValue.getCompany();
+		Optional<Network> networkOpt = networkDAO.findByName(agency.getName());
+		Network network = networkOpt.orElseGet(()->createNewNetwork(agency));
+		oldValue.setNetwork(network);
+	}
+
+	private Network createNewNetwork(Company agency){
+
+    	Network newNetwork = new Network();
+    	String agencyName = agency.getName();
+		newNetwork.setName(agencyName);
+
+		String prefix = agency.objectIdPrefix();
+		newNetwork.setObjectId(prefix + ":" + Network.PTNETWORK_KEY + ":" + agencyName);
+		newNetwork.setVersionDate(LocalDate.now());
+		newNetwork.setRegistrationNumber(prefix);
+		newNetwork.setSourceName("GTFS");
+		networkDAO.create(newNetwork);
+		return newNetwork;
+
 	}
 
 	private boolean isLineValidInFuture(Line line) {

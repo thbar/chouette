@@ -44,16 +44,6 @@ public class GtfsDataCollector extends DataCollector {
 	private void collectAgencyCompany(Line line, ExportableData collection) {
 		Company company = line.getCompany();
 
-		if (company == null || !OrganisationTypeEnum.Authority.equals(company.getOrganisationType())) {
-			// Use network->authority as agency if it is an authority
-			Network network = line.getNetwork();
-			if (network != null && network.getCompany() != null) {
-				if (OrganisationTypeEnum.Authority.equals(network.getCompany().getOrganisationType())) {
-					company = network.getCompany();
-				}
-			}
-		}
-
 		if (company == null) {
 			log.info("line " + line.getObjectId() + " : missing company, using network instead");
 			company = new Company();
@@ -67,16 +57,6 @@ public class GtfsDataCollector extends DataCollector {
 
 	private void collectOperatorCompany(Line line, ExportableData collection) {
 		Company company = line.getCompany();
-
-		if (company == null || !OrganisationTypeEnum.Authority.equals(company.getOrganisationType())) {
-			// Use network->authority as agency if it is an authority
-			Network network = line.getNetwork();
-			if (network != null && network.getCompany() != null) {
-				if (OrganisationTypeEnum.Operator.equals(network.getCompany().getOrganisationType())) {
-					company = network.getCompany();
-				}
-			}
-		}
 
 		if (company == null) {
 			log.info("line " + line.getObjectId() + " : missing company, using network instead");

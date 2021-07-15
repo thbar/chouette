@@ -205,24 +205,8 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
             agencyId = configuration.getReferentialName();
         }
 
-        String operatorId = AbstractConverter.composeObjectId(configuration,
-                Company.OPERATOR_KEY, agencyId + "o", log);
-        Company operator = ObjectFactory.getCompany(referential, operatorId);
-        line.setCompany(operator);
 
-        // PTNetwork
-        String ptNetworkId = configuration.getObjectIdPrefix() + ":" + Network.PTNETWORK_KEY + ":"
-                + agencyId;
-        Network ptNetwork = ObjectFactory.getPTNetwork(referential, ptNetworkId);
-        if (ptNetwork.getCompany() == null) {
-            String authorityId = AbstractConverter.composeObjectId(configuration,
-                    Company.AUTHORITY_KEY, agencyId, log);
-            Company authority = ObjectFactory.getCompany(referential, authorityId);
-            ptNetwork.setCompany(authority);
-            ptNetwork.setName(authority.getName()); // Set
-        }
 
-        line.setNetwork(ptNetwork);
 
         // Route VehicleJourney VehicleJourneyAtStop , JourneyPattern ,StopPoint
         GtfsTripParser gtfsTripParser = (GtfsTripParser) ParserFactory.create(GtfsTripParser.class.getName());
