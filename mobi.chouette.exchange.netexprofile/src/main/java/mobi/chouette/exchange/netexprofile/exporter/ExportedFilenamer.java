@@ -5,6 +5,7 @@ import java.text.StringCharacterIterator;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.model.Line;
+import org.apache.commons.lang3.StringUtils;
 
 public class ExportedFilenamer {
 	private static final String SPACE = " ";
@@ -30,6 +31,15 @@ public class ExportedFilenamer {
 		if(line.getCodifligne() != null){
 			b.append(line.getCodifligne().replaceAll(UNDERSCORE, DASH));
 			b.append(UNDERSCORE);
+		}
+		if(line.getNetwork() != null){
+			String networkObjId = line.getNetwork().getObjectId();
+			if (StringUtils.isNotEmpty(networkObjId) && networkObjId.split(":").length == 3){
+				String networkId = networkObjId.split(":")[2];
+				b.append(networkId);
+				b.append(UNDERSCORE);
+			}
+
 		}
 		if(line.getNumber() != null){
 			b.append(line.getNumber().replaceAll(UNDERSCORE, DASH));
