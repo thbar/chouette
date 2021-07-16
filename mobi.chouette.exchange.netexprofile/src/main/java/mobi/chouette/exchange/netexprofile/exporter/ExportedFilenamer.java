@@ -32,6 +32,11 @@ public class ExportedFilenamer {
 			b.append(line.getCodifligne().replaceAll(UNDERSCORE, DASH));
 			b.append(UNDERSCORE);
 		}
+		if(line.getTransportModeName() != null){
+			String transportMode = line.getTransportModeName().toString().replace(" ","_");
+			b.append(transportMode);
+			b.append(UNDERSCORE);
+		}
 		if(line.getNetwork() != null){
 			String networkObjId = line.getNetwork().getObjectId();
 			if (StringUtils.isNotEmpty(networkObjId) && networkObjId.split(":").length == 3){
