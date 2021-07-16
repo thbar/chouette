@@ -2,8 +2,9 @@ package mobi.chouette.exchange.gtfs.model.importer;
 
 public class FactoryParameters {
 
-    String splitCharacter;
-    String linePrefixToRemove;
+    private String splitCharacter;
+    private String linePrefixToRemove;
+    private String commercialPointIdPrefixToRemove;
 
     public String getSplitCharacter() {
         return splitCharacter;
@@ -19,5 +20,13 @@ public class FactoryParameters {
 
     public void setLinePrefixToRemove(String linePrefixToRemove) {
         this.linePrefixToRemove = linePrefixToRemove;
+    }
+
+    public String getCommercialPointIdPrefixToRemove() {
+        return commercialPointIdPrefixToRemove;
+    }
+
+    public void setCommercialPointIdPrefixToRemove(String commercialPointIdPrefixToRemove) {
+        this.commercialPointIdPrefixToRemove = commercialPointIdPrefixToRemove;
     }
 }

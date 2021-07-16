@@ -6,6 +6,7 @@ import mobi.chouette.exchange.gtfs.model.GtfsRoute;
 import mobi.chouette.exchange.gtfs.model.GtfsStop;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.LocationType;
 import mobi.chouette.exchange.gtfs.model.GtfsStop.WheelchairBoardingType;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -22,10 +23,17 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 
 	private GtfsStop bean = new GtfsStop();
 	private String[] array = new String[FIELDS.values().length];
+	private String commercialPointIdPrefixToRemove;
+
 	// private String _stopId = null;
 
 	public StopById(String name) throws IOException {
 		super(name, KEY);
+	}
+
+	public StopById(String name, FactoryParameters factoryParameters) throws IOException {
+		super(name, KEY);
+		commercialPointIdPrefixToRemove = factoryParameters.getCommercialPointIdPrefixToRemove();
 	}
 
 	@Override
@@ -271,6 +279,13 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 
 		GtfsStop copy_bean = new GtfsStop(bean);
 		String parentStationId = copy_bean.getParentStation();
+
+		if (StringUtils.isNotEmpty(commercialPointIdPrefixToRemove) && parentStationId!=null && copy_bean.getStopId().equals(parentStationId.replaceFirst("^" + commercialPointIdPrefixToRemove,""))){
+			//After prefix removal, parent and child has the same id. It is forbidden
+			result = false;
+			bean.getErrors().add(new GtfsException(_path, copy_bean.getId(), getIndex(FIELDS.parent_station.name()), FIELDS.parent_station.name(), GtfsException.ERROR.PREFIX_REMOVAL_ERROR, copy_bean.getStopId(), parentStationId));
+		}
+
 		if (isPresent(parentStationId)) {
 
 			// parentStation must reference a stop
@@ -390,6 +405,11 @@ public class StopById extends IndexImpl<GtfsStop> implements GtfsConverter {
 		@Override
 		protected Index create(String name) throws IOException {
 			return new StopById(name);
+		}
+
+		@Override
+		protected Index create(String name, FactoryParameters factoryParameters) throws IOException {
+			return new StopById(name,factoryParameters);
 		}
 	}
 
