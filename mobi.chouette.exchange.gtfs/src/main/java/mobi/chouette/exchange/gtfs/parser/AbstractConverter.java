@@ -12,7 +12,6 @@ import org.joda.time.LocalTime;
 
 public abstract class AbstractConverter implements Constant{
 
-	private static String COLON_REPLACEMENT_CODE="##3A##";
 
 	public static String extractOriginalId(String chouetteObjectId) {
 		return chouetteObjectId.split(":")[2];
