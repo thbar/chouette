@@ -81,7 +81,9 @@ public class NetexFranceProfileTest {
 
     private static String codifLigne = "TestNetexFranceProfile";
     private static String testPath = "src/test/data/netexFranceProfile";
-    private static String generatedFilePath = testPath+"/output/offre_"+codifLigne+"_.xml";
+    private static String generatedFilePath = testPath+"/output/offre_"+codifLigne+"_Bus_1_l1_.xml";
+
+
     private File generatedFile = new File(generatedFilePath);
 
     private NetexXMLProcessingHelperFactory importer = new NetexXMLProcessingHelperFactory();
