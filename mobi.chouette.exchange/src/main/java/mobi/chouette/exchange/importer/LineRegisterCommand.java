@@ -170,7 +170,7 @@ public class LineRegisterCommand implements Command {
 					oldValue.setCategoriesForLine(categoriesForLinesDAO.find(Long.valueOf(0)));
 				}
 				oldValue.setPosition(newValue.getPosition());
-				searchEmptyOriginalStopIds(referential,oldValue);
+//				searchEmptyOriginalStopIds(referential,oldValue);
 				lineDAO.create(oldValue);
 				lineDAO.flush(); // to prevent SQL error outside method
 

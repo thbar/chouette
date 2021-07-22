@@ -64,7 +64,7 @@ public class TestUtils{
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-3", "ERROR"));
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-4", "ERROR"));
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-5", "ERROR"));
-			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-6", "ERROR"));
+			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-6", "WARNING"));
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-7", "ERROR"));
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-8", "ERROR"));
 			neptuneTestList.add(new TestDescription(2, "2-NEPTUNE-Route-9", "WARNING"));

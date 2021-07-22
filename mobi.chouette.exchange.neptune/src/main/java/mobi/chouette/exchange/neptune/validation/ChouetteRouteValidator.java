@@ -52,7 +52,7 @@ public class ChouetteRouteValidator extends AbstractValidator implements Validat
 	protected void initializeCheckPoints(Context context)
 	{
 		addItemToValidation(context, prefix, "Route", 12, "E", "E", "E", "E",
-				"E", "E", "E", "E", "W", "E", "W", "W");
+				"E", "W", "E", "E", "W", "E", "W", "W");
 
 	}
 
