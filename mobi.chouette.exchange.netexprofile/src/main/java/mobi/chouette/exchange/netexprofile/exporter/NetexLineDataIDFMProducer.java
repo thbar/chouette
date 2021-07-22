@@ -146,6 +146,19 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         for (VehicleJourney vehicleJourney : exportableData.getVehicleJourneys()) {
             vehicleJourney.setObjectId(replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(vehicleJourney.getObjectId(), defaultCodespacePrefix));
         }
+
+        exportableData.getLine().setObjectId(exportableData.getLine().getObjectId().replace(SANITIZED_REPLACEMENT_CODE, "-"));
+    }
+
+    /**
+     * Replace the special replacement code by a dash (-)
+     * ( because when file is imported, semi colons are replaced by a special code)
+     *
+     * @param inputId
+     * @return
+     */
+    private String sanitizeID(String inputId){
+        return inputId.replace(SANITIZED_REPLACEMENT_CODE, "-");
     }
 
     private String replaceAllSpacesAndSpecialCharacterAndReplaceNameDataSpace(String objectId, String defaultCodespacePrefix){
@@ -156,7 +169,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         if(!nameDataSpace[0].equals(defaultCodespacePrefix)){
             objectId = objectId.replace(nameDataSpace[0], defaultCodespacePrefix);
         }
-
+        objectId = objectId.replace(SANITIZED_REPLACEMENT_CODE, "-");
         return objectId;
     }
 
