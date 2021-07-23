@@ -72,10 +72,6 @@ public class DaoLineValidatorCommand implements Command, Constant {
 			Long lineId = (Long) context.get(LINE_ID);
 			Line line = lineDAO.find(lineId);
 
-			if(line.getSupprime().equals(true)){
-				return true;
-			}
-
 			ValidationDataCollector collector = new ValidationDataCollector();
 			collector.collect(data, line);
 

@@ -63,6 +63,7 @@ public class DaoReader {
 		}
 		// ordonnancement des lignes
 		return lines.stream()
+					 .filter(line -> line.getSupprime().equals(false))
 				     .sorted(Comparator.comparing(Line::getPosition))
 				     .map(Line::getId)
 				     .collect(Collectors.toCollection(LinkedHashSet::new));
