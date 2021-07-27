@@ -114,12 +114,6 @@ public class GtfsAgencyParser implements Parser, Validator, Constant {
 			}
 
 
-			// Create both as operator and as authority
-			String objectIdOperator = AbstractConverter.composeObjectId(configuration, Company.OPERATOR_KEY,
-					gtfsAgency.getAgencyId()+"o", log);
-			Company operator = ObjectFactory.getCompany(referential, objectIdOperator);
-			convert(context, gtfsAgency, operator, OrganisationTypeEnum.Operator );
-
 			String objectIdAuthority = AbstractConverter.composeObjectId(configuration, Company.AUTHORITY_KEY,
 					gtfsAgency.getAgencyId(), log);
 			Company authority = ObjectFactory.getCompany(referential, objectIdAuthority);

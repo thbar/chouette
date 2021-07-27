@@ -84,28 +84,6 @@ public class PTNetworkUpdater implements Updater<Network> {
 			oldValue.setSourceIdentifier(newValue.getSourceIdentifier());
 		}
 		
-		// Company
-		Referential cache = (Referential) context.get(CACHE);
-
-		if (newValue.getCompany() == null) {
-			oldValue.setCompany(null);
-		} else {
-			String objectId = newValue.getCompany().getObjectId();
-			Company company = cache.getCompanies().get(objectId);
-			if (company == null) {
-				company = companyDAO.findByObjectId(objectId);
-				if (company != null) {
-					cache.getCompanies().put(objectId, company);
-				}
-			}
-
-			if (company == null) {
-				company = ObjectFactory.getCompany(cache, objectId);
-			}
-			oldValue.setCompany(company);
-			companyUpdater.update(context, oldValue.getCompany(), newValue.getCompany());
-		}
-
 	}
 
 }

@@ -17,10 +17,6 @@ public class NetexDataCollector extends DataCollector {
 	public boolean collect(ExportableData collection, Line line, LocalDate startDate, LocalDate endDate) {
 		boolean res = collect(collection, line, startDate, endDate, false, false);
 
-		if (line.getNetwork().getCompany() != null) {
-			collection.getCompanies().add(line.getNetwork().getCompany());
-		}
-
 
 		// Remove any routes or journey patterns without active vehicle journeys.
 		List<Route> activeRoutes = collection.getVehicleJourneys().stream().map(vj -> vj.getRoute()).distinct().collect(Collectors.toList());
