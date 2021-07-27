@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>mobi.chouette</groupId>
 		<artifactId>mobi.chouette</artifactId>
-		<version>4.0.25_MOSAIC-SNAPSHOT</version>
+		<version>4.0.26_MOSAIC-SNAPSHOT</version>
 	</parent>
 	<artifactId>mobi.chouette.persistence.hibernate</artifactId>
 	<packaging>ejb</packaging>
