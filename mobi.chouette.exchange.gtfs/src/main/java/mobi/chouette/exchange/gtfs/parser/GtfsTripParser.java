@@ -659,7 +659,7 @@ public class GtfsTripParser implements Parser, Validator, Constant {
         String result = null;
 
 //        if (drop == DropOffType.Scheduled && pickup == PickupType.Scheduled) {
-            result = vehicleJourneyAtStop.stopId;
+            result = vehicleJourneyAtStop.stopId.replace(":",COLON_REPLACEMENT_CODE);;
 //        } else {
 //            result = vehicleJourneyAtStop.stopId + "." + drop.ordinal() + "" + pickup.ordinal();
 //        }
