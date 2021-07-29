@@ -81,5 +81,7 @@ public interface Constant {
 	public static final String IMPORTED_ID = "imported-id";
 
 	public static final String MOBIITI_PREFIX = "MOBIITI";
-	
+	public static final String COLON_REPLACEMENT_CODE="##3A##";
+	public static final String SANITIZED_REPLACEMENT_CODE="__3A__";
+
 }

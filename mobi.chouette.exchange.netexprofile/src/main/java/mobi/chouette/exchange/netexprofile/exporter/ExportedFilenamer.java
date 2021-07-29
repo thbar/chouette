@@ -5,6 +5,10 @@ import java.text.StringCharacterIterator;
 import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.Constant;
 import mobi.chouette.model.Line;
+import org.apache.commons.lang3.StringUtils;
+
+import static mobi.chouette.common.Constant.COLON_REPLACEMENT_CODE;
+import static mobi.chouette.common.Constant.SANITIZED_REPLACEMENT_CODE;
 
 public class ExportedFilenamer {
 	private static final String SPACE = " ";
@@ -29,6 +33,26 @@ public class ExportedFilenamer {
 		b.append("offre_");
 		if(line.getCodifligne() != null){
 			b.append(line.getCodifligne().replaceAll(UNDERSCORE, DASH));
+			b.append(UNDERSCORE);
+		}
+		if(line.getTransportModeName() != null){
+			String transportMode = line.getTransportModeName().toString().replace(" ","_");
+			b.append(transportMode);
+			b.append(UNDERSCORE);
+		}
+		if(line.getNetwork() != null){
+			String networkObjId = line.getNetwork().getObjectId();
+			if (StringUtils.isNotEmpty(networkObjId) && networkObjId.split(":").length == 3){
+				String networkId = networkObjId.split(":")[2];
+				b.append(networkId);
+				b.append(UNDERSCORE);
+			}
+		}
+
+		String lineObjectId = line.getObjectId();
+		if (StringUtils.isNotEmpty(lineObjectId) && lineObjectId.split(":").length == 3){
+			String lineId = lineObjectId.split(":")[2].replace(SANITIZED_REPLACEMENT_CODE,"-");
+			b.append(lineId);
 			b.append(UNDERSCORE);
 		}
 		if(line.getNumber() != null){

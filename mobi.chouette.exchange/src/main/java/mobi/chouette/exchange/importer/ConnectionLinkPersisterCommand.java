@@ -1,4 +1,4 @@
-package mobi.chouette.exchange.gtfs.importer;
+package mobi.chouette.exchange.importer;
 
 import lombok.extern.log4j.Log4j;
 import mobi.chouette.common.Constant;
@@ -6,11 +6,8 @@ import mobi.chouette.common.Context;
 import mobi.chouette.common.chain.Command;
 import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.dao.ConnectionLinkDAO;
-import mobi.chouette.dao.LineDAO;
 import mobi.chouette.dao.StopAreaDAO;
-import mobi.chouette.exchange.importer.LineRegisterCommand;
 import mobi.chouette.model.ConnectionLink;
-import mobi.chouette.model.Line;
 import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +18,6 @@ import javax.ejb.Stateless;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 
@@ -52,11 +48,16 @@ public class ConnectionLinkPersisterCommand implements Command, Constant {
 
             String originalStartID = connectionLink.getStartOfLink().getObjectId();
             String originalEndID = connectionLink.getEndOfLink().getObjectId();
+            String startIdtoLookUp = originalStartID;
+            String endIdtoLookUp = originalEndID;
 
-            String referentialStartId = fileToReferentialStopIdMap.get(originalStartID);
-            String referentialEndId = fileToReferentialStopIdMap.get(originalEndID);
 
-            createConnectionLink(connectionLink,referentialStartId,referentialEndId);
+            if (fileToReferentialStopIdMap.containsKey(originalStartID) && fileToReferentialStopIdMap.containsKey(originalEndID)){
+                startIdtoLookUp = fileToReferentialStopIdMap.get(originalStartID);
+                endIdtoLookUp = fileToReferentialStopIdMap.get(originalEndID);
+            }
+
+            createConnectionLink(connectionLink,startIdtoLookUp,endIdtoLookUp);
 
         });
 
@@ -105,7 +106,7 @@ public class ConnectionLinkPersisterCommand implements Command, Constant {
         protected Command create(InitialContext context) throws IOException {
             Command result = null;
             try {
-                String name = "java:app/mobi.chouette.exchange.gtfs/" + COMMAND;
+                String name = "java:app/mobi.chouette.exchange/" + COMMAND;
                 result = (Command) context.lookup(name);
             } catch (NamingException e) {
                 // try another way on test context

@@ -44,6 +44,7 @@ public class GtfsInitImportCommand implements Command, Constant {
 				FactoryParameters factoryParameters = new FactoryParameters();
 				factoryParameters.setSplitCharacter(parameters.getSplitCharacter());
 				factoryParameters.setLinePrefixToRemove(parameters.getLinePrefixToRemove());
+				factoryParameters.setCommercialPointIdPrefixToRemove(parameters.getCommercialPointIdPrefixToRemove());
 				importer = new GtfsImporter(path.toString(),factoryParameters);
 				context.put(PARSER, importer);
 			}

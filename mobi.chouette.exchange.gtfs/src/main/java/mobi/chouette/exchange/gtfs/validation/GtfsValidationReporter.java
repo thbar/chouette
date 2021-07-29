@@ -39,7 +39,7 @@ public class GtfsValidationReporter implements Constant{
 		reporter.addItemToValidationReport(context, "1-GTFS-", "Route", 3, "E","E","W");
 
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Common", 4, "E","W","E","W");
-		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 5, "E","W","E","E","E");
+		reporter.addItemToValidationReport(context, "2-GTFS-", "Stop", 6, "E","W","E","E","E","E");
 		reporter.addItemToValidationReport(context, "2-GTFS-", "Route", 4, "W","W","W","W");
 }
 
@@ -536,6 +536,14 @@ public class GtfsValidationReporter implements Constant{
                     buildDataLocation(context, new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()), routeId), ex.getValue());
             throw ex;
 
+		case PREFIX_REMOVAL_ERROR:
+			// 2-GTFS-Stop-6
+			checkPointName = checkPointName(name, GtfsException.ERROR.PREFIX_REMOVAL_ERROR);
+			fieldName = ex.getField();
+			validationReporter.addCheckPointReportError(context, checkPointName,
+				buildDataLocation(context, new DataLocation(filenameInfo, ex.getId(), ex.getColumn(), ex.getCode()), routeId), ex.getValue(),fieldName);
+			break;
+
 		case DUPLICATE_ROUTE_NAMES:
 			// 2-GTFS-Route-5
 			checkPointName = checkPointName(name, GtfsException.ERROR.DUPLICATE_ROUTE_NAMES);
@@ -673,6 +681,8 @@ public class GtfsValidationReporter implements Constant{
 			return GTFS_2_GTFS_Route_3;
 		case INVERSE_DUPLICATE_ROUTE_NAMES:
 			return GTFS_2_GTFS_Route_4;
+		case PREFIX_REMOVAL_ERROR:
+			return GTFS_2_GTFS_Stop_6;
 
 		default:
 			return null;

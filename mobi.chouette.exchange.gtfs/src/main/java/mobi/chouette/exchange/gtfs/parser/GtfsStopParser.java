@@ -142,7 +142,6 @@ public class GtfsStopParser implements Parser, Validator, Constant {
 	private void checkUniqueIdWithParent(GtfsStop gtfsStop){
 		if (gtfsStop.getStopId().equals(gtfsStop.getParentStation())){
 			log.error("Error on prefix removal. Duplicate id for parent and child on id :" + gtfsStop.getStopId());
-			throw new IllegalArgumentException("Can't remove prefixes chosen by user");
 		}
 	}
 	

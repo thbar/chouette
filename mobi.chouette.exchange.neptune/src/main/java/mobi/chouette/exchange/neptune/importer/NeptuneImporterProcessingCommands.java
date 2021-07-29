@@ -13,6 +13,7 @@ import mobi.chouette.common.chain.CommandFactory;
 import mobi.chouette.exchange.ProcessingCommands;
 import mobi.chouette.exchange.ProcessingCommandsFactory;
 import mobi.chouette.exchange.importer.CleanRepositoryCommand;
+import mobi.chouette.exchange.importer.ConnectionLinkPersisterCommand;
 import mobi.chouette.exchange.importer.CopyCommand;
 import mobi.chouette.exchange.importer.LineRegisterCommand;
 import mobi.chouette.exchange.importer.UncompressCommand;
@@ -129,6 +130,7 @@ public class NeptuneImporterProcessingCommands implements ProcessingCommands, Co
 					chain.add(validate);
 				}
 			}
+			commands.add(CommandFactory.create(initialContext, ConnectionLinkPersisterCommand.class.getName()));
 
 		} catch (Exception e) {
 			log.error(e, e);

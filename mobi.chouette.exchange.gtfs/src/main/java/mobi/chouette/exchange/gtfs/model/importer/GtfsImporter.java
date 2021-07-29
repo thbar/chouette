@@ -154,8 +154,11 @@ public class GtfsImporter {
 
 	@SuppressWarnings("unchecked")
 	public Index<GtfsStop> getStopById() {
-		return getImporter(INDEX.STOP_BY_ID.name(), StopById.FILENAME,
-				StopById.class);
+		if (StringUtils.isEmpty(_factoryParameters.getCommercialPointIdPrefixToRemove()) ){
+			return getImporter(INDEX.STOP_BY_ID.name(), StopById.FILENAME,StopById.class);
+		}else{
+			return getImporter(INDEX.STOP_BY_ID.name(), StopById.FILENAME,StopById.class,_factoryParameters);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

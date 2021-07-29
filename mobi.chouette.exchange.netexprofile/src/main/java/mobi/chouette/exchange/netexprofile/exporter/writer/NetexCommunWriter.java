@@ -57,11 +57,11 @@ public class NetexCommunWriter extends AbstractNetexWriter {
             writeNetworkElement(writer, networkIterator.next(), marshaller);
 
             if (networkIterator.hasNext()){
-                writer.writeStartElement(ADDITIONAL_NETWORKS);
+                //writer.writeStartElement(ADDITIONAL_NETWORKS);
                 while(networkIterator.hasNext()) {
                     writeNetworkElement(writer, networkIterator.next(), marshaller);
                 }
-                writer.writeEndElement();
+               // writer.writeEndElement();
             }
         }
     }
