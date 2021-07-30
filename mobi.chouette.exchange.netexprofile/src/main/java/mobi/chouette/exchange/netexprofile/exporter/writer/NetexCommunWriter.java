@@ -4,12 +4,16 @@ import mobi.chouette.common.Context;
 import mobi.chouette.exchange.netexprofile.exporter.ExportableNetexData;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 import org.rutebanken.netex.model.Authority;
+import org.rutebanken.netex.model.FlexibleLine;
 import org.rutebanken.netex.model.GeneralOrganisation;
+import org.rutebanken.netex.model.Line;
+import org.rutebanken.netex.model.Line_VersionStructure;
 import org.rutebanken.netex.model.Network;
 import org.rutebanken.netex.model.Notice;
 import org.rutebanken.netex.model.Operator;
 import org.rutebanken.netex.model.Organisation_VersionStructure;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
@@ -32,6 +36,7 @@ public class NetexCommunWriter extends AbstractNetexWriter {
         writer.writeStartElement(MEMBERS);
 
         writeNetworks(writer, exportableNetexData, marshaller);
+        writeLinesElement(writer, exportableNetexData, marshaller);
         writeOrganisationsElement(writer, exportableNetexData, marshaller);
         writeNoticesElement(writer, exportableNetexData.getSharedNotices().values(), marshaller);
 
@@ -57,11 +62,9 @@ public class NetexCommunWriter extends AbstractNetexWriter {
             writeNetworkElement(writer, networkIterator.next(), marshaller);
 
             if (networkIterator.hasNext()){
-                //writer.writeStartElement(ADDITIONAL_NETWORKS);
                 while(networkIterator.hasNext()) {
                     writeNetworkElement(writer, networkIterator.next(), marshaller);
                 }
-               // writer.writeEndElement();
             }
         }
     }
@@ -89,6 +92,28 @@ public class NetexCommunWriter extends AbstractNetexWriter {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static void writeLinesElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
+        if (!exportableNetexData.getSharedLines().isEmpty()) {
+            Iterator<Line_VersionStructure> lineIterator = exportableNetexData.getSharedLines().values().iterator();
+            if (lineIterator.hasNext()) {
+                while (lineIterator.hasNext()) {
+                    try {
+                        Line_VersionStructure line = lineIterator.next();
+                        JAXBElement<? extends Line_VersionStructure> jaxbElement = null;
+                        if (line instanceof Line) {
+                            jaxbElement = netexFactory.createLine((Line) line);
+                        } else if (line instanceof FlexibleLine) {
+                            jaxbElement = netexFactory.createFlexibleLine((FlexibleLine) line);
+                        }
+                        marshaller.marshal(jaxbElement, writer);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
         }
     }
 }

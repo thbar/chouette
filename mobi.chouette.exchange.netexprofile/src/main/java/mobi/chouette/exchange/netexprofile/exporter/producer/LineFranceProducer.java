@@ -76,23 +76,16 @@ public class LineFranceProducer extends NetexProducer implements NetexEntityProd
             netexLine.setPrivateCode(privateCodeStruct);
         }
 
-        // TODO à réactiver en erreur actuellement
-//        if (neptuneLine.getCompany() != null) {
-//            OperatorRefStructure operatorRefStruct = netexFactory.createOperatorRefStructure();
-//            NetexProducerUtils.populateReferenceIDFM(neptuneLine.getCompany(), operatorRefStruct);
-//            netexLine.setOperatorRef(operatorRefStruct);
-//        }
+        if (neptuneLine.getCompany() != null) {
+            OperatorRefStructure operatorRefStruct = netexFactory.createOperatorRefStructure();
+            NetexProducerUtils.populateReferenceIDFM(neptuneLine.getCompany(), operatorRefStruct);
+            netexLine.setOperatorRef(operatorRefStruct);
+        }
 
         if (CollectionUtils.isNotEmpty(neptuneLine.getGroupOfLines())) {
             GroupOfLine groupOfLine = neptuneLine.getGroupOfLines().get(0);
             String groupOfLinesId = netexId(groupOfLine.objectIdPrefix(), GROUP_OF_LINES, groupOfLine.objectIdSuffix());
             GroupOfLinesRefStructure groupOfLinesRefStruct = netexFactory.createGroupOfLinesRefStructure().withRef(groupOfLinesId);
-            netexLine.setRepresentedByGroupRef(groupOfLinesRefStruct);
-        }
-        else if (neptuneLine.getNetwork() != null) {
-            mobi.chouette.model.Network neptuneNetwork = neptuneLine.getNetwork();
-            GroupOfLinesRefStructure groupOfLinesRefStruct = netexFactory.createGroupOfLinesRefStructure();
-            NetexProducerUtils.populateReferenceIDFM(neptuneNetwork, groupOfLinesRefStruct);
             netexLine.setRepresentedByGroupRef(groupOfLinesRefStruct);
         }
 

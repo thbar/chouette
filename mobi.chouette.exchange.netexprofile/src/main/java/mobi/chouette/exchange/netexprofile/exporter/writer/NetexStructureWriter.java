@@ -28,7 +28,6 @@ public class NetexStructureWriter extends AbstractNetexWriter {
 
         writer.writeStartElement(MEMBERS);
 
-        writeLinesElement(writer, exportableNetexData, marshaller);
         writeRouteLinksElement(writer, exportableNetexData, marshaller);
         writeRoutesElement(writer, exportableNetexData, marshaller);
         writeDirectionsElement(writer, exportableNetexData, marshaller);
@@ -38,21 +37,6 @@ public class NetexStructureWriter extends AbstractNetexWriter {
         writeDestinationDisplaysElement(writer, exportableNetexData, marshaller);
 
         writer.writeEndElement();
-    }
-
-    static void writeLinesElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {
-        try {
-            Line_VersionStructure line = exportableNetexData.getLine();
-            JAXBElement<? extends Line_VersionStructure> jaxbElement = null;
-            if (line instanceof Line) {
-                jaxbElement = netexFactory.createLine((Line) exportableNetexData.getLine());
-            } else if (line instanceof FlexibleLine) {
-                jaxbElement = netexFactory.createFlexibleLine((FlexibleLine) exportableNetexData.getLine());
-            }
-            marshaller.marshal(jaxbElement, writer);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     static void writeRouteLinksElement(XMLStreamWriter writer, ExportableNetexData exportableNetexData, Marshaller marshaller) {

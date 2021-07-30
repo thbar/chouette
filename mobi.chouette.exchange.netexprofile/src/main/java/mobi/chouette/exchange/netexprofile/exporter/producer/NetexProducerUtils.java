@@ -329,14 +329,12 @@ public class NetexProducerUtils {
 		if (Boolean.TRUE.equals(neptuneLine.getFlexibleService())) {
 			FlexibleLineRefStructure lineRefStruct = netexFactory.createFlexibleLineRefStructure();
 			lineRefStruct.setRef(neptuneLine.getObjectId() + OBJECT_ID_SPLIT_CHAR + LOC);
-			lineRefStruct.setVersion("any");
+			lineRefStruct.setVersionRef("any");
 			return netexFactory.createFlexibleLineRef(lineRefStruct);
 		}
 		LineRefStructure lineRefStruct = netexFactory.createLineRefStructure();
-		//lineRefStruct.setRef("FR1:Line:" + neptuneLine.getCodifligne() + OBJECT_ID_SPLIT_CHAR);
 		lineRefStruct.setRef(neptuneLine.getObjectId() + OBJECT_ID_SPLIT_CHAR + LOC);
-		lineRefStruct.setVersion("any");
-//		lineRefStruct.setValue("version=\"any\"");
+		lineRefStruct.setVersionRef("any");
 		return netexFactory.createLineRef(lineRefStruct);
 	}
 

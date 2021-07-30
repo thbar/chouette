@@ -9,19 +9,16 @@ import mobi.chouette.exchange.netexprofile.ConversionUtil;
 import mobi.chouette.exchange.netexprofile.exporter.producer.CalendarIDFMProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.DirectionProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.LineFranceProducer;
-import mobi.chouette.exchange.netexprofile.exporter.producer.LineProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils;
 import mobi.chouette.exchange.netexprofile.exporter.producer.NetworkFranceProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.OrganisationFranceProducer;
-import mobi.chouette.exchange.netexprofile.exporter.producer.OrganisationProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.RouteIDFMProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.RouteLinkProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.ServiceJourneyIDFMProducer;
 import mobi.chouette.exchange.netexprofile.exporter.producer.ServiceJourneyPatternIDFMProducer;
 import mobi.chouette.exchange.report.ActionReporter;
 import mobi.chouette.exchange.report.IO_TYPE;
-import mobi.chouette.model.Branding;
 import mobi.chouette.model.Company;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Route;
@@ -31,7 +28,6 @@ import mobi.chouette.model.Timetable;
 import mobi.chouette.model.VehicleJourney;
 import mobi.chouette.model.type.AlightingPossibilityEnum;
 import mobi.chouette.model.type.BoardingPossibilityEnum;
-import org.rutebanken.netex.model.AvailabilityCondition;
 import org.rutebanken.netex.model.DestinationDisplay;
 import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.Organisation_VersionStructure;
@@ -39,24 +35,18 @@ import org.rutebanken.netex.model.PassengerStopAssignment;
 import org.rutebanken.netex.model.QuayRefStructure;
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.rutebanken.netex.model.ScheduledStopPointRefStructure;
-import org.rutebanken.netex.model.ValidBetween;
-import org.rutebanken.netex.model.ValidityConditions_RelStructure;
-import org.rutebanken.netex.model.ValidityTriggerRefStructure;
 
 import javax.xml.bind.Marshaller;
 import java.io.File;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.isSet;
 import static mobi.chouette.exchange.netexprofile.exporter.producer.NetexProducerUtils.netexId;
 import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.PASSENGER_STOP_ASSIGNMENT;
-import static mobi.chouette.exchange.netexprofile.util.NetexObjectIdTypes.VALIDITY_CONDITIONS;
 
 public class NetexLineDataIDFMProducer extends NetexProducer implements Constant {
 
@@ -191,6 +181,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
         }
         org.rutebanken.netex.model.Line_VersionStructure netexLine = lineFranceProducer.produce(context, line);
         exportableNetexData.setLine(netexLine);
+        exportableNetexData.getSharedLines().put(line.getObjectId(), netexLine);
 
         for (Company company : exportableData.getCompanies()) {
             if (!exportableNetexData.getSharedOrganisations().containsKey(company.getObjectId())) {
@@ -338,7 +329,7 @@ public class NetexLineDataIDFMProducer extends NetexProducer implements Constant
             QuayRefStructure quayRefStruct = netexFactory.createQuayRefStructure();
             NetexProducerUtils.populateReference(containedInStopArea, quayRefStruct, parameters.isExportStops());
 
-            quayRefStruct.setValue("version=\"any\"");
+            quayRefStruct.setVersionRef("any");
 
             passengerStopAssignment.setQuayRef(quayRefStruct);
         }

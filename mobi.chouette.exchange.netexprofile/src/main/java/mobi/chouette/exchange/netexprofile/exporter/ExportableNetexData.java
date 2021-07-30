@@ -59,6 +59,10 @@ public class ExportableNetexData {
 
     @Getter
     @Setter
+    private Map<String, Line_VersionStructure> sharedLines = new HashMap<>();
+
+    @Getter
+    @Setter
     private Map<String, GroupOfLines> sharedGroupsOfLines = new HashMap<>();
 
     @Getter
@@ -195,6 +199,7 @@ public class ExportableNetexData {
         sharedScheduledStopPoints.clear();
         sharedBrandings.clear();
         sharedRoutePoints.clear();
+        sharedLines.clear();
     }
 
 }

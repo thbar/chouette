@@ -24,14 +24,6 @@ public class GeneralFrameIDFMWriter {
             writer.writeStartElement(GENERAL_FRAME);
             writer.writeAttribute(VERSION, NETEX_DEFAULT_OBJECT_VERSION);
 
-            exportableNetexData.getServiceJourneys().stream()
-                    .flatMap(sj -> sj.getDayTypes().getDayTypeRef().stream())
-                    .filter(dtr -> dtr.getValue().getVersion() != null)
-                    .forEach(dtr -> {
-                        dtr.getValue().setValue("version=\"" + dtr.getValue().getVersion() + "\"");
-                        dtr.getValue().setVersion(null);
-                    });
-
             if (typeNetex.equals(NETEX_LIGNE)) {
                 NetexStructureWriter.writer(writer, context, exportableNetexData, marshaller, timestamp, typeNetex);
             }
