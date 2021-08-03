@@ -127,6 +127,7 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
 
         Map<String, String> lineTextColorMap = new HashMap<>();
         Map<String, String> lineBackgroundColorMap = new HashMap<>();
+        Map<String, String> lineShortNameMap = new HashMap<>();
 
 
 
@@ -138,6 +139,7 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
                 lineList.add(lineName);
                 lineTextColorMap.put(lineName,line.getTextColor());
                 lineBackgroundColorMap.put(lineName,line.getColor());
+                lineShortNameMap.put(lineName,line.getNumber());
 
                 for (Route route : line.getRoutes()) {
 
@@ -189,6 +191,10 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
             if(!analyzeReport.getJourneys().contains(vehicleJourney)){
                 analyzeReport.getJourneys().add(vehicleJourney);
             }
+        });
+
+        lineShortNameMap.forEach((key,value) ->{
+            analyzeReport.addLineShortName(key,value);
         });
     }
 

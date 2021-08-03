@@ -58,6 +58,7 @@ public class AnalyzeReport extends AbstractReport implements Constant, Report {
 
 	private Map<String,String> lineTextColorMap = new HashMap<>();
 	private Map<String,String> lineBackgroundColorMap = new HashMap<>();
+	private Map<String,String> lineShortNameMap = new HashMap<>();
 
 
 
@@ -131,6 +132,11 @@ public class AnalyzeReport extends AbstractReport implements Constant, Report {
 			lineBackgroundColorMap.put(lineName,lineBackgroundColor);
 	}
 
+	public void addLineShortName(String lineName, String shortName){
+		if (!lineShortNameMap.containsKey(lineName))
+			lineShortNameMap.put(lineName,shortName);
+	}
+
 
 	@Override
 	public void print(PrintStream out, StringBuilder ret , int level, boolean first) {
@@ -172,8 +178,9 @@ public class AnalyzeReport extends AbstractReport implements Constant, Report {
 			String lineName = lines.get(i);
 			String lineTextColor = lineTextColorMap.containsKey(lineName) ?  lineTextColorMap.get(lineName) : "000000";
 			String lineBackgroundColor = lineBackgroundColorMap.containsKey(lineName) ?  lineBackgroundColorMap.get(lineName) : "FFFFFF";
+			String lineShortName = lineShortNameMap.containsKey(lineName) ?  lineShortNameMap.get(lineName) : "";
 
-			out.print("{ \"lineName\": \"" + lines.get(i) + "\", \"lineTextColor\":\"" + lineTextColor + "\", \"lineBackgroundColor\": \"" + lineBackgroundColor  + endOfline);
+			out.print("{ \"lineName\": \"" + lines.get(i) + "\", \"lineTextColor\":\"" + lineTextColor + "\", \"lineBackgroundColor\": \"" + lineBackgroundColor + "\", \"shortName\":\""+ lineShortName + endOfline);
 		}
 		out.println("]");
 	}
