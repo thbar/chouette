@@ -119,10 +119,11 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
 
         AnalyzeReport analyzeReport = (AnalyzeReport)context.get(ANALYSIS_REPORT);
         Referential cache = (Referential) context.get(CACHE);
+        List incomingLineList = (List) context.get(INCOMING_LINE_LIST);
 
 
 
-        List<String> lineList = new ArrayList<>();
+        List<String> analyzedLineList = new ArrayList<>();
         List<String> vehicleJourneys = new ArrayList<>();
 
         Map<String, String> lineTextColorMap = new HashMap<>();
@@ -134,9 +135,14 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
         for (Network network : cache.getPtNetworks().values()) {
 
             for (Line line : network.getLines()) {
-
                 String lineName = line.getName();
-                lineList.add(lineName);
+
+                //If line is not part of the incoming file or if line has already been analyzed, we skip it
+                if (!incomingLineList.contains(line.getObjectId()) || analyzedLineList.contains(lineName))
+                    continue;
+
+
+                analyzedLineList.add(lineName);
                 lineTextColorMap.put(lineName,line.getTextColor());
                 lineBackgroundColorMap.put(lineName,line.getColor());
                 lineShortNameMap.put(lineName,line.getNumber());
@@ -173,7 +179,7 @@ public class ProcessAnalyzeCommand extends AbstractImporterCommand implements Co
         }
 
 
-        lineList.forEach(line -> {
+        analyzedLineList.forEach(line -> {
             if (!analyzeReport.getLines().contains(line)){
                 analyzeReport.getLines().add(line);
             }

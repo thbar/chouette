@@ -28,6 +28,7 @@ import mobi.chouette.model.util.Referential;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -232,6 +233,10 @@ public class GtfsRouteParser implements Parser, Validator, Constant {
 
     protected void convert(Context context, GtfsRoute gtfsRoute, Line line) {
         GtfsImportParameters configuration = (GtfsImportParameters) context.get(CONFIGURATION);
+
+        List incomingLineList = (List) context.get(INCOMING_LINE_LIST);
+        incomingLineList.add(line.getObjectId());
+
         NetworksNames networksNames = new NetworksNames();
 
         line.setName(AbstractConverter.getNonEmptyTrimedString(gtfsRoute.getRouteLongName()));

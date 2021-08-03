@@ -18,6 +18,7 @@ import mobi.chouette.exchange.report.AnalyzeReport;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Log4j
 public class GtfsAnalyzeFileCommand extends AbstractImporterCommand implements Command, Constant {
@@ -36,6 +37,7 @@ public class GtfsAnalyzeFileCommand extends AbstractImporterCommand implements C
 
         AnalyzeReport analyzeReport = new AnalyzeReport();
         context.put(ANALYSIS_REPORT, analyzeReport);
+        context.put(INCOMING_LINE_LIST, new ArrayList());
 
         // check params
         Object configuration = context.get(CONFIGURATION);

@@ -84,4 +84,6 @@ public interface Constant {
 	public static final String COLON_REPLACEMENT_CODE="##3A##";
 	public static final String SANITIZED_REPLACEMENT_CODE="__3A__";
 
+	public static final String INCOMING_LINE_LIST="incomingLineList";
+
 }
