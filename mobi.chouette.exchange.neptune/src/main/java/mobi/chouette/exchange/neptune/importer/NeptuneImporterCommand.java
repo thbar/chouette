@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.neptune.importer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.naming.InitialContext;
 
@@ -44,6 +45,7 @@ public class NeptuneImporterCommand extends AbstractImporterCommand implements C
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+		context.put(INCOMING_LINE_LIST, new ArrayList());
 
 		ActionReporter reporter = ActionReporter.Factory.getInstance();
 		

@@ -1,6 +1,7 @@
 package mobi.chouette.exchange.gtfs.importer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.naming.InitialContext;
 
@@ -32,6 +33,7 @@ public class GtfsImporterCommand extends AbstractImporterCommand implements Comm
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
+		context.put(INCOMING_LINE_LIST, new ArrayList());
 
 		ProgressionCommand progression = (ProgressionCommand) CommandFactory.create(initialContext,
 				ProgressionCommand.class.getName());

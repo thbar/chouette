@@ -18,6 +18,7 @@ import mobi.chouette.exchange.report.AnalyzeReport;
 
 import javax.naming.InitialContext;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Log4j
 public class NeptuneAnalyzeFileCommand extends AbstractImporterCommand implements Command, Constant {
@@ -32,6 +33,7 @@ public class NeptuneAnalyzeFileCommand extends AbstractImporterCommand implement
         Monitor monitor = MonitorFactory.start(COMMAND);
         InitialContext initialContext = (InitialContext) context.get(INITIAL_CONTEXT);
         ActionReport report = (ActionReport) context.get(REPORT);
+        context.put(INCOMING_LINE_LIST, new ArrayList());
         ProgressionCommand progression = (ProgressionCommand) CommandFactory.create(initialContext, ProgressionCommand.class.getName());
         ActionReporter reporter = ActionReporter.Factory.getInstance();
 
