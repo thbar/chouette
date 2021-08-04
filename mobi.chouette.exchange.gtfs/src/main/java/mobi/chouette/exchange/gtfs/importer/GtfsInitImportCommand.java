@@ -17,6 +17,7 @@ import mobi.chouette.exchange.gtfs.Constant;
 import mobi.chouette.exchange.gtfs.model.importer.FactoryParameters;
 import mobi.chouette.exchange.gtfs.model.importer.GtfsImporter;
 import mobi.chouette.exchange.validation.ValidationData;
+import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 
 import com.jamonapi.Monitor;
@@ -48,6 +49,8 @@ public class GtfsInitImportCommand implements Command, Constant {
 				importer = new GtfsImporter(path.toString(),factoryParameters);
 				context.put(PARSER, importer);
 			}
+
+			context.put(StopArea.IMPORT_MODE, parameters.getStopAreaImportMode());
 
 			if (parameters.getReferencesType() == null || parameters.getReferencesType().isEmpty()) {
 				parameters.setReferencesType("line");

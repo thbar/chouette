@@ -12,6 +12,7 @@ import mobi.chouette.exchange.validation.report.ValidationReporter;
 import mobi.chouette.model.ScheduledStopPoint;
 import mobi.chouette.model.SimpleObjectReference;
 import mobi.chouette.model.StopArea;
+import mobi.chouette.model.type.StopAreaImportModeEnum;
 import mobi.chouette.model.util.NeptuneUtil;
 import mobi.chouette.model.util.ObjectFactory;
 import mobi.chouette.model.util.Referential;
@@ -32,6 +33,9 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 
 	@Override
 	public void update(Context context, ScheduledStopPoint oldValue, ScheduledStopPoint newValue) throws Exception {
+
+
+		boolean isReadOnlyMode = StopAreaImportModeEnum.READ_ONLY.equals(context.get(StopArea.IMPORT_MODE));
 
 		if (newValue.isSaved()) {
 			return;
@@ -54,7 +58,9 @@ public class ScheduledStopPointUpdater implements Updater<ScheduledStopPoint> {
 
 			oldValue.setDetached(false);
 		} else {
-			twoDatabaseStopPointThreeTest(validationReporter, context, oldValue.getContainedInStopAreaRef().getObject(), newValue.getContainedInStopAreaRef().getObject(), data);
+			if(!isReadOnlyMode){
+				twoDatabaseStopPointThreeTest(validationReporter, context, oldValue.getContainedInStopAreaRef().getObject(), newValue.getContainedInStopAreaRef().getObject(), data);
+			}
 
 			if (newValue.getObjectId() != null && !newValue.getObjectId().equals(oldValue.getObjectId())) {
 				oldValue.setObjectId(newValue.getObjectId());

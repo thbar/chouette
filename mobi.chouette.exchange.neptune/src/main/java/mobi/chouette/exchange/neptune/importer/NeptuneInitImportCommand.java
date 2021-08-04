@@ -15,6 +15,7 @@ import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
 import mobi.chouette.exchange.validation.ValidationData;
+import mobi.chouette.model.StopArea;
 import mobi.chouette.model.util.Referential;
 
 import com.jamonapi.Monitor;
@@ -32,6 +33,8 @@ public class NeptuneInitImportCommand implements Command, Constant {
 		Monitor monitor = MonitorFactory.start(COMMAND);
 
 		try {
+			NeptuneImportParameters parameters = (NeptuneImportParameters) context.get(CONFIGURATION);
+			context.put(StopArea.IMPORT_MODE, parameters.getStopAreaImportMode());
 			context.put(REFERENTIAL, new Referential());
 			if (context.get(VALIDATION) != null)
 			   context.put(VALIDATION_DATA, new ValidationData());

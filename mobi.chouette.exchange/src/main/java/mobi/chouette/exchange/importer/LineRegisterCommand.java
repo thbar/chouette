@@ -24,6 +24,7 @@ import mobi.chouette.exchange.report.ActionReporter.ERROR_CODE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_STATE;
 import mobi.chouette.exchange.report.ActionReporter.OBJECT_TYPE;
 import mobi.chouette.exchange.report.IO_TYPE;
+import mobi.chouette.model.JourneyFrequency;
 import mobi.chouette.model.JourneyPattern;
 import mobi.chouette.model.Line;
 import mobi.chouette.model.Route;
@@ -118,7 +119,6 @@ public class LineRegisterCommand implements Command {
 //		}
 
 		AbstractImportParameter importParameter = (AbstractImportParameter) context.get(CONFIGURATION);
-		context.put(StopArea.IMPORT_MODE, importParameter.getStopAreaImportMode());
 		log.info("Importing line: " + newValue.getObjectId() + " with stop area import mode: " + importParameter.getStopAreaImportMode());
 
 		if (importParameter.isKeepObsoleteLines() || isLineValidInFuture(newValue)) {
@@ -172,6 +172,9 @@ public class LineRegisterCommand implements Command {
 				oldValue.setPosition(newValue.getPosition());
 				searchEmptyOriginalStopIds(referential,oldValue);
 				lineDAO.create(oldValue);
+
+				findRefToLoc(oldValue);
+
 				lineDAO.flush(); // to prevent SQL error outside method
 
 				if (optimized) {
@@ -264,6 +267,37 @@ public class LineRegisterCommand implements Command {
 		return result;
 	}
 
+
+	private void findRefToLoc(Line line){
+		for (Route route : line.getRoutes()) {
+			checkStopPointList(route.getStopPoints());
+
+
+
+			for (JourneyPattern journeyPattern : route.getJourneyPatterns()) {
+				checkStopPointList(journeyPattern.getStopPoints());
+
+				for (VehicleJourney vehicleJourney : journeyPattern.getVehicleJourneys()) {
+
+					for (VehicleJourneyAtStop vehicleJourneyAtStop : vehicleJourney.getVehicleJourneyAtStops()) {
+						checkStopPoint(vehicleJourneyAtStop.getStopPoint());
+					}
+				}
+			}
+		}
+	}
+
+	private void checkStopPointList(List<StopPoint> spList){
+		for (StopPoint stopPoint : spList) {
+			checkStopPoint(stopPoint);
+		}
+	}
+
+	private void checkStopPoint(StopPoint stopPoint) {
+		if (stopPoint.getScheduledStopPoint().getContainedInStopAreaRef().getObjectId().contains("LOC")){
+			log.error("prob ici");
+		}
+	}
 
 	private void searchEmptyOriginalStopIds(Referential referential, Line line){
 		for (Route route : line.getRoutes()) {

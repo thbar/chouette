@@ -114,13 +114,12 @@ public class AbstractImporterCommand implements Constant {
 			}
 
 			// Mosaic Commands after import before validation
-			List<? extends Command> mosaicPostCommands = commands.getMobiitiCommands(context, true);
-			if (mosaicPostCommands.isEmpty()) {
-				progression.terminate(context, 1);
-				progression.execute(context);
+			List<? extends Command> mobiitiPostCommands = commands.getMobiitiCommands(context, true);
+			if (mobiitiPostCommands.isEmpty()) {
+				progression.terminate(context, 0);
 			} else {
-				progression.terminate(context, mosaicPostCommands.size());
-				for (Command command : mosaicPostCommands) {
+				progression.terminate(context, mobiitiPostCommands.size());
+				for (Command command : mobiitiPostCommands) {
 					result = command.execute(context);
 					if (!result) {
 						return ERROR;

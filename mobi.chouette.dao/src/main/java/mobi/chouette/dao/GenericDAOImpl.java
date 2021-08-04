@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import mobi.chouette.model.NeptuneIdentifiedObject;
 import org.hibernate.Session;
 
 import com.google.common.collect.Iterables;
@@ -113,6 +114,11 @@ public abstract class 	GenericDAOImpl<T> implements GenericDAO<T> {
 
 	
 	public void create(final T entity) {
+		if (entity instanceof NeptuneIdentifiedObject){
+			if(((NeptuneIdentifiedObject) entity).getObjectId().contains("LOC")){
+				System.out.println("ici");
+			}
+		}
 		em.persist(entity);
 	}
 
