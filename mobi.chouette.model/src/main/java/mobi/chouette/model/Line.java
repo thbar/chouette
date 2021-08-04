@@ -39,7 +39,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.ws.rs.DefaultValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -533,11 +532,6 @@ public class Line extends NeptuneIdentifiedObject implements ObjectIdTypes {
 	@Getter
 	@Setter
 	private FlexibleLineProperties flexibleLineProperties;
-
-	@Getter
-	@Setter
-	@DefaultValue("false")
-	private Boolean supprime = false;
 
 	public boolean equals(Object o) {
 		if (this == o) return true;

@@ -72,9 +72,9 @@ public class LineFilter {
 			}
 		}
 
-		return line.getRoutes().stream()
-				.anyMatch(route -> route.getJourneyPatterns().stream()
-						.anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent()));
+		// Recheck that there are at least 1 vehiclejourney
+		// TODO
+		return true;
 	}
 
 	private boolean isTimetableValid(Timetable timetable, Date startDate, Date endDate) {
