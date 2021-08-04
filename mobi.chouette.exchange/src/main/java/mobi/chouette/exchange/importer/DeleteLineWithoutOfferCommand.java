@@ -40,16 +40,6 @@ public class DeleteLineWithoutOfferCommand implements Command, Constant {
         }
         lineDAO.flush(); // to prevent SQL error outside method
 
-        // du coup on supprime les réseaux sans ligne car inutiles
-        for(Network network: networkDAO.findAll()) {
-            List<Line> lines = lineDAO.findByNetworkId(network.getId());
-            boolean hasLines = lines != null && lines.size() > 0;
-            if(!hasLines){
-                networkDAO.delete(network);
-            }
-        }
-        networkDAO.flush(); // to prevent SQL error outside method
-
         return SUCCESS;
     }
 
