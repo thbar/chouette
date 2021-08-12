@@ -74,7 +74,7 @@ public class LineFilter {
 
 		return line.getRoutes().stream()
 				.anyMatch(route -> route.getJourneyPatterns().stream()
-						.anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent()));
+						.anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent() && !journeyPattern.getSupprime()));
 	}
 
 	private boolean isTimetableValid(Timetable timetable, Date startDate, Date endDate) {
