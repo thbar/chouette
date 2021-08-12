@@ -76,32 +76,9 @@ public class LineFilter {
 		}
 
 		return line.getRoutes().stream()
-				               .anyMatch(this::hasRouteData);
+				               .anyMatch(TransferUtil::hasRouteData);
 	}
 
-	/**
-	 * Checks if route has correct data
-	 * @param route
-	 * @return
-	 * true : route has correct data
-	 * false: no journey pattern in route OR
-	 * 				journey patterns with no vehicle journeys OR
-	 * 				journey patterns deleted
-	 */
-	private boolean hasRouteData(Route route){
-
-		List<JourneyPattern> undeletedJourneyPatterns = route.getJourneyPatterns().stream()
-						            												.filter(journeyPattern -> !journeyPattern.getSupprime())
-									                     							.collect(Collectors.toList());
-
-		if (undeletedJourneyPatterns.isEmpty()){
-			return false;
-		}
-
-		return undeletedJourneyPatterns.stream()
-				 					   .anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent());
-
-	}
 
 	private boolean isTimetableValid(Timetable timetable, Date startDate, Date endDate) {
 		if (timetable.getPeriods().isEmpty() && timetable.getCalendarDays().isEmpty()) {
