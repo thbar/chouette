@@ -16,14 +16,14 @@ public class LineFilter {
 		// Clean line
 		for (Iterator<Route> routeI = line.getRoutes().iterator(); routeI.hasNext();) {
 			Route route = routeI.next();
-			if (route.getStopPoints().size() < 2 && !route.getLine().getFlexibleService()) {
+			if (route.getStopPoints().size() < 2  && !route.getLine().getFlexibleService()) {
 				routeI.remove();
 				continue;
 
 			}
 			for (Iterator<JourneyPattern> jpI = route.getJourneyPatterns().iterator(); jpI.hasNext();) {
 				JourneyPattern jp = jpI.next();
-				if (jp.getStopPoints().size() < 2 && !jp.getRoute().getLine().getFlexibleService()) {
+				if (jp.getSupprime() || (jp.getStopPoints().size() < 2  && !jp.getRoute().getLine().getFlexibleService())) {
 					jpI.remove();
 					continue; // no stops
 				}
