@@ -112,6 +112,10 @@ public class VehicleJourneyCheckPoints extends AbstractValidation<VehicleJourney
         for (int i = 0; i < beans.size(); i++) {
             VehicleJourney vj = beans.get(i);
 
+            if (vj.getSupprime()){
+                continue;
+            }
+
             // 3-VehicleJourney-1 : check if time progress correctly on each
             // stop
             check3VehicleJourney1(context, vj, parameters);

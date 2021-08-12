@@ -68,6 +68,11 @@ public class JourneyPatternCheckPoints extends AbstractValidation<JourneyPattern
 		for (int i = 0; i < beans.size(); i++) {
 			JourneyPattern jp = beans.get(i);
 
+			if (jp.getSupprime()){
+				//deleted jp : no need to check
+				continue;
+			}
+
 			// 3-JourneyPattern-1 : check if two journey patterns use same stops
 			check3JourneyPattern1(context, beans, i, jp);
 

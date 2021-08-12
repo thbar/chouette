@@ -26,6 +26,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.ws.rs.DefaultValue;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -275,5 +276,10 @@ public class Route extends NeptuneIdentifiedObject {
 	@OrderColumn(name = "position")
 	@JoinTable(name = "routes_route_points", joinColumns = {@JoinColumn(name = "route_id", nullable = false, updatable = false)}, inverseJoinColumns = {@JoinColumn(name = "route_point_id", nullable = false, updatable = false)})
 	private List<RoutePoint> routePoints = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	@DefaultValue("false")
+	private Boolean supprime = false;
 
 }

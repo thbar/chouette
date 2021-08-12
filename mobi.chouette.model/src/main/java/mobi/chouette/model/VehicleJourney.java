@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.ws.rs.DefaultValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -457,5 +458,13 @@ public class VehicleJourney extends NeptuneIdentifiedObject {
 		if(splitObjectId.length<3) return this.getObjectId();
 		return splitObjectId[0] + ":" + splitObjectId[1] + ":" + this.getShortTripId();
 	}
+
+	/**
+	 * Supprimé via l'IHM ou pas.
+	 */
+	@Getter
+	@Setter
+	@DefaultValue("false")
+	private Boolean supprime = false;
 
 }
