@@ -7,6 +7,9 @@ import org.joda.time.LocalDate;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j
 public class LineFilter {
@@ -73,8 +76,31 @@ public class LineFilter {
 		}
 
 		return line.getRoutes().stream()
-				.anyMatch(route -> route.getJourneyPatterns().stream()
-						.anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent() && !journeyPattern.getSupprime()));
+				               .anyMatch(this::hasRouteData);
+	}
+
+	/**
+	 * Checks if route has correct data
+	 * @param route
+	 * @return
+	 * true : route has correct data
+	 * false: no journey pattern in route OR
+	 * 				journey patterns with no vehicle journeys OR
+	 * 				journey patterns deleted
+	 */
+	private boolean hasRouteData(Route route){
+
+		List<JourneyPattern> undeletedJourneyPatterns = route.getJourneyPatterns().stream()
+						            												.filter(journeyPattern -> !journeyPattern.getSupprime())
+									                     							.collect(Collectors.toList());
+
+		if (undeletedJourneyPatterns.isEmpty()){
+			return false;
+		}
+
+		return undeletedJourneyPatterns.stream()
+				 					   .anyMatch(journeyPattern -> journeyPattern.getVehicleJourneys().stream().findAny().isPresent());
+
 	}
 
 	private boolean isTimetableValid(Timetable timetable, Date startDate, Date endDate) {
