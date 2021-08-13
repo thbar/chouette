@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.ws.rs.DefaultValue;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -115,6 +116,16 @@ public class JourneyPattern extends NeptuneIdentifiedObject {
 	public void setRegistrationNumber(String value) {
 		registrationNumber = StringUtils.abbreviate(value, 255);
 	}
+
+
+	/**
+	 * Le trajet a-t-il été suppérimé via l'interface ?
+	 * On le désactive en fait seulement.
+	 */
+	@Getter
+	@Setter
+	@DefaultValue("false")
+	private Boolean supprime = false;
 
 	/**
 	 * published name

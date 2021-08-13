@@ -36,6 +36,7 @@ import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -104,7 +105,17 @@ public class TransferExportDataWriter implements Command, Constant {
 		try {
 			for (Line l : lineToTransfer) {
 				for (Route r : l.getRoutes()) {
+
+					if (!TransferUtil.hasRouteData(r)){
+						continue;
+					}
+
 					for(JourneyPattern jp : r.getJourneyPatterns()) {
+
+						if (jp.getSupprime()){
+							continue;
+						}
+
 						for(RouteSection rs : jp.getRouteSections()) {
 							referential.getRouteSections().putIfAbsent(rs.getObjectId(), rs);
 						}
@@ -140,6 +151,7 @@ public class TransferExportDataWriter implements Command, Constant {
 			
 			for (int i = 0; i < lineToTransfer.size(); i++) {
 				Line line = lineToTransfer.get(i);
+				removeDeletedOrEmptyRoute(line);
 				log.info("Persisting line " + line.getObjectId() + " / " + line.getName());
 
 				lineDAO.create(line);
@@ -170,6 +182,42 @@ public class TransferExportDataWriter implements Command, Constant {
 			em.clear();
 			referential.clear(true);
 			lineToTransfer.clear();
+		}
+	}
+
+	/**
+	 * Read a line and :
+	 *    - removes routes with no correct data at all
+	 *    - clean remaining routes to remove incorrect journey patterns
+	 * @param line
+	 */
+	private void removeDeletedOrEmptyRoute(Line line){
+
+		//Remove routes that have no data at all : empty vehicleJourneys or deleted journeys
+		for (Iterator<Route> routeI = line.getRoutes().iterator(); routeI.hasNext();) {
+			Route route = routeI.next();
+			if (!TransferUtil.hasRouteData(route)) {
+				routeI.remove();
+				continue;
+			}
+		}
+
+		//once all empty routes have been removed, we are looking into each route to remove empty journey patterns
+		line.getRoutes().forEach(this::removeDeletedOrEmptyJourneyPatterns);
+	}
+
+
+	/**
+	 * Read a route and remove all journey patterns that have "deleted" status or with less than 2 stop points
+	 * @param route
+	 */
+	private void removeDeletedOrEmptyJourneyPatterns(Route route){
+		for (Iterator<JourneyPattern> jpI = route.getJourneyPatterns().iterator(); jpI.hasNext();) {
+			JourneyPattern jp = jpI.next();
+			if (jp.getSupprime() || (jp.getStopPoints().size() < 2 && !jp.getRoute().getLine().getFlexibleService())) {
+				jpI.remove();
+				continue; // no stops
+			}
 		}
 	}
 

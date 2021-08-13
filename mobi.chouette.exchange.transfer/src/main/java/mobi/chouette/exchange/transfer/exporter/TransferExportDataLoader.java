@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Log4j
 @Stateless(name = TransferExportDataLoader.COMMAND)
@@ -65,7 +66,9 @@ public class TransferExportDataLoader implements Command, Constant {
 		TransferExportParameters configuration = (TransferExportParameters) context.get(CONFIGURATION);
 
 		log.info("Loading all lines...");
-		List<Line> allLines = lineDAO.findAll();
+		List<Line> allLines = lineDAO.findAll().stream()
+											   .filter(line-> !line.getSupprime())
+										       .collect(Collectors.toList());
 		
 		List<Line> lineToTransfer = new ArrayList<>();
 		

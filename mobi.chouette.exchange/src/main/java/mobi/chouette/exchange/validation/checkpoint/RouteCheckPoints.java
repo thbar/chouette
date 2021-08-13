@@ -67,6 +67,11 @@ public class RouteCheckPoints extends AbstractValidation<Route> implements Valid
 		for (int i = 0; i < beans.size(); i++) {
 			Route route = beans.get(i);
 
+			if (route.getSupprime()){
+				//Deleted route : no need to check
+				continue;
+			}
+
 			// 3-Route-1 : check if two successive route points are in same area
 			check3RouteRb2(context, route);
 
