@@ -61,6 +61,7 @@ public class DaoReader {
 		LineComparator lineComp = new LineComparator();
 
 		return lines.stream()
+					 .filter(line -> line.getSupprime().equals(false))
 				     .sorted(lineComp)
 				     .map(Line::getId)
 				     .collect(Collectors.toCollection(LinkedHashSet::new));
